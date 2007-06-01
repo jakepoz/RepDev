@@ -1,0 +1,1 @@
+java -cp swt-win/swt.jar;./ -Djava.library.path=swt-win com.repdev.RepDevMain
