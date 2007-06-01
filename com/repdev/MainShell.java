@@ -819,6 +819,14 @@ public class MainShell {
 
 			public void close(CTabFolderEvent event) {
 				event.doit = confirmClose( mainfolder.getSelection() );	
+				
+				if( event.doit ){
+					if( mainfolder.getSelection().getControl() instanceof EditorComposite ){
+						for( TableItem item : tblErrors.getItems() ){
+							//TODO: Remove these items, time to go home for the night.
+						}
+					}
+				}
 			}
 
 			public void maximize(CTabFolderEvent event) {
@@ -1115,24 +1123,6 @@ public class MainShell {
 		shell.setMenuBar(bar);
 	}
 	
-	public void updateErrorList(){
-		tblErrors.clearAll();
-		
-		for( CTabItem item : mainfolder.getItems()){
-			if( item.getControl() != null && ((SymitarFile)item.getData("file")).getType() == FileType.REPGEN )
-			{
-				synchronized(((EditorComposite)item.getControl()).getParser()){
-					for( RepgenParser.Error error : ((EditorComposite)item.getControl()).getParser().getErrorList()){
-						TableItem row = new TableItem(tblErrors,SWT.NONE);
-						row.setText(0, error.getDescription());
-						row.setText(1, error.getFile());
-						row.setText(2, String.valueOf(error.getLine()));
-					}
-				}
-			}
-		}
-	}
-
 	private void showOptions() {
 		OptionsShell.showOptions(shell.getDisplay(), shell);
 	}
@@ -1143,6 +1133,14 @@ public class MainShell {
 		dialog.setText("About");
 
 		dialog.open();
+	}
+	
+	public Table getErrorTable(){
+		return tblErrors;
+	}
+	
+	public Table getTaskTable(){
+		return tblTasks;
 	}
 
 	private void close() {

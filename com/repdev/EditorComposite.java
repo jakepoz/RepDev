@@ -611,6 +611,8 @@ public class EditorComposite extends Composite {
 		frmTxt.bottom = new FormAttachment(100);
 		txt.setLayoutData(frmTxt);
 
+		parser.errorCheck();
+		
 		undoMode = 1;
 		modified = false;
 		updateModified();

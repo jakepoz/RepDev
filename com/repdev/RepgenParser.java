@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 import com.repdev.DatabaseLayout.Field;
 import com.repdev.DatabaseLayout.Record;
@@ -400,17 +403,44 @@ public class RepgenParser {
 			me = instance;
 		}
 		
-		public void run(){
-			synchronized(me){
-				errorList.clear();
-				errorList.add(new Error(RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName())));
-			}
+		public void run() {
+			final Table tblErrors = RepDevMain.mainShell.getErrorTable();
+			//ArrayList<Integer> toRemove = new ArrayList<Integer>();
+			//int i = 0;
+			
+			errorList.clear();
+			errorList.add(new Error(RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName())));
+
+			tblErrors.getDisplay().asyncExec(new Runnable(){
+				public void run(){
+					for( TableItem item : tblErrors.getItems() ){
+						if( ((SymitarFile)item.getData("file")).equals(file) && ((Integer)item.getData("sym")) == sym)
+							item.dispose();
+					
+					}
+								
+					for (Error error : errorList) {
+						if( !error.getDescription().equals("") ){
+							TableItem row = new TableItem(tblErrors, SWT.NONE);
+							row.setText(0, error.getDescription());
+							row.setText(1, error.getFile());
+							row.setText(2, String.valueOf(error.getLine()));
+							row.setData("file", file);
+							row.setData("sym", sym);
+						}
+					}
+
+				}
+			});
+			
 		}
 	}
 
 	
 	/**
-	 * Adds tokens to ltokens, but also keeps track of it in the new tokens list for determining what to process later
+	 * Adds tokens to ltokens, but also keeps track of it in the new tokens list
+	 * for determining what to process later
+	 * 
 	 * @param spot
 	 * @param tok
 	 */
