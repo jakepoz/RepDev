@@ -625,7 +625,7 @@ public class EditorComposite extends Composite {
 		if( parser != null)
 			parser.errorCheck();
 		
-		RepDevMain.mainShell.updateErrorList();
+		//RepDevMain.mainShell.updateErrorList();
 	}
 	
 	public void updateModified(){
