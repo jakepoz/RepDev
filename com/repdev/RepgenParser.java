@@ -371,6 +371,7 @@ public class RepgenParser {
 		}
 		
 		public void run(){
+			//TODO: PARSE VARIABLES IN LEVELS DEEPER THAN FIRST.
 			for( Token tok : ltokens ){
 				if( tok.str.equals("#include") && tok.after != null){
 					String fileName = getFullString(tok.after,text);

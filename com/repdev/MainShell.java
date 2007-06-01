@@ -17,6 +17,7 @@ public class MainShell {
 	private Shell shell;
 	private Tree tree;
 	private Table tblErrors, tblTasks; 
+	
 
 	public MainShell(Display display) {
 		this.display = display;
