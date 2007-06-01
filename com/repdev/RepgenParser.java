@@ -372,6 +372,7 @@ public class RepgenParser {
 		
 		public void run(){
 			//TODO: PARSE VARIABLES IN LEVELS DEEPER THAN FIRST.
+			//Probably change it to have this function get and parse all the files, then make rebuildVars go off a fileName and token array
 			for( Token tok : ltokens ){
 				if( tok.str.equals("#include") && tok.after != null){
 					String fileName = getFullString(tok.after,text);
