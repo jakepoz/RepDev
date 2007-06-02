@@ -5,6 +5,11 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * Remove from project/Delete file shell,
+ * @author Jake Poznanski
+ *
+ */
 public class RemFileShell {
 	private static RemFileShell me = new RemFileShell();
 	private Shell shell;

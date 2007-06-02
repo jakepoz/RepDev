@@ -6,13 +6,16 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.*;
 
+/**
+ * Singleton class to load symitar database layout from local cache.
+ * Provides many fast routines and cacheing (since it doesn't change during run time) to speed up repgen parsing
+ * @author Jake Poznanski
+ *
+ */
 public class DatabaseLayout {
 
-	private ArrayList<Record> tree = new ArrayList<Record>(); // Main DB from
-																// file
-	private ArrayList<Record> flat = new ArrayList<Record>(); // Cached after
-																// loading from
-																// file
+	private ArrayList<Record> tree = new ArrayList<Record>(); // Main DB from file
+	private ArrayList<Record> flat = new ArrayList<Record>(); // Cached afterloading from file
 
 	// Cached after loading to compare easily to tokens in the syntax
 	private HashSet<String> lowerCaseRecordNames = new HashSet<String>();
@@ -183,11 +186,7 @@ public class DatabaseLayout {
 							rootRecord = rootRecord.getRoot();
 						}
 					}
-
-					// System.out.println("On Record: " + recMatcher.group(2) +
-					// " Root: " + rootRecord + " depth: " + depth + " last
-					// Depth: " + lastDepth);
-
+					
 					currentRecord = new Record(recMatcher.group(2), recMatcher.group(3), rootRecord);
 
 					if (depth == 0)

@@ -36,6 +36,14 @@ import com.repdev.SyntaxHighlighter.*;
 import com.repdev.RepgenParser.*;
 import com.repdev.DatabaseLayout.*;
 
+
+/**
+ * Suggestion box for help as you type in Repgens
+ * Only one instance is ever made, and gets attached to currently open tab
+ * 
+ * @author Jake Poznanski
+ *
+ */
 public class SuggestShell {
 	private Shell shell,tooltip;
 	private StyledText toolText;

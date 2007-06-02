@@ -2,6 +2,11 @@ package com.repdev;
 
 import java.util.Date;
 
+/**
+ * File on symitar server
+ * @author Jake Poznanski
+ *
+ */
 public class SymitarFile {
 	private String name;
 	private FileType type;

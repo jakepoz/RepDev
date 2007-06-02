@@ -17,6 +17,11 @@ import com.repdev.DatabaseLayout.Field;
 import com.repdev.RepgenParser.Variable;
 import com.repdev.RepgenParser.Token;
 
+/**
+ * Adds the right listeners to a StyledText object to colorize repgens. Uses RepgenParser for the tokenization 
+ * @author Jake Poznanski
+ *
+ */
 public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListener {
 	private static final String FONT_NAME = "Courier New";
 	private static final int FONT_SIZE = 11;

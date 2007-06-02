@@ -7,6 +7,14 @@ import java.util.HashMap;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * Main run class, runs as first startup
+ * 
+ * Provides many application global functions/variables, as well as intializes all the stuff we need
+ * 
+ * @author Jake Poznanski
+ *
+ */
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
 	public static final String VERSION = "v .01";

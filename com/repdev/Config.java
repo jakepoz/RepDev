@@ -3,6 +3,11 @@ package com.repdev;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Configuration class is serialized at the start/end of the program to store things like syms open, server, and other global config things
+ * @author Jake Poznanski
+ *
+ */
 public class Config implements Serializable {
 	private static Config me = new Config();
 	private static final long serialVersionUID = 1L;

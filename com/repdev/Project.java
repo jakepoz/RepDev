@@ -2,6 +2,11 @@ package com.repdev;
 
 import java.util.ArrayList;
 
+/**
+ * Class describing a project on the symitar server
+ * @author Jake Poznanski
+ *
+ */
 public class Project {
 
 	private ArrayList<SymitarFile> files = new ArrayList<SymitarFile>();

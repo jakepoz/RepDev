@@ -5,6 +5,11 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * Project creation window
+ * @author Jake Poznanski
+ *
+ */
 public class NewProjShell {
 	private static NewProjShell me = new NewProjShell();
 	private Shell shell;

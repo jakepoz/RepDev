@@ -374,15 +374,38 @@ public class RepgenParser {
 		}
 		
 		public void run(){
+			String data = "";
+			ArrayList<Token> tokens = new ArrayList<Token>();
+			boolean exists = false;
+			
 			//TODO: PARSE VARIABLES IN LEVELS DEEPER THAN FIRST.
 			//Probably change it to have this function get and parse all the files, then make rebuildVars go off a fileName and token array
 			for( Token tok : ltokens ){
-				if( tok.str.equals("#include") && tok.after != null){
+				if( tok.str.equals("#include") && tok.after != null && tok.inDefs){
 					String fileName = getFullString(tok.after,text);
 					
-					if( tok.inDefs ){
+					exists = false;
+					
+					for( Include cur : includes ){
+						if( cur.getDivision().equals( Division.DEFINE) && cur.getFileName().equals(fileName))
+							exists=true;
+					}
+					
+					if( !exists ){
 						includes.add(new Include(fileName,Division.DEFINE));
-						rebuildVars(fileName);
+	
+						data = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(new SymitarFile(fileName,FileType.REPGEN));				
+				
+						if( data == null )
+							return;
+						
+						parse(fileName, data, 0, data.length(), 0, tokens, new ArrayList<Variable>(),null);
+						
+						//Set to be in defs, since we are assuming only working with Include files already in the define division
+						for( Token cur : tokens)
+							cur.setInDefs(true);
+					
+						rebuildVars(fileName,data,tokens);
 					}
 				}
 			}
@@ -400,18 +423,44 @@ public class RepgenParser {
 		RepgenParser me;
 		
 		public BackgroundSymitarErrorChecker(RepgenParser instance){
+			super("Background Error Checker");
 			me = instance;
 		}
 		
 		public void run() {
 			final Table tblErrors = RepDevMain.mainShell.getErrorTable();
-			//ArrayList<Integer> toRemove = new ArrayList<Integer>();
-			//int i = 0;
 			
+			if( tblErrors.isDisposed() )
+				return;
+			
+			Display display = tblErrors.getDisplay();
+			
+			//Remove old errors
 			errorList.clear();
+			
+			//Error check with symitar
 			errorList.add(new Error(RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName())));
+			
+			//Variable checking
+			for( final Variable var : lvars){
+				if( var.getFilename().equals(file.getName())){
+					int count = 0;
+					
+					for( Variable var2 : lvars)
+						if( var2.equals(var) )
+							count++;
+					
+					if( count > 1)
+						display.syncExec(new Runnable(){
+							public void run(){
+								errorList.add(new Error("Duplicate variable name: " + var.getName(),txt.getLineAtOffset(var.pos), var.pos - txt.getOffsetAtLine(txt.getLineAtOffset(var.pos))));
+							}
+						});
+				}				
+			}
 
-			tblErrors.getDisplay().asyncExec(new Runnable(){
+			//Add to list
+			display.asyncExec(new Runnable(){
 				public void run(){
 					for( TableItem item : tblErrors.getItems() ){
 						if( ((SymitarFile)item.getData("file")).equals(file) && ((Integer)item.getData("sym")) == sym)
@@ -420,13 +469,20 @@ public class RepgenParser {
 					}
 								
 					for (Error error : errorList) {
-						if( !error.getDescription().equals("") ){
+						if( !error.getDescription().trim().equals("") ){
 							TableItem row = new TableItem(tblErrors, SWT.NONE);
 							row.setText(0, error.getDescription());
 							row.setText(1, error.getFile());
-							row.setText(2, String.valueOf(error.getLine()));
+							
+							if( error.getLine() >= 0 && error.getCol() >= 0)
+								row.setText(2, String.valueOf(error.getLine()) + " : " + error.getCol());
+							else
+								row.setText(2, "---");
+							
 							row.setData("file", file);
 							row.setData("sym", sym);
+							row.setData("error", error);
+							row.setImage(RepDevMain.smallErrorsImage);
 						}
 					}
 
@@ -449,6 +505,22 @@ public class RepgenParser {
 		lasttokens.add(tok);
 	}
 
+	/**
+	 * Parses given file and data into tokens, also uses current token lists and usually only replaces certain sections of the
+	 * token list.
+	 * 
+	 * Doesn't do any error checking, or anything like that
+	 * 
+	 * @param filename
+	 * @param str
+	 * @param start
+	 * @param end
+	 * @param oldend
+	 * @param tokens
+	 * @param vars
+	 * @param txt
+	 * @return
+	 */
 	private boolean parse(String filename, String str, int start, int end, int oldend, ArrayList<Token> tokens, ArrayList<Variable> vars, StyledText txt) {
 		Token modToken = null;
 
@@ -814,12 +886,10 @@ public class RepgenParser {
 		}
 	}
 	
-	private void rebuildVars(String fileName) {
+	private void rebuildVars(String fileName, String data, ArrayList<Token> tokens) {
 		ArrayList<Variable> newvars = new ArrayList<Variable>();
 		ArrayList<Variable> oldvars = new ArrayList<Variable>();
-		ArrayList<Token> tokens = new ArrayList<Token>();
-		String data;
-		
+			
 		boolean changed = false, exists = false;
 		
 		int c = 0;
@@ -828,24 +898,6 @@ public class RepgenParser {
 				oldvars.add(lvars.remove(c));
 			else
 				c++;
-		}
-		
-		if( fileName.equals(file.getName())){
-			tokens = ltokens;
-			data = txt.getText();
-		}
-		else{
-
-			data = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(new SymitarFile(fileName,FileType.REPGEN));				
-	
-			if( data == null )
-				return;
-			
-			parse(fileName, data, 0, data.length(), 0, tokens, new ArrayList<Variable>(),null);
-			
-			//Set to be in defs, since we are assuming only working with Include files already in the define division
-			for( Token cur : tokens)
-				cur.setInDefs(true);
 		}
 		
 		System.out.println("Parsing vars for " + fileName);
@@ -967,7 +1019,7 @@ public class RepgenParser {
 						rebuildVars = true;
 					
 				if( rebuildVars )
-					rebuildVars(file.getName());
+					rebuildVars(file.getName(), txt.getText(), ltokens);
 				
 				if( refreshIncludes ){
 					parseIncludes();
@@ -998,7 +1050,7 @@ public class RepgenParser {
 		try {
 			ltokens = new ArrayList<Token>();
 			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, ltokens, lvars, txt);
-			rebuildVars(file.getName());
+			rebuildVars(file.getName(), txt.getText(), ltokens);
 
 			System.out.println("Reparsed");
 		} catch (Exception e) {

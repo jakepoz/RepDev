@@ -6,6 +6,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * Logon to symitar shell
+ * @author Jake Poznanski
+ *
+ */
 public class SymLoginShell {
 	private static SymLoginShell me = new SymLoginShell();
 	private Shell shell;

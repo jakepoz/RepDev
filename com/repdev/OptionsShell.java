@@ -7,6 +7,11 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * Global options window
+ * @author Jake Poznanski
+ *
+ */
 public class OptionsShell {
 	Shell shell;
 	private static OptionsShell me = new OptionsShell();

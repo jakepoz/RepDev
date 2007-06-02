@@ -2,6 +2,11 @@ package com.repdev;
 
 import java.util.ArrayList;
 
+/**
+ * Abstract symitar session, allows for several different conneciton methods
+ * @author Jake Poznanski
+ *
+ */
 public abstract class SymitarSession {
 	protected String server, aixUsername, aixPassword, userID;
 	protected int sym;

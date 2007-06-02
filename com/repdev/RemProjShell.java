@@ -5,6 +5,12 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * Remove/Delete projects
+ * 
+ * @author Jake Poznanski
+ *
+ */
 public class RemProjShell {
 	private static RemProjShell me = new RemProjShell();
 	private Shell shell;

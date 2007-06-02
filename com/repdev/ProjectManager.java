@@ -3,6 +3,11 @@ package com.repdev;
 import java.util.ArrayList;
 import java.util.*;
 
+/**
+ * Global help utility class for managing projects
+ * @author Jake Poznanski
+ *
+ */
 public class ProjectManager {
 	private static HashMap<Integer, ArrayList<Project>> symProjects = new HashMap<Integer, ArrayList<Project>>();
 

@@ -11,6 +11,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * Main editor for repgen, help, and letter files
+ * Provides syntax highlighting and other advanced features for the repgen files, basically all the text editor stuff is in this class
+ * 
+ * @author Jake Poznanski
+ *
+ */
 public class EditorComposite extends Composite {
 	private SymitarFile file;
 	private int sym;

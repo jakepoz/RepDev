@@ -234,13 +234,12 @@ public class TestingSymitarSession extends SymitarSession {
 
 	@Override
 	public ErrorCheckResult errorCheckRepGen(String filename) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ErrorCheckResult("",-1,ErrorCheckResult.Type.ERROR);
 	}
 
 	@Override
 	public ErrorCheckResult installRepgen(String f) {
-		return null;
+		return new ErrorCheckResult("",-1,ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY);
 	}
 
 }

@@ -160,14 +160,14 @@ public class MainShell {
 		shell.setMinimumSize(3 * MIN_COMP_SIZE, 3 * MIN_COMP_SIZE);
 	}
 
-	private void openFile(SymitarFile file, int sym) {
+	private Object openFile(SymitarFile file, int sym) {
 		boolean found = false;
-
+		
 		for (CTabItem c : mainfolder.getItems()) {
 			if (c.getData("file") != null && c.getData("file").equals(file) && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
 				mainfolder.setSelection(c);
 				found = true;
-				break;
+				return c.getControl();
 			}
 		}
 
@@ -183,7 +183,11 @@ public class MainShell {
 			item.setControl(editor);
 
 			mainfolder.setSelection(item);
+			
+			return editor;
 		}
+		
+		return null;
 	}
 
 	private void doubleClickTreeItem() {
@@ -820,13 +824,11 @@ public class MainShell {
 			public void close(CTabFolderEvent event) {
 				event.doit = confirmClose( mainfolder.getSelection() );	
 				
-				if( event.doit ){
-					if( mainfolder.getSelection().getControl() instanceof EditorComposite ){
-						for( TableItem item : tblErrors.getItems() ){
-							//TODO: Remove these items, time to go home for the night.
-						}
-					}
-				}
+				if( event.doit && mainfolder.getSelection().getControl() instanceof EditorComposite )
+					for( TableItem item : tblErrors.getItems() )
+						if( item.getData("file").equals(mainfolder.getSelection().getData("file"))  &&  item.getData("sym").equals(mainfolder.getSelection().getData("sym"))  )
+								item.dispose();					
+			
 			}
 
 			public void maximize(CTabFolderEvent event) {
@@ -879,14 +881,36 @@ public class MainShell {
 		CTabItem errors = new CTabItem(folder, SWT.NONE);
 		errors.setText("&Errors");
 		errors.setImage(RepDevMain.smallErrorsImage);
-		tblErrors = new Table(folder, SWT.NONE);
+		tblErrors = new Table(folder, SWT.MULTI | SWT.FULL_SELECTION);
 		createTable(tblErrors);
+		tblErrors.addSelectionListener(new SelectionAdapter(){
+			public void widgetDefaultSelected(SelectionEvent e){
+				TableItem item = (TableItem)e.item;
+				SymitarFile file = (SymitarFile)item.getData("file");
+				int sym = (Integer)item.getData("sym");
+				RepgenParser.Error error = (RepgenParser.Error)item.getData("error");
+				
+				Object o = openFile(file, sym);
+				
+				EditorComposite editor = null;
+				
+				if( o instanceof EditorComposite)
+					editor = (EditorComposite)o;
+				
+				if( error.getLine() >= 0 && editor != null ){
+				 	editor.getStyledText().setTopIndex(Math.max(0, error.getLine() - 10));
+				 	editor.getStyledText().setCaretOffset(editor.getStyledText().getOffsetAtLine(error.getLine()) + Math.max(0,error.getCol()));
+				 	editor.getStyledText().setFocus();
+				}				
+			}
+		});
+		
 		errors.setControl(tblErrors);
 
 		CTabItem tasks = new CTabItem(folder, SWT.NONE);
 		tasks.setText("&Tasks");
 		tasks.setImage(RepDevMain.smallTasksImage);
-		tblTasks = new Table(folder, SWT.NONE);
+		tblTasks = new Table(folder, SWT.MULTI | SWT.FULL_SELECTION);
 		createTable(tblTasks);
 		tasks.setControl(tblTasks);
 
@@ -897,7 +921,7 @@ public class MainShell {
 		tbl.setHeaderVisible(true);
 		tbl.setLinesVisible(true);
 
-		String[] names = { "Description", "RepGen", "Line" };
+		String[] names = { "Description", "RepGen", "Location" };
 		int[] widths = {400,100,50};
 		int i = 0;
 		
@@ -911,8 +935,6 @@ public class MainShell {
 			
 			if (col.getWidth() < MIN_COL_WIDTH)
 				col.setWidth(MIN_COL_WIDTH);
-			
-			
 
 			col.addControlListener(new ControlAdapter() {
 				public void controlResized(ControlEvent e) {

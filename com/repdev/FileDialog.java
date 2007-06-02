@@ -22,6 +22,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Basic dialog box for both opening and saving files from symitar
+ * Watch out, as OPEN and SAVE modes are slightly different
+ * 
+ * @author Jake Poznanski
+ *
+ */
 public class FileDialog {
 	Shell shell, parent;
 	Display display;

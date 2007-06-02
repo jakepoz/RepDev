@@ -11,6 +11,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
 
+/**
+ * This is the main connection object to the Symitar host, it provides all the routines you would need to connect
+ * 
+ * Each action leaves no side effects for any other one in general, but the run repgen mode is a bit special
+ * 
+ * Provides classes and methods also to help in reading commands from the server, parsing them, creating new ones, etc.
+ * 
+ * @author Jake Poznanski
+ *
+ */
 public class DirectSymitarSession extends SymitarSession {
 	Socket socket;
 	BufferedReader in;
