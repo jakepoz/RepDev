@@ -419,76 +419,79 @@ public class RepgenParser {
 	 * @author poznanja
 	 *
 	 */
-	public class BackgroundSymitarErrorChecker extends Thread{
+	public class BackgroundSymitarErrorChecker extends Thread {
 		RepgenParser me;
-		
-		public BackgroundSymitarErrorChecker(RepgenParser instance){
+
+		public BackgroundSymitarErrorChecker(RepgenParser instance) {
 			super("Background Error Checker");
 			me = instance;
 		}
-		
+
 		public void run() {
 			final Table tblErrors = RepDevMain.mainShell.getErrorTable();
-			
-			if( tblErrors.isDisposed() )
+
+			if (tblErrors.isDisposed())
 				return;
-			
+
 			Display display = tblErrors.getDisplay();
-			
-			//Remove old errors
+
+			// Remove old errors
 			errorList.clear();
-			
-			//Error check with symitar
+
+			// Error check with symitar
 			errorList.add(new Error(RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName())));
-			
-			//Variable checking
-			for( final Variable var : lvars){
-				if( var.getFilename().equals(file.getName())){
+
+			// Variable checking
+			for (final Variable var : lvars) {
+				if (var.getFilename().equals(file.getName())) {
 					int count = 0;
-					
-					for( Variable var2 : lvars)
-						if( var2.equals(var) )
+
+					for (Variable var2 : lvars)
+						if (var2.equals(var))
 							count++;
-					
-					if( count > 1)
-						display.syncExec(new Runnable(){
-							public void run(){
-								errorList.add(new Error("Duplicate variable name: " + var.getName(),txt.getLineAtOffset(var.pos), var.pos - txt.getOffsetAtLine(txt.getLineAtOffset(var.pos))));
+
+					if (count > 1 && !tblErrors.isDisposed())
+						display.syncExec(new Runnable() {
+							public void run() {
+								if( !txt.isDisposed() )
+									errorList.add(new Error("Duplicate variable name: " + var.getName(), txt.getLineAtOffset(var.pos), var.pos - txt.getOffsetAtLine(txt.getLineAtOffset(var.pos))));
 							}
 						});
-				}				
+				}
 			}
 
-			//Add to list
-			display.asyncExec(new Runnable(){
-				public void run(){
-					for( TableItem item : tblErrors.getItems() ){
-						if( ((SymitarFile)item.getData("file")).equals(file) && ((Integer)item.getData("sym")) == sym)
-							item.dispose();
-					
-					}
-								
-					for (Error error : errorList) {
-						if( !error.getDescription().trim().equals("") ){
-							TableItem row = new TableItem(tblErrors, SWT.NONE);
-							row.setText(0, error.getDescription());
-							row.setText(1, error.getFile());
-							
-							if( error.getLine() >= 0 && error.getCol() >= 0)
-								row.setText(2, String.valueOf(error.getLine()) + " : " + error.getCol());
-							else
-								row.setText(2, "---");
-							
-							row.setData("file", file);
-							row.setData("sym", sym);
-							row.setData("error", error);
-							row.setImage(RepDevMain.smallErrorsImage);
-						}
-					}
+			// Add to list
+			if (!tblErrors.isDisposed() ) {
+				display.asyncExec(new Runnable() {
+					public void run() {
+						for (TableItem item : tblErrors.getItems()) {
+							if (((SymitarFile) item.getData("file")).equals(file) && ((Integer) item.getData("sym")) == sym)
+								item.dispose();
 
-				}
-			});
-			
+						}
+
+						for (Error error : errorList) {
+							if (!error.getDescription().trim().equals("")) {
+								TableItem row = new TableItem(tblErrors, SWT.NONE);
+								row.setText(0, error.getDescription());
+								row.setText(1, error.getFile());
+
+								if (error.getLine() >= 0 && error.getCol() >= 0)
+									row.setText(2, String.valueOf(error.getLine()) + " : " + error.getCol());
+								else
+									row.setText(2, "---");
+
+								row.setData("file", file);
+								row.setData("sym", sym);
+								row.setData("error", error);
+								row.setImage(RepDevMain.smallErrorsImage);
+							}
+						}
+
+					}
+				});
+
+			}
 		}
 	}
 

@@ -228,8 +228,8 @@ public class EditorComposite extends Composite {
 	private void groupIndent(int direction, int startLine, int endLine) {
 		String tabStr = getTabStr();
 
-		if (endLine >= txt.getLineCount() - 1)
-			endLine = Math.max(txt.getLineCount() - 2, startLine + 1);
+		if (endLine > txt.getLineCount() - 1 )
+			endLine = Math.max(txt.getLineCount() - 1, startLine + 1);
 
 		try {
 			Point oldSelection = txt.getSelection();
@@ -241,9 +241,19 @@ public class EditorComposite extends Composite {
 			if (direction < 0) {
 				for (int i = startLine; i <= endLine; i++) {
 					int startOffset = txt.getOffsetAtLine(i);
-					int endOffset = txt.getOffsetAtLine(i + 1);
+					int endOffset;
+					String line;
+					
+					if( i >= txt.getLineCount() - 1 ){
+						endOffset = txt.getCharCount() ;
+					}
+					else
+						endOffset = txt.getOffsetAtLine(i + 1);
 
-					String line = txt.getText(startOffset, endOffset - 1);
+					if( endOffset - 1 <= startOffset)
+						line = "";
+					else
+						line = txt.getText(startOffset, endOffset - 1);		
 
 					for (int x = 0; x < Math.min(tabStr.length(), line.length()); x++)
 						if (line.charAt(x) > 32)
@@ -254,9 +264,20 @@ public class EditorComposite extends Composite {
 
 			for (int i = startLine; i <= endLine; i++) {
 				int startOffset = txt.getOffsetAtLine(i);
-				int endOffset = txt.getOffsetAtLine(i + 1);
+				int endOffset;
+				String line;
+				
+				if( i >= txt.getLineCount() - 1 ){
+					endOffset = txt.getCharCount() ;
+				}
+				else
+					endOffset = txt.getOffsetAtLine(i + 1);
 
-				String line = txt.getText(startOffset, endOffset - 1);
+				if( endOffset - 1 <= startOffset)
+					line = "";
+				else
+					line = txt.getText(startOffset, endOffset - 1);			
+				
 
 				if (direction > 0)
 					txt.replaceTextRange(startOffset, endOffset - startOffset, tabStr + line);
@@ -276,8 +297,8 @@ public class EditorComposite extends Composite {
 
 			// TODO: This fails if you are right inbetween a /r
 			// and /n, better fix it ;)
-			
 			txt.setSelection(oldSelection);
+
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
