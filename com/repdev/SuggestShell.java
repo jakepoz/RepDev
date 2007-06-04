@@ -55,15 +55,16 @@ public class SuggestShell {
 
 	public void open() {
 		open = true;
-		update();
-
-		shell.setVisible(true);
-		tooltip.setVisible(true);
-		shell.moveAbove(txt);
-		txt.setFocus();
+			
+		if( update() ){
+			shell.setVisible(true);
+			tooltip.setVisible(true);
+			shell.moveAbove(txt);
+			txt.setFocus();
+		}
 	}
 
-	private void update() {
+	private boolean update() {
 		String tokenStr = "";
 		Point loc = shell.getDisplay().map(txt, null, txt.getLocationAtOffset(txt.getCaretOffset()));
 		loc.x += 5;
@@ -72,7 +73,7 @@ public class SuggestShell {
 		tooltip.setLocation(shell.getLocation().x+shell.getSize().x, shell.getLocation().y);
 
 		if (parser == null || parser.getLtokens() == null)
-			return;
+			return false;
 
 		current = null;
 
@@ -100,7 +101,7 @@ public class SuggestShell {
 				record = record.getBefore();
 
 			if (record == null)
-				return;
+				return false;
 
 			DatabaseLayout.Record dRecord = null;
 
@@ -200,8 +201,15 @@ public class SuggestShell {
 
 		table.setRedraw(true);
 		table.setSelection(0);
+				
 		refreshTooltip();
-
+		
+		if( table.getItemCount() == 0){
+			close();
+			return false;
+		}
+		
+		return true;
 	}
 
 	public void attach(StyledText txt, RepgenParser parser) {
@@ -242,16 +250,18 @@ public class SuggestShell {
 			txt.addKeyListener(new KeyListener() {
 	
 				public void keyPressed(KeyEvent e) {
-	
-					if (open && e.keyCode != SWT.ARROW_DOWN && e.keyCode != SWT.ARROW_UP && e.keyCode != SWT.SHIFT)
+					if (open && (e.keyCode == SWT.ESC || e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT))
+						close();
+					
+					if (open && e.keyCode != SWT.ARROW_DOWN && e.keyCode != SWT.ARROW_UP && e.keyCode != SWT.PAGE_DOWN  && e.keyCode != SWT.PAGE_UP && e.keyCode != SWT.SHIFT)
 						update();
+					
 	
 					if ((e.character == ' ' && e.stateMask == SWT.CTRL) || e.character == ':') {
 						open();
 					}
 	
-					if (open && (e.keyCode == SWT.ESC || e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT))
-						close();
+
 				}
 	
 				public void keyReleased(KeyEvent e) {
@@ -294,6 +304,14 @@ public class SuggestShell {
 							e.doit = false;
 						} else if (e.keyCode == SWT.ARROW_UP) {
 							table.setSelection(Math.max(table.getSelectionIndex() - 1, 0));
+							refreshTooltip();
+							e.doit = false;
+						} else if (e.keyCode == SWT.PAGE_DOWN ){
+							table.setSelection(Math.min(table.getSelectionIndex() + 8, table.getItemCount() - 1));
+							refreshTooltip();
+							e.doit = false;
+						} else if (e.keyCode == SWT.PAGE_UP){
+							table.setSelection(Math.max(table.getSelectionIndex() - 8, 0));
 							refreshTooltip();
 							e.doit = false;
 						} else if ((e.keyCode == '\r' || e.character == ':') && table.getSelectionIndex() != -1 && table.getItemCount() > 0) {

@@ -1,6 +1,0 @@
-define
- #include "ASD"
- 
- 
- i=number
-end
