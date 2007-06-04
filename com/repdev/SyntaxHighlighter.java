@@ -14,8 +14,8 @@ import java.util.HashSet;
 
 import com.repdev.DatabaseLayout.Record;
 import com.repdev.DatabaseLayout.Field;
-import com.repdev.RepgenParser.Variable;
-import com.repdev.RepgenParser.Token;
+import com.repdev.parser.*;
+
 
 /**
  * Adds the right listeners to a StyledText object to colorize repgens. Uses RepgenParser for the tokenization 
@@ -95,9 +95,9 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 		if (tok.getCDepth() != 0)
 			return COMMENTS.getRange(tok.getStart(), tok.length());
-		else if (tok.getInString())
+		else if (tok.inString())
 			return TYPE_CHAR.getRange(tok.getStart(), tok.length());
-		else if (tok.getInDate())
+		else if (tok.inDate())
 			return TYPE_DATE.getRange(tok.getStart(), tok.length());
 		else if (tok.getAfter() != null && tok.getAfter().getStr().equals(":")) {
 			if (tok.dbRecordValid())

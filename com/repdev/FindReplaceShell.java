@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import com.repdev.FileDialog.Mode;
+import com.repdev.parser.RepgenParser;
 
 public class FindReplaceShell {
 	private Shell shell, parent;

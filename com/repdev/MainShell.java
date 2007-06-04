@@ -10,6 +10,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
+import com.repdev.parser.*;
+import com.repdev.parser.Error;
+
 /**
  * Main graphical user interface. Provides some utility methods as well. 
  * Really should move things out to other places as it gets more complex, either way it will be  large file.
@@ -903,7 +906,7 @@ public class MainShell {
 				TableItem item = (TableItem)e.item;
 				SymitarFile file = (SymitarFile)item.getData("file");
 				int sym = (Integer)item.getData("sym");
-				RepgenParser.Error error = (RepgenParser.Error)item.getData("error");
+				Error error = (Error)item.getData("error");
 				
 				Object o = openFile(file, sym);
 				

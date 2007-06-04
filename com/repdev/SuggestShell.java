@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import com.repdev.SyntaxHighlighter.*;
-import com.repdev.RepgenParser.*;
+import com.repdev.parser.*;
 import com.repdev.DatabaseLayout.*;
 
 
@@ -141,10 +141,12 @@ public class SuggestShell {
 			
 			ArrayList<Variable> vars = new ArrayList<Variable>(parser.getLvars());
 			
-			if(tokenStr.startsWith("@"))
-				for( Object cur :RepgenParser.getSpecialvars().toArray())
-					if( cur instanceof String)
-						vars.add(new Variable((String)cur,"Special Variable",-1,""));
+			//Sort of a bit application specific, but only show the many "@" variables if you've already typed an @, so not to over crowd the list
+			//Other special vars will always show up
+			
+			for( Object cur :RepgenParser.getSpecialvars().toArray())
+				if( cur instanceof String && ((((String)cur).startsWith("@") && tokenStr.startsWith("@")) || !((String)cur).startsWith("@")))
+					vars.add(new Variable((String)cur,"Special Variable",-1,""));
 				
 			Collections.sort(vars);
 			
