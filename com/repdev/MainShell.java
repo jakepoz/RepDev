@@ -10,6 +10,12 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
+/**
+ * Main graphical user interface. Provides some utility methods as well. 
+ * Really should move things out to other places as it gets more complex, either way it will be  large file.
+ * @author Jake Poznanski
+ *
+ */
 public class MainShell {
 	private static final int MIN_COL_WIDTH = 75, MIN_COMP_SIZE = 125;
 	private CTabFolder mainfolder;
@@ -17,7 +23,7 @@ public class MainShell {
 	private Shell shell;
 	private Tree tree;
 	private Table tblErrors, tblTasks; 
-	
+	private FindReplaceShell findReplaceShell;
 
 	public MainShell(Display display) {
 		this.display = display;
@@ -156,6 +162,8 @@ public class MainShell {
 				}
 			}
 		});
+		
+		findReplaceShell = new FindReplaceShell(shell);
 
 		shell.setMinimumSize(3 * MIN_COMP_SIZE, 3 * MIN_COMP_SIZE);
 	}
@@ -183,6 +191,9 @@ public class MainShell {
 			item.setControl(editor);
 
 			mainfolder.setSelection(item);
+			
+			//Attach find/replace shell here as well (in addition to folder listener)
+			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText());
 			
 			return editor;
 		}
@@ -819,6 +830,14 @@ public class MainShell {
 		mainfolder.setLayout(new FillLayout());
 		mainfolder.setSimple(false);
 		
+		//Make the find/replace box know which thing we are looking through, if the window is open as we switch tabs
+		mainfolder.addSelectionListener( new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e){
+				if( mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite )
+					findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText());
+			}
+		});
+		
 		mainfolder.addCTabFolder2Listener(new CTabFolder2Listener(){
 
 			public void close(CTabFolderEvent event) {
@@ -837,13 +856,9 @@ public class MainShell {
 			}
 
 			public void minimize(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-				
 			}
 
 			public void restore(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-				
 			}
 
 			public void showList(CTabFolderEvent event) {
@@ -1062,10 +1077,7 @@ public class MainShell {
 		editFind.setText("Find/Replace\tCTRL+F");
 		editFind.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if( mainfolder.getSelectionIndex() == -1)
-					return;
-				
-				
+				showFindWindow();
 			}
 		});
 		
@@ -1074,10 +1086,7 @@ public class MainShell {
 		editFindNext.setText("Find Next\tF3");
 		editFindNext.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if( mainfolder.getSelectionIndex() == -1)
-					return;
-				
-				
+				findNext();
 			}
 		});
 		
@@ -1099,7 +1108,6 @@ public class MainShell {
 					editPaste.setEnabled(false);
 					
 					editSelectAll.setEnabled(false);
-					editFind.setEnabled(false);
 					editFindNext.setEnabled(false);
 				}
 				else{
@@ -1107,7 +1115,6 @@ public class MainShell {
 					editCopy.setEnabled(true);
 					editPaste.setEnabled(true);
 					editSelectAll.setEnabled(true);
-					editFind.setEnabled(true);
 					editFindNext.setEnabled(true);
 					
 					if( ((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canRedo() )
@@ -1143,6 +1150,20 @@ public class MainShell {
 		});
 
 		shell.setMenuBar(bar);
+	}
+	
+	public void showFindWindow(){
+		if( mainfolder.getSelection() == null || !(mainfolder.getSelection().getControl() instanceof EditorComposite))
+			findReplaceShell.attach(null);
+		else
+			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText());
+		
+		
+		findReplaceShell.open();	
+	}
+	
+	public void findNext(){
+		
 	}
 	
 	private void showOptions() {

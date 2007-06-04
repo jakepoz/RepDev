@@ -475,8 +475,17 @@ public class EditorComposite extends Composite {
 					case 'A':
 						txt.selectAll();
 						break;
+					case 'f':
+					case 'F':
+						RepDevMain.mainShell.showFindWindow();
+						break;
 					}
 				}
+				else{
+					if( e.keyCode == SWT.F3 )
+						RepDevMain.mainShell.findNext();
+				}
+				
 
 				if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT || e.keyCode == SWT.ARROW_UP)
 					commitUndo();
