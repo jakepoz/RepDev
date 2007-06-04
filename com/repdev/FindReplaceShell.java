@@ -27,6 +27,7 @@ import com.repdev.FileDialog.Mode;
 public class FindReplaceShell {
 	private Shell shell, parent;
 	private StyledText txt;
+	private RepgenParser parser; //Only used to disable it for replace All operations, can always be null
 	private Label infoLabel;
 	private Text findText, replaceText;
 	private Button forwardButton,backwardButton,caseButton, wrapButton, findButton; 
@@ -47,8 +48,13 @@ public class FindReplaceShell {
 		findText.selectAll();
 	}
 	
-	public void attach(StyledText txt){
+	public void attach(StyledText txt, RepgenParser parser){
 		this.txt = txt;
+		this.parser = parser;
+	}
+	
+	public void attach(StyledText txt){
+		attach(txt,null);
 	}
 	
 	public void close(){
@@ -234,26 +240,65 @@ public class FindReplaceShell {
 	}
 
 	protected void replaceAll() {
-		// TODO Auto-generated method stub
+		init();
 		
+		txt.setRedraw(false);
+		
+		if( parser != null)
+			parser.setReparse(false);
+		
+		while(true){
+			if( !find() )
+				break;
+			
+			if( !replace() )
+				break;
+		}
+		
+		if( parser != null){
+			parser.setReparse(true);
+			parser.reparseAll();
+		}
+		
+		txt.setRedraw(true);
 	}
 
-	protected void replace() {
-		// TODO Auto-generated method stub
+	protected boolean replace() {
+		init();
 		
-	}
+		String text = txt.getText();
+		String find = findText.getText(), replace = replaceText.getText(), selection = txt.getSelectionText();
 
-	protected void find() {
+		if( !caseButton.getSelection() ){
+			text = text.toLowerCase();
+			find = find.toLowerCase();
+			selection = selection.toLowerCase();			
+		}
+		
+		if( !selection.equals(find) )
+			return false;
+			
+		txt.replaceTextRange(txt.getSelection().x, txt.getSelection().y - txt.getSelection().x, replace);
+		txt.setSelection(txt.getCaretOffset() - replace.length(), txt.getCaretOffset());
+		
+		return true;
+	}
+	
+	private void init(){
 		if( txt == null ){
 			infoLabel.setText("No document opened");
 			return;
 		}
+		
+		infoLabel.setText("");
+	}
+
+	protected boolean find() {
+		init();
 				
 		String text = txt.getText();
 		String find = findText.getText(), replace = replaceText.getText();
 		int nextPos, lastPos;
-		
-		infoLabel.setText("");
 		
 		if( !caseButton.getSelection() ){
 			text = text.toLowerCase();
@@ -280,7 +325,6 @@ public class FindReplaceShell {
 			while(true){
 				nextPos = text.indexOf(find, nextPos + 1);
 				
-				System.out.println(txt.getCaretOffset());
 				if( nextPos + find.length() >= txt.getCaretOffset() || nextPos == -1)
 				{
 					nextPos = lastPos;
@@ -297,7 +341,6 @@ public class FindReplaceShell {
 				while(true){
 					nextPos = text.indexOf(find, txt.getCaretOffset());
 					
-					System.out.println(txt.getCaretOffset());
 					if( nextPos + find.length() < txt.getCaretOffset() || nextPos == lastPos)
 					{
 						nextPos = lastPos;
@@ -313,9 +356,11 @@ public class FindReplaceShell {
 		if( nextPos == -1)
 		{
 			infoLabel.setText("String not found");
-			return;
+			return false;
 		}
 		else
 			txt.setSelection(nextPos, nextPos + find.length());
+		
+		return true;
 	}
 }

@@ -1156,14 +1156,14 @@ public class MainShell {
 		if( mainfolder.getSelection() == null || !(mainfolder.getSelection().getControl() instanceof EditorComposite))
 			findReplaceShell.attach(null);
 		else
-			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText());
+			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(), ((EditorComposite)mainfolder.getSelection().getControl()).getParser());
 		
 		
 		findReplaceShell.open();	
 	}
 	
 	public void findNext(){
-		
+		findReplaceShell.find();
 	}
 	
 	private void showOptions() {
