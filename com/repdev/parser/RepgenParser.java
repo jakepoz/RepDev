@@ -20,6 +20,7 @@ import com.repdev.DatabaseLayout;
 import com.repdev.ErrorCheckResult;
 import com.repdev.FileType;
 import com.repdev.RepDevMain;
+import com.repdev.SpecialVariables;
 import com.repdev.SymitarFile;
 import com.repdev.DatabaseLayout.DataType;
 import com.repdev.DatabaseLayout.Field;
@@ -31,9 +32,11 @@ public class RepgenParser {
 	private int sym;
 	private boolean reparse = true;
 	
-	private static HashSet<String> functions, keywords, specialvars;
+	private static HashSet<String> functions, keywords;
+	
 	private static DatabaseLayout db;
-
+	private static SpecialVariables specialvars = SpecialVariables.getInstance();
+	
 	private ArrayList<Token> ltokens = new ArrayList<Token>();
 	private ArrayList<Variable> lvars = new ArrayList<Variable>();
 	private ArrayList<Token> lasttokens = new ArrayList<Token>();
@@ -47,7 +50,6 @@ public class RepgenParser {
 	static {
 		functions = build(new File("functions.txt"));
 		keywords = build(new File("keywords.txt"));
-		specialvars = build(new File("vars.txt"));
 		db = DatabaseLayout.getInstance();
 	}
 	
@@ -835,11 +837,11 @@ public class RepgenParser {
 		RepgenParser.keywords = keywords;
 	}
 
-	public static HashSet<String> getSpecialvars() {
+	public static SpecialVariables getSpecialvars() {
 		return specialvars;
 	}
 
-	public static void setSpecialvars(HashSet<String> specialvars) {
+	public static void setSpecialvars(SpecialVariables specialvars) {
 		RepgenParser.specialvars = specialvars;
 	}
 

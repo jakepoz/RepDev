@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import com.repdev.SpecialVariables.SpecialVariable;
 import com.repdev.SyntaxHighlighter.*;
 import com.repdev.parser.*;
 import com.repdev.DatabaseLayout.*;
@@ -140,18 +142,9 @@ public class SuggestShell {
 				tokenStr = "";
 			
 			ArrayList<Variable> vars = new ArrayList<Variable>(parser.getLvars());
-			
-			//Sort of a bit application specific, but only show the many "@" variables if you've already typed an @, so not to over crowd the list
-			//Other special vars will always show up
-			
-			for( Object cur :RepgenParser.getSpecialvars().toArray())
-				if( cur instanceof String && ((((String)cur).startsWith("@") && tokenStr.startsWith("@")) || !((String)cur).startsWith("@")))
-					vars.add(new Variable((String)cur,"Special Variable",-1,""));
-				
+						
 			Collections.sort(vars);
 			
-			
-
 			for (Variable var : vars) {
 				if (var.getName().toLowerCase().startsWith(tokenStr)) {
 					TableItem item = new TableItem(table, SWT.NONE);
@@ -177,6 +170,35 @@ public class SuggestShell {
 					item.setData("tooltipstyles", styles);
 				}
 			}
+			
+			//Special system vars next
+			//Sort of a bit application specific, but only show the many "@" variables if you've already typed an @, so not to over crowd the list
+			//Other special vars will always show up
+			
+			for( SpecialVariable var :RepgenParser.getSpecialvars().getVars())
+				if( (!tokenStr.equals("") && var.getName().toLowerCase().startsWith(tokenStr)) || 
+					(tokenStr.equals("") && !var.getName().startsWith("@") ) )
+				{
+					TableItem item = new TableItem(table, SWT.NONE);
+					item.setText(var.getName().toUpperCase() + "   " + var.getType());
+					item.setImage(RepDevMain.smallVariableImage);
+					item.setData("value", var.getName().toUpperCase());
+					
+					String tooltip = var.getName().toUpperCase();
+					
+					tooltip += "\nType: " + var.getType().toUpperCase();
+					tooltip += "\nSystem Variable\n\n";
+					tooltip += var.getDescription();
+					
+					item.setData("tooltip", tooltip);
+					
+					StyleRange[] styles = {
+							new StyleRange(0,var.getName().length(),null,null,SWT.BOLD),
+							new StyleRange(tooltip.indexOf("System Variable"),15, null,null,SWT.ITALIC ),
+							
+					};
+					item.setData("tooltipstyles", styles);
+				}
 
 			ArrayList<Record> records = DatabaseLayout.getInstance().getFlatRecords();
 			for (Record record : records) {
@@ -379,8 +401,11 @@ public class SuggestShell {
 		}
 		
 		if( table.getSelection()[0].getData("tooltip") != null ){
-			toolText.setText((String)table.getSelection()[0].getData("tooltip"));
-			toolText.setStyleRanges((StyleRange[])table.getSelection()[0].getData("tooltipstyles"));
+			if( table.getSelection()[0].getData("tooltip") != null )
+				toolText.setText((String)table.getSelection()[0].getData("tooltip"));
+			
+			if( table.getSelection()[0].getData("tooltipstyles") != null)
+				toolText.setStyleRanges((StyleRange[])table.getSelection()[0].getData("tooltipstyles"));
 		}
 		else
 			toolText.setText("");
