@@ -12,6 +12,7 @@ public class Token {
 	private int pos, commentDepth, afterDepth;
 	private boolean inString, afterString, inDate, afterDate, inDefs;
 
+
 	public Token(String str, int pos, int commentDepth, int afterDepth, boolean inString, boolean afterString, boolean inDefs, boolean inDate, boolean afterDate) {
 		this.str = str;
 		this.pos = pos;
@@ -47,6 +48,11 @@ public class Token {
 		}
 		// }
 	}
+	
+
+	public void setStr(String str) {
+		this.str = str;
+	}
 
 	public Token getNextNCToken() {
 		return after;
@@ -58,6 +64,10 @@ public class Token {
 
 	public int getEnd() {
 		return pos + str.length();
+	}
+	
+	public void setPos(int pos) {
+		this.pos = pos;
 	}
 
 	public String getStr() {

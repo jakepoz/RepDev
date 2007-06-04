@@ -124,7 +124,7 @@ From
 Queue
 Revise
 Right
-Sset
+Set
 StopBlink
 Suppress
 SuppressNewLine

@@ -243,310 +243,276 @@ public class RepgenParser {
 	 * @return
 	 */
 	private boolean parse(String filename, String str, int start, int end, int oldend, ArrayList<Token> tokens, ArrayList<Variable> vars, StyledText txt) {
-		Token modToken = null;
-
+		boolean allDefs = true, redrawAll = false;
 		lasttokens.clear();
 		
-		boolean allDefs = true;
-
-		if (str.length() == 0)
-			return false;
-
 		int ftoken;
-		for (ftoken = 0; ftoken < tokens.size(); ftoken++)
-			if (tokens.get(ftoken).getEnd() >= start)
+		for(ftoken = 0; ftoken < tokens.size(); ftoken++)
+			if(tokens.get(ftoken).getEnd()>=start)
 				break;
 
 		int ltoken;
-		for (ltoken = ftoken; ltoken < tokens.size(); ltoken++)
-			if (tokens.get(ltoken).getStart() > oldend)
+		for(ltoken = ftoken; ltoken < tokens.size(); ltoken++)
+			if(tokens.get(ltoken).getStart()>oldend)
 				break;
 
-		if (tokens.size() > 0) {
-			// Must scan several more ahead for records with spaces
-			ltoken = Math.min(tokens.size() - 1, ltoken + 3);
-
-			// And two back for editing the second "word" in a record, and for
-			// fields with colons
-			ftoken = Math.max(0, ftoken - 2);
-
-			boolean inStr;
-
-			inStr = tokens.get(ltoken).inString();
-
-			while (tokens.get(ltoken).inString() == inStr) {
-				ltoken++;
-
-				if (ltoken > tokens.size() - 1) {
-					ltoken = tokens.size() - 1;
-					break;
-				}
-			}
-
-		}
-
 		int charStart, charEnd;
-
-		if (ftoken < tokens.size())
+		
+		if(ftoken<tokens.size())
 			charStart = Math.min(start, tokens.get(ftoken).getStart());
 		else
 			charStart = start;
-
-		if (ltoken < tokens.size())
-			charEnd = Math.min(str.length(), Math.max(end, tokens.get(ltoken).getStart() + end - oldend + tokens.get(ltoken).getStr().length()));
+		
+		if(ltoken<tokens.size())
+			charEnd = Math.max(end, tokens.get(ltoken).getStart()+end-oldend);
 		else
 			charEnd = str.length();
 
 		char[] chars = str.substring(charStart, charEnd).toLowerCase().toCharArray();
-
-		boolean inString = false, inDate = false, inDefine = false;
-		int commentDepth = 0;
-		if (ftoken > 0) {
-			inString = tokens.get(ftoken - 1).inString();
-			inDate = tokens.get(ftoken - 1).getEndInDate();
-			commentDepth = tokens.get(ftoken - 1).getEndCDepth();
-			inDefine = tokens.get(ftoken - 1).inDefs();
+		
+		boolean inString=false, inDate=false, inDefine = false;
+		int commentDepth=0;
+		if(ftoken>0){
+			inString = tokens.get(ftoken-1).endInString();
+			inDate = tokens.get(ftoken-1).getEndInDate();
+			commentDepth = tokens.get(ftoken-1).getEndCDepth();
+			inDefine = tokens.get(ftoken-1).inDefs();
 		}
-
-		boolean oldInString = false, oldInDefine = false, oldInDate = false;
-		int oldCommentDepth = 0;
-		if (ltoken < tokens.size()) {
-			oldInString = tokens.get(ltoken).inString();
-			oldInDate = tokens.get(ltoken).inDate();
-			oldCommentDepth = tokens.get(ltoken).getCDepth();
-			oldInDefine = tokens.get(ltoken).inDefs();
+		
+		boolean oldInString=false, oldInDefine = false, oldInDate=false;
+		int oldCommentDepth=0;
+		if(ltoken<tokens.size()) {
+			oldInString=tokens.get(ltoken).inString();
+			oldInDate=tokens.get(ltoken).inDate();
+			oldCommentDepth=tokens.get(ltoken).getCDepth();
+			oldInDefine=tokens.get(ltoken).inDefs();
 		}
+		
+		if( inDefine || oldInDefine )
+			redrawAll = true;
 
-		if (inDefine || oldInDefine) {
-			reparseAll();
-			return false;
-		}
-
-		if (tokens.size() > 0)
-			for (int i = 0; i <= ltoken - ftoken; i++)
+		if(tokens.size()>0)
+			for(int i=0;i<ltoken-ftoken;i++)
 				tokens.remove(ftoken);
-
+		
 		int curspot = ftoken, cstart = charStart;
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < chars.length; i++) {
+		for(int i=0; i<chars.length; i++) {
 			char cur = chars[i];
-
-			if ((cur >= 'a' && cur <= 'z') || (cur >= '0' && cur <= '9') || cur == '#' || cur == '@') {
+			
+			if((cur>='a'&&cur<='z')||(cur>='0'&&cur<='9')||cur=='#'||cur=='@') {
 				sb.append(cur);
 			} else {
-				String scur = null;
-
-				// Look ahead one name to see if a record exists with this name
-				// and make it all one token
-				if (cur == ' ') {
-					String tempRecord = sb.toString() + " ";
-					int x;
-
-					for (x = Math.min(i + 1,chars.length-1); x < chars.length; x++) {
-						tempRecord += chars[x];
-
-						if (!((chars[x] >= 'a' && chars[x] <= 'z') || (chars[x] >= '0' && chars[x] <= '9') || chars[x] == '#' || chars[x] == '@')) {
-							tempRecord = tempRecord.substring(0, tempRecord.length() - 1);
-							break;
-						}
-					}
-
-					if (db.containsRecordName(tempRecord)) {
-						scur = tempRecord;
-						i = x;
-						
-						if( i == chars.length )
-							i--;
-						
-						cur = chars[i];
-					}
-
-				}
-
-				// Look ahead again for field names with colons
-				if (cur == ':') {
-					String tempRecord = sb.toString() + ":";
-					int x;
-
-					for (x = i + 1; x < chars.length; x++) {
-						tempRecord += chars[x];
-
-						if (!((chars[x] >= 'a' && chars[x] <= 'z') || (chars[x] >= '0' && chars[x] <= '9') || chars[x] == '#' || chars[x] == '@')) {
-							tempRecord = tempRecord.substring(0, tempRecord.length() - 1);
-							break;
-						}
-					}
-
-					if (db.containsFieldName(tempRecord)) {
-						scur = tempRecord;
-						i = x;
-						cur = chars[i];
-					}
-
-				}
-
-				if (scur == null)
-					scur = sb.toString().trim();
-
-				if (scur.length() > 0) {
-					if (commentDepth == 0 && !inString) {
-						if (scur.equals("define")) {
+				String scur=sb.toString().trim();
+				
+				if(scur.length()>0){			
+					if(commentDepth==0 && !inString) {
+						if(scur.equals("define")) {
 							inDefine = true;
-						} else if (scur.equals("end")) {
+						} else if(scur.equals("end")) {
 							inDefine = false;
 							allDefs = false;
 						}
 					}
-
-					Token nToken = new Token(scur, cstart, commentDepth, commentDepth, inString, inString, inDefine, inDate, inDate);
-					addToken(tokens, curspot, nToken);
 					
+					addToken(tokens,curspot,new Token(scur,cstart,commentDepth,commentDepth,inString,inString,inDefine,inDate,inDate));
 					curspot++;
 				}
-
 				sb = new StringBuilder();
 				cstart = i + charStart;
-
+				
 				scur = "" + cur;
-				if (commentDepth == 0 && cur == '"') {
-					if (inString)
-						addToken(tokens, curspot, new Token(scur, cstart, 0, 0, true, false, inDefine, inDate, inDate));
+				if(commentDepth==0 && cur=='"') {
+					if(inString)
+						addToken(tokens,curspot,new Token(scur,cstart,0,0,true,false,inDefine,inDate,inDate));
 					else
-						addToken(tokens, curspot, new Token(scur, cstart, 0, 0, true, true, inDefine, inDate, inDate));
-
+						addToken(tokens,curspot,new Token(scur,cstart,0,0,true,true,inDefine,inDate,inDate));
+					
 					curspot++;
 					inString = !inString;
-				} else if (!inString && cur == '[') {
+				} else if(!inString && cur=='[') {
 					commentDepth++;
-					addToken(tokens, curspot, new Token(scur, cstart, commentDepth, commentDepth, false, false, inDefine, inDate, inDate));
+					addToken(tokens,curspot,new Token(scur,cstart,commentDepth,commentDepth,false,false,inDefine,
+							inDate,inDate));
 					curspot++;
-				} else if (!inString && cur == ']') {
+				} else if(!inString && cur==']') {
 					commentDepth--;
-					if (commentDepth < 0)
-						commentDepth = 0;
-
-					addToken(tokens, curspot, new Token(scur, cstart, commentDepth + 1, commentDepth, false, false, inDefine, inDate, inDate));
+					if(commentDepth<0)
+						commentDepth=0;
+					
+					addToken(tokens,curspot,new Token(scur,cstart,commentDepth+1,commentDepth,false,false,inDefine,
+							inDate,inDate));
 					curspot++;
-				} else if (commentDepth == 0 && !inString && cur == '\'') {
-					if (inDate)
-						addToken(tokens, curspot, new Token(scur, cstart, 0, 0, inString, inString, inDefine, true, false));
+				} else if(commentDepth==0 && !inString && cur =='\'') {
+					if(inDate)
+						addToken(tokens,curspot,new Token(scur,cstart,0,0,inString,inString,inDefine,true,false));
 					else
-						addToken(tokens, curspot, new Token(scur, cstart, 0, 0, inString, inString, inDefine, true, true));
-
+						addToken(tokens,curspot,new Token(scur,cstart,0,0,inString,inString,inDefine,true,true));
+						
 					curspot++;
 					inDate = !inDate;
-				} else if (scur.trim().length() != 0) {
-					addToken(tokens, curspot, new Token(scur, cstart, commentDepth, commentDepth, inString, inString, inDefine, inDate, inDate));
+				} else if(scur.trim().length()!=0){
+					addToken(tokens,curspot,new Token(scur,cstart,commentDepth,commentDepth,inString,inString,inDefine,
+							inDate,inDate));
 					curspot++;
 				}
-
+				
 				cstart++;
 			}
 		}
-
-		String scur = sb.toString().trim();
-		if (scur.length() > 0) {
-			if (commentDepth == 0 && !inString) {
-				if (scur.equals("define")) {
+		
+		String scur=sb.toString().trim();
+		if(scur.length()>0){
+			if(commentDepth==0 && !inString) {
+				if(scur.equals("define")) {
 					inDefine = true;
-				} else if (scur.equals("end")) {
+				} else if(scur.equals("end")) {
 					inDefine = false;
 					allDefs = false;
 				}
 			}
-			modToken = new Token(scur, cstart, commentDepth, commentDepth, inString, inString, inDefine, inDate, inDate);
-			modToken.setNearTokens(tokens, curspot);
-
-			addToken(tokens, curspot, modToken);
+			
+			addToken(tokens,curspot,new Token(scur,cstart,commentDepth,commentDepth,inString,inString,inDefine,
+					inDate,inDate));
 			curspot++;
 		}
-
-		if (end != oldend)
-			for (int i = curspot; i < tokens.size(); i++)
-				tokens.get(i).incStart(end - oldend);
-
+			
+		if(end!=oldend)
+			for(int i=curspot;i<tokens.size();i++)
+				tokens.get(i).incStart(end-oldend);
+		
 		int fixspot = curspot;
-
-		if (inString != oldInString || commentDepth != oldCommentDepth || inDefine != oldInDefine || inDate != oldInDate) {
-			for (fixspot = curspot; fixspot < tokens.size(); fixspot++) {
+		
+		if(inString!=oldInString || commentDepth!=oldCommentDepth || inDefine!=oldInDefine || inDate!=oldInDate) {
+			for(fixspot=curspot;fixspot<tokens.size();fixspot++) {
 				Token tcur = tokens.get(fixspot);
 				String cur = tcur.getStr();
+				
 
 				oldInString = tcur.inString();
 				oldInDate = tcur.inDate();
 				oldCommentDepth = tcur.getCDepth();
 				oldInDefine = tcur.inDefs();
-
-				tcur.setInString(inString, inString);
-				tcur.setInDate(inDate, inDate);
-				tcur.setCDepth(commentDepth, commentDepth);
-				tcur.setInDefs(inDefine);
-
-				if (commentDepth == 0 && cur.equals("\"")) {
-					if (inString)
-						tcur.setInString(true, false);
+				
+				tcur.setInString(inString,inString);
+				tcur.setInDate(inDate,inDate);
+				tcur.setCDepth(commentDepth,commentDepth);
+				tcur.setInDefs(inDefine);			
+						
+				if(commentDepth==0 && cur.equals("\"")) {
+					if(inString)
+						tcur.setInString(true,false);
 					else
-						tcur.setInString(true, true);
-
+						tcur.setInString(true,true);
+					
 					inString = !inString;
-				} else if (!inString && cur.equals("[")) {
+				} else if(!inString && cur.equals("[")) {
 					commentDepth++;
-
-					tcur.setCDepth(commentDepth, commentDepth);
-				} else if (!inString && cur.equals("]")) {
+					
+					tcur.setCDepth(commentDepth,commentDepth);
+				} else if(!inString && cur.equals("]")) {
 					commentDepth--;
-					if (commentDepth < 0)
-						commentDepth = 0;
-
-					tcur.setCDepth(commentDepth + 1, commentDepth);
-				} else if (!inString && commentDepth == 0 && cur.equals("define")) {
+					if(commentDepth<0)
+						commentDepth=0;
+					
+					tcur.setCDepth(commentDepth+1,commentDepth);
+				} else if(!inString && commentDepth==0 && cur.equals("define")) {
 					inDefine = true;
 					tcur.setInDefs(true);
-				} else if (!inString && commentDepth == 0 && cur.equals("end")) {
+				} else if(!inString && commentDepth==0 && cur.equals("end")) {
 					inDefine = false;
 					tcur.setInDefs(false);
-				} else if (!inString && commentDepth == 0 && cur.equals("'")) {
-					if (inDate)
-						tcur.setInDate(true, false);
+				} else if(!inString && commentDepth==0 && cur.equals("'")) {
+					if(inDate)
+						tcur.setInDate(true,false);
 					else
-						tcur.setInDate(true, true);
-
-					inDate = !inDate;
-				} else if (inDefine == oldInDefine && commentDepth == oldCommentDepth && inString == oldInString && inDate == oldInDate) {
+						tcur.setInDate(true,true);
+					
+					inDate=!inDate;
+				} else if(inDefine==oldInDefine && commentDepth==oldCommentDepth && inString==oldInString &&
+						inDate==oldInDate) {
 					break;
 				}
 			}
 		}
-
-		// Go forward 2 tokens to redraw field, if this is a record
-		if (modToken != null && !modToken.inDate() && !modToken.inString() && modToken.getCDepth() == 0 && modToken.getAfter() != null && modToken.getAfter().getBefore() != null && modToken.getAfter().getBefore().getStr().equals(":")) {
-			fixspot = Math.min(Math.max(fixspot, curspot + 2), tokens.size());
-		}
-
-		for (int i = curspot - 1; i >= 0; i--)
-			if (!tokens.get(i).inString() && tokens.get(i).getCDepth() != 0) {
-				tokens.get(i).setNearTokens(tokens, i);
+		     
+		for(int i=curspot-1;i>=0;i--)
+			if(!tokens.get(i).inString() && tokens.get(i).getCDepth()!=0) {
+				tokens.get(i).setNearTokens(tokens,i);
 				break;
 			}
+				
+		for(int i=Math.max(0,ftoken-1);i<fixspot;i++)
+			tokens.get(i).setNearTokens(tokens,i);
+		
+		if(tokens.size()>1) {
+			//Go through and merge multi tokens into single ones, ex. db fields and records
+			
+			//First go through and add buffer distances to the tokens we have already
+			if(lasttokens.size() > 0 ){
+				Token first = lasttokens.get(0);
+				Token last = lasttokens.get(lasttokens.size()-1);
 
-		for (int i = ftoken; i < fixspot; i++)
-			tokens.get(i).setNearTokens(tokens, i);
+				if( first.getBefore() != null){
+					lasttokens.add(0,first.getBefore());
+					if( first.getBefore().getBefore() != null)
+						lasttokens.add(0,first.getBefore().getBefore());
+				}
 
-		if (tokens.size() > 1) {
-			if (ftoken < tokens.size())
+				if( last.getAfter() != null){
+					lasttokens.add(first.getAfter());
+					if( last.getAfter().getAfter() != null)
+						lasttokens.add(first.getAfter().getAfter());
+				}
+				
+				int i = 0;
+				
+				while(i < lasttokens.size() - 1){
+					Token cur = lasttokens.get(i);
+					
+					if( cur.getAfter() == null)
+						break;
+					
+					if( db.containsRecordName(cur.getStr() + " " + cur.getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getStart()).equals(" "))
+					{
+						cur.setStr(cur.getStr() + " " + cur.getAfter().getStr() );
+						tokens.remove(cur.getAfter());
+						cur.setNearTokens(tokens, tokens.indexOf(cur));
+						i+=2;
+						continue;
+					}
+					
+					if( cur.getAfter().getAfter() != null && db.containsFieldName(cur.getStr() + ":" + cur.getAfter().getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getAfter().getStart()).equals(":"))	
+					{
+						cur.setStr(cur.getStr() + ":" + cur.getAfter().getAfter().getStr() );
+						tokens.remove(cur.getAfter());
+						tokens.remove(cur.getAfter().getAfter());
+						cur.setNearTokens(tokens, tokens.indexOf(cur));
+						i+=3;
+						continue;
+					}
+						
+					i++;
+				}
+			}
+			
+			if(ftoken<tokens.size())
 				charStart = tokens.get(ftoken).getStart();
 			else
-				charStart = tokens.get(ftoken - 1).getEnd();
-
-			if (fixspot < tokens.size())
+				charStart = tokens.get(tokens.size()-1).getEnd();
+			
+			if(fixspot<tokens.size())
 				charEnd = tokens.get(fixspot).getStart();
 			else
-				charEnd = str.length() - 1;
-
+				charEnd = str.length();
+			
 			if( txt != null)
-				txt.redrawRange(charStart, charEnd - charStart, false);
+				if( redrawAll )
+					txt.redrawRange(0, txt.getCharCount(), false);
+				else
+					txt.redrawRange(charStart,charEnd-charStart,false);
 		}
-
+		
 		return allDefs;
 	}
 	
