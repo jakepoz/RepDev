@@ -101,7 +101,7 @@ public class RepgenParser {
 					
 					if( !exists ){
 						includes.add(new Include(fileName,Division.DEFINE));
-	
+						tokens = new ArrayList<Token>();
 						data = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(new SymitarFile(fileName,FileType.REPGEN));				
 				
 						if( data == null )
