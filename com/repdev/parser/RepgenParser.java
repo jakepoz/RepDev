@@ -45,6 +45,9 @@ public class RepgenParser {
 	private ArrayList<Error> errorList = new ArrayList<Error>();
 	private ArrayList<Task> taskList = new ArrayList<Task>();
 	
+	BackgroundSymitarErrorChecker errorCheckerWorker = null;
+	BackgroundIncludeParser includeParserWorker = null;
+	
 	boolean refreshIncludes = true;
 	
 	static {
@@ -721,16 +724,22 @@ public class RepgenParser {
 		}
 	}
 	
-	public synchronized void parseIncludes(){
-		includes.clear();
-		
-		BackgroundIncludeParser parser = new BackgroundIncludeParser(txt.getText());
-		parser.start();
+	public void parseIncludes(){
+		if( includeParserWorker == null){
+			includes.clear();
+			
+			includeParserWorker = new BackgroundIncludeParser(txt.getText());
+			includeParserWorker.start();
+			includeParserWorker = null;
+		}
 	}
 	
-	public synchronized void errorCheck(){
-		BackgroundSymitarErrorChecker checker = new BackgroundSymitarErrorChecker(this);
-		checker.start();
+	public void errorCheck(){
+		if( errorCheckerWorker == null){
+			errorCheckerWorker = new BackgroundSymitarErrorChecker(this);
+			errorCheckerWorker.start();
+			errorCheckerWorker = null;
+		}
 	}
 
 	public void reparseAll() {

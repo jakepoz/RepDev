@@ -63,12 +63,6 @@ public class SymLoginShell {
 
 		final Text userIDText = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 
-		if (inSym != -1)
-			aixUserText.setFocus();
-		
-		if( !aixUserText.getText().trim().equals("") )
-			aixPasswordText.setFocus();
-
 		Button ok = new Button(shell, SWT.PUSH);
 		ok.setText("Login");
 		ok.addSelectionListener(new SelectionAdapter() {
@@ -109,6 +103,15 @@ public class SymLoginShell {
 				shell.dispose();
 			}
 		});
+		
+		if( symText.isEnabled() && symText.getText().trim().equals(""))
+			symText.setFocus();
+		else if( aixUserText.getText().trim().equals("") )
+			aixUserText.setFocus();
+		else if ( aixPasswordText.getText().trim().equals("") )
+			aixPasswordText.setFocus();
+		else if( userIDText.getText().trim().equals("") )
+			userIDText.setFocus();
 
 		FormData data;
 
