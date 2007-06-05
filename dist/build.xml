@@ -27,6 +27,12 @@
 		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
 		<!-- <jar jarfile="${dist}/RepDev-${DSTAMP}.jar" basedir="${build}"/> -->
 
+		<delete>
+		 <fileset dir="${dist}" >
+		 	<include name="**/*.class"/>
+  		 </fileset>
+		</delete>
+		
 		<copy todir="${dist}" overwrite="true">
 			<fileset dir="${src}">
 				<exclude name="**/*.java" />
