@@ -68,12 +68,14 @@ public class DirectSymitarSession extends SymitarSession {
 			out.print(aixUsername + "\r");
 			out.flush();
 
-			log(readUntil("Password:"));
-
-			line = writeLog(aixPassword + "\r", "[c", ":");
-
-			if (line.indexOf("invalid login") != -1)
-				return SessionError.AIX_LOGIN_WRONG;
+			String temp = readUntil("Password:", "[c");
+		
+			if( temp.indexOf("[c") == -1 ){
+				line = writeLog(aixPassword + "\r", "[c", ":");
+	
+				if (line.indexOf("invalid login") != -1)
+					return SessionError.AIX_LOGIN_WRONG;	
+			}
 
 			writeLog("WINDOWSLEVEL=3\n", "$ ");
 			write("sym " + sym + "\r");
