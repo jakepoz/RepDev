@@ -63,13 +63,7 @@ public class RepgenParser {
 		this.file = file;
 		this.sym = sym;
 	}
-	
-
-
-
-
-
-	
+		
 	/**
 	 * Worker class for loading any included files and parsing out their contents
 	 * Currently runs once at opening of the report
@@ -84,15 +78,47 @@ public class RepgenParser {
 			this.text = text;
 		}
 		
-		public void run(){
-			String data = "";
-			ArrayList<Token> tokens = new ArrayList<Token>();
+		private void parseCurrentFile(String fileName){
 			boolean exists = false;
+			ArrayList<Token> tokens = new ArrayList<Token>();
+			String data = "";
 			
-			//TODO: PARSE VARIABLES IN LEVELS DEEPER THAN FIRST.
-			//Probably change it to have this function get and parse all the files, then make rebuildVars go off a fileName and token array
+			data = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(new SymitarFile(fileName,FileType.REPGEN));
+			
+			if( data == null )
+				return;
+			
+			parse(fileName, data, 0, data.length(), 0, tokens, new ArrayList<Variable>(),null);
+			
+			for( Token tok : tokens ){
+				tok.setInDefs(true);
+				
+				if( tok.getStr().equals("#include") && tok.getAfter() != null && tok.getCDepth() == 0){
+					String newFileName = getFullString(tok.getAfter(),data);
+					
+					exists = false;
+					
+					for( Include cur : includes ){
+						if( cur.getDivision().equals( Division.DEFINE) && cur.getFileName().equals(newFileName))
+							exists=true;
+					}
+					
+					if( !exists ){
+						parseCurrentFile(newFileName);
+					}
+				}
+			}
+			
+			rebuildVars(fileName,data,tokens);
+		}
+		
+		public void run(){	
+			boolean exists = false;
+
+			//Only run next level of parsing on the include files not including the current file
+			//Variables in the current file are handled seperately
 			for( Token tok : ltokens ){
-				if( tok.getStr().equals("#include") && tok.getAfter() != null && tok.inDefs()){
+				if( tok.getStr().equals("#include") && tok.getAfter() != null && tok.inDefs() && tok.getCDepth() == 0){
 					String fileName = getFullString(tok.getAfter(),text);
 					
 					exists = false;
@@ -103,20 +129,7 @@ public class RepgenParser {
 					}
 					
 					if( !exists ){
-						includes.add(new Include(fileName,Division.DEFINE));
-						tokens = new ArrayList<Token>();
-						data = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(new SymitarFile(fileName,FileType.REPGEN));				
-				
-						if( data == null )
-							return;
-						
-						parse(fileName, data, 0, data.length(), 0, tokens, new ArrayList<Variable>(),null);
-						
-						//Set to be in defs, since we are assuming only working with Include files already in the define division
-						for( Token cur : tokens)
-							cur.setInDefs(true);
-					
-						rebuildVars(fileName,data,tokens);
+						parseCurrentFile(fileName);
 					}
 				}
 			}
