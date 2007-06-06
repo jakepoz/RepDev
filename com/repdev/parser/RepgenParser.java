@@ -78,7 +78,7 @@ public class RepgenParser {
 			this.text = text;
 		}
 		
-		private void parseCurrentFile(String fileName){
+		private void parseCurrentFileAsDefine(String fileName){
 			boolean exists = false;
 			ArrayList<Token> tokens = new ArrayList<Token>();
 			String data = "";
@@ -104,7 +104,7 @@ public class RepgenParser {
 					}
 					
 					if( !exists ){
-						parseCurrentFile(newFileName);
+						parseCurrentFileAsDefine(newFileName);
 					}
 				}
 			}
@@ -129,7 +129,7 @@ public class RepgenParser {
 					}
 					
 					if( !exists ){
-						parseCurrentFile(fileName);
+						parseCurrentFileAsDefine(fileName);
 					}
 				}
 			}
