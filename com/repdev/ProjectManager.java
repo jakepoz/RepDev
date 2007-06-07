@@ -81,8 +81,11 @@ public class ProjectManager {
 		SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
 		String prefix = "tester";
 
-		if (session.getUserID() == null || session.getUserID().length() >= 3)
+		if (session.getUserID() != null && session.getUserID().length() >= 3)
 			prefix = session.userID.substring(0, 3);
+		else if( session.getUserID() != null)
+			prefix = session.getUserID();
+
 
 		return new SymitarFile("repdev." + prefix + "projects", FileType.REPGEN);
 	}
