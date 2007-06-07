@@ -180,7 +180,7 @@ public class RepgenParser {
 							display.syncExec(new Runnable() {
 								public void run() {
 									if (!txt.isDisposed())
-										errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName(), txt.getLineAtOffset(var.getPos()), var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())),Error.Type.WARNING));
+										errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
 								}
 							});
 					}
