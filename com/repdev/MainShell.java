@@ -917,7 +917,7 @@ public class MainShell {
 				
 				if( error.getLine() >= 0 && editor != null ){
 				 	editor.getStyledText().setTopIndex(Math.max(0, error.getLine() - 10));
-				 	editor.getStyledText().setCaretOffset(editor.getStyledText().getOffsetAtLine(error.getLine()) + Math.max(0,error.getCol()));
+				 	editor.getStyledText().setCaretOffset(editor.getStyledText().getOffsetAtLine(error.getLine() - 1)+ Math.max(0,error.getCol() - 1 ) );
 				 	editor.getStyledText().setFocus();
 				}				
 			}

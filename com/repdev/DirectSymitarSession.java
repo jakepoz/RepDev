@@ -2,6 +2,7 @@ package com.repdev;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -306,7 +307,7 @@ public class DirectSymitarSession extends SymitarSession {
 			  			column = Integer.parseInt(cur.getParameters().get("Col").replace(",", ""));
 			  		}
 			  		else if( cur.getParameters().get("Action").equals("ErrText") )
-			  			error += cur.getParameters().get("Line") + "\n";
+			  			error += cur.getParameters().get("Line") + " ";
 			  		
 			  		log(cur.toString());
 			  	}
@@ -402,8 +403,8 @@ public class DirectSymitarSession extends SymitarSession {
 				break;
 
 			if( current.getParameters().get("Name") != null)
-				toRet.add(new SymitarFile(current.getParameters().get("Name"), type));
-			
+				toRet.add(new SymitarFile(current.getParameters().get("Name"), type, new Date(0), Integer.parseInt(current.getParameters().get("Size"))));
+						
 			if(current.getParameters().get("Done") != null)
 				break;
 		}
@@ -588,7 +589,7 @@ public class DirectSymitarSession extends SymitarSession {
 			  			column = Integer.parseInt(cur.getParameters().get("Col").replace(",", ""));
 			  		}
 			  		else if( cur.getParameters().get("Action").equals("ErrText") )
-			  			error += cur.getParameters().get("Line") + "\n";
+			  			error += cur.getParameters().get("Line") + " ";
 			  		
 			  		log(cur.toString());
 			  	}
