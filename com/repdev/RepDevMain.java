@@ -31,13 +31,22 @@ public class RepDevMain {
 	public static void main(String[] args) {
 		display = new Display();
 
-		loadSettings();
-		createImages();
-		createGUI();
+		try{
+			loadSettings();
+			createImages();
+			createGUI();
+			
+			while (!mainShell.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
+			}
+		}
+		catch(Exception e){
+			if (display.isDisposed())
+				display = new Display();
 
-		while (!mainShell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
+			ErrorDialog errorDialog = new ErrorDialog(e);
+			errorDialog.open();
 		}
 
 		// Save off projects

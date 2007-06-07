@@ -909,7 +909,7 @@ public class MainShell {
 				Error error = (Error)item.getData("error");
 				
 				Object o = openFile(file, sym);
-				
+	
 				EditorComposite editor = null;
 				
 				if( o instanceof EditorComposite)
