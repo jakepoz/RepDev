@@ -16,6 +16,7 @@ public class RunReportShell {
 	private Display display;
 	private SymitarFile file;
 	int sym;
+	boolean promptReady = false;
 	
 	public RunReportShell(Shell parent, SymitarFile file, int sym) {
 		this.parent = parent;
@@ -71,12 +72,13 @@ public class RunReportShell {
 		layout.spacing = 5;
 		fmGroup.setLayout(layout);
 		
-		Button defaultsButton = new Button(promptGroup,SWT.RADIO);
+		final Button defaultsButton = new Button(promptGroup,SWT.RADIO);
 		defaultsButton.setText("Answer default to all prompt");
-		defaultsButton.setSelection(true);
+		
 		
 		Button promptButton = new Button(promptGroup,SWT.RADIO);
 		promptButton.setText("Prompt user at run time");
+		promptButton.setSelection(true);
 		
 		final Label titleLabel = new Label(fmGroup,SWT.NONE);
 		titleLabel.setText("Report Title: ");
@@ -114,11 +116,20 @@ public class RunReportShell {
 		runButton.setText("Run Report");
 		
 		
-		Button cancelButton = new Button(shell,SWT.NONE);
+		final Button cancelButton = new Button(shell,SWT.NONE);
 		cancelButton.setText("Cancel");
+		cancelButton.setEnabled(false);
 		
 		Button closeButton = new Button(shell,SWT.NONE);
 		closeButton.setText("Close Window");
+		closeButton.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shell.close();
+			}
+			
+		});
 		
 		Group ioGroup = new Group(shell,SWT.NONE);
 		ioGroup.setText("Report Run I/O");
@@ -140,22 +151,84 @@ public class RunReportShell {
 		
 		final Text ioText = new Text(ioGroup,SWT.MULTI | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
 		
-		Label promptLabel = new Label(ioGroup,SWT.NONE);
+		final Label promptLabel = new Label(ioGroup,SWT.NONE);
 		promptLabel.setText("Prompt:");
+		promptLabel.setEnabled(false);
 		
-		Text promptText = new Text(ioGroup,SWT.BORDER);
+		final Text promptText = new Text(ioGroup,SWT.BORDER);
+		promptText.setEnabled(false);
 		
-		Button nextPromptButton = new Button(ioGroup,SWT.NONE);
+		final Button nextPromptButton = new Button(ioGroup,SWT.NONE);
 		nextPromptButton.setText("Next");
+		nextPromptButton.setEnabled(false);
+		nextPromptButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				promptReady = true;
+			}
+		});
 		
-		Button prevPromptButton = new Button(ioGroup,SWT.NONE);
+		final Button prevPromptButton = new Button(ioGroup,SWT.NONE);
+		prevPromptButton.setEnabled(false);
 		prevPromptButton.setText("Prev");
 		
 		
 		runButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
+				SymitarSession.PromptListener prompter = new SymitarSession.PromptListener(){
+					public String getPrompt(String name) {
+						String toRet = "";
+						
+						if( shell.isDisposed() || promptLabel.isDisposed() || promptText.isDisposed()  )
+							return null;
+						
+						if( defaultsButton.getSelection() )
+							return "";
+						
+						promptLabel.setEnabled(true);
+						promptText.setEnabled(true);
+						prevPromptButton.setEnabled(true);
+						nextPromptButton.setEnabled(true);
+						
+						promptLabel.setText(name);
+						promptText.setText("");
+						promptText.setFocus();
+						
+						shell.layout(true,true);
+						promptReady = false;
+										
+						while (!promptReady && !shell.isDisposed()) {
+							if (!display.readAndDispatch())
+								display.sleep();
+						}
+						
+						if( !promptText.isDisposed() )
+						{
+							toRet = promptText.getText();
+							promptLabel.setText("Prompt:");
+							promptText.setText("");
+							
+							promptLabel.setEnabled(false);
+							promptText.setEnabled(false);
+							prevPromptButton.setEnabled(false);
+							nextPromptButton.setEnabled(false);
+							
+							return toRet;
+						}
+						else
+							return null;
+					}
+					
+				};
 				
-				ioText.setText(RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), -1, progressBar, ioText, null));
+				cancelButton.setEnabled(true);
+				
+				String result = RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), -1, progressBar, ioText, prompter);
+				
+				if( !ioText.isDisposed() ){
+					ioText.setText(result);
+					cancelButton.setEnabled(false);
+				}
 			}	
 		});
 		
@@ -276,7 +349,7 @@ public class RunReportShell {
 		ioText.setLayoutData(data);
 		
 		data = new FormData();
-		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(promptText);
 		data.bottom = new FormAttachment(100);
 		promptLabel.setLayoutData(data);
 		
@@ -306,7 +379,7 @@ public class RunReportShell {
 		create();
 
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!shell.isDisposed() && !display.readAndDispatch())
 				display.sleep();
 		}
 	}

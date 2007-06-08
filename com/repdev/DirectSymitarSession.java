@@ -458,10 +458,10 @@ public class DirectSymitarSession extends SymitarSession {
 	 * @param str
 	 */
 	private void setProgress(ProgressBar progress, int value, Text text, String str){
-		if( progress != null )
+		if( progress != null && !progress.isDisposed() )
 			progress.setSelection(value);
 		
-		if( text != null && str != null)
+		if( text != null && str != null && !text.isDisposed())
 			text.setText(str);
 	}
 	
@@ -470,8 +470,14 @@ public class DirectSymitarSession extends SymitarSession {
 	 * any other number for a specific one
 	 * 
 	 * Progressbar is useful for updating GUI stuff
+	 * 
+	 * The listener object is the best way to ask for prompts while still blocking from other threads.
+	 * 
+	 * TODO:Make it unblock when repgen finishes queueing, then you can periodically poll for if it finished or not.
+	 * This allows for amodal dialogs for running, and also the option to cancel
+	 * Non polling would be nice, but maybe tricky to implement, I will look into it.
 	 */
-	public String runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
+	public synchronized String runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
 		Command cur, old;
 		boolean isError = false;
 		
@@ -497,8 +503,7 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			setProgress(progress,15, null, null);
-			
+			setProgress(progress,15, text, "Please answer prompts");
 			
 			write( name + "\r");
 			
@@ -508,8 +513,25 @@ public class DirectSymitarSession extends SymitarSession {
 							
 				log(cur);
 				
-				if( cur.getCommand().equals("Input"))
+				if( cur.getCommand().equals("Input") && cur.getParameters().get("HelpCode").equals("20301"))
 					break;
+				else if( cur.getCommand().equals("Input") ){
+					String result = prompter.getPrompt(cur.getParameters().get("Prompt"));
+					
+					if( result == null ){
+						write( Character.toString((char)0x1b));
+						
+						while( !(cur = readNextCommand()).getCommand().equals("Input") )
+							log(cur);
+						
+						return "Cancelled";
+					}
+					else
+						write( result.trim() + "\r");
+				}
+				else if( cur.getCommand().equals("Bell") ){
+					setProgress(progress, 15, text, "That prompt input is invalid, please reenter");
+				}
 				else if( cur.getCommand().equals("Batch") && cur.getParameters().get("Text").contains("No such file or directory")){
 					old = cur;
 					
@@ -531,6 +553,9 @@ public class DirectSymitarSession extends SymitarSession {
 					setProgress(progress,100, text, "There was an error in your program,\n that is preventing it from running:\n\n" + old.getParameters().get("Text"));	
 					
 					return "There was an error in your program,\n that is preventing it from running:\n\n" + old.getParameters().get("Text");
+				}
+				else if( cur.getCommand().equals("Batch") && cur.getParameters().get("Action").equals("DisplayLine")){
+					setProgress(null, 0, text, text.getText() + "\n" + cur.getParameters().get("Text"));
 				}
 			}
 			
