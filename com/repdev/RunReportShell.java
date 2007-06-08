@@ -112,7 +112,7 @@ public class RunReportShell {
 			}
 		});
 		
-		Button runButton = new Button(shell,SWT.NONE);
+		final Button runButton = new Button(shell,SWT.NONE);
 		runButton.setText("Run Report");
 		
 		
@@ -222,12 +222,14 @@ public class RunReportShell {
 				};
 				
 				cancelButton.setEnabled(true);
+				runButton.setEnabled(false);
 				
 				String result = RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), -1, progressBar, ioText, prompter);
 				
 				if( !ioText.isDisposed() ){
 					ioText.setText(result);
 					cancelButton.setEnabled(false);
+					runButton.setEnabled(true);
 				}
 			}	
 		});
@@ -300,13 +302,14 @@ public class RunReportShell {
 		promptButton.setLayoutData(data);
 		
 		data = new FormData();
+		data.right = new FormAttachment(100);
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
 		noFMButton.setLayoutData(data);
 		
 		data = new FormData();
-		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
+		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(noFMButton);
 		yesFMButton.setLayoutData(data);
 		
@@ -322,11 +325,12 @@ public class RunReportShell {
 		
 		data = new FormData();
 		data.right = new FormAttachment(100);
+		data.left = new FormAttachment(typeLabel);
 		data.top = new FormAttachment(titleText);
 		typeCombo.setLayoutData(data);
 		
 		data = new FormData();
-		data.right = new FormAttachment(typeCombo);
+		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(titleText);
 		typeLabel.setLayoutData(data);
 		

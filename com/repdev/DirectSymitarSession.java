@@ -566,68 +566,35 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			setProgress(progress,20, null, null);	
 			
-			write( "1\r");
+			write( "0\r");
 			
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
 			setProgress(progress,25, null, null);	
 			
-			write( "1\r");
+			write( "0\r");
 			
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
 			setProgress(progress,30, null, null);	
 			
-			write( "4\r");
-			
-			while( !(cur = readNextCommand()).getCommand().equals("Input") )
-				log(cur);
-			
-			setProgress(progress,35, null, null);	
-			
-			write( "00000000\r");
-			
-			while( !(cur = readNextCommand()).getCommand().equals("Input") )
-				log(cur);
-			
-			setProgress(progress,40, null, null);	
-			
-			write( "\r");
-			
-			while( !((cur = readNextCommand()).getParameters().get("Done") == null ))
-				log(cur);
-			
-			setProgress(progress,45, null, null);	
-			
-			write( "0\r");
-			
-			while( !(cur = readNextCommand()).getCommand().equals("Input") )
-				log(cur);
-			
-			setProgress(progress,50, text, "Waiting for batch job to finish");	
-			
 			write( "1\r");
 			
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-		
-			while( (cur = readNextCommand()) != null){
-				log(cur);
-				
-				if( cur.getCommand().equals("MsgDlg") && cur.getParameters().get("Type").equals("Message") && cur.getParameters().get("Text").contains("REPWRITER"))
-						break;
-			}
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			
+			return "IO Error";
 		}
 		
-		setProgress(progress,100,text,"Batch file run has finished");	
+		setProgress(progress,50, text, "Repgen queued\nWaiting for batch job to finish");	
 		
-		return "Batch file run has finished";
+		return "Repgen queued\nWaiting for batch job to finish";
 	}
 
 
