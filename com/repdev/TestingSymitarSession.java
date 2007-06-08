@@ -5,6 +5,11 @@ import java.util.Date;
 import java.io.*;
 import java.util.regex.*;
 
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Text;
+
+import com.repdev.SymitarSession.PromptListener;
+
 public class TestingSymitarSession extends SymitarSession {
 	boolean isConnected;
 	int repGenRun = -1;
@@ -28,11 +33,6 @@ public class TestingSymitarSession extends SymitarSession {
 			return SessionError.NOT_CONNECTED;
 	}
 
-	@Override
-	public int acceptRepGenQuery(String value) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public int getBatchOutputSequenceNumber() {
@@ -134,22 +134,6 @@ public class TestingSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public String getRepGenQuery() {
-		switch (repGenRun) {
-		case 0:
-			repGenRun = 1;
-			return "Enter the date to run report on";
-		}
-
-		return null;
-	}
-
-	@Override
-	public int getRepgenQueue() {
-		return 0;
-	}
-
-	@Override
 	public ArrayList<Integer> getSequenceNumbers() {
 		if (repGenRun == 1) {
 			ArrayList<Integer> temp = new ArrayList<Integer>();
@@ -172,13 +156,9 @@ public class TestingSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public void runRepGen(String name) {
-		runRepGen(name, 0);
-	}
-
-	@Override
-	public void runRepGen(String name, int queue) {
-		repGenRun = 0;
+	public String runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
+		
+		return "";
 	}
 
 	@Override
@@ -201,11 +181,6 @@ public class TestingSymitarSession extends SymitarSession {
 			return SessionError.IO_ERROR;
 		}
 
-	}
-
-	@Override
-	public void waitOnChange() {
-		return;
 	}
 
 	@Override

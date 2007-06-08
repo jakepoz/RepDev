@@ -5,6 +5,7 @@ import java.awt.TextArea;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -112,6 +113,7 @@ public class RunReportShell {
 		Button runButton = new Button(shell,SWT.NONE);
 		runButton.setText("Run Report");
 		
+		
 		Button cancelButton = new Button(shell,SWT.NONE);
 		cancelButton.setText("Cancel");
 		
@@ -128,12 +130,15 @@ public class RunReportShell {
 		layout.spacing = 5;
 		ioGroup.setLayout(layout);
 		
-		ProgressBar progressBar = new ProgressBar(ioGroup,SWT.NONE);
+		final ProgressBar progressBar = new ProgressBar(ioGroup,SWT.NONE);
+		progressBar.setMaximum(100);
+		progressBar.setMinimum(0);
+		
 		
 		Label messageLabel = new Label(ioGroup,SWT.NONE);
 		messageLabel.setText("Messages:");
 		
-		Text ioText = new Text(ioGroup,SWT.MULTI | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
+		final Text ioText = new Text(ioGroup,SWT.MULTI | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		Label promptLabel = new Label(ioGroup,SWT.NONE);
 		promptLabel.setText("Prompt:");
@@ -145,6 +150,14 @@ public class RunReportShell {
 		
 		Button prevPromptButton = new Button(ioGroup,SWT.NONE);
 		prevPromptButton.setText("Prev");
+		
+		
+		runButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				
+				ioText.setText(RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), -1, progressBar, ioText, null));
+			}	
+		});
 		
 		data = new FormData();
 		data.left = new FormAttachment(0);

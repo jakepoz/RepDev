@@ -12,6 +12,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.*;
 
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Text;
+
 /**
  * This is the main connection object to the Symitar host, it provides all the routines you would need to connect
  * 
@@ -28,15 +31,14 @@ public class DirectSymitarSession extends SymitarSession {
 	PrintWriter out;
 	boolean connected = false;
 
-	@Override
-	public int acceptRepGenQuery(String value) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	private String log(String str) {
 		System.out.println(str);
 		return str;
+	}
+	
+	private String log(Object o){
+		return log( o.toString() );
 	}
 
 	@Override
@@ -412,17 +414,6 @@ public class DirectSymitarSession extends SymitarSession {
 		return toRet;
 	}
 
-	@Override
-	public String getRepGenQuery() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getRepgenQueue() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public ArrayList<Integer> getSequenceNumbers() {
@@ -458,18 +449,162 @@ public class DirectSymitarSession extends SymitarSession {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public void runRepGen(String name) {
-		// TODO Auto-generated method stub
-
+	
+	/**
+	 * Helper method for runRepGen stuff
+	 * @param progress
+	 * @param value
+	 * @param text
+	 * @param str
+	 */
+	private void setProgress(ProgressBar progress, int value, Text text, String str){
+		if( progress != null )
+			progress.setSelection(value);
+		
+		if( text != null && str != null)
+			text.setText(str);
+	}
+	
+	/**
+	 * Queue, -1 for first available,
+	 * any other number for a specific one
+	 * 
+	 * Progressbar is useful for updating GUI stuff
+	 */
+	public String runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
+		Command cur, old;
+		boolean isError = false;
+		
+		setProgress(progress,0, text, "Queuing batch run, please wait...");
+		
+		try{
+			write("mm0" + (char)27);
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,5, null, null);
+			
+			write("1\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,10, null, null);
+			
+			write("11\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,15, null, null);
+			
+			
+			write( name + "\r");
+			
+			//TODO: Error checking
+			isError = false;
+			while( (cur = readNextCommand()) != null ){
+							
+				log(cur);
+				
+				if( cur.getCommand().equals("Input"))
+					break;
+				else if( cur.getCommand().equals("Batch") && cur.getParameters().get("Text").contains("No such file or directory")){
+					old = cur;
+					
+					while( !(cur = readNextCommand()).getCommand().equals("Input") )
+						log(cur);
+					
+					setProgress(progress,100, text, "Error: No such file or directory");					
+					
+					return "Error: No such file or directory";
+				}
+				else if( cur.getCommand().equals("SpecfileErr"))
+					isError = true;
+				else if (isError && cur.getCommand().equals("Batch") && cur.getParameters().get("Action").equals("DisplayLine")){
+					old = cur;
+					
+					while( !(cur = readNextCommand()).getCommand().equals("Input") )
+						log(cur);
+					
+					setProgress(progress,100, text, "There was an error in your program,\n that is preventing it from running:\n\n" + old.getParameters().get("Text"));	
+					
+					return "There was an error in your program,\n that is preventing it from running:\n\n" + old.getParameters().get("Text");
+				}
+			}
+			
+			write( "\r" );
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,20, null, null);	
+			
+			write( "1\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,25, null, null);	
+			
+			write( "1\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,30, null, null);	
+			
+			write( "4\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,35, null, null);	
+			
+			write( "00000000\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,40, null, null);	
+			
+			write( "\r");
+			
+			while( !((cur = readNextCommand()).getParameters().get("Done") == null ))
+				log(cur);
+			
+			setProgress(progress,45, null, null);	
+			
+			write( "0\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			setProgress(progress,50, text, "Waiting for batch job to finish");	
+			
+			write( "1\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+		
+			while( (cur = readNextCommand()) != null){
+				log(cur);
+				
+				if( cur.getCommand().equals("MsgDlg") && cur.getParameters().get("Type").equals("Message") && cur.getParameters().get("Text").contains("REPWRITER"))
+						break;
+			}
+		}
+		catch(Exception e){
+			
+		}
+		
+		setProgress(progress,100,text,"Batch file run has finished");	
+		
+		return "Batch file run has finished";
 	}
 
-	@Override
-	public void runRepGen(String name, int queue) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public synchronized SessionError saveFile(SymitarFile file, String text) {
@@ -537,12 +672,6 @@ public class DirectSymitarSession extends SymitarSession {
 			return SessionError.IO_ERROR;
 		}
 		return SessionError.NONE;
-	}
-
-	@Override
-	public void waitOnChange() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -2,6 +2,11 @@ package com.repdev;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Text;
+
+import com.repdev.SymitarSession.PromptListener;
+
 /**
  * Abstract symitar session, allows for several different conneciton methods
  * @author Jake Poznanski
@@ -57,10 +62,14 @@ public abstract class SymitarSession {
 	 */
 	public abstract SessionError saveFile(SymitarFile file, String text);
 
-	public abstract void runRepGen(String name);
+	public abstract String runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter);
 
-	public abstract void runRepGen(String name, int queue);
-
+	/**
+	 * Interface needed for runRepGen stuff, should maybe be it's own file later
+	 */
+	public interface PromptListener{
+		String getPrompt(String name);
+	}
 	/**
 	 * Returns an arraylist of QueueInfo objects
 	 * 
@@ -70,44 +79,6 @@ public abstract class SymitarSession {
 		return queueInfoList;
 	}
 
-	/**
-	 * Blocks until a change is available from the session, telnet or otherwise
-	 * For example, if we had asked for a repgen to be run, entered its prompts,
-	 * then we would call this method and it would block.
-	 * 
-	 * Then, when new data was available, ex. the repgen finished, or the queue
-	 * listing got updated. It would unblock. The caller would then have to
-	 * determine what changed, (ex. update the UI) and if required, call this
-	 * method again
-	 * 
-	 * Current Changes Possible: 1. Repgen Completion 2. Repgen Prompt 3. Queue
-	 * Info Chane
-	 * 
-	 * @return
-	 */
-	public abstract void waitOnChange();
-
-	/**
-	 * Returns a query that the user must respond to in this repgen, null if
-	 * there are no more queries
-	 * 
-	 * @return
-	 */
-	public abstract String getRepGenQuery();
-
-	/**
-	 * Sends an answer to the next waiting query
-	 * 
-	 * @param value
-	 * @return
-	 */
-	public abstract int acceptRepGenQuery(String value);
-
-	/**
-	 * 
-	 * @return Queue number of currently running repgen
-	 */
-	public abstract int getRepgenQueue();
 
 	/**
 	 * Sequence numbers for the last batch process to run, not including BATCH
