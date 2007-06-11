@@ -27,7 +27,7 @@ public class RunReportShell {
 	
 	private void create(){
 		shell = new Shell(parent,SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
-		shell.setText("Run Report");
+		shell.setText("Run Report - EXPERIMENTAL!!!");
 		shell.setImage(RepDevMain.smallRunImage);
 		
 		FormLayout layout = new FormLayout();
