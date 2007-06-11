@@ -72,6 +72,29 @@ public class RunReportShell {
 		layout.spacing = 5;
 		fmGroup.setLayout(layout);
 		
+		Group queueGroup = new Group(shell,SWT.NONE);
+		layout = new FormLayout();
+		layout.marginTop = 5;
+		layout.marginBottom = 5;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		layout.spacing = 5;
+		queueGroup.setLayout(layout);
+		queueGroup.setText("Queue Control");
+		
+		final Button defaultQueueButton = new Button(queueGroup,SWT.RADIO);
+		defaultQueueButton.setText("Use first empty queue");
+		defaultQueueButton.setSelection(true);
+		final Button selectQueueButton = new Button(queueGroup,SWT.RADIO);
+		selectQueueButton.setText("Pick a queue");
+		
+		Label queueLabel = new Label(queueGroup,SWT.NONE);
+		queueLabel.setText("Queue:");
+		
+		final Spinner queueSpinner = new Spinner(queueGroup,SWT.BORDER);
+		queueSpinner.setMaximum(3);
+		queueSpinner.setMinimum(0);
+		
 		final Button defaultsButton = new Button(promptGroup,SWT.RADIO);
 		defaultsButton.setText("Answer default to all prompt");
 		
@@ -102,7 +125,7 @@ public class RunReportShell {
 		noFMButton.setSelection(true);
 		
 		Button yesFMButton = new Button(fmGroup,SWT.RADIO);
-		yesFMButton.setText("Execute File Maintenance after running report");
+		yesFMButton.setText("Execute File Maintenance");
 		yesFMButton.addSelectionListener( new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
 				titleLabel.setEnabled(true);
@@ -182,6 +205,7 @@ public class RunReportShell {
 						if( shell.isDisposed() || promptLabel.isDisposed() || promptText.isDisposed()  )
 							return null;
 						
+						//Return "" as default value
 						if( defaultsButton.getSelection() )
 							return "";
 						
@@ -197,6 +221,7 @@ public class RunReportShell {
 						shell.layout(true,true);
 						promptReady = false;
 										
+						//Process SWT messages here until the prompt is ready or has been cancelled, this way we know when the button is clicked.
 						while (!promptReady && !shell.isDisposed()) {
 							if (!display.readAndDispatch())
 								display.sleep();
@@ -224,7 +249,7 @@ public class RunReportShell {
 				cancelButton.setEnabled(true);
 				runButton.setEnabled(false);
 				
-				String result = RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), -1, progressBar, ioText, prompter);
+				String result = RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), defaultQueueButton.getSelection() ? -1 : queueSpinner.getSelection(), progressBar, ioText, prompter);
 				
 				if( !ioText.isDisposed() ){
 					ioText.setText(result);
@@ -267,6 +292,12 @@ public class RunReportShell {
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(promptGroup);
 		data.right = new FormAttachment(ioGroup);
+		queueGroup.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(ioGroup);
+		data.top = new FormAttachment(queueGroup);
 		fmGroup.setLayoutData(data);
 		
 		data = new FormData();
@@ -372,6 +403,27 @@ public class RunReportShell {
 		data.right = new FormAttachment(prevPromptButton);
 		data.bottom = new FormAttachment(100);
 		nextPromptButton.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(0);
+		defaultQueueButton.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(defaultQueueButton);
+		selectQueueButton.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(selectQueueButton);
+		queueLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(queueLabel);
+		data.right = new FormAttachment(100);
+		data.top = new FormAttachment(selectQueueButton);
+		queueSpinner.setLayoutData(data);
 		
 		shell.pack();
 		shell.open();

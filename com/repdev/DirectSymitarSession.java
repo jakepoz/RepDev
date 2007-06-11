@@ -45,6 +45,9 @@ public class DirectSymitarSession extends SymitarSession {
 	public SessionError connect(String server, String aixUsername, String aixPassword, int sym, String userID) {
 		String line = "";
 
+		if( connected )
+			return SessionError.ALREADY_CONNECTED;
+		
 		this.server = server;
 		this.aixUsername = aixUsername;
 		this.aixPassword = aixPassword;
@@ -277,7 +280,6 @@ public class DirectSymitarSession extends SymitarSession {
 		int line = -1, column = -1;
 		
 		try{
-
 			write("mm3" + (char)27); //Managment menu #3- repgen, of course!!
 			
 			log(readNextCommand().toString());
