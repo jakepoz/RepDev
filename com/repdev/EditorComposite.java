@@ -650,7 +650,8 @@ public class EditorComposite extends Composite {
 		frmTxt.bottom = new FormAttachment(100);
 		txt.setLayoutData(frmTxt);
 
-		parser.errorCheck();
+		if( parser != null )
+			parser.errorCheck();
 		
 		undoMode = 1;
 		modified = false;
