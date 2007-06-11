@@ -70,14 +70,6 @@ SaveMode
 Segment
 SetService
 SetWarning
-SysActualDate
-SysActualyTime
-SysConsoleNum
-SysMemoMode
-SystemDate
-SysUserName
-SysUserNumber
-SysWindowsLevel
 UpperCase
 Value
 Year
