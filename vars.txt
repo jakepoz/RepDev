@@ -1,5 +1,12 @@
 SYSTEMDATE|Current banking date|DATE|
 SYSACTUALDATE|Actual calendar date|DATE|
+SYSACTUALTIME|Actual clock time on the server|NUMBER|
+SYSCONSOLENUM|Console number of user running this repgen|NUMBER|
+SYSTEMEMOMODE|Memo Mode|NUMBER|
+
+SYSUSERNAME|User name of current user|CHARACTER|
+SYSUSERNUMBER|User number of current user|NUMBER|
+SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 
 @VALIDATEFIELDNUMBER||NUMBER|
 @VALIDATESUBFIELD||NUMBER|
