@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
  */
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
-	public static final String VERSION = "v .01";
+	public static final String VERSION = "v0.1.4-20070612";
 	public static final String NAMESTR = "RepDev - " + VERSION;
 	public static MainShell mainShell;
 	private static Display display;
