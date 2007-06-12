@@ -34,15 +34,6 @@ public class TestingSymitarSession extends SymitarSession {
 			return SessionError.NOT_CONNECTED;
 	}
 
-
-	@Override
-	public int getBatchOutputSequenceNumber() {
-		if (repGenRun == 1)
-			return 133;
-		else
-			return -1;
-	}
-
 	@Override
 	public String getFile(SymitarFile file) {
 		StringBuilder data = new StringBuilder();
@@ -132,17 +123,6 @@ public class TestingSymitarSession extends SymitarSession {
 			}
 
 		return data;
-	}
-
-	@Override
-	public ArrayList<Integer> getSequenceNumbers() {
-		if (repGenRun == 1) {
-			ArrayList<Integer> temp = new ArrayList<Integer>();
-			temp.add(134);
-			temp.add(135);
-		}
-
-		return null;
 	}
 
 	@Override

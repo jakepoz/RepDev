@@ -337,12 +337,6 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public int getBatchOutputSequenceNumber() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public synchronized String getFile(SymitarFile file) {
 		StringBuilder data = new StringBuilder();
 
@@ -434,12 +428,6 @@ public class DirectSymitarSession extends SymitarSession {
 		return toRet;
 	}
 
-
-	@Override
-	public ArrayList<Integer> getSequenceNumbers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public boolean isConnected() {

@@ -269,12 +269,15 @@ public class RunReportShell {
 							else
 							{
 								stillRunning = false;
-								ioText.setText("Repgen Finished\nSequence: " + seq);
-								progressBar.setSelection(100);
+								ioText.setText("Repgen Run Finished, Looking up output files\n");
+								progressBar.setSelection(85);
 								
 								for( int seq : RepDevMain.SYMITAR_SESSIONS.get(sym).getReportSeqs(file.getName(), time) ){
-									ioText.setText(ioText.getText()+"\n\nOutput Sequence: " + seq);
+									ioText.setText(ioText.getText()+"\nOutput Sequence: " + seq);
+									RepDevMain.mainShell.openFile(seq, sym);
 								}
+								
+								progressBar.setSelection(100);
 							}
 						}
 					});

@@ -109,21 +109,6 @@ public abstract class SymitarSession {
 	}
 
 
-	/**
-	 * Sequence numbers for the last batch process to run, not including BATCH
-	 * OUTPUT file
-	 * 
-	 * @return
-	 */
-	public abstract ArrayList<Integer> getSequenceNumbers();
-
-	/**
-	 * Batch ouput sequence number for the last batch process to run
-	 * 
-	 * @return
-	 */
-	public abstract int getBatchOutputSequenceNumber();
-	
 	public abstract boolean isSeqRunning(int seq);
 	
 	public abstract void terminateRepgen(int seq);
@@ -161,8 +146,11 @@ public abstract class SymitarSession {
 			
 			String name = file.substring(0,file.indexOf("\n"));
 			
-			if( (time == -1 || time == curTime) && name.equals(reportName) )
+			if( (time == -1 || time == curTime) && name.equals(reportName) ){
 				newItems.add(cur.getBatchSeq());
+				
+				//TODO: OPtimize here
+			}
 		}
 		
 		return newItems;

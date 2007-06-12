@@ -170,9 +170,45 @@ public class MainShell {
 
 		shell.setMinimumSize(3 * MIN_COMP_SIZE, 3 * MIN_COMP_SIZE);
 	}
-
-	private Object openFile(SymitarFile file, int sym) {
+	
+	public Object openFile(int seq, int sym){
 		boolean found = false;
+		Composite editor;
+		
+		for (CTabItem c : mainfolder.getItems()) {
+			if (c.getData("seq") != null && (Integer)c.getData("seq") == seq && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
+				mainfolder.setSelection(c);
+				found = true;
+				return c.getControl();
+			}
+		}
+
+		if (!found) {
+			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
+
+			item.setText("Sequence View: " + seq);
+			
+			item.setData("seq", seq);
+			item.setData("sym", sym);
+
+			editor = new ReportComposite(mainfolder, seq, sym);
+		
+			item.setControl(editor);
+
+			mainfolder.setSelection(item);
+			
+			//Attach find/replace shell here as well (in addition to folder listener)
+			//findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText());
+			
+			return editor;
+		}
+		
+		return null;
+	}
+
+	public Object openFile(SymitarFile file, int sym) {
+		boolean found = false;
+		Composite editor;
 		
 		for (CTabItem c : mainfolder.getItems()) {
 			if (c.getData("file") != null && c.getData("file").equals(file) && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
@@ -190,7 +226,11 @@ public class MainShell {
 			item.setData("file", file);
 			item.setData("sym", sym);
 
-			EditorComposite editor = new EditorComposite(mainfolder, file, sym);
+			if( file.getType() == FileType.REPORT)
+				editor = new ReportComposite(mainfolder, file, sym);
+			else
+				editor = new EditorComposite(mainfolder, file, sym);
+			
 			item.setControl(editor);
 
 			mainfolder.setSelection(item);
