@@ -278,15 +278,12 @@ public class RunReportShell {
 								}
 								
 								progressBar.setSelection(100);
+								shell.close();
 							}
 						}
 					});
 				}
-				
-				if( !ioText.isDisposed() ){
-					cancelButton.setEnabled(false);
-					runButton.setEnabled(true);
-				}
+
 			}	
 		});
 		

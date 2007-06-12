@@ -1,6 +1,7 @@
 package com.repdev;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import org.eclipse.swt.widgets.ProgressBar;
@@ -130,6 +131,9 @@ public abstract class SymitarSession {
 		ArrayList<PrintItem> items = getPrintItems("REPWRITER", 10);
 		ArrayList<Integer> newItems = new ArrayList<Integer>();
 		
+		//More than likely, if we are looking for anything, it will be the newest one first
+		Collections.reverse(items);
+		
 		for( PrintItem cur : items){
 			String file = getFile(new SymitarFile("" + cur.getSeq(),FileType.REPORT));
 			
@@ -146,10 +150,12 @@ public abstract class SymitarSession {
 			
 			String name = file.substring(0,file.indexOf("\n"));
 			
-			if( (time == -1 || time == curTime) && name.equals(reportName) ){
+			if( (time == -1 || curTime - 1 == time || curTime == time || curTime +1 == time ) && name.equals(reportName) ){
 				newItems.add(cur.getBatchSeq());
 				
-				//TODO: OPtimize here
+				//If we have matched it, then we are done
+				if( time != -1 )
+					break;
 			}
 		}
 		

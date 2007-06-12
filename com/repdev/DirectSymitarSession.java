@@ -838,7 +838,7 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public ArrayList<PrintItem> getPrintItems(String query, int limit) {
+	public synchronized ArrayList<PrintItem> getPrintItems(String query, int limit) {
 		ArrayList<PrintItem> items = new ArrayList<PrintItem>();
 		Command cur;
 		
@@ -868,7 +868,7 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public ArrayList<PrintItem> getPrintItems(int seq, int limit) {
+	public synchronized ArrayList<PrintItem> getPrintItems(int seq, int limit) {
 		ArrayList<PrintItem> items = new ArrayList<PrintItem>();
 		Command cur;
 		

@@ -672,7 +672,7 @@ public class EditorComposite extends Composite {
 		CTabFolder folder = (CTabFolder)getParent();
 		
 		for( CTabItem cur : folder.getItems())
-			if( ((SymitarFile)cur.getData("file")).equals(file) && ((Integer)cur.getData("sym")) == sym  )
+			if( cur.getData("file") != null && ((SymitarFile)cur.getData("file")).equals(file) && ((Integer)cur.getData("sym")) == sym  )
 				if( modified && ( cur.getData("modified") == null || !((Boolean)cur.getData("modified")))){
 					cur.setData("modified", true);
 					cur.setText(cur.getText() + " *");
