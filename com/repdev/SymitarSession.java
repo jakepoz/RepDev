@@ -1,6 +1,7 @@
 package com.repdev;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
@@ -62,7 +63,35 @@ public abstract class SymitarSession {
 	 */
 	public abstract SessionError saveFile(SymitarFile file, String text);
 
-	public abstract String runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter);
+	public class RunRepgenResult{
+		int seq, time;
+
+		public RunRepgenResult(int seq, int time) {
+			super();
+			this.seq = seq;
+			this.time = time;
+		}
+
+		public int getSeq() {
+			return seq;
+		}
+
+		public void setSeq(int seq) {
+			this.seq = seq;
+		}
+
+		public int getTime() {
+			return time;
+		}
+
+		public void setTime(int time) {
+			this.time = time;
+		}
+		
+		
+	}
+	
+	public abstract RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter);
 
 	/**
 	 * Interface needed for runRepGen stuff, should maybe be it's own file later
@@ -94,9 +123,51 @@ public abstract class SymitarSession {
 	 * @return
 	 */
 	public abstract int getBatchOutputSequenceNumber();
+	
+	public abstract boolean isSeqRunning(int seq);
+	
+	public abstract void terminateRepgen(int seq);
 
 	public abstract SessionError runBatchFM(String title);
 
+	public abstract ArrayList<PrintItem> getPrintItems( String query, int limit );
+	public abstract ArrayList<PrintItem> getPrintItems( int seq, int limit );
+	
+	/**
+	 * Goes through past several batch output files in print control
+	 * If certain time is given, just returns that one, 
+	 * if it's -1, then finds last couple
+	 * @param reportName
+	 * @param time
+	 * @return
+	 */
+	public ArrayList<Integer> getReportSeqs( String reportName, int time ){
+		ArrayList<PrintItem> items = getPrintItems("REPWRITER", 10);
+		ArrayList<Integer> newItems = new ArrayList<Integer>();
+		
+		for( PrintItem cur : items){
+			String file = getFile(new SymitarFile("" + cur.getSeq(),FileType.REPORT));
+			
+			file = file.substring(file.indexOf("Processing begun on") + 41);
+			String timeStr = file.substring(0,8);
+			int curTime;
+			
+			curTime = Integer.parseInt(timeStr.substring(timeStr.lastIndexOf(":")+1));
+			curTime += 60 * Integer.parseInt(timeStr.substring(timeStr.indexOf(":")+1, timeStr.lastIndexOf(":")));
+			curTime += 3600 * Integer.parseInt(timeStr.substring(0,timeStr.indexOf(":")));
+			
+			//Advance to the right place
+			file =  file.substring(file.indexOf("(newline when done):") + 21);
+			
+			String name = file.substring(0,file.indexOf("\n"));
+			
+			if( (time == -1 || time == curTime) && name.equals(reportName) )
+				newItems.add(cur.getBatchSeq());
+		}
+		
+		return newItems;
+	}
+	
 	/**
 	 * Supports default "+" as a wildcard
 	 * 

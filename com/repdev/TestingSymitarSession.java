@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 
 import com.repdev.SymitarSession.PromptListener;
+import com.repdev.SymitarSession.RunRepgenResult;
 
 public class TestingSymitarSession extends SymitarSession {
 	boolean isConnected;
@@ -156,9 +157,9 @@ public class TestingSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public String runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
+	public RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
 		
-		return "";
+		return null;
 	}
 
 	@Override
@@ -215,6 +216,30 @@ public class TestingSymitarSession extends SymitarSession {
 	@Override
 	public ErrorCheckResult installRepgen(String f) {
 		return new ErrorCheckResult("",-1,ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY);
+	}
+
+	@Override
+	public boolean isSeqRunning(int seq) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void terminateRepgen(int seq) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<PrintItem> getPrintItems(String query, int limit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<PrintItem> getPrintItems(int seq, int limit) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

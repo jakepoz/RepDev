@@ -151,7 +151,10 @@ public class DirectSymitarSession extends SymitarSession {
 
 		// Returns string containing any file data sent in this message
 		public String getFileData() {
-			return data.substring(data.indexOf(Character.toString((char) 253)) + 1, data.indexOf(Character.toString((char) 254)));
+			if( data.indexOf(Character.toString((char) 253)) != -1 )
+				return data.substring(data.indexOf(Character.toString((char) 253)) + 1, data.indexOf(Character.toString((char) 254)));
+			else
+				return "";
 		}
 
 		public String sendStr() {
@@ -278,6 +281,9 @@ public class DirectSymitarSession extends SymitarSession {
 		Command cur;
 		String error = "";
 		int line = -1, column = -1;
+
+		if( !connected )
+			return null;
 		
 		try{
 			write("mm3" + (char)27); //Managment menu #3- repgen, of course!!
@@ -340,6 +346,9 @@ public class DirectSymitarSession extends SymitarSession {
 	public synchronized String getFile(SymitarFile file) {
 		StringBuilder data = new StringBuilder();
 
+		if( !connected )
+			return null;
+		
 		Command current;
 		Command retrieve = new Command();
 		retrieve.setCommand("File");
@@ -351,11 +360,13 @@ public class DirectSymitarSession extends SymitarSession {
 			retrieve.getParameters().put("Type", "Help");
 		else if (file.getType() == FileType.LETTER)
 			retrieve.getParameters().put("Type", "Letter");
-
+		else if( file.getType() == FileType.REPORT)
+			retrieve.getParameters().put("Type", "Report");
+		
 		retrieve.getParameters().put("Name", file.getName());
 
 		write(retrieve);
-
+		
 		try {
 			while (true) {
 				current = readNextCommand();
@@ -367,6 +378,10 @@ public class DirectSymitarSession extends SymitarSession {
 					return data.toString();
 
 				data.append(current.getFileData());
+				
+				if( file.getType() == FileType.REPORT )
+					data.append( "\n");
+				
 			}
 		} catch (IOException e) {
 			return null;
@@ -378,6 +393,9 @@ public class DirectSymitarSession extends SymitarSession {
 	public synchronized ArrayList<SymitarFile> getFileList(FileType type, String search) {
 		ArrayList<SymitarFile> toRet = new ArrayList<SymitarFile>();
 		Command current;
+		
+		if( !connected )
+			return toRet;
 
 		Command list = new Command("File");
 
@@ -464,7 +482,7 @@ public class DirectSymitarSession extends SymitarSession {
 			progress.setSelection(value);
 		
 		if( text != null && str != null && !text.isDisposed())
-			text.setText(str);
+			text.setText(str.replace("\r", "\n"));
 	}
 	
 	/**
@@ -479,9 +497,14 @@ public class DirectSymitarSession extends SymitarSession {
 	 * This allows for amodal dialogs for running, and also the option to cancel
 	 * Non polling would be nice, but maybe tricky to implement, I will look into it.
 	 */
-	public synchronized String runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
+	public synchronized RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
 		Command cur, old;
 		boolean isError = false;
+		int[] queueCounts = new int[9999];
+		int maxQ = 0, seq = -1, time = 0;
+		
+		for( int i = 0; i < queueCounts.length; i++)
+			queueCounts[i] = -1;
 		
 		setProgress(progress,0, text, "Queuing batch run, please wait...");
 		
@@ -526,7 +549,7 @@ public class DirectSymitarSession extends SymitarSession {
 						while( !(cur = readNextCommand()).getCommand().equals("Input") )
 							log(cur);
 						
-						return "Cancelled";
+						return new RunRepgenResult(-1,0);
 					}
 					else
 						write( result.trim() + "\r");
@@ -542,7 +565,7 @@ public class DirectSymitarSession extends SymitarSession {
 					
 					setProgress(progress,100, text, "Error: No such file or directory");					
 					
-					return "Error: No such file or directory";
+					return new RunRepgenResult(-1,0);
 				}
 				else if( cur.getCommand().equals("SpecfileErr"))
 					isError = true;
@@ -554,7 +577,7 @@ public class DirectSymitarSession extends SymitarSession {
 					
 					setProgress(progress,100, text, "There was an error in your program,\n that is preventing it from running:\n\n" + old.getParameters().get("Text"));	
 					
-					return "There was an error in your program,\n that is preventing it from running:\n\n" + old.getParameters().get("Text");
+					return new RunRepgenResult(-1,0);
 				}
 				else if( cur.getCommand().equals("Batch") && cur.getParameters().get("Action").equals("DisplayLine")){
 					setProgress(null, 0, text, text.getText() + "\n" + cur.getParameters().get("Text"));
@@ -570,12 +593,46 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			write( "0\r");
 			
-			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+			while( !(cur = readNextCommand()).getCommand().equals("Input") ){
 				log(cur);
+				if( cur.getParameters().get("Action").equals("DisplayLine") && cur.getParameters().get("Text").contains("Batch Queues Available:")){
+					maxQ = Integer.parseInt(cur.getParameters().get("Text").substring(cur.getParameters().get("Text").indexOf("-")+1));
+				}
+			}
 			
 			setProgress(progress,25, null, null);	
+				
+			//Batch queue selection
+			Command getQueues = new Command("Misc");
+			getQueues.getParameters().put("InfoType", "BatchQueues");
+			write(getQueues);
+	
+			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
+				log(cur);
+				
+				if( cur.getParameters().get("Action").equals("QueueEntry") && cur.getParameters().get("Stat").equals("Running"))
+					if(queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))] < 0)
+						queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))] = 1;
+					else
+						queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))]++;
+				else if( cur.getParameters().get("Action").equals("QueueEmpty"))
+					queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))] = 0;
+			}
 			
-			write( "0\r");
+			int freeQ;
+			
+			for( freeQ = 0; freeQ < queueCounts.length; freeQ++)
+				if( queueCounts[freeQ] == -1){
+					freeQ--;
+					break;
+				}
+				else if (queueCounts[freeQ] == 0)
+					break;
+			
+			if( queue == -1)
+				write( "" + Math.min(freeQ,maxQ) + "\r");
+			else
+				write( "" + Math.min(queue,maxQ) + "\r");
 			
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
@@ -587,16 +644,39 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
+			write(getQueues);
+			
+			int newestTime = 0;
+			
+			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
+				log(cur);
+				
+				//Get the Sequence for the latest running one at this point, and return it so we can keep track of it
+				if( cur.getParameters().get("Action").equals("QueueEntry") ){
+					int curTime = 0;
+					String timeStr = cur.getParameters().get("Time");
+					curTime = Integer.parseInt(timeStr.substring(timeStr.lastIndexOf(":")+1));
+					curTime += 60 * Integer.parseInt(timeStr.substring(timeStr.indexOf(":")+1, timeStr.lastIndexOf(":")));
+					curTime += 3600 * Integer.parseInt(timeStr.substring(0,timeStr.indexOf(":")));
+					
+					if( curTime > newestTime )
+					{
+						newestTime = curTime;
+						seq = Integer.parseInt(cur.getParameters().get("Seq"));
+						time = curTime;
+					}
+				}
+			}
 		}
 		catch(Exception e){
 			e.printStackTrace();
 			
-			return "IO Error";
+			return new RunRepgenResult(-1,0);
 		}
 		
 		setProgress(progress,50, text, "Repgen queued\nWaiting for batch job to finish");	
 		
-		return "Repgen queued\nWaiting for batch job to finish";
+		return new RunRepgenResult(seq,time);
 	}
 
 
@@ -612,6 +692,8 @@ public class DirectSymitarSession extends SymitarSession {
 		if (!connected)
 			return SessionError.NOT_CONNECTED;
 
+		log("Savin file: " + file);
+		
 		for (int i = 0; i < 6; i++)
 			pad20 += Character.toString((char) 0x20);
 
@@ -729,6 +811,100 @@ public class DirectSymitarSession extends SymitarSession {
 		}
 		
 		return null;
+	}
+
+	@Override
+	public synchronized boolean isSeqRunning(int seq) {
+		Command cur;
+		boolean running = false;
+		
+		if( !connected )
+			return false;
+		
+		//Batch queue selection
+		Command getQueues = new Command("Misc");
+		getQueues.getParameters().put("InfoType", "BatchQueues");
+		write(getQueues);
+		
+		try{
+			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
+				log(cur);
+				
+				if( cur.getParameters().get("Action").equals("QueueEntry") && Integer.parseInt(cur.getParameters().get("Seq"))==seq)
+					running = true;
+			}
+		}
+		catch(IOException e){
+			return false;
+		}
+		
+		return running;
+	}
+	
+	
+
+	@Override
+	public void terminateRepgen(int seq) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<PrintItem> getPrintItems(String query, int limit) {
+		ArrayList<PrintItem> items = new ArrayList<PrintItem>();
+		Command cur;
+		
+		if( !connected )
+			return null;
+		
+		Command getItems = new Command("File");
+		getItems.getParameters().put("Action", "List");
+		getItems.getParameters().put("MaxCount", "50");
+		getItems.getParameters().put("Query", "LAST " + limit + " \"+" + query + "+\"");// + " \"+" + query + "+\"");
+		getItems.getParameters().put("Type", "Report");
+		
+		write(getItems);
+		
+		try {
+			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
+				log(cur);
+				
+				if( cur.getParameters().get("Sequence") != null )
+					items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),new Date() ));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return items;
+	}
+
+	@Override
+	public ArrayList<PrintItem> getPrintItems(int seq, int limit) {
+		ArrayList<PrintItem> items = new ArrayList<PrintItem>();
+		Command cur;
+		
+		if( !connected )
+			return null;
+		
+		Command getItems = new Command("File");
+		getItems.getParameters().put("Action", "List");
+		getItems.getParameters().put("MaxCount", String.valueOf(limit));
+		getItems.getParameters().put("Query", "BATCH " + seq);
+		getItems.getParameters().put("Type", "Report");
+		
+		write(getItems);
+		
+		try {
+			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
+				if( cur.getParameters().get("Sequence") != null )
+					items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),new Date() ));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return items;
 	}
 
 }

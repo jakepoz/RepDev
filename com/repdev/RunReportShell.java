@@ -16,7 +16,7 @@ public class RunReportShell {
 	private Display display;
 	private SymitarFile file;
 	int sym;
-	boolean promptReady = false;
+	boolean promptReady = false, stillRunning = false;
 	
 	public RunReportShell(Shell parent, SymitarFile file, int sym) {
 		this.parent = parent;
@@ -26,7 +26,7 @@ public class RunReportShell {
 	}
 	
 	private void create(){
-		shell = new Shell(parent,SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
+		shell = new Shell(parent,SWT.SHELL_TRIM | SWT.APPLICATION_MODAL );
 		shell.setText("Run Report - EXPERIMENTAL!!!");
 		shell.setImage(RepDevMain.smallRunImage);
 		
@@ -249,10 +249,38 @@ public class RunReportShell {
 				cancelButton.setEnabled(true);
 				runButton.setEnabled(false);
 				
-				String result = RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), defaultQueueButton.getSelection() ? -1 : queueSpinner.getSelection(), progressBar, ioText, prompter);
+				SymitarSession.RunRepgenResult result =  RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), defaultQueueButton.getSelection() ? -1 : queueSpinner.getSelection(), progressBar, ioText, prompter);
+				final int seq = result.getSeq();
+				final int time = result.getTime();
+				
+				if( seq != -1){
+					stillRunning = true;
+					
+					shell.getDisplay().timerExec(500, new Runnable(){
+						public void run() {
+							if( shell.isDisposed() )
+								return;
+							
+							if( RepDevMain.SYMITAR_SESSIONS.get(sym).isSeqRunning(seq) ){
+								ioText.setText("Still running... \nSequence: " + seq);
+								progressBar.setSelection(75);
+								shell.getDisplay().timerExec(1000, this);
+							}
+							else
+							{
+								stillRunning = false;
+								ioText.setText("Repgen Finished\nSequence: " + seq);
+								progressBar.setSelection(100);
+								
+								for( int seq : RepDevMain.SYMITAR_SESSIONS.get(sym).getReportSeqs(file.getName(), time) ){
+									ioText.setText(ioText.getText()+"\n\nOutput Sequence: " + seq);
+								}
+							}
+						}
+					});
+				}
 				
 				if( !ioText.isDisposed() ){
-					ioText.setText(result);
 					cancelButton.setEnabled(false);
 					runButton.setEnabled(true);
 				}

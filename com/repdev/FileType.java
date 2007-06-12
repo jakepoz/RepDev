@@ -1,5 +1,5 @@
 package com.repdev;
 
 public enum FileType {
-	LETTER, REPGEN, HELP,
+	LETTER, REPGEN, HELP, REPORT
 };
