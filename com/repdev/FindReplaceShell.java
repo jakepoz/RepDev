@@ -31,7 +31,8 @@ public class FindReplaceShell {
 	private RepgenParser parser; //Only used to disable it for replace All operations, can always be null
 	private Label infoLabel;
 	private Text findText, replaceText;
-	private Button forwardButton,backwardButton,caseButton, wrapButton, findButton; 
+	private Button forwardButton,backwardButton,caseButton, wrapButton, findButton, replaceButton, replaceAllButton, replaceFindButton; 
+	private boolean replace = true;
 	
 	public FindReplaceShell(Shell parent){
 		this.parent = parent;
@@ -49,13 +50,18 @@ public class FindReplaceShell {
 		findText.selectAll();
 	}
 	
-	public void attach(StyledText txt, RepgenParser parser){
+	public void attach(StyledText txt, RepgenParser parser, boolean replace){
 		this.txt = txt;
 		this.parser = parser;
+		this.replace = replace;
+		
+		replaceButton.setEnabled(replace);
+		replaceAllButton.setEnabled(replace);
+		replaceFindButton.setEnabled(replace);			
 	}
 	
-	public void attach(StyledText txt){
-		attach(txt,null);
+	public void attach(StyledText txt, boolean replace){
+		attach(txt,null,replace);
 	}
 	
 	public void close(){
@@ -129,7 +135,7 @@ public class FindReplaceShell {
 			}
 		});
 		
-		Button replaceFindButton = new Button(shell,SWT.NONE);
+		replaceFindButton = new Button(shell,SWT.NONE);
 		replaceFindButton.setText("Replace/Find");
 		replaceFindButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
@@ -138,7 +144,7 @@ public class FindReplaceShell {
 			}
 		});
 		
-		Button replaceButton = new Button(shell,SWT.NONE);
+		replaceButton = new Button(shell,SWT.NONE);
 		replaceButton.setText("Replace");
 		replaceButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
@@ -146,7 +152,7 @@ public class FindReplaceShell {
 			}
 		});
 		
-		Button replaceAllButton = new Button(shell,SWT.NONE);
+		replaceAllButton = new Button(shell,SWT.NONE);
 		replaceAllButton.setText("Replace All");
 		replaceAllButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){

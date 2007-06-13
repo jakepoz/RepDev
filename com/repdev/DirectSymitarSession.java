@@ -864,8 +864,20 @@ public class DirectSymitarSession extends SymitarSession {
 			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
 				log(cur);
 				
-				if( cur.getParameters().get("Sequence") != null )
-					items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),new Date() ));
+				if( cur.getParameters().get("Sequence") != null ){
+					try {
+						String dateStr = cur.getParameters().get("Date");
+						Date date = new SimpleDateFormat("MMddyyy").parse(dateStr);
+						
+						items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),date ));
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

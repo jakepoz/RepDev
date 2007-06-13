@@ -198,7 +198,7 @@ public class MainShell {
 			mainfolder.setSelection(item);
 			
 			//Attach find/replace shell here as well (in addition to folder listener)
-			//findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText());
+			findReplaceShell.attach(((ReportComposite)editor).getStyledText(),false);
 			
 			return editor;
 		}
@@ -236,7 +236,7 @@ public class MainShell {
 			mainfolder.setSelection(item);
 			
 			//Attach find/replace shell here as well (in addition to folder listener)
-			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText());
+			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(),true);
 			
 			return editor;
 		}
@@ -877,7 +877,9 @@ public class MainShell {
 		mainfolder.addSelectionListener( new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
 				if( mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite )
-					findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText());
+					findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(), true);
+				else if( mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof ReportComposite )
+					findReplaceShell.attach(((ReportComposite)mainfolder.getSelection().getControl()).getStyledText(), false);
 			}
 		});
 		
@@ -1160,12 +1162,12 @@ public class MainShell {
 					editSelectAll.setEnabled(true);
 					editFindNext.setEnabled(true);
 					
-					if( ((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canRedo() )
+					if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof EditorComposite && ((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canRedo() )
 						editRedo.setEnabled(true);
 					else
 						editRedo.setEnabled(false);
 					
-					if( ((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canUndo() )
+					if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof EditorComposite && ((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canUndo() )
 						editUndo.setEnabled(true);
 					else
 						editUndo.setEnabled(false);
@@ -1196,10 +1198,12 @@ public class MainShell {
 	}
 	
 	public void showFindWindow(){
-		if( mainfolder.getSelection() == null || !(mainfolder.getSelection().getControl() instanceof EditorComposite))
-			findReplaceShell.attach(null);
-		else
-			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(), ((EditorComposite)mainfolder.getSelection().getControl()).getParser());
+		if( mainfolder.getSelection() == null )
+			findReplaceShell.attach(null, false);
+		else if( mainfolder.getSelection().getControl() instanceof EditorComposite )
+			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(), ((EditorComposite)mainfolder.getSelection().getControl()).getParser(), true);
+		else if(  mainfolder.getSelection().getControl() instanceof ReportComposite )
+			findReplaceShell.attach(((ReportComposite)mainfolder.getSelection().getControl()).getStyledText(), null, false);
 		
 		
 		findReplaceShell.open();	

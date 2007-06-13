@@ -17,6 +17,9 @@ public class RunReportShell {
 	private SymitarFile file;
 	int sym;
 	boolean promptReady = false, stillRunning = false;
+	Button defaultQueueButton, selectQueueButton;
+	Label queueLabel;
+	Spinner queueSpinner;
 	
 	public RunReportShell(Shell parent, SymitarFile file, int sym) {
 		this.parent = parent;
@@ -73,16 +76,29 @@ public class RunReportShell {
 		queueGroup.setLayout(layout);
 		queueGroup.setText("Queue Control");
 		
-		final Button defaultQueueButton = new Button(queueGroup,SWT.RADIO);
+		defaultQueueButton = new Button(queueGroup,SWT.RADIO);
 		defaultQueueButton.setText("Use first empty queue");
 		defaultQueueButton.setSelection(true);
-		final Button selectQueueButton = new Button(queueGroup,SWT.RADIO);
-		selectQueueButton.setText("Pick a queue");
+		defaultQueueButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doEnable();
+			}
+		});
 		
-		Label queueLabel = new Label(queueGroup,SWT.NONE);
+		selectQueueButton = new Button(queueGroup,SWT.RADIO);
+		selectQueueButton.setText("Pick a queue");
+		selectQueueButton.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				doEnable();
+			}
+		});
+		
+		queueLabel = new Label(queueGroup,SWT.NONE);
 		queueLabel.setText("Queue:");
 		
-		final Spinner queueSpinner = new Spinner(queueGroup,SWT.BORDER);
+		queueSpinner = new Spinner(queueGroup,SWT.BORDER);
 		queueSpinner.setMaximum(3);
 		queueSpinner.setMinimum(0);
 		
@@ -373,11 +389,22 @@ public class RunReportShell {
 		data.top = new FormAttachment(selectQueueButton);
 		queueSpinner.setLayoutData(data);
 		
+		doEnable();
+		
 		shell.pack();
 		shell.open();
 		shell.setMinimumSize(shell.getSize().x + 100, shell.getSize().y + 50);
 	}
 	
+	private void doEnable(){
+		boolean set = false;
+		
+		if( selectQueueButton.getSelection() )
+			set = true;
+		
+		queueSpinner.setEnabled(set);
+		queueLabel.setEnabled(set);
+	}
 	
 	public void open(){
 		create();
