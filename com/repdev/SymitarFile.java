@@ -12,6 +12,7 @@ public class SymitarFile {
 	private FileType type;
 	private Date modified = new Date(0), installed = new Date(0);
 	private long size = -1;
+	boolean local = false;
 
 	public SymitarFile(String name, FileType type) {
 		this.name = name;

@@ -62,15 +62,6 @@ public class RunReportShell {
 		layout.spacing = 5;
 		promptGroup.setLayout(layout);
 		
-		Group fmGroup = new Group(shell,SWT.NONE);
-		fmGroup.setText("File Maintenance Options");
-		layout = new FormLayout();
-		layout.marginTop = 5;
-		layout.marginBottom = 5;
-		layout.marginLeft = 5;
-		layout.marginRight = 5;
-		layout.spacing = 5;
-		fmGroup.setLayout(layout);
 		
 		Group queueGroup = new Group(shell,SWT.NONE);
 		layout = new FormLayout();
@@ -102,38 +93,6 @@ public class RunReportShell {
 		Button promptButton = new Button(promptGroup,SWT.RADIO);
 		promptButton.setText("Prompt user at run time");
 		promptButton.setSelection(true);
-		
-		final Label titleLabel = new Label(fmGroup,SWT.NONE);
-		titleLabel.setText("Report Title: ");
-		
-		final Label typeLabel = new Label(fmGroup,SWT.NONE);
-		typeLabel.setText("Root File Type: ");
-		
-		final Text titleText = new Text(fmGroup, SWT.BORDER);
-		final Combo typeCombo = new Combo(fmGroup,SWT.READ_ONLY | SWT.DROP_DOWN);
-		
-		Button noFMButton = new Button(fmGroup,SWT.RADIO);
-		noFMButton.setText("Do not run File Maintenance");
-		noFMButton.addSelectionListener( new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e){
-				titleLabel.setEnabled(false);
-				typeLabel.setEnabled(false);
-				titleText.setEnabled(false);
-				typeCombo.setEnabled(false);
-			}
-		});
-		noFMButton.setSelection(true);
-		
-		Button yesFMButton = new Button(fmGroup,SWT.RADIO);
-		yesFMButton.setText("Execute File Maintenance");
-		yesFMButton.addSelectionListener( new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e){
-				titleLabel.setEnabled(true);
-				typeLabel.setEnabled(true);
-				titleText.setEnabled(true);
-				typeCombo.setEnabled(true);
-			}
-		});
 		
 		final Button runButton = new Button(shell,SWT.NONE);
 		runButton.setText("Run Report");
@@ -258,7 +217,7 @@ public class RunReportShell {
 					
 					shell.getDisplay().timerExec(500, new Runnable(){
 						public void run() {
-							if( shell.isDisposed() )
+							if( shell == null || shell.isDisposed() )
 								return;
 							
 							if( RepDevMain.SYMITAR_SESSIONS.get(sym).isSeqRunning(seq) ){
@@ -323,12 +282,6 @@ public class RunReportShell {
 		queueGroup.setLayoutData(data);
 		
 		data = new FormData();
-		data.left = new FormAttachment(0);
-		data.right = new FormAttachment(ioGroup);
-		data.top = new FormAttachment(queueGroup);
-		fmGroup.setLayoutData(data);
-		
-		data = new FormData();
 		data.left = new FormAttachment(promptGroup);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(symText);
@@ -359,39 +312,6 @@ public class RunReportShell {
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(defaultsButton);
 		promptButton.setLayoutData(data);
-		
-		data = new FormData();
-		data.right = new FormAttachment(100);
-		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(0);
-		noFMButton.setLayoutData(data);
-		
-		data = new FormData();
-		data.right = new FormAttachment(100);
-		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(noFMButton);
-		yesFMButton.setLayoutData(data);
-		
-		data = new FormData();
-		data.right = new FormAttachment(100);
-		data.top = new FormAttachment(yesFMButton);
-		titleText.setLayoutData(data);
-		
-		data = new FormData();
-		data.right = new FormAttachment(titleText);
-		data.top = new FormAttachment(yesFMButton);
-		titleLabel.setLayoutData(data);
-		
-		data = new FormData();
-		data.right = new FormAttachment(100);
-		data.left = new FormAttachment(typeLabel);
-		data.top = new FormAttachment(titleText);
-		typeCombo.setLayoutData(data);
-		
-		data = new FormData();
-		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(titleText);
-		typeLabel.setLayoutData(data);
 		
 		data = new FormData();
 		data.left = new FormAttachment(0);
