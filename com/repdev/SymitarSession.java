@@ -117,7 +117,7 @@ public abstract class SymitarSession {
 	public abstract SessionError runBatchFM(String title);
 
 	public abstract ArrayList<PrintItem> getPrintItems( String query, int limit );
-	public abstract ArrayList<PrintItem> getPrintItems( int seq, int limit );
+	public abstract ArrayList<PrintItem> getPrintItems( int seq );
 	
 	/**
 	 * Goes through past several batch output files in print control

@@ -1,6 +1,9 @@
 package com.repdev;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -279,7 +282,7 @@ public class DirectSymitarSession extends SymitarSession {
 	@Override
 	public synchronized ErrorCheckResult errorCheckRepGen(String filename) {
 		Command cur;
-		String error = "";
+		String error = "", errFile = "";
 		int line = -1, column = -1;
 
 		if( !connected )
@@ -301,15 +304,17 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			if( cur.getParameters().get("Warning") != null || cur.getParameters().get("Error") != null){
 				readNextCommand();
-				return new ErrorCheckResult("File does not exist on server!",-1,-1,ErrorCheckResult.Type.ERROR);
+				return new ErrorCheckResult(filename,"File does not exist on server!",-1,-1,ErrorCheckResult.Type.ERROR);
 			}
 			
 			if( cur.getParameters().get("Action").equals("NoError") ){
 				readNextCommand();
-				return new ErrorCheckResult("",-1,-1,ErrorCheckResult.Type.NO_ERROR);
+				return new ErrorCheckResult(filename,"",-1,-1,ErrorCheckResult.Type.NO_ERROR);
 			}
 			
 			if( cur.getParameters().get("Action").equals("Init")){
+				errFile = cur.getParameters().get("FileName");
+				
 			  	while( !(cur=readNextCommand()).getParameters().get("Action").equals("DisplayEdit")){
 			  		if( cur.getParameters().get("Action").equals("FileInfo") )
 			  		{
@@ -324,7 +329,7 @@ public class DirectSymitarSession extends SymitarSession {
 			  	
 			  	readNextCommand();
 			  	
-			  	return new ErrorCheckResult(error.trim(),line,column,ErrorCheckResult.Type.ERROR);  		  	
+			  	return new ErrorCheckResult(errFile,error.trim(),line,column,ErrorCheckResult.Type.ERROR);  		  	
 			}
 		
 		}
@@ -741,7 +746,7 @@ public class DirectSymitarSession extends SymitarSession {
 	@Override
 	public synchronized ErrorCheckResult installRepgen(String filename) {
 		Command cur;
-		String error = "";
+		String error = "", errFile = "";
 		int line = -1, column = -1;
 		
 		try{
@@ -761,7 +766,7 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			if( cur.getParameters().get("Warning") != null || cur.getParameters().get("Error") != null){
 				readNextCommand();
-				return new ErrorCheckResult("File does not exist on server!",-1,-1,ErrorCheckResult.Type.ERROR);
+				return new ErrorCheckResult(filename,"File does not exist on server!",-1,-1,ErrorCheckResult.Type.ERROR);
 			}
 			
 			if( cur.getCommand().equals("SpecfileData") ){
@@ -770,11 +775,13 @@ public class DirectSymitarSession extends SymitarSession {
 				
 				readNextCommand();
 				readNextCommand();
-				return new ErrorCheckResult("",Integer.parseInt(cur.getParameters().get("Size").replace(",", "")),ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY);
+				return new ErrorCheckResult(filename,"",Integer.parseInt(cur.getParameters().get("Size").replace(",", "")),ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY);
 				
 			}
 			
 			if( cur.getParameters().get("Action").equals("Init")){
+				errFile = cur.getParameters().get("FileName");
+				
 			  	while( !(cur=readNextCommand()).getParameters().get("Action").equals("DisplayEdit")){
 			  		if( cur.getParameters().get("Action").equals("FileInfo") )
 			  		{
@@ -789,7 +796,7 @@ public class DirectSymitarSession extends SymitarSession {
 			  	
 			  	readNextCommand();
 			  	
-			  	return new ErrorCheckResult(error.trim(),line,column,ErrorCheckResult.Type.ERROR);  		  	
+			  	return new ErrorCheckResult(errFile,error.trim(),line,column,ErrorCheckResult.Type.ERROR);  		  	
 			}
 		
 		}
@@ -868,31 +875,59 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public synchronized ArrayList<PrintItem> getPrintItems(int seq, int limit) {
+	public synchronized ArrayList<PrintItem> getPrintItems(int seq) {
 		ArrayList<PrintItem> items = new ArrayList<PrintItem>();
+		ArrayList<PrintItem> trimmedItems = new ArrayList<PrintItem>();
 		Command cur;
+		Date maxDate = new Date(0);
 		
 		if( !connected )
 			return null;
 		
 		Command getItems = new Command("File");
 		getItems.getParameters().put("Action", "List");
-		getItems.getParameters().put("MaxCount", String.valueOf(limit));
+		getItems.getParameters().put("MaxCount", "150");
 		getItems.getParameters().put("Query", "BATCH " + seq);
 		getItems.getParameters().put("Type", "Report");
 		
 		write(getItems);
+		log("Requesting batch sequence: " + seq);
 		
 		try {
 			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
-				if( cur.getParameters().get("Sequence") != null )
-					items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),new Date() ));
+				log(cur);
+				
+				if( cur.getParameters().get("Sequence") != null ){
+					try {
+						String dateStr = cur.getParameters().get("Date");
+						Date date = new SimpleDateFormat("MMddyyy").parse(dateStr);
+						
+						items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),date ));
+					} catch (NumberFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+					
 			}
+			
+			for( PrintItem item : items )
+				if( item.getDate().compareTo(maxDate) == 1 )
+					maxDate = item.getDate();
+			
+			for( PrintItem item : items){
+				if( item.getDate().equals(maxDate) )
+					trimmedItems.add(item);
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		return items;
+		return trimmedItems;
 	}
 
 }

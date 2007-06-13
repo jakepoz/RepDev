@@ -165,7 +165,8 @@ public class RepgenParser {
 				errorList.clear();
 
 				// Error check with symitar
-				errorList.add(new Error(file.getName(),RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName())));
+				ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
+				errorList.add(new Error(result));
 
 				// Variable checking
 				 for (final Variable var : lvars) {

@@ -8,6 +8,7 @@ package com.repdev;
  * 
  */
 public class ErrorCheckResult {
+	private String file;
 	private String errorMessage;
 	private int lineNumber;
 	private int column;
@@ -25,14 +26,16 @@ public class ErrorCheckResult {
 
 	}
 
-	public ErrorCheckResult(String errorMessage, int lineNumber, int column, Type type) {
+	public ErrorCheckResult(String file, String errorMessage, int lineNumber, int column, Type type) {
+		this.file = file;
 		this.errorMessage = errorMessage;
 		this.lineNumber = lineNumber;
 		this.column = column;
 		this.type = type;
 	}
 	
-	public ErrorCheckResult(String errorMessage, int installSize, Type type) {
+	public ErrorCheckResult(String file, String errorMessage, int installSize, Type type) {
+		this.file = file;
 		this.errorMessage = errorMessage;
 		this.lineNumber = -1;
 		this.column = -1;
@@ -40,6 +43,14 @@ public class ErrorCheckResult {
 		this.type = type;
 	}
 
+
+	public String getFile() {
+		return file;
+	}
+
+	public void setFile(String file) {
+		this.file = file;
+	}
 
 	public String getErrorMessage() {
 		return errorMessage;

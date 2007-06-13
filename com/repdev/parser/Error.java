@@ -13,8 +13,8 @@ public class Error{
 		ERROR,
 	}
 	
-	public Error(String fileName,ErrorCheckResult result){
-		this.fileName = fileName;
+	public Error(ErrorCheckResult result){
+		this.fileName = result.getFile();
 		line = result.getLineNumber();
 		col = result.getColumn();
 		description = result.getErrorMessage();

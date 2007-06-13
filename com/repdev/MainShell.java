@@ -944,9 +944,9 @@ public class MainShell {
 		tblErrors.addSelectionListener(new SelectionAdapter(){
 			public void widgetDefaultSelected(SelectionEvent e){
 				TableItem item = (TableItem)e.item;
-				SymitarFile file = (SymitarFile)item.getData("file");
 				int sym = (Integer)item.getData("sym");
 				Error error = (Error)item.getData("error");
+				SymitarFile file = new SymitarFile(error.getFile(),FileType.REPGEN);
 				
 				Object o = openFile(file, sym);
 	

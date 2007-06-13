@@ -126,7 +126,7 @@ public class ReportComposite extends Composite {
 		}
 		else
 		{
-			for( PrintItem item : RepDevMain.SYMITAR_SESSIONS.get(sym).getPrintItems(seq, 10)){
+			for( PrintItem item : RepDevMain.SYMITAR_SESSIONS.get(sym).getPrintItems(seq)){
 				TableItem row = new TableItem(table,SWT.NONE);
 				row.setText(0, item.getTitle());
 				row.setText(1, String.valueOf(item.getSeq()));

@@ -190,12 +190,12 @@ public class TestingSymitarSession extends SymitarSession {
 
 	@Override
 	public ErrorCheckResult errorCheckRepGen(String filename) {
-		return new ErrorCheckResult("",-1,ErrorCheckResult.Type.ERROR);
+		return new ErrorCheckResult(filename,"",-1,ErrorCheckResult.Type.ERROR);
 	}
 
 	@Override
 	public ErrorCheckResult installRepgen(String f) {
-		return new ErrorCheckResult("",-1,ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY);
+		return new ErrorCheckResult(f,"",-1,ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY);
 	}
 
 	@Override
@@ -217,7 +217,7 @@ public class TestingSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public ArrayList<PrintItem> getPrintItems(int seq, int limit) {
+	public ArrayList<PrintItem> getPrintItems(int seq) {
 		// TODO Auto-generated method stub
 		return null;
 	}
