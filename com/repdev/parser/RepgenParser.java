@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -22,9 +19,6 @@ import com.repdev.FileType;
 import com.repdev.RepDevMain;
 import com.repdev.SpecialVariables;
 import com.repdev.SymitarFile;
-import com.repdev.DatabaseLayout.DataType;
-import com.repdev.DatabaseLayout.Field;
-import com.repdev.DatabaseLayout.Record;
 
 public class RepgenParser {
 	private StyledText txt;

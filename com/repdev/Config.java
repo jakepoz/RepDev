@@ -1,7 +1,7 @@
 package com.repdev;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Configuration class is serialized at the start/end of the program to store things like syms open, server, and other global config things

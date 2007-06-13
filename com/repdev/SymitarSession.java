@@ -2,12 +2,9 @@ package com.repdev;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
-
-import com.repdev.SymitarSession.PromptListener;
 
 /**
  * Abstract symitar session, allows for several different conneciton methods

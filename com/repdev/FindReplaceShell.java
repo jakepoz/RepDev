@@ -2,16 +2,10 @@ package com.repdev;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -22,7 +16,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.repdev.FileDialog.Mode;
 import com.repdev.parser.RepgenParser;
 
 public class FindReplaceShell {
@@ -249,6 +242,9 @@ public class FindReplaceShell {
 	protected void replaceAll() {
 		init();
 		
+		if( !replace )
+			return;
+		
 		txt.setRedraw(false);
 		
 		if( parser != null)
@@ -272,6 +268,9 @@ public class FindReplaceShell {
 
 	protected boolean replace() {
 		init();
+		
+		if( !replace )
+			return false;
 		
 		String text = txt.getText();
 		String find = findText.getText(), replace = replaceText.getText(), selection = txt.getSelectionText();

@@ -1,6 +1,11 @@
 package com.repdev;
 
-import java.text.DateFormat;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,11 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.*;
 
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
@@ -486,7 +486,7 @@ public class DirectSymitarSession extends SymitarSession {
 	 * 
 	 * The listener object is the best way to ask for prompts while still blocking from other threads.
 	 * 
-	 * TODO:Make it unblock when repgen finishes queueing, then you can periodically poll for if it finished or not.
+	 * 
 	 * This allows for amodal dialogs for running, and also the option to cancel
 	 * Non polling would be nice, but maybe tricky to implement, I will look into it.
 	 */

@@ -1,15 +1,18 @@
 package com.repdev;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.io.*;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
-
-import com.repdev.SymitarSession.PromptListener;
-import com.repdev.SymitarSession.RunRepgenResult;
 
 public class TestingSymitarSession extends SymitarSession {
 	boolean isConnected;
