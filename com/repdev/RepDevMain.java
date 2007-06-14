@@ -56,6 +56,12 @@ public class RepDevMain {
 		// Save off projects
 		ProjectManager.saveAllProjects();
 		saveSettings();
+		
+		//Close all symitar connections
+		for( SymitarSession session : SYMITAR_SESSIONS.values() ){
+			session.disconnect();
+		}
+		
 		display.dispose();
 	}
 

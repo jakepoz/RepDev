@@ -33,7 +33,7 @@ public class DirectSymitarSession extends SymitarSession {
 	BufferedReader in;
 	PrintWriter out;
 	boolean connected = false;
-
+	Thread keepAlive;
 
 	private String log(String str) {
 		System.out.println(str);
@@ -59,7 +59,7 @@ public class DirectSymitarSession extends SymitarSession {
 		try {
 			socket = new Socket(server, 23);
 			socket.setKeepAlive(true);
-
+		
 			// Constant commands, these are the basic telnet establishment
 			// stuffs, which really don't change, so I just send them directly
 			char init1[] = { 0xff, 0xfb, 0x18 };
@@ -112,6 +112,29 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			connected = true;
 			log("Connected to Symitar!");
+			
+			//Establish keepalive timer, every 55 seconds send an empty command
+			keepAlive = new Thread(new Runnable(){
+
+				public void run() {
+					try{
+						while(true){
+							Thread.sleep(55000);
+							log("Keep Alive");
+							wakeUp();
+						}
+					}
+					catch(InterruptedException e){
+						System.out.println("Terminating keepalive thread");
+					}
+					catch(Exception e){
+						e.printStackTrace();
+					}
+				}
+				
+			});
+			keepAlive.start();
+			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			return SessionError.SERVER_NOT_FOUND;
@@ -269,6 +292,8 @@ public class DirectSymitarSession extends SymitarSession {
 			return SessionError.NOT_CONNECTED;
 
 		try {
+			keepAlive.interrupt();
+			
 			in.close();
 			out.close();
 			socket.close();
@@ -279,6 +304,10 @@ public class DirectSymitarSession extends SymitarSession {
 		return null;
 	}
 
+	private synchronized void wakeUp(){
+		write(new Command("WakeUp"));
+	}
+	
 	@Override
 	public synchronized ErrorCheckResult errorCheckRepGen(String filename) {
 		Command cur;
