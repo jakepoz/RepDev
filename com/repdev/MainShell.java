@@ -218,6 +218,8 @@ public class MainShell {
 			item.setData("seq", seq);
 			item.setData("sym", sym);
 
+			item.setImage(RepDevMain.smallReportsImage);
+			
 			editor = new ReportComposite(mainfolder, seq, sym);
 		
 			item.setControl(editor);

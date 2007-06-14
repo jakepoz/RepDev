@@ -714,7 +714,7 @@ public class DirectSymitarSession extends SymitarSession {
 		if (!connected)
 			return SessionError.NOT_CONNECTED;
 
-		log("Savin file: " + file);
+		log("Saving file: " + file);
 		
 		for (int i = 0; i < 6; i++)
 			pad20 += Character.toString((char) 0x20);
