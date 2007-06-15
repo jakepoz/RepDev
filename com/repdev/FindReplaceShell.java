@@ -242,6 +242,9 @@ public class FindReplaceShell {
 	protected void replaceAll() {
 		init();
 		
+		//TODO: WRAP FEATURE CAN REALLY SCREW THINGS UP, EX
+		//REPLACE ANUMBER WITH MYANUMBER WILL KILL IT IF REPLACEALL AND WRAP ARE USED
+		
 		if( !replace )
 			return;
 		
