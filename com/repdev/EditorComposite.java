@@ -481,7 +481,7 @@ public class EditorComposite extends Composite {
 
 		});
 
-		//TODO: Open include files by clicking in them.
+		
 		txt.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				lineHighlight();
@@ -525,7 +525,7 @@ public class EditorComposite extends Composite {
 
 			}
 		});
-
+		
 		txt.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
 				lineHighlight();
@@ -535,6 +535,28 @@ public class EditorComposite extends Composite {
 
 			public void mouseUp(MouseEvent e) {
 				lineHighlight();
+			}
+
+			// TODO: Make double clicking include files work when last line of the file
+			public void mouseDoubleClick(MouseEvent e) {
+				int curLine = txt.getLineAtOffset(txt.getSelection().x);
+				int startOffset = txt.getOffsetAtLine(curLine);
+				int endOffset;
+				String line;
+				
+				endOffset = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, curLine + 1));
+
+				if( endOffset - 1 <= startOffset)
+					line = "";
+				else
+					line = txt.getText(startOffset, endOffset - 1);	
+								
+				if( line.indexOf("#INCLUDE") != -1 ) {
+					String file = line.substring(line.indexOf("\"")+1, line.lastIndexOf("\""));
+					RepDevMain.mainShell.openFile(new SymitarFile(sym, file, FileType.REPGEN));
+				}
+				
+				
 			}
 
 		});
