@@ -51,6 +51,7 @@ public class DirectSymitarSession extends SymitarSession {
 		if( connected )
 			return SessionError.ALREADY_CONNECTED;
 		
+		this.sym = sym;
 		this.server = server;
 		this.aixUsername = aixUsername;
 		this.aixPassword = aixPassword;
