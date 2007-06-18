@@ -97,7 +97,7 @@ public class FileDialog {
 					files.add((SymitarFile) (table.getSelection())[0].getData());
 					shell.close();
 				} else if (mode == Mode.SAVE) {
-					files.add(new SymitarFile(nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+					files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
 					shell.close();
 				}
 			}
@@ -134,7 +134,7 @@ public class FileDialog {
 					files.add((SymitarFile) (table.getItems()[0].getData()));
 					shell.close();
 				} else if (mode == Mode.SAVE && nameText.getText().trim().length() > 0 && !isTemplate()) {
-					files.add(new SymitarFile(nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+					files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
 					shell.close();
 				}
 
@@ -182,7 +182,7 @@ public class FileDialog {
 					}
 					else
 					{
-						files.add(new SymitarFile(nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+						files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
 						shell.close();
 					}
 				}

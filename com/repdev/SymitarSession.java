@@ -132,7 +132,7 @@ public abstract class SymitarSession {
 		Collections.reverse(items);
 		
 		for( PrintItem cur : items){
-			String file = getFile(new SymitarFile("" + cur.getSeq(),FileType.REPORT));
+			String file = new SymitarFile(sym,"" + cur.getSeq(),FileType.REPORT).getData();
 			
 			file = file.substring(file.indexOf("Processing begun on") + 41);
 			String timeStr = file.substring(0,8);

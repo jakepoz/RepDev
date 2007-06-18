@@ -122,7 +122,7 @@ public class TestingSymitarSession extends SymitarSession {
 				name = name.substring(name.indexOf(".") + 1);
 				name = name.substring(0, name.lastIndexOf("."));
 
-				data.add(new SymitarFile(name, type, new Date(current.lastModified()), current.length()));
+				data.add(new SymitarFile(sym,name, type, new Date(current.lastModified()), current.length()));
 			}
 
 		return data;

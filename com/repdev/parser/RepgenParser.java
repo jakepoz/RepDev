@@ -52,10 +52,10 @@ public class RepgenParser {
 	
 	
 
-	public RepgenParser(StyledText txt, SymitarFile file, int sym) {
+	public RepgenParser(StyledText txt, SymitarFile file) {
 		this.txt = txt;
 		this.file = file;
-		this.sym = sym;
+		this.sym = file.getSym();
 	}
 		
 	/**
@@ -77,7 +77,7 @@ public class RepgenParser {
 			ArrayList<Token> tokens = new ArrayList<Token>();
 			String data = "";
 			
-			data = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(new SymitarFile(fileName,FileType.REPGEN));
+			data = new SymitarFile(sym,fileName,FileType.REPGEN).getData();
 			
 			if( data == null )
 				return;

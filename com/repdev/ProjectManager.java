@@ -61,7 +61,7 @@ public class ProjectManager {
 			sb.append("\r\n");
 		}
 
-		RepDevMain.SYMITAR_SESSIONS.get(sym).saveFile(getProjectFile(sym), sb.toString());
+		getProjectFile(sym).saveFile(sb.toString());
 	}
 
 	public static Project createProject(String name, int sym) {
@@ -87,12 +87,12 @@ public class ProjectManager {
 			prefix = session.getUserID();
 
 
-		return new SymitarFile("repdev." + prefix + "projects", FileType.REPGEN);
+		return new SymitarFile(sym,"repdev." + prefix + "projects", FileType.REPGEN);
 	}
 
 	private static void loadProjects(int sym) {
 		ArrayList<Project> myProjs = new ArrayList<Project>();
-		String dataTemp = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(getProjectFile(sym));
+		String dataTemp = getProjectFile(sym).getData();
 		Project curProject = null;
 
 		if (dataTemp == null) {
@@ -111,7 +111,7 @@ public class ProjectManager {
 
 				curProject = new Project(parts[1], sym);
 			} else if (parts[0].equals("FILE")) {
-				curProject.addFile(new SymitarFile(parts[2].trim(), FileType.valueOf(parts[1])));
+				curProject.addFile(new SymitarFile(sym,parts[2].trim(), FileType.valueOf(parts[1])));
 			}
 		}
 

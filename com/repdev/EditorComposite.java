@@ -109,10 +109,10 @@ public class EditorComposite extends Composite {
 		}
 	}
 
-	public EditorComposite(Composite parent, SymitarFile file, int sym) {
+	public EditorComposite(Composite parent, SymitarFile file) {
 		super(parent, SWT.NONE);
 		this.file = file;
-		this.sym = sym;
+		this.sym = file.getSym();
 
 		buildGUI();
 	}
@@ -371,7 +371,7 @@ public class EditorComposite extends Composite {
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
 
 		if (file.getType() == FileType.REPGEN){
-			parser = new RepgenParser(txt, file, sym);
+			parser = new RepgenParser(txt, file);
 			highlighter = new SyntaxHighlighter(parser);
 		}
 		
@@ -624,7 +624,8 @@ public class EditorComposite extends Composite {
 
 		txt.setMenu(contextMenu);
 
-		String str = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(file);
+		String str = file.getData();
+		
 		if (str == null)
 			str = "";
 		txt.setText(str);
@@ -685,7 +686,7 @@ public class EditorComposite extends Composite {
 	}
 	
 	public void saveFile(){
-		RepDevMain.SYMITAR_SESSIONS.get(sym).saveFile(file, txt.getText());
+		file.saveFile(txt.getText());
 		commitUndo();
 		modified = false;
 		updateModified();

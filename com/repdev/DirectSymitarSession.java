@@ -453,7 +453,7 @@ public class DirectSymitarSession extends SymitarSession {
 				break;
 
 			if( current.getParameters().get("Name") != null)
-				toRet.add(new SymitarFile(current.getParameters().get("Name"), type, new Date(0), Integer.parseInt(current.getParameters().get("Size"))));
+				toRet.add(new SymitarFile(sym, current.getParameters().get("Name"), type, new Date(0), Integer.parseInt(current.getParameters().get("Size"))));
 						
 			if(current.getParameters().get("Done") != null)
 				break;

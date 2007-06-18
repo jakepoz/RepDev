@@ -235,9 +235,10 @@ public class MainShell {
 		return null;
 	}
 
-	public Object openFile(SymitarFile file, int sym) {
+	public Object openFile(SymitarFile file) {
 		boolean found = false;
 		Composite editor;
+		int sym = file.getSym();
 		
 		for (CTabItem c : mainfolder.getItems()) {
 			if (c.getData("file") != null && c.getData("file").equals(file) && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
@@ -256,9 +257,9 @@ public class MainShell {
 			item.setData("sym", sym);
 
 			if( file.getType() == FileType.REPORT)
-				editor = new ReportComposite(mainfolder, file, sym);
+				editor = new ReportComposite(mainfolder, file);
 			else
-				editor = new EditorComposite(mainfolder, file, sym);
+				editor = new EditorComposite(mainfolder, file);
 			
 			item.setControl(editor);
 
@@ -284,7 +285,7 @@ public class MainShell {
 			SymitarFile file = (SymitarFile) cur.getData();
 			int sym = ((Project) cur.getParentItem().getData()).getSym();
 
-			openFile(file, sym);
+			openFile(file);
 		} else {
 			doTree(cur);
 		}
@@ -472,8 +473,8 @@ public class MainShell {
 				item.setImage(getFileImage(file));
 			}
 
-			RepDevMain.SYMITAR_SESSIONS.get(getCurrentTreeSym()).saveFile(file, "");
-			openFile(file, getCurrentTreeSym());
+			file.saveFile("");
+			openFile(file);
 			tree.notifyListeners(SWT.Selection, null);
 		}
 	}
@@ -573,8 +574,8 @@ public class MainShell {
 				if (files.size() > 0) {
 					SymitarFile file = files.get(0);
 
-					RepDevMain.SYMITAR_SESSIONS.get(getCurrentTreeSym()).saveFile(file, "");
-					openFile(file, getCurrentTreeSym());
+					file.saveFile("");
+					openFile(file);
 				}
 			}
 		});
@@ -665,7 +666,7 @@ public class MainShell {
 				FileDialog dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeSym());
 
 				for (SymitarFile file : dialog.open())
-					openFile(file, getCurrentTreeSym());
+					openFile(file);
 			}
 
 		});
@@ -855,7 +856,7 @@ public class MainShell {
 		if( !(data instanceof SymitarFile) )
 			return;
 		
-		RunReportShell dialog = new RunReportShell(shell,(SymitarFile)data,getCurrentTreeSym());
+		RunReportShell dialog = new RunReportShell(shell,(SymitarFile)data);
 		dialog.open();
 	}
 
@@ -977,9 +978,9 @@ public class MainShell {
 				TableItem item = (TableItem)e.item;
 				int sym = (Integer)item.getData("sym");
 				Error error = (Error)item.getData("error");
-				SymitarFile file = new SymitarFile(error.getFile(),FileType.REPGEN);
+				SymitarFile file = new SymitarFile(sym,error.getFile(),FileType.REPGEN);
 				
-				Object o = openFile(file, sym);
+				Object o = openFile(file);
 	
 				EditorComposite editor = null;
 				

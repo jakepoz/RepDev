@@ -31,10 +31,10 @@ public class ReportComposite extends Composite {
 	 * @param sym
 	 * @param seq
 	 */
-	public ReportComposite(Composite parent, SymitarFile file, int sym) {
+	public ReportComposite(Composite parent, SymitarFile file) {
 		super(parent, SWT.NONE);
 		this.file = file;
-		this.sym = sym;
+		this.sym = file.getSym();
 		
 		buildGUI();
 	}
@@ -132,7 +132,7 @@ public class ReportComposite extends Composite {
 
 		
 		if( file != null){
-			txt.setText(RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(file));
+			txt.setText(file.getData());
 			
 			TableItem row = new TableItem(table,SWT.NONE);
 			row.setText(0, "");
@@ -167,7 +167,7 @@ public class ReportComposite extends Composite {
 		else
 			item = (PrintItem)table.getSelection()[0].getData();
 		
-		String data = RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(new SymitarFile(String.valueOf(item.getSeq()),FileType.REPORT));
+		String data = new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT).getData();
 		
 		if( data != null)
 			txt.setText( data);

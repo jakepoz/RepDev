@@ -25,11 +25,11 @@ public class RunReportShell {
 	Label queueLabel;
 	Spinner queueSpinner;
 	
-	public RunReportShell(Shell parent, SymitarFile file, int sym) {
+	public RunReportShell(Shell parent, SymitarFile file) {
 		this.parent = parent;
 		display = parent.getDisplay();
 		this.file = file;
-		this.sym = sym;
+		this.sym = file.getSym();
 	}
 	
 	private void create(){
