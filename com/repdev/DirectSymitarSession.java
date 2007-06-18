@@ -94,21 +94,25 @@ public class DirectSymitarSession extends SymitarSession {
 
 			Command current;
 
-			while (!(current = readNextCommand()).getCommand().equals("Input"))
-				;
+			while (!(current = readNextCommand()).getCommand().equals("Input")){
+				log(current);
+				
+				if( current.getCommand().equals("SymLogonError") && current.getParameters().get("Text").contains("Too Many Invalid Password Attempts") )
+					return SessionError.CONSOLE_BLOCKED;
+			}
 
 			log(current.toString());
 
 			write(userID + "\r");
 
 			current = readNextCommand();
-			log(current.getCommand());
+			log("USER RESPONSE: " + current.getCommand());
 
 			if (current.getCommand().equals("SymLogonInvalidUser"))
 				return SessionError.USERID_INVALID;
 			
 			write("\r");
-			log(readNextCommand().toString());
+			readNextCommand();
 			
 			write("\r");
 			log(readNextCommand().toString());
@@ -472,9 +476,46 @@ public class DirectSymitarSession extends SymitarSession {
 		return connected;
 	}
 
+	//TODO: Finish and also add error checking
 	@Override
-	public SessionError printFileLPT(SymitarFile file, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority) {
-		// TODO Auto-generated method stub
+	public SessionError printFileLPT(SymitarFile file, int queue, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority) {
+		if( !connected )
+			return SessionError.NOT_CONNECTED;
+			
+		if( !(file.getType() == FileType.REPORT))
+			return SessionError.INVALID_FILE_TYPE;
+		
+		try {
+			write("mm1" + (char)27); //Managment menu #3- repgen, of course!!
+			
+			while( !readNextCommand().getCommand().equals("Input"))
+				;
+			
+			write("P\r");
+			
+			while( !readNextCommand().getCommand().equals("Input"))
+				;
+			
+			write( file.getName() + "\r");
+			
+			while( !readNextCommand().getCommand().equals("Input"))
+				;
+			
+			write( "\r");
+			
+			while( !readNextCommand().getCommand().equals("Input"))
+				;
+			
+			write( "\r");
+			
+			while( !readNextCommand().getCommand().equals("Input"))
+				;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return SessionError.IO_ERROR;
+		}
+		
 		return null;
 	}
 

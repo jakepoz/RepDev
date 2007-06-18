@@ -180,7 +180,7 @@ public class TestingSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public SessionError printFileLPT(SymitarFile file, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority) {
+	public SessionError printFileLPT(SymitarFile file, int queue, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority) {
 		// TODO Auto-generated method stub
 		return null;
 	}

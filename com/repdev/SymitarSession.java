@@ -167,13 +167,13 @@ public abstract class SymitarSession {
 	 */
 	public abstract ArrayList<SymitarFile> getFileList(FileType type, String search);
 
-	public abstract SessionError printFileLPT(SymitarFile file, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority);
+	public abstract SessionError printFileLPT(SymitarFile file, int queue, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority);
 
 	/**
 	 * Calls the regular print command with default options
 	 */
-	public SessionError printFileLPT(SymitarFile file) {
-		return printFileLPT(file, false, 0, 0, 0, 1, false, false, 4);
+	public SessionError printFileLPT(SymitarFile file, int queue) {
+		return printFileLPT(file, queue, false, 0, 0, 0, 1, false, false, 4);
 	}
 
 	public abstract SessionError printFileTPT(SymitarFile file, int queue);

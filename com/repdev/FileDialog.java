@@ -74,10 +74,10 @@ public class FileDialog {
 
 		typeCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
 
-		for (FileType type : FileType.values())
-			typeCombo.add(type.toString());
-
-		typeCombo.select(FileType.REPGEN.ordinal());
+		typeCombo.add("REPGEN");
+		typeCombo.add("LETTER");
+		typeCombo.add("HELP");
+		typeCombo.select(0);
 
 		table = new Table(shell, (mode == Mode.OPEN ? SWT.MULTI : SWT.SINGLE) | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLinesVisible(false);
