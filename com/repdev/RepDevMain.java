@@ -51,6 +51,9 @@ public class RepDevMain {
 
 			ErrorDialog errorDialog = new ErrorDialog(e);
 			errorDialog.open();
+			
+			display.dispose();
+			System.exit(0);
 		}
 
 		// Save off projects
@@ -63,6 +66,7 @@ public class RepDevMain {
 		}
 		
 		display.dispose();
+		System.exit(0);
 	}
 
 	private static void createImages() {

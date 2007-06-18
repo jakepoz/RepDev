@@ -11,8 +11,6 @@ import java.util.Date;
  * @author poznanja
  *
  */
-
-//TODO: Write these methods!
 public class Util {
 	
 	/**
@@ -39,7 +37,6 @@ public class Util {
 				return new SimpleDateFormat("MMddyyyyHHmm").parse(dateStr);
 			}
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -55,8 +52,13 @@ public class Util {
 	 * @param size
 	 * @return
 	 */
-	public static String getByteStr(int size){
-		return "" + size;
+	public static String getByteStr(long size){
+		if( size < 1024)
+			return "" + size + " byte" + (size == 1 ? "" : "s");
+		else if ( size < 1024 * 1024 )
+			return "" + new DecimalFormat("##0.00").format(size / 1024.) + " kB";
+		else
+			return "" + new DecimalFormat("##0.00").format(size / (1024. * 1024.)) + " MB";
 	}
 	
 }

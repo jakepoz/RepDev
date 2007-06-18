@@ -941,10 +941,9 @@ public class DirectSymitarSession extends SymitarSession {
 				if( cur.getParameters().get("Sequence") != null ){
 					try {
 					   Date date = Util.parseDate(cur.getParameters().get("Date"), cur.getParameters().get("Time"));
-						//Date date = Util.parseDate(cur.getParameters().get("Date"),"");
+						
 						items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),date ));
 					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

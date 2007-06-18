@@ -147,7 +147,7 @@ public class ReportComposite extends Composite {
 				row.setText(0, item.getTitle());
 				row.setText(1, String.valueOf(item.getSeq()));
 				row.setText(2, String.valueOf(item.getPages()));
-				row.setText(3, String.valueOf(item.getSize()));
+				row.setText(3, Util.getByteStr(item.getSize()));
 				row.setText(4, DateFormat.getDateTimeInstance().format(item.getDate()));
 				row.setData(item);
 			}

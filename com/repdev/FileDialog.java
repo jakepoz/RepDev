@@ -262,7 +262,7 @@ public class FileDialog {
 			else
 				item.setImage(0, RepDevMain.smallFileImage);
 			
-			item.setText(1, String.valueOf(cur.getSize()));
+			item.setText(1, Util.getByteStr(cur.getSize()));
 			item.setText(2,DateFormat.getDateTimeInstance().format(cur.getModified()));
 			item.setData(cur);
 		}
