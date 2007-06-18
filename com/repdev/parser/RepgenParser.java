@@ -57,7 +57,8 @@ public class RepgenParser {
 		this.file = file;
 		this.sym = file.getSym();
 	}
-		
+	
+	
 	/**
 	 * Worker class for loading any included files and parsing out their contents
 	 * Currently runs once at opening of the report
@@ -108,7 +109,10 @@ public class RepgenParser {
 		
 		public void run(){	
 			boolean exists = false;
-
+			ArrayList<Token> tempTokens = new  ArrayList<Token>();
+			
+			//TODO: Deep Copy LTokens array for correct multithreading first!! Crashes
+			
 			//Only run next level of parsing on the include files not including the current file
 			//Variables in the current file are handled seperately
 			for( Token tok : ltokens ){
@@ -127,6 +131,7 @@ public class RepgenParser {
 					}
 				}
 			}
+			
 		}
 	}
 	

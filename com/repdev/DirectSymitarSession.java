@@ -10,7 +10,9 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -454,7 +456,8 @@ public class DirectSymitarSession extends SymitarSession {
 				break;
 
 			if( current.getParameters().get("Name") != null)
-				toRet.add(new SymitarFile(sym, current.getParameters().get("Name"), type, new Date(0), Integer.parseInt(current.getParameters().get("Size"))));
+				toRet.add(new SymitarFile(sym, current.getParameters().get("Name"), type, Util.parseDate(current.getParameters().get("Date"), current.getParameters().get("Time")), Integer.parseInt(current.getParameters().get("Size"))));
+		
 						
 			if(current.getParameters().get("Done") != null)
 				break;
@@ -896,14 +899,10 @@ public class DirectSymitarSession extends SymitarSession {
 				
 				if( cur.getParameters().get("Sequence") != null ){
 					try {
-						String dateStr = cur.getParameters().get("Date");
-						Date date = new SimpleDateFormat("MMddyyy").parse(dateStr);
+						Date date = Util.parseDate(cur.getParameters().get("Date"), cur.getParameters().get("Time"));
 						
 						items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),date ));
 					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -941,14 +940,10 @@ public class DirectSymitarSession extends SymitarSession {
 				
 				if( cur.getParameters().get("Sequence") != null ){
 					try {
-						String dateStr = cur.getParameters().get("Date");
-						Date date = new SimpleDateFormat("MMddyyy").parse(dateStr);
-						
+					   Date date = Util.parseDate(cur.getParameters().get("Date"), cur.getParameters().get("Time"));
+						//Date date = Util.parseDate(cur.getParameters().get("Date"),"");
 						items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),date ));
 					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ParseException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -956,12 +951,19 @@ public class DirectSymitarSession extends SymitarSession {
 					
 			}
 			
-			for( PrintItem item : items )
-				if( item.getDate().compareTo(maxDate) == 1 )
+			for( PrintItem item : items ){
+				if( item.getDate().compareTo(maxDate) == 1 || maxDate.getTime() == 0 )
 					maxDate = item.getDate();
+			}
 			
 			for( PrintItem item : items){
-				if( item.getDate().equals(maxDate) )
+				Calendar maxCal = new GregorianCalendar();
+				maxCal.setTime(maxDate);
+				
+				Calendar curCal = new GregorianCalendar();
+				curCal.setTime(item.getDate());
+				
+				if( maxCal.get(Calendar.DAY_OF_YEAR) == curCal.get(Calendar.DAY_OF_YEAR) )
 					trimmedItems.add(item);
 			}
 			

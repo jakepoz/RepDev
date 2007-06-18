@@ -1,5 +1,7 @@
 package com.repdev;
 
+import java.text.DateFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
@@ -113,7 +115,7 @@ public class ReportComposite extends Composite {
 		
 		col = new TableColumn(table,SWT.NONE);
 		col.setText("Date");
-		col.setWidth(100);
+		col.setWidth(150);
 		
 		
 		FormData data = new FormData();
@@ -146,7 +148,7 @@ public class ReportComposite extends Composite {
 				row.setText(1, String.valueOf(item.getSeq()));
 				row.setText(2, String.valueOf(item.getPages()));
 				row.setText(3, String.valueOf(item.getSize()));
-				row.setText(4, item.getDate().toString());
+				row.setText(4, DateFormat.getDateTimeInstance().format(item.getDate()));
 				row.setData(item);
 			}
 		}

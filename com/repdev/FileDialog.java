@@ -1,5 +1,6 @@
 package com.repdev;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -262,7 +263,7 @@ public class FileDialog {
 				item.setImage(0, RepDevMain.smallFileImage);
 			
 			item.setText(1, String.valueOf(cur.getSize()));
-			item.setText(2, cur.getModified().toString());
+			item.setText(2,DateFormat.getDateTimeInstance().format(cur.getModified()));
 			item.setData(cur);
 		}
 

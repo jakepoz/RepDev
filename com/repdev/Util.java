@@ -1,5 +1,8 @@
 package com.repdev;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -21,12 +24,30 @@ public class Util {
 	 * @param time
 	 * @return
 	 */
-	public static Date parseDate( String date, String time){
-		return null;
+	public static Date parseDate( String dateStr, String time){	
+	
+		try {
+			if( time == null || time.trim().equals("") ){
+				return new SimpleDateFormat("MMddyyyy").parse(dateStr);
+			}
+			else{
+				DecimalFormat formatter = new DecimalFormat("0000");
+				time = formatter.format(Integer.parseInt(time));
+				
+				dateStr += time;
+				
+				return new SimpleDateFormat("MMddyyyyHHmm").parse(dateStr);
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 	
 	public static Date parseDate( String date){
-		return parseDate( date, "0" );
+		return parseDate( date, "" );
 	}
 	
 	/**
