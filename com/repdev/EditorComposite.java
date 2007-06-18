@@ -481,6 +481,7 @@ public class EditorComposite extends Composite {
 
 		});
 
+		//TODO: Open include files by clicking in them.
 		txt.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				lineHighlight();
