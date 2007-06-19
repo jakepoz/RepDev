@@ -85,8 +85,10 @@ public class DirectSymitarSession extends SymitarSession {
 			if( temp.indexOf("[c") == -1 ){
 				line = writeLog(aixPassword + "\r", "[c", ":");
 	
-				if (line.indexOf("invalid login") != -1)
-					return SessionError.AIX_LOGIN_WRONG;	
+				if (line.indexOf("invalid login") != -1){
+					disconnect();
+					return SessionError.AIX_LOGIN_WRONG;
+				}
 			}
 
 			writeLog("WINDOWSLEVEL=3\n", "$ ");
@@ -97,8 +99,10 @@ public class DirectSymitarSession extends SymitarSession {
 			while (!(current = readNextCommand()).getCommand().equals("Input")){
 				log(current);
 				
-				if( current.getCommand().equals("SymLogonError") && current.getParameters().get("Text").contains("Too Many Invalid Password Attempts") )
+				if( current.getCommand().equals("SymLogonError") && current.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
+					disconnect();
 					return SessionError.CONSOLE_BLOCKED;
+				}
 			}
 
 			log(current.toString());
@@ -108,8 +112,10 @@ public class DirectSymitarSession extends SymitarSession {
 			current = readNextCommand();
 			log("USER RESPONSE: " + current.getCommand());
 
-			if (current.getCommand().equals("SymLogonInvalidUser"))
+			if (current.getCommand().equals("SymLogonInvalidUser")){
+				disconnect();
 				return SessionError.USERID_INVALID;
+			}
 			
 			write("\r");
 			readNextCommand();
@@ -144,9 +150,11 @@ public class DirectSymitarSession extends SymitarSession {
 			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+			disconnect();
 			return SessionError.SERVER_NOT_FOUND;
 		} catch (IOException e) {
 			e.printStackTrace();
+			disconnect();
 			return SessionError.IO_ERROR;
 		}
 
@@ -295,9 +303,6 @@ public class DirectSymitarSession extends SymitarSession {
 
 	@Override
 	public SessionError disconnect() {
-		if (!connected)
-			return SessionError.NOT_CONNECTED;
-
 		try {
 			keepAlive.interrupt();
 			

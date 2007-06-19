@@ -15,7 +15,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -252,7 +258,7 @@ public class MainShell {
 			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
 
 			item.setText(file.getName());
-			item.setImage(getFileImage(file, sym));
+			item.setImage(getFileImage(file));
 			item.setData("file", file);
 			item.setData("sym", sym);
 
@@ -872,20 +878,47 @@ public class MainShell {
 
 		return sym;
 	}
+	
+	private Image drawSymOverImage(Image img, int sym){
+		Image image = new Image(display, 16, 16);
 
-	private Image getFileImage(SymitarFile file) {
-		return getFileImage(file, -1);
+		GC gc = new GC(image);
+		gc.drawImage(img, 0,0);			
+		gc.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED));
+		gc.setAlpha(254);
+		
+		if( sym < 100){
+			gc.setFont(new Font(Display.getCurrent(),"Courier New",8,SWT.BOLD));
+			gc.drawString(String.valueOf(sym), 16-7*String.valueOf(sym).length(),5,true);
+		}
+		else{
+			gc.setFont(new Font(Display.getCurrent(),"Courier New",7,SWT.BOLD));
+			gc.drawString(String.valueOf(sym), 0,5,true);
+		}
+		gc.dispose();
+		
+		ImageData imageData = image.getImageData();
+		PaletteData palette = new PaletteData(new RGB[] { new RGB(0, 0, 0), new RGB(0xFF, 0xFF, 0xFF), });
+		ImageData maskData = new ImageData(16, 16, 1, palette);
+		Image mask = new Image(display, maskData);
+		gc = new GC(mask);
+		gc.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+		gc.fillRectangle(0,0,16,16);
+		gc.dispose();
+		maskData = mask.getImageData();
+
+		return new Image(display, imageData, maskData);
 	}
 
-	private Image getFileImage(SymitarFile file, int sym) {
+	private Image getFileImage(SymitarFile file) {
 		Image img;
 
 		switch (file.getType()) {
 		case REPGEN:
-			img = RepDevMain.smallRepGenImage;
+			img = drawSymOverImage(RepDevMain.smallRepGenImage, file.getSym());
 			break;
 		default:
-			img = RepDevMain.smallFileImage;
+			img = drawSymOverImage(RepDevMain.smallFileImage, file.getSym());
 		}
 
 		return img;

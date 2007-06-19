@@ -214,6 +214,7 @@ public class SymLoginShell {
 		else{
 			MessageBox dialog = new MessageBox(new Shell(),SWT.OK | SWT.ICON_ERROR);
 			dialog.setText("Error logging into host");
+			dialog.setMessage("Error connecting to server, check network connections");
 			me.result = -1;
 		
 			if( error == SessionError.CONSOLE_BLOCKED)
