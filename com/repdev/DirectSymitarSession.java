@@ -787,6 +787,7 @@ public class DirectSymitarSession extends SymitarSession {
 
 		store.getParameters().put("Name", file.getName());
 
+		wakeUp();
 		write(store);
 
 		try {
