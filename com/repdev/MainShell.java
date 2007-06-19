@@ -324,12 +324,7 @@ public class MainShell {
 				item.setData(sym);
 				new TreeItem(item, SWT.NONE).setText("Loading...");
 			}
-		} else {
-			MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-			dialog.setMessage("Could not connect to symitar server, please set a correct server in the options menu");
-			dialog.setText("Error connecting");
-			dialog.open();
-		}
+		} 
 	}
 
 	private void removeSym() {

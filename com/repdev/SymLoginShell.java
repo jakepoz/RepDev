@@ -206,10 +206,27 @@ public class SymLoginShell {
 		//TODO: Show Errors a lot better!!
 		SessionError error = session.connect(Config.getServer(), aixUsername, aixPassword, sym, userID);
 
-		if (error == SessionError.NONE)
+		
+		if (error == SessionError.NONE){
 			me.result = sym;
-		else
+			return;
+		}
+		else{
+			MessageBox dialog = new MessageBox(new Shell(),SWT.OK | SWT.ICON_ERROR);
+			dialog.setText("Error logging into host");
 			me.result = -1;
+		
+			if( error == SessionError.CONSOLE_BLOCKED)
+				dialog.setMessage("This console has been blocked");
+			else if( error == SessionError.SERVER_NOT_FOUND)
+				dialog.setMessage("Server not found, please check network connections");
+			else if( error == SessionError.USERID_INVALID)
+				dialog.setMessage("Invalid User ID");
+			else if( error == SessionError.AIX_LOGIN_WRONG)
+				dialog.setMessage("AIX Login information is incorrect");
+			
+			dialog.open();
+		}
 	}
 
 	// returns -1 on cancel
