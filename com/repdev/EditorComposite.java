@@ -657,7 +657,7 @@ public class EditorComposite extends Composite {
 
 		save.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				saveFile();
+				saveFile(true);
 			}
 		});
 
@@ -670,7 +670,7 @@ public class EditorComposite extends Composite {
 				dialog.setMessage("Are you sure you want to save this file and install this repgen?");
 				
 				if( dialog.open() == SWT.YES ){
-					saveFile();
+					saveFile(true);
 					ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).installRepgen(file.getName());
 							
 					dialog2 = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | ( result.getType() == ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY ? SWT.ICON_INFORMATION : SWT.ICON_ERROR ));
@@ -708,13 +708,13 @@ public class EditorComposite extends Composite {
 		updateModified();
 	}
 	
-	public void saveFile(){
+	public void saveFile( boolean errorCheck){
 		file.saveFile(txt.getText());
 		commitUndo();
 		modified = false;
 		updateModified();
 		
-		if( parser != null)
+		if( parser != null && errorCheck)
 			parser.errorCheck();
 	}
 	

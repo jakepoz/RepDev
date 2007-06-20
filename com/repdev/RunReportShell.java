@@ -196,6 +196,7 @@ public class RunReportShell {
 						promptLabel.setText(name);
 						promptText.setText("");
 						promptText.setFocus();
+						shell.setDefaultButton(nextPromptButton);
 						
 						shell.layout(true,true);
 						promptReady = false;

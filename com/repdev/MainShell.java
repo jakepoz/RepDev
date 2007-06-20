@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -224,7 +226,7 @@ public class MainShell {
 			item.setData("seq", seq);
 			item.setData("sym", sym);
 
-			item.setImage(RepDevMain.smallReportsImage);
+			item.setImage(drawSymOverImage(RepDevMain.smallReportsImage,sym));
 			
 			editor = new ReportComposite(mainfolder, seq, sym);
 		
@@ -931,6 +933,73 @@ public class MainShell {
 		mainfolder.setLayout(new FillLayout());
 		mainfolder.setSimple(false);
 		
+		Menu tabContextMenu = new Menu(mainfolder);
+		mainfolder.setMenu(tabContextMenu);
+				
+		final MenuItem closeTab = new MenuItem(tabContextMenu,SWT.NONE);
+		closeTab.setText("Close Tab");
+		closeTab.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {		
+				if( mainfolder.getSelectionIndex() != -1){
+					if( confirmClose(mainfolder.getSelection()) ){
+						mainfolder.getSelection().dispose();
+					}
+				}
+			}
+			
+		});
+		
+		final MenuItem closeOthers = new MenuItem(tabContextMenu,SWT.NONE);
+		closeOthers.setText("Close Others");
+		closeOthers.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if( mainfolder.getItems().length > 1){
+	
+					for( CTabItem item : mainfolder.getItems())
+						if( !item.equals(mainfolder.getSelection()))
+							if( confirmClose(item) )
+								item.dispose();
+				
+				}
+			}
+			
+		});
+		
+		final MenuItem closeAll = new MenuItem(tabContextMenu,SWT.NONE);
+		closeAll.setText("Close All");
+		closeAll.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if( mainfolder.getItems().length >= 1){
+	
+					for( CTabItem item : mainfolder.getItems())
+						if( confirmClose(item) )
+							item.dispose();
+				
+				}
+			}
+			
+		});
+
+		tabContextMenu.addMenuListener(new MenuAdapter(){
+
+			@Override
+			public void menuShown(MenuEvent e) {
+				boolean flag = mainfolder.getSelectionIndex() != -1;
+				
+				closeTab.setEnabled(flag);
+				closeAll.setEnabled(flag);
+				
+				closeOthers.setEnabled(mainfolder.getItems().length>1);
+			}
+						
+		});
+		
 		//Make the find/replace box know which thing we are looking through, if the window is open as we switch tabs
 		mainfolder.addSelectionListener( new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
@@ -941,34 +1010,10 @@ public class MainShell {
 			}
 		});
 		
-		mainfolder.addCTabFolder2Listener(new CTabFolder2Listener(){
-
+		mainfolder.addCTabFolder2Listener(new CTabFolder2Adapter(){
 			public void close(CTabFolderEvent event) {
-				event.doit = confirmClose( mainfolder.getSelection() );	
-				
-				if( event.doit && mainfolder.getSelection().getControl() instanceof EditorComposite )
-					for( TableItem item : tblErrors.getItems() )
-						if( item.getData("file").equals(mainfolder.getSelection().getData("file"))  &&  item.getData("sym").equals(mainfolder.getSelection().getData("sym"))  )
-								item.dispose();					
-			
-			}
-
-			public void maximize(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			public void minimize(CTabFolderEvent event) {
-			}
-
-			public void restore(CTabFolderEvent event) {
-			}
-
-			public void showList(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-			
+				event.doit = confirmClose( mainfolder.getSelection() );						
+			}		
 		});
 	}
 
@@ -983,10 +1028,15 @@ public class MainShell {
 			if (result == SWT.CANCEL)
 				return false;
 			else if (result == SWT.YES) {
-				((EditorComposite) item.getControl()).saveFile();
+				((EditorComposite) item.getControl()).saveFile(false);
 			}
 		}
 
+		if( mainfolder.getSelection().getControl() instanceof EditorComposite )
+			for( TableItem tItem : tblErrors.getItems() )
+				if( tItem.getData("file").equals(mainfolder.getSelection().getData("file"))  &&  tItem.getData("sym").equals(mainfolder.getSelection().getData("sym"))  )
+						tItem.dispose();		
+		
 		return true;
 	}
 
