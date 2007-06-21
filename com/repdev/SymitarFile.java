@@ -66,6 +66,12 @@ public class SymitarFile {
 	}
 	
 	public SessionError saveFile(String data){
+		//Note, this is an odd workaround for a symitar issue
+		//Repgens with no newline at the end fail to pass error checks, so
+		//I'm making sure one exists now
+		if( type == FileType.REPGEN && data != null && data.length() > 0 && data.charAt(data.length()-1) != '\n')
+			data += "\n";
+		
 		if( !local )
 			return RepDevMain.SYMITAR_SESSIONS.get(sym).saveFile(this, data);
 		
