@@ -1099,6 +1099,54 @@ public class MainShell {
 			
 		});
 
+		final MenuItem separator = new MenuItem(tabContextMenu, SWT.SEPARATOR );
+		
+		final MenuItem save = new MenuItem(tabContextMenu, SWT.None );
+		save.setText("Save");
+		save.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if( mainfolder.getSelectionIndex() != -1 
+						&& (mainfolder.getSelection().getControl() instanceof EditorComposite) ) {
+					((EditorComposite)mainfolder.getSelection().getControl()).saveFile(true);
+				} else {
+					System.out.println("Error:  Can not save non-EditorComposite File");
+				}
+			}
+		});
+		
+		
+		final MenuItem saveAll = new MenuItem(tabContextMenu,SWT.NONE);
+		saveAll.setText("Save All");
+		saveAll.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if( mainfolder.getItems().length >= 1){
+					for( CTabItem item : mainfolder.getItems()) {
+						if( (item.getControl() instanceof EditorComposite) 
+								&& item.getData("modified") != null && (Boolean) item.getData("modified") ) {
+							System.out.println("Saving file: " + item.getData("file") );
+							((EditorComposite)item.getControl()).saveFile(true);						
+						} 
+					}
+				
+				}
+			}
+			
+		});
+		
+		final MenuItem installRepgen = new MenuItem(tabContextMenu, SWT.NONE);
+		installRepgen.setText("Install");
+		installRepgen.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if( mainfolder.getSelectionIndex() != -1 
+						&& (mainfolder.getSelection().getControl() instanceof EditorComposite) ) {
+					
+					((EditorComposite)mainfolder.getSelection().getControl()).installRepgen(false);					
+				}
+			}
+		});
+		
 		tabContextMenu.addMenuListener(new MenuAdapter(){
 
 			@Override
@@ -1108,7 +1156,17 @@ public class MainShell {
 				closeTab.setEnabled(flag);
 				closeAll.setEnabled(flag);
 				
+				save.setEnabled( (flag 
+						&& (mainfolder.getSelection().getControl() instanceof EditorComposite) 
+						&& mainfolder.getSelection().getData("modified") != null 
+						&& (Boolean) mainfolder.getSelection().getData("modified") ) );
+				
+				saveAll.setEnabled(flag);
+				installRepgen.setEnabled( (flag && (mainfolder.getSelection().getControl() instanceof EditorComposite)) );
+				
 				closeOthers.setEnabled(mainfolder.getItems().length>1);
+				
+				
 			}
 						
 		});
@@ -1408,7 +1466,7 @@ public class MainShell {
 		});
 
 		MenuItem helpAbout = new MenuItem(helpMenu, SWT.PUSH);
-		helpAbout.setText("&About " + RepDevMain.NAMESTR);
+		helpAbout.setText("&About");
 		helpAbout.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
 				showAboutBox();
@@ -1439,11 +1497,7 @@ public class MainShell {
 	}
 
 	private void showAboutBox() {
-		MessageBox dialog = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
-		dialog.setMessage(RepDevMain.NAMESTR);
-		dialog.setText("About");
-
-		dialog.open();
+		AboutBoxShell.show();
 	}
 	
 	public Table getErrorTable(){

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="bin/|dist/|ftptemp/|res/|testdata/" path="" kind="src"/>
-	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"/>
-	<classpathentry sourcepath="swt-win/src.zip" path="swt-win/swt.jar" kind="lib">
+	<classpathentry excluding="bin/|dist/|ftptemp/|res/|testdata/" kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="swt-win/swt.jar" sourcepath="swt-win/src.zip">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="RepDev/swt-win"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry path="" kind="output"/>
+	<classpathentry kind="con" path="SWT_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
 </classpath>

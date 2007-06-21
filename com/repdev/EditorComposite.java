@@ -663,27 +663,7 @@ public class EditorComposite extends Composite {
 
 		install.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(),SWT.YES | SWT.NO | SWT.ICON_QUESTION);
-				MessageBox dialog2 = null;
-				
-				dialog.setText("Confirm Repgen Installation");
-				dialog.setMessage("Are you sure you want to save this file and install this repgen?");
-				
-				if( dialog.open() == SWT.YES ){
-					saveFile(true);
-					ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).installRepgen(file.getName());
-							
-					dialog2 = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | ( result.getType() == ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY ? SWT.ICON_INFORMATION : SWT.ICON_ERROR ));
-					dialog2.setText("Installation Result");
-					
-					if( result.getType() != ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY )
-						dialog2.setMessage("Error Installing Repgen: \n" + result.getErrorMessage());
-					else
-						dialog2.setMessage("Repgen Installed, Size: " + result.getInstallSize());
-					
-					dialog2.open();
-				}
-				
+				installRepgen(true);				
 			}
 		});
 
@@ -708,7 +688,7 @@ public class EditorComposite extends Composite {
 		updateModified();
 	}
 	
-	public void saveFile( boolean errorCheck){
+	public void saveFile( boolean errorCheck ){
 		file.saveFile(txt.getText());
 		commitUndo();
 		modified = false;
@@ -731,6 +711,30 @@ public class EditorComposite extends Composite {
 					cur.setData("modified", false);
 					cur.setText(cur.getText().substring(0,cur.getText().length() - 2));
 				}
+	}
+	
+	public void installRepgen(boolean confirm) {
+		MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(),SWT.YES | SWT.NO | SWT.ICON_QUESTION);
+		MessageBox dialog2 = null;
+		
+		dialog.setText("Confirm Repgen Installation");
+		dialog.setMessage("Are you sure you want to save this file and install this repgen?");
+		
+
+		if( !confirm || dialog.open() == SWT.YES ){
+			if(modified) saveFile(true);
+			ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).installRepgen(file.getName());
+					
+			dialog2 = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | ( result.getType() == ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY ? SWT.ICON_INFORMATION : SWT.ICON_ERROR ));
+			dialog2.setText("Installation Result");
+			
+			if( result.getType() != ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY )
+				dialog2.setMessage("Error Installing Repgen: \n" + result.getErrorMessage());
+			else
+				dialog2.setMessage("Repgen Installed, Size: " + result.getInstallSize());
+			
+			dialog2.open();
+		}
 	}
 
 	public RepgenParser getParser() {
