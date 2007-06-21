@@ -50,7 +50,6 @@ public class RepgenParser {
 		db = DatabaseLayout.getInstance();
 	}
 	
-	
 
 	public RepgenParser(StyledText txt, SymitarFile file) {
 		this.txt = txt;
@@ -83,7 +82,7 @@ public class RepgenParser {
 			if( data == null )
 				return;
 			
-			parse(fileName, data, 0, data.length(), 0, tokens, new ArrayList<Variable>(),null);
+			parse(fileName, data, 0, data.length(), 0, tokens, new ArrayList<Token>(), new ArrayList<Variable>(),null);
 			
 			for( Token tok : tokens ){
 				tok.setInDefs(true);
@@ -111,11 +110,21 @@ public class RepgenParser {
 			boolean exists = false;
 			ArrayList<Token> tempTokens = new  ArrayList<Token>();
 			
-			//TODO: Deep Copy LTokens array for correct multithreading first!! Crashes
+			
+			for( Token tok : ltokens){
+				tempTokens.add(new Token(tok));
+			}
+			
+			int i = 0;
+			
+			for( Token tok : tempTokens){
+				tok.setNearTokens(tempTokens, i);
+				i++;
+			}
 			
 			//Only run next level of parsing on the include files not including the current file
 			//Variables in the current file are handled seperately
-			for( Token tok : ltokens ){
+			for( Token tok : tempTokens ){
 				if( tok.getStr().equals("#include") && tok.getAfter() != null && tok.inDefs() && tok.getCDepth() == 0){
 					String fileName = getFullString(tok.getAfter(),text);
 					
@@ -258,7 +267,7 @@ public class RepgenParser {
 	 * @param txt
 	 * @return
 	 */
-	private boolean parse(String filename, String str, int start, int end, int oldend, ArrayList<Token> tokens, ArrayList<Variable> vars, StyledText txt) {
+	private synchronized boolean parse(String filename, String str, int start, int end, int oldend, ArrayList<Token> tokens, ArrayList<Token> lasttokens, ArrayList<Variable> vars, StyledText txt) {
 		boolean allDefs = true, redrawAll = false;
 		lasttokens.clear();
 		
@@ -715,7 +724,7 @@ public class RepgenParser {
 			long time = System.currentTimeMillis();
 	
 			try {
-				parse(file.getName(), txt.getText(), st, end, oldend, ltokens, lvars, txt);
+				parse(file.getName(), txt.getText(), st, end, oldend, ltokens, lasttokens, lvars, txt);
 				
 				for( Token cur : lasttokens)
 					if( cur.inDefs() )
@@ -758,7 +767,7 @@ public class RepgenParser {
 	public void reparseAll() {
 		try {
 			ltokens = new ArrayList<Token>();
-			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, ltokens, lvars, txt);
+			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, ltokens, lasttokens, lvars, txt);
 			rebuildVars(file.getName(), txt.getText(), ltokens);
 
 			System.out.println("Reparsed");

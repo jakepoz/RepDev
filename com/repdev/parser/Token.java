@@ -24,6 +24,25 @@ public class Token {
 		this.afterDate = afterDate;
 		this.inDefs = inDefs;
 	}
+	
+	/**
+	 * Provided for making deep copies of tokens for the background processors
+	 * @param old
+	 */
+	public Token( Token old ){
+		if( old == null)
+		  return;
+		
+		this.str = old.str;
+		this.pos = old.pos;
+		this.commentDepth = old.commentDepth;
+		this.afterDepth = old.afterDepth;
+		this.inString = old.inString;
+		this.afterString = old.afterString;
+		this.inDate = old.inDate;
+		this.afterDate = old.afterDate;
+		this.inDefs = old.inDefs;
+	}
 
 	public void setNearTokens(ArrayList<Token> tokens, int mypos) {
 		after = null;
