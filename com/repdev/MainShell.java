@@ -1122,16 +1122,7 @@ public class MainShell {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( mainfolder.getItems().length >= 1){
-					for( CTabItem item : mainfolder.getItems()) {
-						if( (item.getControl() instanceof EditorComposite) 
-								&& item.getData("modified") != null && (Boolean) item.getData("modified") ) {
-							System.out.println("Saving file: " + item.getData("file") );
-							((EditorComposite)item.getControl()).saveFile(true);						
-						} 
-					}
-				
-				}
+				saveAllRepgens();
 			}
 			
 		});
@@ -1143,7 +1134,7 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() != -1 
 						&& (mainfolder.getSelection().getControl() instanceof EditorComposite) ) {
 					
-					((EditorComposite)mainfolder.getSelection().getControl()).installRepgen(false);					
+					((EditorComposite)mainfolder.getSelection().getControl()).installRepgen(true);					
 				}
 			}
 		});
@@ -1512,4 +1503,18 @@ public class MainShell {
 	private void close() {
 		shell.dispose();
 	}
+	
+	public void saveAllRepgens() {
+		if( mainfolder.getItems().length >= 1){
+			for( CTabItem item : mainfolder.getItems()) {
+				if( (item.getControl() instanceof EditorComposite) 
+						&& item.getData("modified") != null && (Boolean) item.getData("modified") ) {
+					System.out.println("Saving file: " + item.getData("file") );
+					((EditorComposite)item.getControl()).saveFile(true);						
+				} 
+			}
+		
+		}
+	}
+	
 }

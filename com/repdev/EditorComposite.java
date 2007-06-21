@@ -508,11 +508,24 @@ public class EditorComposite extends Composite {
 					case 'F':
 						RepDevMain.mainShell.showFindWindow();
 						break;
+						
+					case 'd':
+					case 'D':
+						installRepgen(false); // install without confirmation
+						break;						
+					}
+				} else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
+					switch(e.keyCode) {
+					case 's':
+					case 'S':
+						RepDevMain.mainShell.saveAllRepgens();
 					}
 				}
 				else{
 					if( e.keyCode == SWT.F3 )
 						RepDevMain.mainShell.findNext();
+					if( e.keyCode == SWT.F8 )
+						installRepgen(true);
 				}
 				
 
