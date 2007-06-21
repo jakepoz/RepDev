@@ -644,6 +644,7 @@ public class MainShell {
 				
 				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 				
+				//FIXME: This whole thing only works if the last run is the current date
 				if( seqs != null && seqs.size() > 0){
 					openFile(seqs.get(0), file.getSym());
 				}

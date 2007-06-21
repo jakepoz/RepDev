@@ -484,6 +484,8 @@ public class DirectSymitarSession extends SymitarSession {
 	//TODO: Finish and also add error checking
 	@Override
 	public SessionError printFileLPT(SymitarFile file, int queue, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority) {
+		Command cur;
+		
 		if( !connected )
 			return SessionError.NOT_CONNECTED;
 			
@@ -493,28 +495,68 @@ public class DirectSymitarSession extends SymitarSession {
 		try {
 			write("mm1" + (char)27); //Managment menu #3- repgen, of course!!
 			
-			while( !readNextCommand().getCommand().equals("Input"))
-				;
-			
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+
 			write("P\r");
 			
-			while( !readNextCommand().getCommand().equals("Input"))
-				;
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
 			
 			write( file.getName() + "\r");
 			
-			while( !readNextCommand().getCommand().equals("Input"))
-				;
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
 			
 			write( "\r");
 			
-			while( !readNextCommand().getCommand().equals("Input"))
-				;
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+			
+			write( queue + "\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
 			
 			write( "\r");
 			
-			while( !readNextCommand().getCommand().equals("Input"))
-				;
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+			
+			write( "0\r");
+			
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+			
+			write("0\r");
+
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+
+			write("0\r");
+
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+
+			write("1\r");
+
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+
+			write("1\r");
+
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+
+			write("0\r");
+
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+			
+			write("4\r");
+
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
 			
 		} catch (IOException e) {
 			e.printStackTrace();

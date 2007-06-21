@@ -4,18 +4,22 @@ import java.text.DateFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -117,12 +121,15 @@ public class ReportComposite extends Composite {
 		col.setText("Date");
 		col.setWidth(150);
 		
+		col = new TableColumn(table,SWT.NONE);
+		col.setText("Options");
+		col.setWidth(200);
 		
 		FormData data = new FormData();
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(0);
-		data.height = 40;
+		data.height = 48;
 		table.setLayoutData(data);
 
 		FormData frmTxt = new FormData();
@@ -142,13 +149,35 @@ public class ReportComposite extends Composite {
 		}
 		else
 		{
-			for( PrintItem item : RepDevMain.SYMITAR_SESSIONS.get(sym).getPrintItems(seq)){
+			for( final PrintItem item : RepDevMain.SYMITAR_SESSIONS.get(sym).getPrintItems(seq)){
 				TableItem row = new TableItem(table,SWT.NONE);
 				row.setText(0, item.getTitle());
 				row.setText(1, String.valueOf(item.getSeq()));
 				row.setText(2, String.valueOf(item.getPages()));
 				row.setText(3, Util.getByteStr(item.getSize()));
 				row.setText(4, DateFormat.getDateTimeInstance().format(item.getDate()));
+				
+				TableEditor editor = new TableEditor(table);
+				editor.grabHorizontal=true;
+				editor.grabVertical=true;
+				
+				Composite labelComposite = new Composite(table,SWT.NONE);
+				labelComposite.setLayout(new FillLayout());
+				
+				Link printLPT = new Link(labelComposite,SWT.NONE);
+				printLPT.setText("<a>Print LPT</a>");
+				printLPT.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+				printLPT.addSelectionListener(new SelectionAdapter(){
+
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						RepDevMain.SYMITAR_SESSIONS.get(sym).printFileLPT(new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT), 1200);
+					}
+					
+				});
+				
+				editor.setEditor(labelComposite, row, 5);
+				
 				row.setData(item);
 			}
 		}
