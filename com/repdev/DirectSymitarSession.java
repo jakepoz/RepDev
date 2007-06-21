@@ -932,6 +932,8 @@ public class DirectSymitarSession extends SymitarSession {
 		if( !connected )
 			return null;
 		
+		limit = Math.min(40, limit);
+		
 		Command getItems = new Command("File");
 		getItems.getParameters().put("Action", "List");
 		getItems.getParameters().put("MaxCount", "50");

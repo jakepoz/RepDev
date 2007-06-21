@@ -122,10 +122,11 @@ public abstract class SymitarSession {
 	 * if it's -1, then finds last couple
 	 * @param reportName
 	 * @param time
+	 * @param limit TODO
 	 * @return
 	 */
-	public ArrayList<Integer> getReportSeqs( String reportName, int time ){
-		ArrayList<PrintItem> items = getPrintItems("REPWRITER", 10);
+	public ArrayList<Integer> getReportSeqs( String reportName, int time, int search, int limit){
+		ArrayList<PrintItem> items = getPrintItems("REPWRITER", search);
 		ArrayList<Integer> newItems = new ArrayList<Integer>();
 		
 		//More than likely, if we are looking for anything, it will be the newest one first
@@ -151,7 +152,7 @@ public abstract class SymitarSession {
 				newItems.add(cur.getBatchSeq());
 				
 				//If we have matched it, then we are done
-				if( time != -1 )
+				if( time != -1 || newItems.size() >= limit )
 					break;
 			}
 		}

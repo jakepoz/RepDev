@@ -28,10 +28,13 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -620,17 +623,127 @@ public class MainShell {
 			}
 		});
 		
-		MenuItem runFMReport = new MenuItem(runMenu,SWT.NONE);
-		runFMReport.setText("Run Report with FM");
-		runFMReport.setImage(RepDevMain.smallRunFMImage);
 		
 		MenuItem openLastReport = new MenuItem(runMenu,SWT.NONE);
 		openLastReport.setText("Open Last Report Run");
 		openLastReport.setImage(RepDevMain.smallFileOpenImage);
+		openLastReport.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Object data = tree.getSelection()[0].getData();
+				
+				if( !(data instanceof SymitarFile) )
+					return;
+				
+				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
+				
+				SymitarFile file = (SymitarFile)data;
+				
+				ArrayList<Integer> seqs = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getReportSeqs(file.getName(), -1, 40,1);
+				
+				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+				
+				if( seqs != null && seqs.size() > 0){
+					openFile(seqs.get(0), file.getSym());
+				}
+				else
+				{
+					MessageBox dialog = new MessageBox(shell,SWT.OK | SWT.ICON_ERROR);
+					dialog.setMessage("This report was not found within the last 40 REPWRITER jobs");
+					dialog.setText("Report Not Found");
+					dialog.open();
+				}			
+				
+			}
+			
+		});
 		
 		MenuItem findReport = new MenuItem(runMenu,SWT.NONE);
 		findReport.setText("Find runs in Print History");
 		findReport.setImage(RepDevMain.smallFindImage);
+		findReport.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Object obj = tree.getSelection()[0].getData();
+				
+				if( !(obj instanceof SymitarFile) )
+					return;
+				
+				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
+				
+				SymitarFile file = (SymitarFile)obj;
+				
+				ArrayList<Integer> seqs = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getReportSeqs(file.getName(), -1, 40,1);
+				
+				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+				
+				if( seqs != null && seqs.size() > 0){
+					//TODO: Finish this mess
+					//Create mini shell to pick report
+					Shell dialog = new Shell(shell,SWT.SHELL_TRIM);
+					FormLayout layout = new FormLayout();
+					layout.marginTop = 5;
+					layout.marginBottom = 5;
+					layout.marginLeft = 5;
+					layout.marginRight = 5;
+					layout.spacing = 5;
+					dialog.setLayout(layout);
+					
+					FormData data;
+					dialog.setText("Please select which report run to view");
+					
+					Label label = new Label(dialog,SWT.NONE);
+					label.setText("Report Run: ");
+					data = new FormData();
+					data.top = new FormAttachment(0);
+					data.left = new FormAttachment(0);
+					label.setLayoutData(data);
+					
+					Combo combo = new Combo(dialog,SWT.READ_ONLY);
+					data = new  FormData();
+					data.top = new FormAttachment(0);
+					data.left = new FormAttachment(label);
+					data.right = new  FormAttachment(100);
+					combo.setLayoutData(data);
+					
+					for(int seq : seqs)
+						combo.add("Sequence: " + seq);
+					
+					combo.select(0);
+					
+					
+					Button cancelButton = new Button(dialog,SWT.PUSH);
+					cancelButton.setText("Cancel");
+					data = new FormData();
+					//data.right = new FormAttachment(100);
+					data.bottom = new FormAttachment(100);
+					cancelButton.setData(data);
+					
+					/*Button okButton = new Button(dialog,SWT.PUSH);
+					okButton.setText("Ok");
+					data = new FormData();
+					data.right = new FormAttachment(cancelButton);
+					data.top = new FormAttachment(combo);
+					okButton.setLayoutData(data);*/
+					
+
+					dialog.layout(true,true);
+					dialog.pack();
+					dialog.open();
+				}
+				else
+				{
+					MessageBox dialog = new MessageBox(shell,SWT.OK | SWT.ICON_ERROR);
+					dialog.setMessage("This report was not found within the last 40 REPWRITER jobs");
+					dialog.setText("Report Not Found");
+					dialog.open();
+				}			
+				
+			}
+			
+		});
 		
 
 		new MenuItem(treeMenu, SWT.SEPARATOR);
