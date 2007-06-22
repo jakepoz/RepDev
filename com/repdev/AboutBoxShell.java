@@ -32,6 +32,9 @@ public class AboutBoxShell {
 	 */
 	private void createSShell() {
 				
+		GridData gridData11 = new GridData();
+		gridData11.grabExcessHorizontalSpace = true;
+		gridData11.grabExcessVerticalSpace = false;
 		GridData gridData1 = new GridData();
 		gridData1.horizontalAlignment = GridData.FILL;
 		gridData1.verticalSpan = 2;
@@ -51,7 +54,8 @@ public class AboutBoxShell {
 		
 		logo = new Label(sShell, SWT.NONE);
 		logo.setText("");
-		logo.setImage(new Image(null, RepDevMain.IMAGE_DIR + "about-logo.PNG" ));
+		logo.setLayoutData(gridData11);
+		logo.setImage(new Image(null, RepDevMain.IMAGE_DIR + "repdev_logo.png" ));
 		aboutVersion = new Label(sShell, SWT.NONE);
 		aboutVersion.setBackground(null);
 		aboutVersion.setLayoutData(gridData);
