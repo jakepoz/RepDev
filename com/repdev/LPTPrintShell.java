@@ -242,7 +242,14 @@ public class LPTPrintShell {
 				result = true;
 				
 				//TODO: Error checking and rest of fields + result dialog
-				SessionError result = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).printFileLPT(file, Integer.parseInt(queueText.getText()), false, 0, Integer.parseInt(startText.getText()), Integer.parseInt(endText.getText()), Integer.parseInt(copiesText.getText()), landscapeCombo.getSelectionIndex()==1, duplexCombo.getSelectionIndex() == 1, Integer.parseInt(priorityText.getText()));
+			
+				SessionError result = SessionError.INPUT_ERROR;
+				
+				try {
+					result = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).printFileLPT(file, Integer.parseInt(queueText.getText()), false, 0, Integer.parseInt(startText.getText()), Integer.parseInt(endText.getText()), Integer.parseInt(copiesText.getText()), landscapeCombo.getSelectionIndex()==1, duplexCombo.getSelectionIndex() == 1, Integer.parseInt(priorityText.getText()));
+				} catch (NumberFormatException e1) {
+					
+				}
 				
 				if( result != SessionError.NONE){
 					MessageBox dialog = new MessageBox(shell,SWT.OK | SWT.ICON_ERROR);
