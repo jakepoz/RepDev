@@ -568,15 +568,21 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			write("4\r");
 
-			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+			while( !(cur = readNextCommand()).getCommand().equals("Input")){
 				log(cur);
+				
+				if( cur.getCommand().equals("MsgDlg") && cur.getParameters().get("Type").equals("Error") ){
+					 wakeUp();
+					 return SessionError.INPUT_ERROR;
+				}
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return SessionError.IO_ERROR;
 		}
 		
-		return null;
+		return SessionError.NONE;
 	}
 
 	@Override

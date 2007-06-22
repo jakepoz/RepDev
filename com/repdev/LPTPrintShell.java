@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -241,7 +242,14 @@ public class LPTPrintShell {
 				result = true;
 				
 				//TODO: Error checking and rest of fields + result dialog
-				RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).printFileLPT(file, Integer.parseInt(queueText.getText()), false, 0, Integer.parseInt(startText.getText()), Integer.parseInt(endText.getText()), Integer.parseInt(copiesText.getText()), landscapeCombo.getSelectionIndex()==1, duplexCombo.getSelectionIndex() == 1, Integer.parseInt(priorityText.getText()));
+				SessionError result = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).printFileLPT(file, Integer.parseInt(queueText.getText()), false, 0, Integer.parseInt(startText.getText()), Integer.parseInt(endText.getText()), Integer.parseInt(copiesText.getText()), landscapeCombo.getSelectionIndex()==1, duplexCombo.getSelectionIndex() == 1, Integer.parseInt(priorityText.getText()));
+				
+				if( result != SessionError.NONE){
+					MessageBox dialog = new MessageBox(shell,SWT.OK | SWT.ICON_ERROR);
+					dialog.setText("Print Error");
+					dialog.setMessage(result.toString());
+					dialog.open();
+				}
 				
 				shell.dispose();
 			}			

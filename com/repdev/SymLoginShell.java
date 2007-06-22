@@ -203,9 +203,7 @@ public class SymLoginShell {
 			return;
 		}
 
-		//TODO: Show Errors a lot better!!
 		SessionError error = session.connect(Config.getServer(), aixUsername, aixPassword, sym, userID);
-
 		
 		if (error == SessionError.NONE){
 			me.result = sym;
