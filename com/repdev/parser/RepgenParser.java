@@ -598,7 +598,7 @@ public class RepgenParser {
 		}
 	}
 	
-	private void rebuildVars(String fileName, String data, ArrayList<Token> tokens) {
+	private synchronized void rebuildVars(String fileName, String data, ArrayList<Token> tokens) {
 		ArrayList<Variable> newvars = new ArrayList<Variable>();
 		ArrayList<Variable> oldvars = new ArrayList<Variable>();
 			

@@ -735,9 +735,14 @@ public class EditorComposite extends Composite {
 		
 
 		if( !confirm || dialog.open() == SWT.YES ){
+			getShell().setCursor(getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
+			
 			if(modified) saveFile(true);
 			ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).installRepgen(file.getName());
-					
+			
+			getShell().setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+			
+			
 			dialog2 = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | ( result.getType() == ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY ? SWT.ICON_INFORMATION : SWT.ICON_ERROR ));
 			dialog2.setText("Installation Result");
 			

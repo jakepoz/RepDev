@@ -122,9 +122,11 @@ public abstract class SymitarSession {
 	 * if it's -1, then finds last couple
 	 * @param reportName
 	 * @param time
-	 * @param limit TODO
+	 * @param limit
 	 * @return
 	 */
+	
+	//TODO: Do not take a time, but a regular Date object
 	public ArrayList<Integer> getReportSeqs( String reportName, int time, int search, int limit){
 		ArrayList<PrintItem> items = getPrintItems("REPWRITER", search);
 		ArrayList<Integer> newItems = new ArrayList<Integer>();
