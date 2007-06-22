@@ -139,7 +139,7 @@ public class RepDevMain {
 		} catch (ClassCastException e) {
 			System.out.println("FILE OUT OF DATE!");
 		} catch (IOException e) {
-			System.out.println("Could not load data file.");
+			System.out.println("Creating data file for the first time.");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

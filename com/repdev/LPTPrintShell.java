@@ -61,7 +61,12 @@ public class LPTPrintShell {
 		queueText.setText("0");
 		queueText.selectAll();
 		
-		Text lengthText = new Text(shell,SWT.BORDER);
+		final Combo overrideCombo = new Combo(shell,SWT.READ_ONLY);
+		overrideCombo.add("No");
+		overrideCombo.add("Yes");
+		overrideCombo.select(0);
+		
+		final Text lengthText = new Text(shell,SWT.BORDER);
 		lengthText.setText("0");
 		
 		final Text startText = new Text(shell,SWT.BORDER);
@@ -73,9 +78,6 @@ public class LPTPrintShell {
 		final Text copiesText = new Text(shell,SWT.BORDER);
 		copiesText.setText("1");
 		
-		final Text priorityText = new Text(shell,SWT.BORDER);
-		priorityText.setText("4");
-		
 		final Combo landscapeCombo = new Combo(shell,SWT.READ_ONLY);
 		landscapeCombo.add("No");
 		landscapeCombo.add("Yes");
@@ -86,10 +88,10 @@ public class LPTPrintShell {
 		duplexCombo.add("Yes");
 		duplexCombo.select(0);
 		
-		Combo overrideCombo = new Combo(shell,SWT.READ_ONLY);
-		overrideCombo.add("No");
-		overrideCombo.add("Yes");
-		overrideCombo.select(0);
+		
+		final Text priorityText = new Text(shell,SWT.BORDER);
+		priorityText.setText("4");
+		
 		
 		Button okButton = new Button(shell,SWT.PUSH);
 		okButton.setText("Print");
