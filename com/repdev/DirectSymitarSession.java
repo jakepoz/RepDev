@@ -481,7 +481,7 @@ public class DirectSymitarSession extends SymitarSession {
 		return connected;
 	}
 
-	//TODO: Finish and also add error checking
+	//TODO: Add more error checking
 	@Override
 	public SessionError printFileLPT(SymitarFile file, int queue, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority) {
 		Command cur;
@@ -515,40 +515,53 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			write( queue + "\r");
 			
-			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+			while( !(cur = readNextCommand()).getCommand().equals("Input")){
 				log(cur);
+				
+				if( cur.getCommand().equals("MsgDlg") && cur.getParameters().get("Type").equals("Error") ){
+					 wakeUp();
+					 return SessionError.INVALID_QUEUE;
+				}
+			}
 			
 			write( "\r");
 			
 			while( !(cur = readNextCommand()).getCommand().equals("Input"))
 				log(cur);
 			
-			write( "0\r");
+			write( (formsOverride ? "1" : "0")+ "\r");
 			
 			while( !(cur = readNextCommand()).getCommand().equals("Input"))
 				log(cur);
 			
-			write("0\r");
+			if( formsOverride ){
+				write( formLength + "\r");
+
+				while( !(cur = readNextCommand()).getCommand().equals("Input"))
+					log(cur);
+			}
+			
+			write( startPage + "\r");
 
 			while( !(cur = readNextCommand()).getCommand().equals("Input"))
 				log(cur);
 
-			write("0\r");
+			write( endPage + "\r");
 
 			while( !(cur = readNextCommand()).getCommand().equals("Input"))
 				log(cur);
 
-			write("1\r");
+			write( copies + "\r");
 
 			while( !(cur = readNextCommand()).getCommand().equals("Input"))
 				log(cur);
 
-			write("1\r");
+			write( (landscape ? "1" : "0") + "\r");
 
 			while( !(cur = readNextCommand()).getCommand().equals("Input"))
 				log(cur);
-
-			write("0\r");
+			
+			write( (duplex ? "1" : "0") + "\r");
 
 			while( !(cur = readNextCommand()).getCommand().equals("Input"))
 				log(cur);

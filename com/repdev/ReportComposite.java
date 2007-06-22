@@ -171,7 +171,7 @@ public class ReportComposite extends Composite {
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						RepDevMain.SYMITAR_SESSIONS.get(sym).printFileLPT(new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT), 1200);
+						LPTPrintShell.print(getDisplay(), getShell(), new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT));
 					}
 					
 				});

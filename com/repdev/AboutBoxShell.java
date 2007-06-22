@@ -77,7 +77,7 @@ public class AboutBoxShell {
 		  +"Credits:\n"
 		  +"  Jake Poznanski - Programmer/Project Head\n"
 		  +"  Ryan Schultz   - Programmer\n"
-		  +"  That One Guy   - Documentation\n";
+		  +"  Michael Webb   - Documentation\n";
 		
 		aboutText += "\n";		
 		aboutTextBox.setText(aboutText);
