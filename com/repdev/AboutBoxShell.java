@@ -69,6 +69,7 @@ public class AboutBoxShell {
 		String aboutText = 
 		   "RepDev (" + RepDevMain.VERSION + ")\n"
 		  +"(c) 2007\n"
+		  +"  http://repdev.org/\n"
 		  +"\n"
 		  +"RepDev is a community based free IDE for use writing\n"
 		  +"RepGens for Symitar systems.  It is ment to be an\n"
