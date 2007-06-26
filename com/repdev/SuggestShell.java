@@ -58,6 +58,8 @@ public class SuggestShell {
 	private boolean update() {
 		String tokenStr = "";
 		
+		//TODO, close this window if we lose focus off the styled text, and some other things I might have mised.
+		
 		Point loc = shell.getDisplay().map(txt, null, txt.getLocationAtOffset(txt.getCaretOffset()));
 		loc.x += 5;
 		loc.y += 20;
