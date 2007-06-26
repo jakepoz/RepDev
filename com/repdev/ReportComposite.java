@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-public class ReportComposite extends Composite {
+public class ReportComposite extends Composite implements TabTextView{
 	private StyledText txt;
 	private Table table;
 	private SymitarFile file = null;

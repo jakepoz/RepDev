@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -1318,7 +1319,8 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).undo();
+				if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView )
+					((TabTextEditorView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).undo();
 			}
 		});
 
@@ -1330,7 +1332,8 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).redo();
+				if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView )
+					((TabTextEditorView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).redo();
 			}
 		});
 		
@@ -1344,7 +1347,7 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().cut();
+				((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().cut();
 			}
 		});
 		
@@ -1356,7 +1359,7 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().copy();
+				((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().copy();
 			}
 		});
 		
@@ -1368,7 +1371,7 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().paste();
+				((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().paste();
 			}
 		});
 		
@@ -1433,12 +1436,12 @@ public class MainShell {
 					editSelectAll.setEnabled(true);
 					editFindNext.setEnabled(true);
 					
-					if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof EditorComposite && ((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canRedo() )
+					if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView && ((TabTextEditorView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canRedo() )
 						editRedo.setEnabled(true);
 					else
 						editRedo.setEnabled(false);
 					
-					if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof EditorComposite && ((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canUndo() )
+					if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView && ((TabTextEditorView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canUndo() )
 						editUndo.setEnabled(true);
 					else
 						editUndo.setEnabled(false);

@@ -1,4 +1,4 @@
-package com.repdev;
+package com.repdev.parser;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -22,143 +22,6 @@ public class DatabaseLayout {
 	// Cached after loading to compare easily to tokens in the syntax
 	private HashSet<String> lowerCaseRecordNames = new HashSet<String>();
 	private HashSet<String> lowerCaseFieldNames = new HashSet<String>();
-
-	public enum DataType {
-		CHARACTER(0), DATE(3), NUMBER(4), MONEY(7), RATE(2), CODE(5);
-
-		public int code;
-
-		DataType(int myCode) {
-			code = myCode;
-		}
-
-	}
-
-	public class Record {
-		private ArrayList<Record> subRecords = new ArrayList<Record>();
-		private ArrayList<Field> fields = new ArrayList<Field>();
-		private String description = "";
-		private String name = "";
-		private Record root;
-
-		public Record(String name, String desc, Record root) {
-			this.description = desc;
-			this.name = name;
-			this.root = root;
-		}
-
-		public void setSubRecords(ArrayList<Record> subRecords) {
-			this.subRecords = subRecords;
-		}
-
-		public ArrayList<Record> getSubRecords() {
-			return subRecords;
-		}
-
-		public void setFields(ArrayList<Field> fields) {
-			this.fields = fields;
-		}
-
-		public ArrayList<Field> getFields() {
-			return fields;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String toString() {
-			return "Record: " + name;
-		}
-
-		public void setRoot(Record root) {
-			this.root = root;
-		}
-
-		public Record getRoot() {
-			return root;
-		}
-
-	}
-
-	public class Field implements Comparable {
-		private String name = "", description = "";
-		private int fieldNumber;
-		private DataType dataType;
-		private int len;
-
-		public Field(String name, String description, int fieldNumber, DataType dataType, int len) {
-			super();
-			this.name = name;
-			this.description = description;
-			this.fieldNumber = fieldNumber;
-			this.dataType = dataType;
-			this.len = len;
-		}
-
-		public int compareTo(Object o) {
-			if (o instanceof Field)
-				return name.compareToIgnoreCase(((Field) o).getName());
-			else
-				return -1;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public DataType getDataType() {
-			return dataType;
-		}
-
-		public void setDataType(DataType dataType) {
-			this.dataType = dataType;
-		}
-
-		public int getFieldNumber() {
-			return fieldNumber;
-		}
-
-		public void setFieldNumber(int fieldNumber) {
-			this.fieldNumber = fieldNumber;
-		}
-
-		public String toString() {
-			return "Field: " + name;
-		}
-
-		public void setLen(int len) {
-			this.len = len;
-		}
-
-		public int getLen() {
-			return len;
-		}
-	}
 
 	private DatabaseLayout() {
 		Pattern recPattern, fieldPattern;
@@ -201,12 +64,12 @@ public class DatabaseLayout {
 					fieldMatcher = fieldPattern.matcher(line);
 					fieldMatcher.matches();
 
-					DataType curType = null;
+					VariableType curType = null;
 					int len, type;
 
 					type = Integer.parseInt(fieldMatcher.group(5));
 
-					for (DataType cur : DataType.values())
+					for (VariableType cur : VariableType.values())
 						if (cur.code == type) {
 							curType = cur;
 							break;

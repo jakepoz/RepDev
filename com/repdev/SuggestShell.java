@@ -25,13 +25,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.repdev.DatabaseLayout.Field;
-import com.repdev.DatabaseLayout.Record;
-import com.repdev.SpecialVariables.SpecialVariable;
-import com.repdev.parser.RepgenParser;
-import com.repdev.parser.Token;
-import com.repdev.parser.Variable;
 
+import com.repdev.parser.*;
 
 /**
  * Suggestion box for help as you type in Repgens
@@ -99,10 +94,10 @@ public class SuggestShell {
 			if (record == null)
 				return false;
 
-			DatabaseLayout.Record dRecord = null;
+			Record dRecord = null;
 
 			if (DatabaseLayout.getInstance().containsRecordName(record.getStr())) {
-				for (DatabaseLayout.Record cur : DatabaseLayout.getInstance().getFlatRecords()) {
+				for (Record cur : DatabaseLayout.getInstance().getFlatRecords()) {
 					if (cur.getName().toLowerCase().equals(record.getStr())) {
 						dRecord = cur;
 						break;
@@ -113,13 +108,13 @@ public class SuggestShell {
 
 				Collections.sort(sortedFields);
 
-				for (DatabaseLayout.Field field : dRecord.getFields()) {
+				for (Field field : dRecord.getFields()) {
 					if (tokenStr.equals(":") || field.getName().toLowerCase().startsWith(tokenStr)) {
 						TableItem item = new TableItem(table, SWT.NONE);
-						item.setText(field.getName().toUpperCase() + "   " + field.getDataType());
+						item.setText(field.getName().toUpperCase() + "   " + field.getVariableType());
 						item.setImage(RepDevMain.smallDBFieldImage);
 						item.setData("value", field.getName().toUpperCase());
-						String tooltip = field.getName().toUpperCase() + "\nType: " + field.getDataType() + (field.getLen() != -1 ? "(" + field.getLen() + ")" : "" ) + "\nField Number: " + field.getFieldNumber() + "\n\n" + field.getDescription();
+						String tooltip = field.getName().toUpperCase() + "\nType: " + field.getVariableType() + (field.getLen() != -1 ? "(" + field.getLen() + ")" : "" ) + "\nField Number: " + field.getFieldNumber() + "\n\n" + field.getDescription();
 						
 						item.setData("tooltip", tooltip) ;
 						StyleRange[] styles = {

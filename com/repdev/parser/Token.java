@@ -2,10 +2,6 @@ package com.repdev.parser;
 
 import java.util.ArrayList;
 
-import com.repdev.DatabaseLayout;
-import com.repdev.DatabaseLayout.Field;
-import com.repdev.DatabaseLayout.Record;
-
 public class Token {
 	private String str;
 	private Token after = null, before = null;

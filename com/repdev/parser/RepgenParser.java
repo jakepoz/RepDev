@@ -13,11 +13,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.repdev.DatabaseLayout;
 import com.repdev.ErrorCheckResult;
 import com.repdev.FileType;
 import com.repdev.RepDevMain;
-import com.repdev.SpecialVariables;
 import com.repdev.SymitarFile;
 
 public class RepgenParser {
@@ -26,10 +24,11 @@ public class RepgenParser {
 	private int sym;
 	private boolean reparse = true;
 	
-	private static HashSet<String> functions, keywords;
+	private static HashSet<String> keywords;
 	
-	private static DatabaseLayout db;
+	private static DatabaseLayout db = DatabaseLayout.getInstance();
 	private static SpecialVariables specialvars = SpecialVariables.getInstance();
+	private static FunctionLayout functions = FunctionLayout.getInstance();
 	
 	private ArrayList<Token> ltokens = new ArrayList<Token>();
 	private ArrayList<Variable> lvars = new ArrayList<Variable>();
@@ -45,9 +44,7 @@ public class RepgenParser {
 	boolean refreshIncludes = true;
 	
 	static {
-		functions = build(new File("functions.txt"));
 		keywords = build(new File("keywords.txt"));
-		db = DatabaseLayout.getInstance();
 	}
 	
 
@@ -668,7 +665,7 @@ public class RepgenParser {
 					}
 				}
 				
-				for( DatabaseLayout.DataType cur : DatabaseLayout.DataType.values())
+				for( VariableType cur : VariableType.values())
 					if( cur.toString().equalsIgnoreCase(type))
 						isConstant = false;
 				
@@ -818,13 +815,10 @@ public class RepgenParser {
 		this.txt = txt;
 	}
 
-	public static HashSet<String> getFunctions() {
+	public static FunctionLayout getFunctions() {
 		return functions;
 	}
 
-	public static void setFunctions(HashSet<String> functions) {
-		RepgenParser.functions = functions;
-	}
 
 	public static HashSet<String> getKeywords() {
 		return keywords;

@@ -14,6 +14,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+import com.repdev.parser.FunctionLayout;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Token;
 import com.repdev.parser.Variable;
@@ -111,7 +112,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 				return STRUCT2.getRange(tok.getStart(), tok.length());
 			else
 				return STRUCT2_INVALID.getRange(tok.getStart(), tok.length());
-		} else if (RepgenParser.getFunctions().contains(tok.getStr()) && tok.getAfter() != null && tok.getAfter().getStr().equals("("))
+		} else if (FunctionLayout.getInstance().containsName(tok.getStr()) && tok.getAfter() != null && tok.getAfter().getStr().equals("("))
 			return FUNCTIONS.getRange(tok.getStart(), tok.length());
 		else if (RepgenParser.getKeywords().contains(tok.getStr()))
 			return KEYWORDS.getRange(tok.getStart(), tok.length());

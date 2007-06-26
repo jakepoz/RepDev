@@ -45,7 +45,7 @@ import com.repdev.parser.RepgenParser;
  * @author Jake Poznanski
  *
  */
-public class EditorComposite extends Composite {
+public class EditorComposite extends Composite implements TabTextEditorView{
 	private SymitarFile file;
 	private int sym;
 	private Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
