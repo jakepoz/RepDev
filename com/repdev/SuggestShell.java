@@ -57,11 +57,22 @@ public class SuggestShell {
 
 	private boolean update() {
 		String tokenStr = "";
+		
 		Point loc = shell.getDisplay().map(txt, null, txt.getLocationAtOffset(txt.getCaretOffset()));
 		loc.x += 5;
 		loc.y += 20;
+		
+		if( loc.x + shell.getBounds().width > shell.getMonitor().getBounds().width )
+			loc.x = shell.getMonitor().getBounds().width - shell.getBounds().width;
+		
 		shell.setLocation(loc);
-		tooltip.setLocation(shell.getLocation().x+shell.getSize().x, shell.getLocation().y);
+		
+		loc = new Point(shell.getBounds().x+shell.getBounds().width,shell.getBounds().y);
+		
+		if( loc.x + tooltip.getBounds().width > shell.getMonitor().getBounds().width )
+			loc.x = Math.max(0, shell.getBounds().x - tooltip.getBounds().width);
+		
+		tooltip.setLocation(loc);
 
 		if (parser == null || parser.getLtokens() == null)
 			return false;
@@ -188,6 +199,30 @@ public class SuggestShell {
 					};
 					item.setData("tooltipstyles", styles);
 				}
+			
+			//Add functions
+			String funcName = tokenStr;
+			if( tokenStr.equals("(") && current.getBefore() != null )
+				funcName = current.getBefore().getStr();
+			
+			for( Function func : FunctionLayout.getInstance().getList()){
+				if( func.getName().toLowerCase().startsWith(funcName)){
+					TableItem item = new TableItem(table,SWT.NONE);
+					String nameText = func.getName().toUpperCase() + "(";
+					
+					for( Argument arg : func.getArguments())
+						nameText += arg.getShortName() + " ";
+					
+					nameText = nameText.substring(0,nameText.length()-1) + ")";
+					
+					item.setText(nameText);
+					item.setImage(RepDevMain.smallFileImage);
+					item.setData("value", func.getName().toUpperCase() + "(");
+					
+					String tooltip = func.getName().toUpperCase() + "\n";
+					
+				}
+			}
 
 			ArrayList<Record> records = DatabaseLayout.getInstance().getFlatRecords();
 			for (Record record : records) {
