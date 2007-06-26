@@ -221,7 +221,14 @@ public class SuggestShell {
 					item.setImage(RepDevMain.smallFileImage);
 					item.setData("value", func.getName().toUpperCase() + "(");
 					
-					String tooltip = func.getName().toUpperCase() + "\n";
+					String tooltip = func.getName().toUpperCase() + "\n" + func.getDescription() + "\n\n";
+					item.setData("tooltip",tooltip);
+					
+					StyleRange[] styles = {
+							new StyleRange(0,func.getName().length(),null,null,SWT.BOLD),
+							new StyleRange(func.getName().length(),tooltip.indexOf("\n\n")-func.getName().length()-1,null,null,SWT.ITALIC),
+					};
+					item.setData("tooltipstyles", styles);
 					
 				}
 			}
@@ -414,7 +421,7 @@ public class SuggestShell {
 		});
 
 		shell.setSize(280, 180);
-		tooltip.setSize(200,120);
+		tooltip.setSize(220,180);
 
 		// shell.open();
 		txt.setFocus();

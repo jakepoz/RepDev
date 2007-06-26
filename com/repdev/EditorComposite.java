@@ -23,6 +23,7 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -70,6 +71,19 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private boolean modified = false;
 	
 	static SuggestShell suggest = new SuggestShell();
+	
+	private static Font DEFAULT_FONT;
+	
+	static {
+		Font cur = null;
+
+		try {
+			cur = new Font(Display.getCurrent(), "Courier New", 11, SWT.NORMAL);
+		} catch (Exception e) {
+		}
+
+		DEFAULT_FONT = cur;
+	}
 
 	class TextChange {
 		private int start, length, topIndex;
@@ -373,6 +387,10 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		if (file.getType() == FileType.REPGEN){
 			parser = new RepgenParser(txt, file);
 			highlighter = new SyntaxHighlighter(parser);
+		}
+		else{
+			if( DEFAULT_FONT != null)
+				txt.setFont(DEFAULT_FONT);
 		}
 		
 		txt.addFocusListener(new FocusListener(){
