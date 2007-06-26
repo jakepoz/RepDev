@@ -213,9 +213,9 @@ public class SuggestShell {
 					String nameText = func.getName().toUpperCase() + "(";
 					
 					for( Argument arg : func.getArguments())
-						nameText += arg.getShortName() + " ";
+						nameText += arg.getShortName() + ", ";
 					
-					nameText = nameText.substring(0,nameText.length()-1) + ")";
+					nameText = nameText.substring(0,nameText.length()-2) + ")";
 					
 					item.setText(nameText);
 					item.setImage(RepDevMain.smallFileImage);
