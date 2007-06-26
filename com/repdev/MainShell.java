@@ -1347,7 +1347,8 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().cut();
+				if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextView )
+					((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().cut();
 			}
 		});
 		
@@ -1359,7 +1360,8 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().copy();
+				if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextView )
+					((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().copy();
 			}
 		});
 		
@@ -1371,7 +1373,8 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().paste();
+				if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextView )
+					((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().paste();
 			}
 		});
 		
@@ -1385,7 +1388,8 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() == -1)
 					return;
 				
-				((EditorComposite)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().selectAll();
+				if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextView )
+					((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().selectAll();
 			}
 		});
 		

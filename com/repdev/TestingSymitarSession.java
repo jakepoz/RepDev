@@ -142,7 +142,7 @@ public class TestingSymitarSession extends SymitarSession {
 	@Override
 	public RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
 		
-		return null;
+		return new RunRepgenResult(-1,0);
 	}
 
 	@Override
