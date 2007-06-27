@@ -73,7 +73,7 @@ public class ProjectManager {
 
 	/**
 	 * Creates a file name from an open symitar session based on user id
-	 * 
+	 * TODO: See Clay Yearsley's email, use first 4 characters, or until a period is entered? Many first X numeric ones, padded with zeros.
 	 * @param session
 	 * @return
 	 */
