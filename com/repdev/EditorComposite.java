@@ -267,6 +267,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		}
 	}
 
+	//FIXME: Doesn't work if part of the idnent text has blank lines (With no spaces, just a \n\n).
 	private void groupIndent(int direction, int startLine, int endLine) {
 		String tabStr = getTabStr();
 
@@ -401,7 +402,6 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 
 			public void focusLost(FocusEvent e) {
 				// TODO Auto-generated method stub
-				
 			}
 			
 		});
