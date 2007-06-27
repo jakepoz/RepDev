@@ -203,7 +203,7 @@ public class SuggestShell {
 				}
 			
 			//Add functions
-			String funcName = tokenStr;
+			/*String funcName = tokenStr;
 			if( tokenStr.equals("(") && current.getBefore() != null )
 				funcName = current.getBefore().getStr();
 			
@@ -231,7 +231,7 @@ public class SuggestShell {
 					item.setData("tooltipstyles", styles);
 					
 				}
-			}
+			}*/
 
 			ArrayList<Record> records = DatabaseLayout.getInstance().getFlatRecords();
 			for (Record record : records) {

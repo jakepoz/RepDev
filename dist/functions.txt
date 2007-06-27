@@ -1,77 +1,184 @@
-Abs
-Any
-AnyService
-AnyWarning
-Capitalize
-CharacterRead
-CharacterSearch
-ChrValue
-ClearService
-ClearWarning
-CodeRead
-CreateFinanceFromCredRep
-CtrlChr
-Date
-DateOffset
-DateRead
-DateValue
-Day
-DayOfWeek
-EnterCharacter
-EnterCode
-EnterDate
-EnterDelimeter
-EnterLine
-EnterMoney
-EnterNumber
-EnterRate
-EnterYesNo
-Exp
-Float
-Floor
-Format
-FullYear
-CharDataChar
-GetDataDate
-GetDataMoney
-GetDataNumber
-GetDataRate
+ABS|Returns the absolute value of an arithmetic expression|NUMBER,FLOAT,MONEY
+	Expression|An arithmetic expression|NUMBER,FLOAT,MONEY
+ANYWARNING|Boolean function that returns true if a warning exists|NUMBER
+	RECORD_TYPE|Account, Share, Loan, or Card Record to be searched|NULL
+	WARNING_CODE|Warning code that is to be searched for|NUMBER
+CAPITILIZE|Capitilizes the first letter and sets all subsequent letters to lowercase|CHARACTER
+	Expression|A character expression|CHARACTER
+CHARACTERREAD|Prompts a user for input in a batch program|CHARACTER
+	Prompt|Prompt that the user sees when running the program|CHARACTER
+CHARACTERSEARCH|Returns the position of a character within a given character sequence|NUMBER
+	Expression|Variable or Field to search for the desired character string|CHARACTER
+	Expression|Character string to search for|CHARACTER
+CHRVALUE|Returns the numeric ASCII value of a single character|NUMBER
+	Expression|A single character expression|CHARACTER
+CLEARSERVICE|Removes a service code on an Account, Share, Loan, or Card record|CODE
+CLEARWARNING|Removes a warning code on an Account, Share, Loan, or Card record|CODE
+CODEREAD|Prompts a user for input in a batch program|CODE
+	Prompt|Prompt that the user sees when running the program|CHARACTER
+CREATEFINANCEFROMCREDREP|Creates Finance records for a loan application based on a previously pulled credit report|NULL
+	CheckPriviledges|1 = check security privileges, 0 = do not check security privileges|NUMBER
+	AppID|The ID of the loan application where the Finance record will be created|NUMBER
+	CreditRepLoc|Value of the locator field of the credit report to be used to create the Finance record|NUMBER
+	SkipBlankDesc|Specifies whether or not to create Finance records when the description of the trade item is blank|NUMBER
+	SkipZeroBal|Specifies wheter or not to create Finance records when the balance of a trade item is zero|NUMBER
+	ErrorText|If an error occurs the error will be stored in this variable|CHARACTER
+CTRLCHR|Converts the enclosed expression into a single control character|NUMBER
+	Expression|Numerical value of the contorl character desired|NUMBER
+DATEOFFSET|Adjusts a date by the specified number of months and days|DATE
+	STARTDATE|Date that is to be adjusted|DATE
+	MONTHCOUNT|Numerical Constant, variable, or expression of the months to be adjusted by|NUMBER
+	DAY|Numerical constant, variable, or expression of the day to be adjusted to|NUMBER
+DATEREAD|Prompts the user for input in a batch program and expects a date response|DATE
+	Expression|Prompt that the user sees when running the program|CHARACTER
+DATEVALUE|Converts a text date to a date data type in Episys|DATE
+	DATE|Text constant, variable, or expression that is converted to a date|CHARACTER
+DAY|Returns the numerical value (0 - 31) of the day of the encolsed date expression|NUMBER
+	DATE|Date expression where the numerical day of the month is desired|DATE
+DAYOFWEEK|Returns the numerical value for the day of the week from a given date|NUMBER
+	Expression|Date where the numerical value for a day is desired|NUMBER
+ENTERCHARACTER|Displays a prompt in a Demand Specfile that expects a character value in response|CHARACTER
+	Prompt|Text the user sees telling them what to enter|CHARACTER
+	MaxLength|Maximum length of the user's response|NUMBER
+	Default|The default value given to the user|CHARACTER
+ENTERCODE|Displays a promt in a Demand Specfile that expects a code value in response|CODE
+	Prompt|Text the user sees telling them what to enter|CHARACTER
+	MaxValue|The Maximum value of the response|CODE
+	Default|The default value given to the user|CODE
+ENTERDATE|Displays a promt in a Demand Specfile that expects a date value in repsonse|DATE
+	Prompt|Text the user sees telling them what to enter|CHARACTER
+	Default|The default value given to the user|DATE
+ENTERLINE|Allows a specfile to get user input without a prompt|CHARACTER
+	Echo_Mode|Number specifying how to echo user input|NUMBER
+ENTERMONEY|Displays a promt in a Demand Specfile that expects a money response|MONEY
+	Prompt|Text the user sees telling them what to enter|CHARACTER
+	Default|The default value given to the user|MONEY
+ENTERNUMBER|Displays a promt in a Demand Specfile that expects a number value in response|NUMBER
+	Prompt|Text the user sees telling them what to enter|CHARACTER
+	Default|The default value given to the user|NUMBER
+ENTERRATE|Displays a promt in a Demand Specfile that expects a rate value in response|RATE
+	Prompt|Text the user sees telling them what to enter|CHARACTER
+	Default|The default value given to the user|NUMBER
+ENTERYESNO|Displays a promt in a Demand Specfile that expects a Y / N answer in response|CHARACTER,NUMBER
+	Prompt|Text the user sees telling that what to enter|CHARACTER
+	Default|The default value given to the user|CHARACTER
+EXP|Returns the value of the mathematical constant e (~2.7183) raised to a specified power|FLOAT
+	Expression|Mathematical expression that becomes the exponent of e|NUMBER,FLOAT,CODE
+FLOAT|Converts a mathematical expression into a floating point value|FLOAT
+	Expression|Mathematical Expression that is desired as a floating point value|NUMBER,CODE,MONEY,DATE,RATE
+FLOOR|Returns a number value that is less than or equal to the specified mathematical expression|NUMBER
+	Expression|Mathematical Expression in which the closest integer less than or equal to the expression is desired|NUMBER,FLOAT,MONEY
+FORMAT|Converts a numeric value to a specified pattern of characters|CHARACTER,NUMBER,MONEY,DATE,RATE,CODE
+	CharacterExpression|Character expression that defines the desired pattern of characters|CHARACTER
+	ArithmeticExpression|Expression or value to be formated|NUMBER,MONEY,DATE,RATE,CODE
+FULLYEAR|Returns a numerical value that is equivalent to the four-digit year in a date expression|NUMBER
+	Date|Date expression where the four-digit year is desired|DATE
+GETDATACHAR|Retrieves the current value of a character field in Parameter or Console files|CHARACTER
+	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
+	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+GETDATADATE|Retrieves the current value of a date field in Parameter or Console files|DATE
+	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
+	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+GETDATAMONEY|Retrieves the current value of a money field in Parameter of Console files|MONEY
+	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
+	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+GETDATANUMBER|Retrieves the current value of a number field in Parameter of Console files|NUMBER
+	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
+	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+GETDATARATE|Retrieves the current value of a rate field in Parameter of Console files|RATE
+	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
+	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
+	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 GetFieldDataMax
+	RecordNum
+	FieldNum
+	SubFieldNum
 GetFieldDataType
+	RecordNum
+	FieldNum
+	SubFieldNum
 GetFieldHelpFile
+	RecordNum
+	FieldNum
+	SubFieldNum
 GetFieldMnemonic
+	RecordNum
+	FieldNum
+	SubFieldNum
 GetFieldName
+	RecordNum
+	FieldNum
+	SubFieldNum
 GetFieldNumber
-Hour
-Int
-Landscape
-Length
-Log
-LowerCase
-MD5Hash
-Minute
-Mod
-Money
-MoneyRead
-Month
-Number
-NumberRead
-PasswordHash
-Portrait
-PrevSystemDate
-Pwr
-QueueCreditReport
-Rate
-RateRead
-RepeatChr
-RevLandscape
-RevPortrait
-SaveMode
-Segment
-SetService
-SetWarning
-UpperCase
-Value
-Year
-YesNoRead
- 
+	RecordNum
+	FieldNum
+	SubFieldNum
+HOUR|Returns the hour value of a time stored in HHMM format|NUMBER
+	Expression|Time expression in HHMM format to return the hour value|NUMBER
+INT|Returns the integer part of a given expression|NUMBER
+	Expression|Expression where the integer value is desired|NUMBER,MONEY,FLOAT
+LENGTH|Returns the number of characters in a character expression|CHARACTER
+	CharacterExpression|Character Expression where the length of the expression is desired|CHARACTER
+LOG|Returns the natural logarithm of an expression|FLOAT
+	Expression|Arithmetic Expression where the natural logarithm of that expression is desired|NUMBER,CODE,FLOAT
+LOWERCASE|Converts alphabetic characters in an expression to lowercase|CHARACTER
+	CharacterExpression|Character Expression to convert to lowercase|CHARACTER
+MD5HASH|Used with the PASSWORDHASN function to encrypt and decrypt audio and home banking codes/passwords|CHARACTER
+	Expression|String expression to return a 32 hexadecimal string to be used with PASSWORDHASH|CHARACTER
+MINUTE|Returns the minute value of a time expression stored in HHMM format|NUMBER
+	Expression|Time expression where the minute is desired to be expressed as a number|NUMBER
+MOD|Returns the value of one expression modulos another expression|FLOAT
+	Expression1|Arithmetic expression to be the numerator|NUMBER,MONEY,FLOAT
+	Expression2|Arithmetic expression to be the denominator|NUMBER,MONEY,FLOAT
+MONEY|Converts a numeric, code, float, or rate value into a monetary value|MONEY
+	Expression|Arithmetic expression to be expressed as a money value|NUMBER,CODE,FLOAT,RATE
+MONEYREAD|Prompts the user for input in a batch program and expects a money value response|MONEY
+	Prompt|Prompt that the user sees when running the program|CHARACTER
+MONTH|Returns the value for the month in a date expression|NUMBER
+	DateExpression|Date expression where the month is desired in a numerical format|DATE
+NUMBER|Converts a money, code, float, or rate value into a number value|NUMBER
+	Expression|Arithmetic expression to be expressed as a number|MONEY,CODE,FLOAT,RATE
+NUMBERREAD|Prompts the user for input in a batch program and expcts a number value response|NUMBER
+	Prompt|Prompt that the user sees when running the program|CHARACTER
+PASSWORDHASH|Used with the MD5HASH function to encrypt and decrypt audio and home banking codes/passwords|CHARACTER
+	Expression|String Expression to be encrypted or decrypted|CHARACTER
+PWR|Returns the float value of raising on numeric value to the power of another|FLOAT
+	ArithmeticExpression1|Numerical value to be raised to a power|NUMBER
+	ArithmeticExpression2|Numerical value used as the exponent|NUMBER
+QUEUECREDITREPORT|Function queues up the retrieval of a credit report
+	CreditBureau|Credit Bureau to retrieve a credit reoprt from|NUMBER
+	AppFlag|Specifies if there is an associated loan application|NUMBER
+	AppID|Specifies the loan application ID if the AppFlag is set to 1|NUMBER
+	ErrorText|Variable to hold any errors generated by the query|CHARACTER
+RATE|Converts a numeric or monetary value into a rate|RATE
+	Expression|Numeric or monetary expression that is desired to be displayed as a rate|NUMBER,MONEY
+RATEREAD|Prompts the user for input in a batch program and expects a rate value response|DATE
+	Expression|Prompt that the user sees when running the program|CHARACTER
+REPEATCHR|Repeats a character value a certain number of times|CHARACTER
+	CharacterValue|Character value to be repeated|CHARACTER
+	RepeatCount|Number of times to repeat the character value|NUMBER
+SEGMENT|Returns a specified part of a character expression|CHARACTER
+	CharacterExpression|Character Expression to segment|CHARACTER
+	StartPOS|Starting position to start searching through the Character Expression|NUMBER
+	EndPOS|Ending position to stop searching through the Character Expression|NUMBER
+UPPERCASE|Converts a character expression to all uppercase characters|CHARACTER
+	CharacterExpression|Character Expression that is desired to be in all uppercase letters|CHARACTER
+VALUE
+YEAR|Returns a value equivalent to the two-digit year in a date expression|NUMBER
+	DateExpression|Date expression where the two-digit year is desired|DATE
+YESNOREAD|Displays a prompt, waits for a Y/N response, then returns true or false|Boolean
+	Prompt|A Y/N question where the answer is used in a Boolean expression|CHARACTER
