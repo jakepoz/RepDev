@@ -138,7 +138,7 @@ public class ErrorDialog {
 	 * @return text
 	 */
 	private String getErrorReportText() {
-		String toRet = "";
+		String toRet = "RepDev: " + RepDevMain.VERSION + "\n\n";
 
 		toRet = "Error Text: " + exception.getMessage() + " - " + exception.getClass().getName() + "\n";
 		toRet += new Date().toString() + "\n\n";
