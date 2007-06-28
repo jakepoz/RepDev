@@ -853,12 +853,15 @@ public class DirectSymitarSession extends SymitarSession {
 
 		try {
 			current = readNextCommand();
-			
+		
 			if( current == null ){
 				System.out.println("Returned null for the save file command, ack!! trying to restore");
 				
 				wakeUp();
 				write(store);
+			}
+			else{
+				System.out.println("Debugging save file issue:\n" + current.toString()+ "\n");
 			}
 
 			String[] badList = current.getParameters().get("BadCharList").split(",");
