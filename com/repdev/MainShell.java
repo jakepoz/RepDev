@@ -449,6 +449,8 @@ public class MainShell {
 					item.setImage(getFileImage(file));
 				}
 			}
+			
+			ProjectManager.saveProjects(proj.getSym());
 		}
 	}
 
@@ -478,6 +480,8 @@ public class MainShell {
 				item.setText(file.getName());
 				item.setData(file);
 				item.setImage(getFileImage(file));
+				
+				ProjectManager.saveProjects(proj.getSym());
 			}
 
 			file.saveFile("");
@@ -506,6 +510,8 @@ public class MainShell {
 			proj.removeFile(file, true);
 			selection[0].dispose();
 		}
+		
+		ProjectManager.saveProjects(proj.getSym());
 
 		tree.notifyListeners(SWT.Selection, null);
 	}

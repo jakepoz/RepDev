@@ -29,6 +29,8 @@ public class ProjectManager {
 		}
 
 		projects.remove(i);
+		
+		saveProjects(sym);
 
 		if (delete)
 			for (SymitarFile file : project.getFiles())
@@ -68,6 +70,8 @@ public class ProjectManager {
 		Project project = new Project(name, sym);
 		getProjects(sym).add(project);
 
+		saveProjects(sym);
+		
 		return project;
 	}
 
