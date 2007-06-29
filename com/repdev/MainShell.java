@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ControlAdapter;
@@ -17,7 +16,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -28,10 +26,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -66,7 +64,11 @@ public class MainShell {
 	private Tree tree;
 	private Table tblErrors, tblTasks; 
 	private FindReplaceShell findReplaceShell;
-
+	
+	// Status bar stuff...	
+	private Composite statusBar;
+	private Label lineColumn;
+	
 	public MainShell(Display display) {
 		this.display = display;
 		createShell();
@@ -103,7 +105,7 @@ public class MainShell {
 			
 
 		});
-
+		
 		final Composite left = new Composite(shell, SWT.NONE);
 		createExplorer(left);
 		final Sash sashVert = new Sash(shell, SWT.VERTICAL | SWT.SMOOTH);
@@ -116,24 +118,26 @@ public class MainShell {
 		final Composite bottom = new Composite(right, SWT.NONE);
 		createBottom(bottom);
 
+		createStatusBar();
+		
 		FormData frmLeft = new FormData();
 		frmLeft.top = new FormAttachment(0);
 		frmLeft.left = new FormAttachment(0);
 		frmLeft.right = new FormAttachment(sashVert);
-		frmLeft.bottom = new FormAttachment(100);
+		frmLeft.bottom = new FormAttachment(statusBar);
 		left.setLayoutData(frmLeft);
 
 		final FormData frmSashVert = new FormData();
 		frmSashVert.top = new FormAttachment(0);
 		frmSashVert.left = new FormAttachment(leftPercent);
-		frmSashVert.bottom = new FormAttachment(100);
+		frmSashVert.bottom = new FormAttachment(statusBar);
 		sashVert.setLayoutData(frmSashVert);
 
 		FormData frmRight = new FormData();
 		frmRight.top = new FormAttachment(0);
 		frmRight.left = new FormAttachment(sashVert);
 		frmRight.right = new FormAttachment(100);
-		frmRight.bottom = new FormAttachment(100);
+		frmRight.bottom = new FormAttachment(statusBar);
 		right.setLayoutData(frmRight);
 
 		FormData frmMain = new FormData();
@@ -148,14 +152,14 @@ public class MainShell {
 		frmSashHoriz.left = new FormAttachment(0);
 		frmSashHoriz.right = new FormAttachment(100);
 		sashHoriz.setLayoutData(frmSashHoriz);
-
+				
 		FormData frmBottom = new FormData();
 		frmBottom.top = new FormAttachment(sashHoriz);
 		frmBottom.left = new FormAttachment(0);
 		frmBottom.right = new FormAttachment(100);
 		frmBottom.bottom = new FormAttachment(100);
 		bottom.setLayoutData(frmBottom);
-
+				
 		left.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
 				if (left.getSize().x < MIN_COMP_SIZE) {
@@ -974,6 +978,38 @@ public class MainShell {
 		tree.setLayoutData(frmTree);
 	}
 
+	public void createStatusBar() {
+		statusBar = new Composite( shell, SWT.BORDER | SWT.SHADOW_IN );
+		
+		// Layout Stuff
+		RowLayout slayout = new RowLayout();
+		slayout.spacing = 5;
+		
+		statusBar.setLayout(slayout);
+		FormData statusBarData = new FormData();
+		statusBarData.left = new FormAttachment(0);
+		statusBarData.right = new FormAttachment(100);
+		statusBarData.bottom = new FormAttachment(100);
+		statusBarData.height = 16;
+	    statusBar.setLayoutData(statusBarData);
+	    	    
+	    final Label verLabel = new Label(statusBar, SWT.NONE );
+	    verLabel.setText( "RepDev " + RepDevMain.VERSION + " ");
+	    verLabel.setSize(100,16);
+	    
+	    new Label(statusBar,SWT.SEPARATOR);
+	    
+	    lineColumn = new Label(statusBar, SWT.NONE);
+	    lineColumn.setSize(150,16);
+	    lineColumn.setText("Line: 0                        ");
+	    	    	    	    
+	    statusBar.pack();
+	}
+	
+	public void setLineColumn(int line, int col) {
+		lineColumn.setText("Line: " + line);
+	}
+	
 	protected void runReport() {
 		Object data = tree.getSelection()[0].getData();
 		
