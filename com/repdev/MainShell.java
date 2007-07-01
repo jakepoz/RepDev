@@ -1007,7 +1007,7 @@ public class MainShell {
 	}
 	
 	public void setLineColumn(int line, int col) {
-		lineColumn.setText("Line: " + line);
+		lineColumn.setText("Line: " + line + " : " + col);
 	}
 	
 	protected void runReport() {

@@ -401,7 +401,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 				
 				int line = txt.getLineAtOffset(txt.getCaretOffset());
 				int startOffset = txt.getOffsetAtLine(line);								
-				RepDevMain.mainShell.setLineColumn( line+1, 0 );
+				RepDevMain.mainShell.setLineColumn( line+1, txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1 );
 			}
 
 			public void focusLost(FocusEvent e) {
@@ -511,7 +511,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 				
 				int line = txt.getLineAtOffset(txt.getCaretOffset());
 				int startOffset = txt.getOffsetAtLine(line);								
-				RepDevMain.mainShell.setLineColumn( line+1, 0 );
+				RepDevMain.mainShell.setLineColumn( line+1, txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1 );
 				
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
@@ -578,7 +578,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 				
 				int line = txt.getLineAtOffset(txt.getCaretOffset());
 				int startOffset = txt.getOffsetAtLine(line);								
-				RepDevMain.mainShell.setLineColumn( line+1, 0 );
+				RepDevMain.mainShell.setLineColumn( line+1, txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1);
 			}
 
 			// TODO: Make double clicking include files work when last line of the file
