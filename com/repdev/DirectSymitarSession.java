@@ -859,6 +859,8 @@ public class DirectSymitarSession extends SymitarSession {
 				
 				wakeUp();
 				write(store);
+				
+				current = readNextCommand();
 			}
 			else{
 				System.out.println("Debugging save file issue:\n" + current.toString()+ "\n");
