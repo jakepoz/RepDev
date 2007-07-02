@@ -9,7 +9,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
@@ -166,16 +165,20 @@ public class ReportComposite extends Composite implements TabTextView{
 				editor.grabVertical=true;
 				
 				Composite labelComposite = new Composite(table,SWT.NONE);
-				labelComposite.setLayout(new FillLayout());
+				FillLayout layout = new FillLayout();
+				labelComposite.setLayout(layout);
 				
-				Link printLPT = new Link(labelComposite,SWT.NONE);
-				printLPT.setText("<a>Print LPT</a>");
-				printLPT.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-				printLPT.addSelectionListener(new SelectionAdapter(){
+				Link printLocal = new Link(labelComposite,SWT.NONE);
+				printLocal.setText("Print <a href=\"local\">Local</a> <a href=\"lpt\">LPT</a>");
+				printLocal.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+				printLocal.addSelectionListener(new SelectionAdapter(){
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						LPTPrintShell.print(getDisplay(), getShell(), new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT));
+						if( e.text.equals("local"))
+							RepDevMain.mainShell.print();
+						else if(e.text.equals("lpt"))
+							LPTPrintShell.print(getDisplay(), getShell(), new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT));
 					}
 					
 				});

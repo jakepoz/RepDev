@@ -8,7 +8,6 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -29,7 +28,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -53,8 +51,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private int sym;
 	private Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
 	private ToolBar bar;
-	private ToolItem save;
-	private ToolItem install;
+	private ToolItem save, install, print, run;
 	private StyledText txt;
 
 	private static final int UNDO_LIMIT = 500;
@@ -378,6 +375,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		setLayout(new FormLayout());
 
 		bar = new ToolBar(this, SWT.HORIZONTAL | SWT.WRAP);
+		
 		save = new ToolItem(bar, SWT.NONE);
 		save.setImage(RepDevMain.smallActionSaveImage);
 		save.setToolTipText("Saves the current file.");
@@ -385,6 +383,15 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		install = new ToolItem(bar, SWT.NONE);
 		install.setImage(RepDevMain.smallSymAddImage);
 		install.setToolTipText("Installs current file for onDemand use.");
+		
+		print = new ToolItem(bar,SWT.NONE);
+		print.setImage(RepDevMain.smallPrintImage);
+		print.setToolTipText("Prints the current file to a local printer.");
+		
+		run = new ToolItem(bar,SWT.NONE);
+		run.setImage(RepDevMain.smallRunImage);
+		run.setToolTipText("Opens the run report dialog.");
+		
 
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -402,8 +409,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 			public void focusGained(FocusEvent e) {
 				suggest.attach(txt, parser);
 				
-				int line = txt.getLineAtOffset(txt.getCaretOffset());
-				int startOffset = txt.getOffsetAtLine(line);								
+				int line = txt.getLineAtOffset(txt.getCaretOffset());							
 				RepDevMain.mainShell.setLineColumn( line+1, txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1 );
 			}
 
@@ -512,8 +518,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 			public void keyPressed(KeyEvent e) {
 				lineHighlight();
 				
-				int line = txt.getLineAtOffset(txt.getCaretOffset());
-				int startOffset = txt.getOffsetAtLine(line);								
+				int line = txt.getLineAtOffset(txt.getCaretOffset());						
 				RepDevMain.mainShell.setLineColumn( line+1, txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1 );
 				
 				if (e.stateMask == SWT.CTRL) {
@@ -583,8 +588,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 			public void mouseUp(MouseEvent e) {
 				lineHighlight();
 				
-				int line = txt.getLineAtOffset(txt.getCaretOffset());
-				int startOffset = txt.getOffsetAtLine(line);								
+				int line = txt.getLineAtOffset(txt.getCaretOffset());							
 				RepDevMain.mainShell.setLineColumn( line+1, txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1);
 			}
 
@@ -715,6 +719,18 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		install.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				installRepgen(true);				
+			}
+		});
+		
+		print.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				RepDevMain.mainShell.print();			
+			}
+		});
+		
+		run.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				RepDevMain.mainShell.runReport();			
 			}
 		});
 
