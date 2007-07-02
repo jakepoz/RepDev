@@ -12,8 +12,6 @@ CHARACTERSEARCH|Returns the position of a character within a given character seq
 	Expression|Character string to search for|CHARACTER
 CHRVALUE|Returns the numeric ASCII value of a single character|NUMBER
 	Expression|A single character expression|CHARACTER
-CLEARSERVICE|Removes a service code on an Account, Share, Loan, or Card record|CODE
-CLEARWARNING|Removes a warning code on an Account, Share, Loan, or Card record|CODE
 CODEREAD|Prompts a user for input in a batch program|CODE
 	Prompt|Prompt that the user sees when running the program|CHARACTER
 CREATEFINANCEFROMCREDREP|Creates Finance records for a loan application based on a previously pulled credit report|NULL

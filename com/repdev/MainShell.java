@@ -568,7 +568,7 @@ public class MainShell {
 
 		toolbar.pack();
 
-		tree = new Tree(group, SWT.NONE | SWT.BORDER );
+		tree = new Tree(group, SWT.NONE | SWT.BORDER  );
 		for (int sym : Config.getSyms()) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
 			item.setText("Sym " + sym);
@@ -820,7 +820,7 @@ public class MainShell {
 			}
 
 			public void menuShown(MenuEvent e) {
-				if (tree.getSelection()[0].getData() instanceof Integer) {
+				if (tree.getSelection()[0].getData() instanceof Integer && tree.getSelectionCount() == 1) {
 					importFilem.setEnabled(false);
 					newProjectFile.setEnabled(false);
 				} else {

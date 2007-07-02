@@ -284,7 +284,14 @@ public class DirectSymitarSession extends SymitarSession {
 		readUntil(Character.toString((char) 0x1b) + Character.toString((char) 0xfe));
 		String data = readUntil(Character.toString((char) 0xfc));
 
-		return Command.parse(data.substring(0, data.length() - 1));
+		Command cmd = Command.parse(data.substring(0, data.length() - 1));
+		
+		//Filter out Messages that come in asychronously and fuck everything up
+		if( cmd.getCommand().equals("MsgDlg") && cmd.getParameters().get("Text").contains("From PID") )
+			return readNextCommand();
+		else
+			return cmd;
+	
 	}
 
 	private String readUntil(String... strs) throws IOException {
