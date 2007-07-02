@@ -76,6 +76,10 @@ public class ReportComposite extends Composite implements TabTextView{
 					case 'F':
 						RepDevMain.mainShell.showFindWindow();
 						break;
+					case 'p':
+					case 'P':
+						RepDevMain.mainShell.print();
+						break;
 					}
 				}
 				else{

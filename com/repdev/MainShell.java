@@ -7,6 +7,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MenuAdapter;
@@ -27,6 +28,9 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.printing.PrintDialog;
+import org.eclipse.swt.printing.Printer;
+import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -1343,7 +1347,18 @@ public class MainShell {
 		helpItem.setMenu(helpMenu);
 		Menu editMenu = new Menu(shell, SWT.DROP_DOWN);
 		editItem.setMenu(editMenu);
-
+	
+		final MenuItem filePrint = new MenuItem(fileMenu, SWT.PUSH);
+		filePrint.setText("&Print\tCTRL+P");
+		filePrint.setImage(RepDevMain.smallPrintImage);
+		filePrint.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent arg0) {
+				print();
+			}
+		});
+		
+		new MenuItem(fileMenu,SWT.SEPARATOR);
+		
 		MenuItem fileExit = new MenuItem(fileMenu, SWT.PUSH);
 		fileExit.setText("E&xit");
 		fileExit.setImage(RepDevMain.smallExitImage);
@@ -1351,6 +1366,19 @@ public class MainShell {
 			public void widgetSelected(SelectionEvent arg0) {
 				close();
 			}
+		});
+		
+		fileMenu.addMenuListener(new MenuListener(){
+
+			public void menuHidden(MenuEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void menuShown(MenuEvent e) {
+				filePrint.setEnabled(mainfolder.getSelection() != null);
+			}
+			
 		});
 		
 		final MenuItem editUndo = new MenuItem(editMenu,SWT.PUSH);
@@ -1474,6 +1502,7 @@ public class MainShell {
 					
 					editSelectAll.setEnabled(false);
 					editFindNext.setEnabled(false);
+					editFind.setEnabled(false);
 				}
 				else{
 					editCut.setEnabled(true);
@@ -1481,6 +1510,7 @@ public class MainShell {
 					editPaste.setEnabled(true);
 					editSelectAll.setEnabled(true);
 					editFindNext.setEnabled(true);
+					editFind.setEnabled(true);
 					
 					if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView && ((TabTextEditorView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canRedo() )
 						editRedo.setEnabled(true);
@@ -1517,6 +1547,27 @@ public class MainShell {
 		shell.setMenuBar(bar);
 	}
 	
+	protected void print() {
+		if( mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof TabTextView){
+			PrintDialog dialog = new PrintDialog(shell);
+			PrinterData data = dialog.open();
+			
+			if( data != null ){
+				 StyledTextPrintOptions options = new StyledTextPrintOptions();
+				 options.footer = "\t\t<page>"; 
+				 options.jobName = "RepDev - " + mainfolder.getSelection().getText();
+				 options.printLineBackground = false;
+				 options.printTextFontStyle = true;
+				 options.printTextForeground = true;
+				 options.printTextBackground = true;
+				 
+							 		 
+				 Runnable runnable = ((TabTextView)mainfolder.getSelection().getControl()).getStyledText().print(new Printer(data), options); 
+				 runnable.run();
+			}
+		}
+	}
+
 	public void showFindWindow(){
 		if( mainfolder.getSelection() == null )
 			findReplaceShell.attach(null, false);

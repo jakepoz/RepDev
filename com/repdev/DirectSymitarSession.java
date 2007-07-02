@@ -863,7 +863,7 @@ public class DirectSymitarSession extends SymitarSession {
 				current = readNextCommand();
 			}
 			else{
-				System.out.println("Debugging save file issue:\n" + current.toString()+ "\n");
+				System.out.println("Save file command:\n" + current.toString()+ "\n");
 			}
 
 			String[] badList = current.getParameters().get("BadCharList").split(",");

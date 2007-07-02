@@ -8,6 +8,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -28,6 +29,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -140,6 +142,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	}
 
 	public void undo() {
+				
 		try {
 			TextChange change;
 
@@ -534,18 +537,22 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 					case 'f':
 					case 'F':
 						RepDevMain.mainShell.showFindWindow();
-						break;
-						
+						break;	
 					case 'd':
 					case 'D':
 						installRepgen(false); // install without confirmation
-						break;						
+						break;	
+					case 'p':
+					case 'P':
+						RepDevMain.mainShell.print();
+						break;
 					}
 				} else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
 					switch(e.keyCode) {
 					case 's':
 					case 'S':
 						RepDevMain.mainShell.saveAllRepgens();
+						break;
 					}
 				}
 				else{
