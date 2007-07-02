@@ -203,7 +203,7 @@ public class SuggestShell {
 				}
 			
 			//Add functions
-			/*String funcName = tokenStr;
+			String funcName = tokenStr;
 			if( tokenStr.equals("(") && current.getBefore() != null )
 				funcName = current.getBefore().getStr();
 			
@@ -211,6 +211,7 @@ public class SuggestShell {
 				if( func.getName().toLowerCase().startsWith(funcName)){
 					TableItem item = new TableItem(table,SWT.NONE);
 					String nameText = func.getName().toUpperCase() + "(";
+					ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
 					
 					for( Argument arg : func.getArguments())
 						nameText += arg.getShortName() + ", ";
@@ -221,17 +222,32 @@ public class SuggestShell {
 					item.setImage(RepDevMain.smallFileImage);
 					item.setData("value", func.getName().toUpperCase() + "(");
 					
-					String tooltip = func.getName().toUpperCase() + "\n" + func.getDescription() + "\n\n";
+					String tooltip = func.getName().toUpperCase() + "\n";
+					ranges.add(new StyleRange(0,tooltip.length(),null,null,SWT.BOLD));
+					
+					tooltip += func.getDescription() + "\n\n";
+					ranges.add(new StyleRange(ranges.get(ranges.size()-1).start + ranges.get(ranges.size()-1).length, (func.getDescription()).length(),null,null,SWT.ITALIC));
+					
+					tooltip += "Arguments:\n";
+					ranges.add(new StyleRange(ranges.get(ranges.size()-1).start + ranges.get(ranges.size()-1).length, 12,null,null,SWT.BOLD));
+					
+					
+					for( Argument arg : func.getArguments()){
+						ranges.add(new StyleRange(tooltip.length(), arg.getShortName().length() + 1,null,null,SWT.BOLD));
+						tooltip += "\t" + arg.getShortName() + " - " + arg.getDescription() + " " + arg.getTypes() + "\n";						
+					}
+					
+					tooltip += "\nReturns: ";
+					ranges.add(new StyleRange(tooltip.length()-11, 11,null,null,SWT.BOLD));
+					
+					tooltip += func.getReturnTypes();
+				
 					item.setData("tooltip",tooltip);
 					
-					StyleRange[] styles = {
-							new StyleRange(0,func.getName().length(),null,null,SWT.BOLD),
-							new StyleRange(func.getName().length(),tooltip.indexOf("\n\n")-func.getName().length()-1,null,null,SWT.ITALIC),
-					};
-					item.setData("tooltipstyles", styles);
+					item.setData("tooltipstyles", ranges.toArray(new StyleRange[0]));
 					
 				}
-			}*/
+			}
 
 			ArrayList<Record> records = DatabaseLayout.getInstance().getFlatRecords();
 			for (Record record : records) {
@@ -293,11 +309,11 @@ public class SuggestShell {
 		shell.setVisible(false);
 		shell.setLayout(new FillLayout());
 		
-		tooltip = new Shell(txt.getDisplay(),SWT.BORDER | SWT.ON_TOP  );
+		tooltip = new Shell(txt.getDisplay(),SWT.BORDER | SWT.ON_TOP);
 		tooltip.setVisible(false);
 		tooltip.setLayout(new FillLayout());
 		
-		toolText = new StyledText(tooltip,SWT.READ_ONLY);
+		toolText = new StyledText(tooltip,SWT.READ_ONLY | SWT.WRAP);
 		toolText.setText("Testing Tooltip");
 		toolText.setBackground(new Color(shell.getDisplay(),new RGB(255,255,225)));
 
