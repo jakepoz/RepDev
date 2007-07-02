@@ -140,6 +140,9 @@ public class RepDevMain {
 		} catch (ClassCastException e) {
 			System.out.println("FILE OUT OF DATE!");
 		} catch (IOException e) {
+			//Any odd defaults
+			Config.setRunOptionsQueue(-1);
+			
 			System.out.println("Creating data file for the first time.");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

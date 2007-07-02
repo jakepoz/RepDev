@@ -384,14 +384,16 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		install.setImage(RepDevMain.smallSymAddImage);
 		install.setToolTipText("Installs current file for onDemand use.");
 		
-		print = new ToolItem(bar,SWT.NONE);
-		print.setImage(RepDevMain.smallPrintImage);
-		print.setToolTipText("Prints the current file to a local printer.");
-		
 		run = new ToolItem(bar,SWT.NONE);
 		run.setImage(RepDevMain.smallRunImage);
 		run.setToolTipText("Opens the run report dialog.");
 		
+		
+		print = new ToolItem(bar,SWT.NONE);
+		print.setImage(RepDevMain.smallPrintImage);
+		print.setToolTipText("Prints the current file to a local printer.");
+		
+
 
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
 

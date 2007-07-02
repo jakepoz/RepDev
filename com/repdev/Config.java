@@ -15,6 +15,8 @@ public class Config implements Serializable {
 	private String server = "127.0.0.1";
 	private int tabSize = 0; // 0 = Regular tab
 	private String lastUsername = "", lastPassword = "";
+	private boolean runOptionsAskForPrompts = true;
+	private int runOptionsQueue = -1;
 
 	private Config() {
 	}
@@ -65,6 +67,22 @@ public class Config implements Serializable {
 
 	public static int getTabSize() {
 		return me.tabSize;
+	}
+
+	public static boolean isRunOptionsAskForPrompts() {
+		return me.runOptionsAskForPrompts;
+	}
+
+	public static void setRunOptionsAskForPrompts(boolean runOptionsAskForPrompts) {
+		me.runOptionsAskForPrompts = runOptionsAskForPrompts;
+	}
+
+	public static int getRunOptionsQueue() {
+		return me.runOptionsQueue;
+	}
+
+	public static void setRunOptionsQueue(int runOptionsQueue) {
+		me.runOptionsQueue = runOptionsQueue;
 	}
 
 }

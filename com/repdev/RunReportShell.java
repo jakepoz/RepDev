@@ -1,6 +1,8 @@
 package com.repdev;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -21,7 +23,7 @@ public class RunReportShell {
 	private SymitarFile file;
 	int sym;
 	boolean promptReady = false, stillRunning = false;
-	Button defaultQueueButton, selectQueueButton;
+	Button defaultQueueButton, selectQueueButton, promptButton;
 	Label queueLabel;
 	Spinner queueSpinner;
 	
@@ -36,6 +38,19 @@ public class RunReportShell {
 		shell = new Shell(parent,SWT.SHELL_TRIM | SWT.APPLICATION_MODAL );
 		shell.setText("Run Report - EXPERIMENTAL!!!");
 		shell.setImage(RepDevMain.smallRunImage);
+		shell.addDisposeListener(new DisposeListener(){
+
+			public void widgetDisposed(DisposeEvent e) {
+				//Save back Config settings
+				Config.setRunOptionsAskForPrompts(promptButton.getSelection());
+				
+				if( defaultQueueButton.getSelection() )
+					Config.setRunOptionsQueue(-1);
+				else
+					Config.setRunOptionsQueue(queueSpinner.getSelection());
+			}
+			
+		});
 		
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 5;
@@ -82,7 +97,6 @@ public class RunReportShell {
 		
 		defaultQueueButton = new Button(queueGroup,SWT.RADIO);
 		defaultQueueButton.setText("Use first empty queue");
-		defaultQueueButton.setSelection(true);
 		defaultQueueButton.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -106,13 +120,27 @@ public class RunReportShell {
 		queueSpinner.setMaximum(3);
 		queueSpinner.setMinimum(0);
 		
+		
+		if( Config.getRunOptionsQueue() != -1 ){
+			queueSpinner.setSelection(Config.getRunOptionsQueue());
+			selectQueueButton.setSelection(true);
+		}
+		else{
+			queueSpinner.setSelection(0);
+			defaultQueueButton.setSelection(true);
+		}
+		
 		final Button defaultsButton = new Button(promptGroup,SWT.RADIO);
 		defaultsButton.setText("Answer default to all prompt");
 		
 		
-		Button promptButton = new Button(promptGroup,SWT.RADIO);
+		promptButton = new Button(promptGroup,SWT.RADIO);
 		promptButton.setText("Prompt user at run time");
-		promptButton.setSelection(true);
+		
+		if( Config.isRunOptionsAskForPrompts())
+			promptButton.setSelection(true);
+		else
+			defaultsButton.setSelection(true);
 		
 		final Button runButton = new Button(shell,SWT.NONE);
 		runButton.setText("Run Report");
@@ -418,6 +446,7 @@ public class RunReportShell {
 			if (!shell.isDisposed() && !display.readAndDispatch())
 				display.sleep();
 		}
+	
 	}
 	
 	
