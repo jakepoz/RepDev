@@ -17,6 +17,7 @@ public class Config implements Serializable {
 	private String lastUsername = "", lastPassword = "";
 	private boolean runOptionsAskForPrompts = true;
 	private int runOptionsQueue = -1;
+	private int maxQueues = 3;
 
 	private Config() {
 	}
@@ -84,5 +85,15 @@ public class Config implements Serializable {
 	public static void setRunOptionsQueue(int runOptionsQueue) {
 		me.runOptionsQueue = runOptionsQueue;
 	}
+
+	public static int getMaxQueues() {
+		return me.maxQueues;
+	}
+
+	public static void setMaxQueues(int maxQueues) {
+		me.maxQueues = maxQueues;
+	}
+	
+	
 
 }

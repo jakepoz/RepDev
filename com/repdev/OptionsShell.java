@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -25,6 +26,7 @@ public class OptionsShell {
 	private Button telnetRadio, testRadio;
 	private Text serverText, tabText;
 	private Label serverLabel;
+	private Spinner maxQueuesSpinner;
 
 	private void create(Shell parent) {
 		FormLayout layout = new FormLayout();
@@ -76,7 +78,15 @@ public class OptionsShell {
 
 		serverText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
 		serverText.setText(Config.getServer());
-
+		
+		final Label maxQueuesLabel = new Label(serverGroup, SWT.NONE);
+		maxQueuesLabel.setText("Number of Queues:");
+		
+		maxQueuesSpinner = new Spinner(serverGroup, SWT.BORDER);
+		maxQueuesSpinner.setMaximum(99);
+		maxQueuesSpinner.setMinimum(0);
+		maxQueuesSpinner.setSelection(Config.getMaxQueues());		
+		
 		Button cancel = new Button(shell, SWT.PUSH);
 		cancel.setText("Cancel");
 		cancel.addSelectionListener(new SelectionAdapter() {
@@ -105,6 +115,8 @@ public class OptionsShell {
 				else
 					Config.setServer(serverText.getText());
 
+				Config.setMaxQueues(maxQueuesSpinner.getSelection());
+				
 				shell.close();
 			}
 		});
@@ -159,6 +171,17 @@ public class OptionsShell {
 		data.top = new FormAttachment(telnetRadio);
 		data.right = new FormAttachment(100);
 		serverText.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(serverText);
+		maxQueuesLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.right = new FormAttachment(100);
+		data.left  = new FormAttachment(maxQueuesLabel);
+		data.top   = new FormAttachment(serverText);
+		maxQueuesSpinner.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(0);

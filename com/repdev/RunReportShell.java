@@ -117,7 +117,7 @@ public class RunReportShell {
 		queueLabel.setText("Queue:");
 		
 		queueSpinner = new Spinner(queueGroup,SWT.BORDER);
-		queueSpinner.setMaximum(3);
+		queueSpinner.setMaximum(Config.getMaxQueues());
 		queueSpinner.setMinimum(0);
 		
 		
