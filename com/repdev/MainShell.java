@@ -1,6 +1,7 @@
 package com.repdev;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -68,6 +69,7 @@ public class MainShell {
 	private Tree tree;
 	private Table tblErrors, tblTasks; 
 	private FindReplaceShell findReplaceShell;
+	private final int MAX_RECENTS = 5;
 	
 	// Status bar stuff...	
 	private Composite statusBar;
@@ -287,6 +289,12 @@ public class MainShell {
 			
 			//Attach find/replace shell here as well (in addition to folder listener)
 			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(),true);
+			
+			System.out.println(Config.getRecentFiles());
+			Config.getRecentFiles().add(0, file);
+			
+			if( Config.getRecentFiles().size() > MAX_RECENTS)
+				Config.getRecentFiles().remove(Config.getRecentFiles().size()-1);
 			
 			return editor;
 		}
@@ -1372,7 +1380,7 @@ public class MainShell {
 		MenuItem helpItem = new MenuItem(bar, SWT.CASCADE);
 		helpItem.setText("&Help");
 
-		Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+		final Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
 		fileItem.setMenu(fileMenu);
 		Menu toolsMenu = new Menu(shell, SWT.DROP_DOWN);
 		toolsItem.setMenu(toolsMenu);
@@ -1390,16 +1398,8 @@ public class MainShell {
 			}
 		});
 		
-		new MenuItem(fileMenu,SWT.SEPARATOR);
-		
-		MenuItem fileExit = new MenuItem(fileMenu, SWT.PUSH);
-		fileExit.setText("E&xit");
-		fileExit.setImage(RepDevMain.smallExitImage);
-		fileExit.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent arg0) {
-				close();
-			}
-		});
+		final MenuItem recentSeperator = new MenuItem(fileMenu,SWT.SEPARATOR);
+			
 		
 		fileMenu.addMenuListener(new MenuListener(){
 
@@ -1410,6 +1410,49 @@ public class MainShell {
 
 			public void menuShown(MenuEvent e) {
 				filePrint.setEnabled(mainfolder.getSelection() != null);
+				int i;
+				
+				for( i = fileMenu.indexOf(recentSeperator) + 1; i < fileMenu.getItemCount(); ){
+					if( !fileMenu.getItem(i).isDisposed() )
+						fileMenu.getItem(i).dispose();
+				}
+				
+				i = 1;
+				
+				for( final SymitarFile file : Config.getRecentFiles()){
+					MenuItem item = new MenuItem(fileMenu,SWT.PUSH);
+					
+					item.setData(file);
+					item.setText(i + " " + file.getName());
+					item.setImage(getFileImage(file));
+					
+					item.addSelectionListener(new SelectionAdapter(){
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							if( !RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).isConnected())
+								if (SymLoginShell.symLogin(display, shell, file.getSym()) == -1) 
+									return;
+								
+							openFile(file);							
+						}
+						
+					});
+					
+					i++;
+				}
+				
+//				Indicator used for creating recents list
+				MenuItem staticSeperator = new MenuItem(fileMenu,SWT.SEPARATOR);
+				
+				MenuItem fileExit = new MenuItem(fileMenu, SWT.PUSH);
+				fileExit.setText("E&xit");
+				fileExit.setImage(RepDevMain.smallExitImage);
+				fileExit.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent arg0) {
+						close();
+					}
+				});
 			}
 			
 		});

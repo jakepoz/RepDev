@@ -3,6 +3,7 @@ package com.repdev;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -10,7 +11,9 @@ import java.util.Date;
  * @author Jake Poznanski
  *
  */
-public class SymitarFile {
+public class SymitarFile implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private FileType type;
 	private Date modified = new Date(0), installed = new Date(0);

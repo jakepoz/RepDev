@@ -18,7 +18,8 @@ public class Config implements Serializable {
 	private boolean runOptionsAskForPrompts = true;
 	private int runOptionsQueue = -1;
 	private int maxQueues = 3;
-
+    private ArrayList<SymitarFile> recentFiles = new ArrayList<SymitarFile>();
+   
 	private Config() {
 	}
 
@@ -94,6 +95,12 @@ public class Config implements Serializable {
 		me.maxQueues = maxQueues;
 	}
 	
-	
+	public static ArrayList<SymitarFile> getRecentFiles() {
+		return me.recentFiles;
+	}
+
+	public static void setRecentFiles(ArrayList<SymitarFile> recentFiles) {
+		me.recentFiles = recentFiles;
+	}
 
 }
