@@ -560,6 +560,11 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 					case 'S':
 						RepDevMain.mainShell.saveAllRepgens();
 						break;
+						
+					case 'o':
+					case 'O':
+						RepDevMain.mainShell.showOptions();
+						break;
 					}
 				}
 				else{

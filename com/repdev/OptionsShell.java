@@ -24,7 +24,8 @@ public class OptionsShell {
 	Shell shell;
 	private static OptionsShell me = new OptionsShell();
 	private Button telnetRadio, testRadio;
-	private Text serverText, tabText;
+	private Text serverText;
+	private Spinner tabSpinner;
 	private Label serverLabel;
 	private Spinner maxQueuesSpinner;
 
@@ -99,16 +100,7 @@ public class OptionsShell {
 		ok.setText("Save Settings");
 		ok.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				try {
-					Config.setTabSize(Integer.valueOf(tabText.getText()));
-				} catch (Exception ex) {
-					MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					dialog.setText("Input Error");
-					dialog.setMessage("Tab Size is incorrect!");
-					dialog.open();
-
-					return;
-				}
+				Config.setTabSize(tabSpinner.getSelection());
 
 				if (testRadio.getSelection())
 					Config.setServer("test");
@@ -134,8 +126,10 @@ public class OptionsShell {
 		Label tabLabel = new Label(editorGroup, SWT.NONE);
 		tabLabel.setText("Tab Width (0 for Regular Tabs):");
 
-		tabText = new Text(editorGroup, SWT.BORDER);
-		tabText.setText(String.valueOf(Config.getTabSize()));
+		tabSpinner = new Spinner(editorGroup, SWT.BORDER);
+		tabSpinner.setMaximum(99);
+		tabSpinner.setMinimum(0);
+		tabSpinner.setSelection(Config.getTabSize());
 
 		data = new FormData();
 		data.left = new FormAttachment(0);
@@ -192,7 +186,7 @@ public class OptionsShell {
 		data.left = new FormAttachment(tabLabel);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(0);
-		tabText.setLayoutData(data);
+		tabSpinner.setLayoutData(data);
 
 		data = new FormData();
 		data.right = new FormAttachment(100);

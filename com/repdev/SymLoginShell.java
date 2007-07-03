@@ -29,8 +29,10 @@ public class SymLoginShell {
 	private int result = -1;
 	private int sym;
 	private String aixUsername, aixPassword, userID;
-	public static String lastUsername = Config.getLastUsername() == null ? "" : Config.getLastUsername(), lastPassword = "";
-
+	public static String lastUsername = Config.getLastUsername() == null ? "" : Config.getLastUsername();
+	public static String lastPassword = (RepDevMain.DEVELOPER && Config.getLastPassword() != null) ? Config.getLastPassword() : "";
+	public static String lastUserID = (RepDevMain.DEVELOPER && Config.getLastUserID() != null) ? Config.getLastUserID() : "";
+	
 	private void create(Shell parent, int inSym) {
 		result = -1;
 
@@ -69,7 +71,8 @@ public class SymLoginShell {
 		aixPasswordText.setText(lastPassword);
 
 		final Text userIDText = new Text(shell, SWT.BORDER | SWT.PASSWORD);
-
+		userIDText.setText(lastUserID);
+		
 		Button ok = new Button(shell, SWT.PUSH);
 		ok.setText("Login");
 		ok.addSelectionListener(new SelectionAdapter() {
@@ -92,9 +95,11 @@ public class SymLoginShell {
 
 				lastUsername = aixUsername;
 				lastPassword = aixPassword;
+				lastUserID = userID;
 				
-				//Config.setLastPassword(lastPassword);
+				Config.setLastPassword(lastPassword);
 				Config.setLastUsername(lastUsername);
+				Config.setLastUserID(lastUserID);
 
 				result = 1000;
 

@@ -11,6 +11,8 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
@@ -111,7 +113,7 @@ public class MainShell {
 			
 
 		});
-		
+				
 		final Composite left = new Composite(shell, SWT.NONE);
 		createExplorer(left);
 		final Sash sashVert = new Sash(shell, SWT.VERTICAL | SWT.SMOOTH);
@@ -1660,7 +1662,7 @@ public class MainShell {
 		findReplaceShell.find();
 	}
 	
-	private void showOptions() {
+	public void showOptions() {
 		OptionsShell.showOptions(shell.getDisplay(), shell);
 	}
 

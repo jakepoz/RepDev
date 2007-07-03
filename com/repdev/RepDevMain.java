@@ -23,6 +23,7 @@ public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
 	public static final String VERSION = "0.2.4-dev";
 	public static final String NAMESTR = "RepDev  v" + VERSION;
+	public static final boolean DEVELOPER = false;
 	public static MainShell mainShell;
 	private static Display display;
 	public static Image largeActionSaveImage, largeAddImage, largeFileAddImage, largeFileRemoveImage, largePrintLocalImage, largePrintLPTImage, largePrintTPTImage, largeProjectAddImage, largeProjectRemoveImage, largeRemoveImage, largeRunImage,

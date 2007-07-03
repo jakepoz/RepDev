@@ -14,7 +14,7 @@ public class Config implements Serializable {
 	private ArrayList<Integer> syms = new ArrayList<Integer>();
 	private String server = "127.0.0.1";
 	private int tabSize = 0; // 0 = Regular tab
-	private String lastUsername = "", lastPassword = "";
+	private String lastUsername = "", lastPassword = "", lastUserID;
 	private boolean runOptionsAskForPrompts = true;
 	private int runOptionsQueue = -1;
 	private int maxQueues = 3;
@@ -93,6 +93,14 @@ public class Config implements Serializable {
 
 	public static void setMaxQueues(int maxQueues) {
 		me.maxQueues = maxQueues;
+	}
+
+	public static String getLastUserID() {
+		return me.lastUserID;
+	}
+
+	public static void setLastUserID(String lastUserID) {
+		me.lastUserID = lastUserID;
 	}
 	
 	public static ArrayList<SymitarFile> getRecentFiles() {
