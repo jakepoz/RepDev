@@ -1005,13 +1005,13 @@ public class MainShell {
 	    
 	    lineColumn = new Label(statusBar, SWT.NONE);
 	    lineColumn.setSize(150,16);
-	    lineColumn.setText("Line: 0                        ");
+	    lineColumn.setText("Location: 0 : 0                        ");
 	    	    	    	    
-	    statusBar.pack();
+	    //statusBar.pack();
 	}
 	
 	public void setLineColumn(int line, int col) {
-		lineColumn.setText("Line: " + line + " : " + col);
+		lineColumn.setText("Location: " + line + " : " + col);
 	}
 	
 	protected void runReport() {
