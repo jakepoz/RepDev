@@ -171,6 +171,12 @@ public class RepDevMain {
 			}
 
 			Config.setSyms(newSyms);
+			
+			//Only save passwords if DEVELOPER FLAG is on
+			if( !DEVELOPER ){
+				Config.setLastPassword("");
+				Config.setLastUserID("");
+			}
 
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.home") + System.getProperty("file.separator") + "repdev.conf"));
 			out.writeObject(Config.getConfig());
