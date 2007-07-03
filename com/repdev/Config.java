@@ -53,6 +53,9 @@ public class Config implements Serializable {
 
 	public static void setConfig(Config config) {
 		me = config;
+		
+		if( me.recentFiles == null) 
+			me.recentFiles = new ArrayList<SymitarFile>();
 	}
 
 	public static void setServer(String server) {

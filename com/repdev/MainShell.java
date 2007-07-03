@@ -292,8 +292,8 @@ public class MainShell {
 			//Attach find/replace shell here as well (in addition to folder listener)
 			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(),true);
 			
-			System.out.println(Config.getRecentFiles());
-			Config.getRecentFiles().add(0, file);
+			if( !Config.getRecentFiles().contains(file) ) 
+				Config.getRecentFiles().add(0, file);
 			
 			if( Config.getRecentFiles().size() > MAX_RECENTS)
 				Config.getRecentFiles().remove(Config.getRecentFiles().size()-1);
