@@ -621,6 +621,34 @@ public class MainShell {
 			}
 		});
 		
+		final MenuItem openAllItem = new MenuItem(treeMenu, SWT.NONE);
+		openAllItem.setText("Open All in Project");
+		openAllItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				TreeItem[] selection = tree.getSelection();
+				if (selection.length != 1)
+					return;
+
+				TreeItem cur = selection[0];
+				while (cur != null && !(cur.getData() instanceof Project))
+					cur = cur.getParentItem();
+
+				if (cur == null)
+					return;
+
+				Project proj = (Project) cur.getData();
+				
+				
+				shell.setCursor(display.getSystemCursor(SWT.CURSOR_WAIT));
+				ArrayList<SymitarFile> files = proj.getFiles();
+				for( SymitarFile file: files ) {
+					openFile(file);
+				}
+				shell.setCursor(display.getSystemCursor(SWT.CURSOR_ARROW));
+			}			
+		});
+		
+		
 		new MenuItem(treeMenu, SWT.SEPARATOR);
 		
 		final Menu runMenu = new Menu(treeMenu);
@@ -828,6 +856,11 @@ public class MainShell {
 					newProjectFile.setEnabled(true);
 				}
 				
+				if( tree.getSelection()[0].getData() instanceof Project && tree.getSelectionCount() == 1 ) {
+					openAllItem.setEnabled(true);
+				} else
+					openAllItem.setEnabled(false);
+					
 				if( tree.getSelectionCount() == 1 && tree.getSelection()[0].getData() instanceof SymitarFile && ((SymitarFile)tree.getSelection()[0].getData()).getType() == FileType.REPGEN){
 					runMenuItem.setEnabled(true);
 				}
