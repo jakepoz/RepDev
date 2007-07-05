@@ -175,6 +175,9 @@ public class RepDevMain {
 
 			Config.setSyms(newSyms);
 			
+			//Write current mounted dirs
+			Config.setMountedDirs(ProjectManager.getMountedDirs());
+			
 			//Only save passwords if DEVELOPER FLAG is on
 			if( !DEVELOPER ){
 				Config.setLastPassword("");

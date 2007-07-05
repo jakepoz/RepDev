@@ -13,14 +13,14 @@ public class SymitarWildcardFilter implements FilenameFilter {
 		String matcher;
 
 		public SymitarWildcardFilter(String matcher) {
-			this.matcher = matcher;
+			this.matcher = matcher.toLowerCase();
 		}
 
 		public boolean accept(File dir, String name) {
 			// Strip out other things to get just the name we want
 			try {
 				Pattern p = Pattern.compile(matcher.replaceAll("\\+", ".*"));
-				Matcher m = p.matcher(name);
+				Matcher m = p.matcher(name.toLowerCase());
 
 				return m.matches();
 

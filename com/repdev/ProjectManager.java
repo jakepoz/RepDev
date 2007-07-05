@@ -182,6 +182,18 @@ public class ProjectManager {
 
 		processLoadProject(dataTemp, sym);
 	}
+	
+	public static ArrayList<String> getMountedDirs(){
+		ArrayList<String> toRet = new ArrayList<String>();
+		
+		for(Object o : projects.keySet()){
+			System.out.println("M: " + o);
+			if( o instanceof String)
+				toRet.add((String)o);
+		}
+		
+		return toRet;
+	}
 
 	public static ArrayList<Project> getProjects(String dir){
 		if( projects.get(dir) == null)

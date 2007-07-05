@@ -633,11 +633,20 @@ public class MainShell {
 		toolbar.pack();
 
 		tree = new Tree(group, SWT.NONE | SWT.BORDER  );
+		
 		for (int sym : Config.getSyms()) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
 			item.setText("Sym " + sym);
 			item.setImage(RepDevMain.smallSymImage);
 			item.setData(sym);
+			new TreeItem(item, SWT.NONE).setText("Loading...");
+		}
+		
+		for (String dir : Config.getMountedDirs()) {
+			TreeItem item = new TreeItem(tree, SWT.NONE);
+			item.setText(dir.substring(dir.lastIndexOf("\\")));
+			item.setImage(RepDevMain.smallFolderImage);
+			item.setData(dir);
 			new TreeItem(item, SWT.NONE).setText("Loading...");
 		}
 
@@ -948,7 +957,7 @@ public class MainShell {
 			}
 
 			public void menuShown(MenuEvent e) {
-				if (tree.getSelection()[0].getData() instanceof Integer && tree.getSelectionCount() == 1) {
+				if ((tree.getSelection()[0].getData() instanceof Integer || tree.getSelection()[0].getData() instanceof String) && tree.getSelectionCount() == 1) {
 					importFilem.setEnabled(false);
 					newProjectFile.setEnabled(false);
 				} else {
@@ -1043,6 +1052,13 @@ public class MainShell {
 
 				Object data = ((TreeItem) selection[0]).getData();
 				if (data instanceof Integer) {
+					remSym.setEnabled(true);
+					addProj.setEnabled(true);
+					remProj.setEnabled(false);
+					importFile.setEnabled(false);
+					newFile.setEnabled(false);
+					remFile.setEnabled(false);
+				} else if( data instanceof String){
 					remSym.setEnabled(true);
 					addProj.setEnabled(true);
 					remProj.setEnabled(false);

@@ -21,7 +21,7 @@ public class Config implements Serializable {
 	private int runOptionsQueue = -1;
 	private int maxQueues = 3;
     private ArrayList<SymitarFile> recentFiles = new ArrayList<SymitarFile>();
-    private ArrayList<String> mountedFolders = new ArrayList<String>();
+    private ArrayList<String> mountedDirs = new ArrayList<String>();
     
 	private Config() {
 	}
@@ -57,8 +57,14 @@ public class Config implements Serializable {
 	public static void setConfig(Config config) {
 		me = config;
 		
+		/**
+		 * Note, this is where we should set any init stuff to un-null any objects
+		 */
 		if( me.recentFiles == null) 
 			me.recentFiles = new ArrayList<SymitarFile>();
+		
+		if( me.mountedDirs == null) 
+			me.mountedDirs = new ArrayList<String>();
 	}
 
 	public static void setServer(String server) {
@@ -117,15 +123,12 @@ public class Config implements Serializable {
 		me.recentFiles = recentFiles;
 	}
 
-	public ArrayList<String> getMountedFolders() {
-		return me.mountedFolders;
+	public static ArrayList<String> getMountedDirs() {
+		return me.mountedDirs;
 	}
 
-	public void setMountedFolders(ArrayList<String> mountedFolders) {
-		me.mountedFolders = mountedFolders;
-		
-		if( me.mountedFolders == null) 
-			me.mountedFolders = new ArrayList<String>();
+	public static void setMountedDirs(ArrayList<String> mountedFolders) {
+		me.mountedDirs = mountedFolders;
 	}
 
 }
