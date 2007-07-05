@@ -111,7 +111,7 @@ public abstract class SymitarSession {
 	
 	public abstract void terminateRepgen(int seq);
 
-	public abstract SessionError runBatchFM(String title);
+	public abstract SessionError runBatchFM(String file, String title);
 
 	public abstract ArrayList<PrintItem> getPrintItems( String query, int limit );
 	public abstract ArrayList<PrintItem> getPrintItems( int seq );

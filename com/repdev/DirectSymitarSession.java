@@ -603,7 +603,7 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public SessionError runBatchFM(String title) {
+	public SessionError runBatchFM(String name, String title) {
 		// TODO Auto-generated method stub
 		return null;
 	}
