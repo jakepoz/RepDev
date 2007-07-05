@@ -84,8 +84,12 @@ public class FileDialog {
 		typeCombo = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
 
 		typeCombo.add("REPGEN");
-		typeCombo.add("LETTER");
-		typeCombo.add("HELP");
+		
+		if( dir == null){
+			typeCombo.add("LETTER");
+			typeCombo.add("HELP");
+		}
+		
 		typeCombo.select(0);
 
 		table = new Table(shell, (mode == Mode.OPEN ? SWT.MULTI : SWT.SINGLE) | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -272,10 +276,18 @@ public class FileDialog {
 
 	private void createList() {
 		table.removeAll();
-
-		SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
-
-		for (SymitarFile cur : session.getFileList(FileType.valueOf(typeCombo.getText()), nameText.getText())) {
+		ArrayList<SymitarFile> fileList = new ArrayList<SymitarFile>();
+		
+		if( dir == null ){
+			SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
+			fileList = session.getFileList(FileType.valueOf(typeCombo.getText()), nameText.getText());
+		}
+		else{
+			fileList = Util.getFileList(dir, nameText.getText());
+		}
+		
+		
+		for (SymitarFile cur : fileList) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, cur.getName());
 			

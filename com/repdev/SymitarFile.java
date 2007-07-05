@@ -36,6 +36,15 @@ public class SymitarFile implements Serializable {
 		this.type = FileType.REPGEN;
 	}
 	
+	public SymitarFile(String dir, String name, Date modified, long size){
+		this.dir = dir;
+		this.name = name;
+		this.local = true;
+		this.type = FileType.REPGEN;
+		this.modified = modified;
+		this.size = size;
+	}
+	
 	public SymitarFile(int sym, String name, FileType type) {
 		this.sym = sym;
 		this.name = name;

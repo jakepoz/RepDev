@@ -492,7 +492,13 @@ public class MainShell {
 
 		Project proj = (Project) cur.getData();
 
-		FileDialog dialog = new FileDialog(shell, FileDialog.Mode.OPEN, proj.getSym());
+		FileDialog dialog;
+		
+		if( isCurrentItemLocal())
+			dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeDir());
+		else
+			dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeSym());
+		
 		ArrayList<SymitarFile> files = dialog.open();
 
 		if (files != null) {
@@ -647,7 +653,14 @@ public class MainShell {
 		newFreeFile.setText("New File");
 		newFreeFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(shell, FileDialog.Mode.SAVE, getCurrentTreeSym());
+				FileDialog dialog;
+				
+				if( isCurrentItemLocal())
+					dialog = new FileDialog(shell, FileDialog.Mode.SAVE, getCurrentTreeDir());
+				else
+					dialog = new FileDialog(shell, FileDialog.Mode.SAVE, getCurrentTreeSym());
+				
+				
 				ArrayList<SymitarFile> files = dialog.open();
 
 				if (files.size() > 0) {
@@ -905,8 +918,12 @@ public class MainShell {
 		openFile.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
-
-				FileDialog dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeSym());
+				FileDialog dialog;
+				
+				if( isCurrentItemLocal() )
+					dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeDir());
+				else
+					dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeSym());
 
 				for (SymitarFile file : dialog.open())
 					openFile(file);
@@ -1178,7 +1195,9 @@ public class MainShell {
 		
 		Object data = tree.getSelection()[0].getData();
 
-		if (data instanceof Integer)
+		if( data instanceof Integer)
+			return null;
+		if (data instanceof String)
 			dir = (String) data;
 		else if (data instanceof Project)
 			dir = ((Project) data).getDir();

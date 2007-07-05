@@ -1,10 +1,14 @@
 package com.repdev;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Small symitar related utility methods, all static
@@ -12,6 +16,7 @@ import java.util.Date;
  *
  */
 public class Util {
+
 	
 	/**
 	 * Parse Symitar Dates
@@ -61,4 +66,25 @@ public class Util {
 			return "" + new DecimalFormat("##0.00").format(size / (1024. * 1024.)) + " MB";
 	}
 	
+	public static ArrayList<SymitarFile> getFileList(String dir, String search) {
+		ArrayList<SymitarFile> data = new ArrayList<SymitarFile>();
+
+		File file = new File(dir);
+		File[] fileListData;
+
+		search = search.trim();
+
+		if (search.equals(""))
+			search = "+";
+
+		fileListData = file.listFiles(new SymitarWildcardFilter(search));
+
+		if (fileListData != null)
+			for (File current : fileListData) {
+				if( !current.isDirectory())
+					data.add(new SymitarFile(dir,current.getName(),new Date(current.lastModified()), current.length()));
+			}
+
+		return data;
+	}
 }
