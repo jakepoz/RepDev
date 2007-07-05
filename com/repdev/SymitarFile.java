@@ -92,7 +92,10 @@ public class SymitarFile implements Serializable {
 		else{
 			try {
 				PrintWriter out = new PrintWriter(new FileWriter(getPath()));
-				out.write(data);
+				
+				if( data != null)
+					out.write(data);
+				
 				out.close();
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -755,7 +755,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		frmTxt.bottom = new FormAttachment(100);
 		txt.setLayoutData(frmTxt);
 
-		if( parser != null )
+		if( parser != null && !file.isLocal())
 			parser.errorCheck();
 		
 		undoMode = 1;
@@ -769,7 +769,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		modified = false;
 		updateModified();
 		
-		if( parser != null && errorCheck)
+		if( parser != null && errorCheck && !file.isLocal())
 			parser.errorCheck();
 	}
 	

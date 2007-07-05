@@ -377,6 +377,7 @@ public class MainShell {
 				item.setImage(RepDevMain.smallFolderImage);
 				item.setData(dir);
 				new TreeItem(item, SWT.NONE).setText("Loading...");
+				Config.getMountedDirs().add(dir);
 			}
 		}
 	}
@@ -911,6 +912,8 @@ public class MainShell {
 
 				if (data instanceof Integer)
 					removeSym();
+				if( data instanceof String)
+					removeDir();
 				else if (data instanceof Project)
 					removeProject();
 				else
@@ -1144,6 +1147,39 @@ public class MainShell {
 		frmTree.right = new FormAttachment(100);
 		frmTree.bottom = new FormAttachment(100);
 		tree.setLayoutData(frmTree);
+	}
+
+	private void removeDir() {
+		TreeItem[] selection = tree.getSelection();
+		TreeItem currentItem;
+		String dir;
+
+		if (selection.length != 1)
+			return;
+		
+		currentItem = selection[0];
+
+		while (!(currentItem.getData() instanceof String)) {
+			currentItem = currentItem.getParentItem();
+
+			if (currentItem == null)
+				return;
+		}
+
+		dir = (String) currentItem.getData();
+
+		MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
+		dialog.setText("Confirm Directory Close");
+		dialog.setMessage("Are you sure you want to close this directory?");
+
+		if (dialog.open() == SWT.OK) {
+			ProjectManager.saveProjects(dir);
+			Config.getMountedDirs().remove(dir);
+
+			currentItem.dispose();
+		}
+
+		tree.notifyListeners(SWT.Selection, null);
 	}
 
 	public void createStatusBar() {
