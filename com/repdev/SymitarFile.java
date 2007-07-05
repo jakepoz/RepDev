@@ -56,7 +56,7 @@ public class SymitarFile implements Serializable {
 		else{
 			StringBuilder sb= new  StringBuilder();
 			try {
-				BufferedReader in = new BufferedReader(new FileReader(name));
+				BufferedReader in = new BufferedReader(new FileReader(getPath()));
 				String line = "";
 				
 				while( (line=in.readLine()) != null)
