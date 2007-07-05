@@ -38,6 +38,8 @@ public class FileDialog {
 	Table table;
 	Combo typeCombo;
 	Text nameText;
+	String dir;
+	
 	boolean listLoaded = false;
 
 	public enum Mode {
@@ -48,6 +50,13 @@ public class FileDialog {
 		this.parent = parent;
 		this.mode = mode;
 		this.sym = sym;
+		this.display = parent.getDisplay();
+	}
+	
+	public FileDialog(Shell parent, Mode mode, String dir) {
+		this.parent = parent;
+		this.mode = mode;
+		this.dir = dir;
 		this.display = parent.getDisplay();
 	}
 
@@ -98,7 +107,12 @@ public class FileDialog {
 					files.add((SymitarFile) (table.getSelection())[0].getData());
 					shell.close();
 				} else if (mode == Mode.SAVE) {
-					files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+					
+					if( dir == null)
+						files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+					else
+						files.add(new SymitarFile(dir,nameText.getText().trim()));
+					
 					shell.close();
 				}
 			}
@@ -135,7 +149,11 @@ public class FileDialog {
 					files.add((SymitarFile) (table.getItems()[0].getData()));
 					shell.close();
 				} else if (mode == Mode.SAVE && nameText.getText().trim().length() > 0 && !isTemplate()) {
-					files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+					if( dir == null)
+						files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+					else
+						files.add(new SymitarFile(dir,nameText.getText().trim()));
+					
 					shell.close();
 				}
 
@@ -183,7 +201,11 @@ public class FileDialog {
 					}
 					else
 					{
-						files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+						if( dir == null)
+							files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+						else
+							files.add(new SymitarFile(dir,nameText.getText().trim()));
+						
 						shell.close();
 					}
 				}

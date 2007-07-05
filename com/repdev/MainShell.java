@@ -11,6 +11,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuAdapter;
@@ -18,6 +19,7 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Font;
@@ -37,6 +39,7 @@ import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -109,11 +112,9 @@ public class MainShell {
 						close = false;
 				
 				e.doit = close;
-			}
-			
-
+			}		
 		});
-				
+					
 		final Composite left = new Composite(shell, SWT.NONE);
 		createExplorer(left);
 		final Sash sashVert = new Sash(shell, SWT.VERTICAL | SWT.SMOOTH);
@@ -356,6 +357,29 @@ public class MainShell {
 			}
 		} 
 	}
+	
+	private void addFolder(){
+		DirectoryDialog dialog = new DirectoryDialog(shell,SWT.NONE);
+		dialog.setMessage("Select a folder to mount in RepDev");
+		String dir;
+		
+		if( (dir = dialog.open()) != null){
+			boolean exists = false;
+
+			for (TreeItem current : tree.getItems()) {
+				if (current.getData() instanceof String && ((String) current.getData()).equals(dir))
+					exists = true;
+			}
+
+			if (!exists) {
+				TreeItem item = new TreeItem(tree, SWT.NONE);
+				item.setText(dir.substring(dir.lastIndexOf("\\")));
+				item.setImage(RepDevMain.smallFolderImage);
+				item.setData(dir);
+				new TreeItem(item, SWT.NONE).setText("Loading...");
+			}
+		}
+	}
 
 	private void removeSym() {
 		TreeItem[] selection = tree.getSelection();
@@ -391,6 +415,9 @@ public class MainShell {
 	}
 
 	private void addProject() {
+		int sym = -1;
+		String dir = null;
+		
 		TreeItem[] selection = tree.getSelection();
 		if (selection.length != 1)
 			return;
@@ -399,10 +426,21 @@ public class MainShell {
 		while (cur.getParentItem() != null)
 			cur = cur.getParentItem();
 
-		int sym = (Integer) cur.getData();
-		String str = NewProjShell.askForName(display, shell, sym);
+		if( cur.getData() instanceof Integer)
+		  sym = (Integer) cur.getData();
+		else if( cur.getData() instanceof String)
+		  dir = (String) cur.getData();
+		
+		String str = NewProjShell.askForName(display, shell);
+		
 		if (str != null) {
-			Project proj = ProjectManager.createProject(str, sym);
+			Project proj = null;
+			
+			if( cur.getData() instanceof Integer)
+				proj = ProjectManager.createProject(str, sym);
+			else if( cur.getData() instanceof String)
+				proj = ProjectManager.createProject(str, dir);
+				
 
 			if (proj != null) {
 				TreeItem item = new TreeItem(cur, SWT.NONE);
@@ -473,7 +511,13 @@ public class MainShell {
 	}
 
 	private void newFileInProject() {
-		FileDialog dialog = new FileDialog(shell, FileDialog.Mode.SAVE, getCurrentTreeSym());
+		FileDialog dialog;
+		
+		if( isCurrentItemLocal())
+			dialog = new FileDialog(shell, FileDialog.Mode.SAVE, getCurrentTreeDir());
+		else
+			dialog = new FileDialog(shell, FileDialog.Mode.SAVE, getCurrentTreeSym());
+		
 		ArrayList<SymitarFile> files = dialog.open();
 
 		if (files.size() > 0) {
@@ -542,7 +586,7 @@ public class MainShell {
 
 		ToolBar toolbar = new ToolBar(group, SWT.HORIZONTAL | SWT.WRAP);
 
-		ToolItem addSym = new ToolItem(toolbar, SWT.PUSH);
+		final ToolItem addSym = new ToolItem(toolbar, SWT.PUSH);
 		addSym.setImage(RepDevMain.smallSymAddImage);
 		addSym.setToolTipText("Add a new Sym to this list.");
 
@@ -550,7 +594,11 @@ public class MainShell {
 		remSym.setImage(RepDevMain.smallSymRemoveImage);
 		remSym.setToolTipText("Remove the selected Sym from this list.");
 		remSym.setEnabled(false);
-
+		
+		final ToolItem addFolder = new ToolItem(toolbar, SWT.PUSH);
+		addFolder.setImage(RepDevMain.smallFolderAddImage);
+		addFolder.setToolTipText("Mounts a local folder to store files and projects.");
+		
 		final ToolItem addProj = new ToolItem(toolbar, SWT.PUSH);
 		addProj.setImage(RepDevMain.smallProjectAddImage);
 		addProj.setToolTipText("Create a new project in the selected Sym.");
@@ -727,16 +775,15 @@ public class MainShell {
 				
 				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 				
-				SymitarFile file = (SymitarFile)obj;
+				final SymitarFile file = (SymitarFile)obj;
 				
-				ArrayList<Integer> seqs = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getReportSeqs(file.getName(), -1, 40,1);
+				ArrayList<Integer> seqs = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getReportSeqs(file.getName(), -1, 40,10);
 				
 				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 				
 				if( seqs != null && seqs.size() > 0){
-					//TODO: Finish this mess
 					//Create mini shell to pick report
-					Shell dialog = new Shell(shell,SWT.SHELL_TRIM);
+					final Shell dialog = new Shell(shell,SWT.DIALOG_TRIM);
 					FormLayout layout = new FormLayout();
 					layout.marginTop = 5;
 					layout.marginBottom = 5;
@@ -750,37 +797,63 @@ public class MainShell {
 					
 					Label label = new Label(dialog,SWT.NONE);
 					label.setText("Report Run: ");
-					data = new FormData();
-					data.top = new FormAttachment(0);
-					data.left = new FormAttachment(0);
-					label.setLayoutData(data);
+
 					
-					Combo combo = new Combo(dialog,SWT.READ_ONLY);
+					final Combo combo = new Combo(dialog,SWT.READ_ONLY);
 					data = new  FormData();
-					data.top = new FormAttachment(0);
-					data.left = new FormAttachment(label);
-					data.right = new  FormAttachment(100);
-					combo.setLayoutData(data);
-					
-					for(int seq : seqs)
+
+					int i = 0;
+					for(int seq : seqs){
 						combo.add("Sequence: " + seq);
+						combo.setData(String.valueOf(i), seq);
+						i++;
+					}
 					
 					combo.select(0);
 					
-					
 					Button cancelButton = new Button(dialog,SWT.PUSH);
 					cancelButton.setText("Cancel");
-					data = new FormData();
-					//data.right = new FormAttachment(100);
-					data.bottom = new FormAttachment(100);
-					cancelButton.setData(data);
+					cancelButton.addSelectionListener(new SelectionAdapter(){
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							dialog.close();
+						}
+						
+					});
+	
+					Button okButton = new Button(dialog,SWT.PUSH);
+					okButton.setText("View Report");
+					okButton.addSelectionListener(new SelectionAdapter(){
+
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							openFile((Integer)combo.getData(String.valueOf(combo.getSelectionIndex())), file.getSym());
+							dialog.close();
+						}
+						
+					});
 					
-					/*Button okButton = new Button(dialog,SWT.PUSH);
-					okButton.setText("Ok");
+					data = new FormData();
+					data.left = new FormAttachment(0);
+					data.top = new FormAttachment(0);
+					label.setLayoutData(data);
+					
+					data = new FormData();
+					data.left = new FormAttachment(label);
+					data.top = new FormAttachment(0);
+					data.right = new FormAttachment(100);
+					combo.setLayoutData(data);
+					
+					data = new FormData();
+					data.right = new FormAttachment(100);
+					data.top = new FormAttachment(combo);
+					cancelButton.setLayoutData(data);
+					
 					data = new FormData();
 					data.right = new FormAttachment(cancelButton);
 					data.top = new FormAttachment(combo);
-					okButton.setLayoutData(data);*/
+					okButton.setLayoutData(data);
 					
 
 					dialog.layout(true,true);
@@ -889,27 +962,35 @@ public class MainShell {
 				for (TreeItem child : root.getItems())
 					child.dispose();
 
-				if (root.getData() instanceof Integer) {
-					SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(root.getData());
-
-					if (session == null || !session.isConnected()) {
-						if (SymLoginShell.symLogin(display, shell, (Integer) root.getData()) == -1) {
-							display.asyncExec(new Runnable() {
-
-								public void run() {
-									TreeItem newItem = new TreeItem(root, SWT.NONE);
-									newItem.setText("Loading...");
-									newItem.setExpanded(false);
-									root.setExpanded(false);
-								}
-
-							});
-
-							return;
+				if (root.getData() instanceof Integer || root.getData() instanceof String) {
+					if( root.getData() instanceof Integer){
+						SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(root.getData());
+	
+						if (session == null || !session.isConnected()) {
+							if (SymLoginShell.symLogin(display, shell, (Integer) root.getData()) == -1) {
+								display.asyncExec(new Runnable() {
+	
+									public void run() {
+										TreeItem newItem = new TreeItem(root, SWT.NONE);
+										newItem.setText("Loading...");
+										newItem.setExpanded(false);
+										root.setExpanded(false);
+									}
+	
+								});
+	
+								return;
+							}
 						}
 					}
-
-					for (Project proj : ProjectManager.getProjects((Integer) root.getData())) {
+					ArrayList<Project> projects = new ArrayList<Project>();
+					
+					if( root.getData() instanceof Integer)
+						projects = ProjectManager.getProjects((Integer)root.getData());
+					else if( root.getData() instanceof String)
+						projects = ProjectManager.getProjects((String)root.getData());
+					
+					for (Project proj : projects) {
 						TreeItem item = new TreeItem(root, SWT.NONE);
 						item.setText(proj.getName());
 						item.setData(proj);
@@ -980,6 +1061,13 @@ public class MainShell {
 				addSym();
 			}
 		});
+		
+		addFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				addFolder();
+			}
+		});
+		
 		remSym.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeSym();
@@ -1085,6 +1173,37 @@ public class MainShell {
 		return sym;
 	}
 	
+	private String getCurrentTreeDir(){
+		String dir = "";
+		
+		Object data = tree.getSelection()[0].getData();
+
+		if (data instanceof Integer)
+			dir = (String) data;
+		else if (data instanceof Project)
+			dir = ((Project) data).getDir();
+		else
+			dir = ((Project) tree.getSelection()[0].getParentItem().getData()).getDir();
+
+		return dir;
+	}
+	
+	private boolean isCurrentItemLocal(){
+		
+		Object data = tree.getSelection()[0].getData();
+
+		if( data instanceof String)
+			return true;
+		else if (data instanceof Integer)
+			return false;
+		else if (data instanceof Project)
+			return ((Project) data).getDir() != null;
+		else if( ((Project) tree.getSelection()[0].getParentItem().getData()).getDir() != null)
+			return false;
+
+		return true;
+	}
+	
 	private Image drawSymOverImage(Image img, int sym){
 		Image image = new Image(display, 16, 16);
 
@@ -1119,6 +1238,9 @@ public class MainShell {
 	private Image getFileImage(SymitarFile file) {
 		Image img;
 
+		if( file.isLocal() )
+			return RepDevMain.smallRepGenImage;
+		
 		switch (file.getType()) {
 		case REPGEN:
 			img = drawSymOverImage(RepDevMain.smallRepGenImage, file.getSym());

@@ -30,7 +30,7 @@ public class RepDevMain {
 			largeSymAddImage, largeSymRemoveImage, smallAddImage, smallErrorsImage, smallFileImage, smallProjectImage, smallRemoveImage, smallRepGenImage, smallSymImage, smallTasksImage, smallActionSaveImage, smallFileAddImage, smallFileRemoveImage,
 			smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
 			smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
-			smallWarningImage, smallReportsImage, smallPrintImage;
+			smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage;
 	public static final String IMAGE_DIR = "repdev-icons/";
 
 	public static void main(String[] args) {
@@ -125,6 +125,9 @@ public class RepDevMain {
 		smallWarningImage = new Image(display, IMAGE_DIR + "small-warning.png");
 		smallReportsImage = new Image(display, IMAGE_DIR + "small-reports.png");
 		smallPrintImage = new Image(display, IMAGE_DIR + "small-print.png");
+		smallFolderImage = new Image(display, IMAGE_DIR + "small-folder.png");
+		smallFolderAddImage = new Image(display, IMAGE_DIR + "small-folder-add.png");
+		smallFolderRemoveImage = new Image(display, IMAGE_DIR + "small-folder-remove.png");
 	}
 
 	/**

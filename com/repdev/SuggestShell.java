@@ -7,6 +7,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
@@ -57,9 +59,8 @@ public class SuggestShell {
 
 	private boolean update() {
 		String tokenStr = "";
-		
-		//TODO, close this window if we lose focus off the styled text, and some other things I might have mised.
-		
+		Token before = null;
+			
 		Point loc = shell.getDisplay().map(txt, null, txt.getLocationAtOffset(txt.getCaretOffset()));
 		loc.x += 5;
 		loc.y += 20;
@@ -82,13 +83,24 @@ public class SuggestShell {
 		current = null;
 
 		for (Token t : parser.getLtokens()) {
+			if(t.getEnd() <= txt.getCaretOffset())
+				before = t;
+			
 			if (t.getEnd() == txt.getCaretOffset()) {
 				current = t;
 				break;
 			}
 		}
 
+		//Do not open window if we are in comments/strings etc.
+		if( before != null && ( 
+				( before.inDate() && !before.getStr().equals("'")) || 
+				( before.inString() && !before.getStr().equals("\"") ) ||
+				( before.getCDepth() != 0 && !before.getStr().equals("]") ) ) ) 
+			return false;
+		
 		table.removeAll();
+		
 
 		if (current == null)
 			tokenStr = "";
@@ -203,6 +215,7 @@ public class SuggestShell {
 				}
 			
 			//Add functions
+			//TODO: SHow tip once you start typing arguments
 			String funcName = tokenStr;
 			if( tokenStr.equals("(") && current.getBefore() != null )
 				funcName = current.getBefore().getStr();
@@ -330,7 +343,7 @@ public class SuggestShell {
 						update();
 					
 	
-					if ((e.character == ' ' && e.stateMask == SWT.CTRL) || e.character == ':') {
+					if ((e.character == ' ' && e.stateMask == SWT.CTRL) || e.character == ':' || e.character == '@') {
 						open();
 					}
 	
@@ -390,6 +403,7 @@ public class SuggestShell {
 						} else if ((e.keyCode == '\r' || e.character == ':') && table.getSelectionIndex() != -1 && table.getItemCount() > 0) {
 							String value = (String) table.getSelection()[0].getData("value");
 	
+							//Actual replacement code
 							if (e.character == ':')
 								value += ":";
 	
@@ -418,7 +432,21 @@ public class SuggestShell {
 	
 			});
 		}
-
+		
+		if( !txt.getShell().isListening(SWT.Resize) || !txt.getShell().isListening(SWT.Move)){
+			txt.getShell().addControlListener(new ControlListener(){
+	
+				public void controlMoved(ControlEvent e) {
+					close();
+				}
+	
+				public void controlResized(ControlEvent e) {
+					close();
+				}
+				
+			});
+		}
+		
 		table = new Table(shell, SWT.SINGLE);
 
 		table.addSelectionListener(new SelectionAdapter() {

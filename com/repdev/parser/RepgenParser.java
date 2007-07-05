@@ -106,8 +106,7 @@ public class RepgenParser {
 		public void run(){	
 			boolean exists = false;
 			ArrayList<Token> tempTokens = new  ArrayList<Token>();
-			
-			
+						
 			for( Token tok : ltokens){
 				tempTokens.add(new Token(tok));
 			}

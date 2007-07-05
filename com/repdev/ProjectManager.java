@@ -9,16 +9,25 @@ import java.util.HashMap;
  *
  */
 public class ProjectManager {
-	private static HashMap<Integer, ArrayList<Project>> symProjects = new HashMap<Integer, ArrayList<Project>>();
+	private static HashMap<Object, ArrayList<Project>> projects = new HashMap<Object, ArrayList<Project>>();
 
 	public static void saveAllProjects() {
-		for (Integer sym : symProjects.keySet())
-			saveProjects(sym);
+		for (Object key: projects.keySet())
+			if( key instanceof Integer)
+				saveProjects((Integer)key);
+			else if( key instanceof String)
+				saveProjects((String)key);
 	}
 
 	public static void removeProject(Project project, boolean delete) {
 		int sym = project.getSym();
-		ArrayList<Project> projects = getProjects(sym);
+		ArrayList<Project> projects = new ArrayList<Project>();
+		
+		if( project.isLocal() )
+			projects = getProjects(project.getDir());
+		else
+			projects = getProjects(sym);
+		
 		int i = 0;
 
 		for (Project cur : projects) {
@@ -38,14 +47,18 @@ public class ProjectManager {
 
 	}
 
-	public static void saveProjects(int sym) {
+	public static void saveProjects(String dir){
+		ArrayList<Project> myProjects = projects.get(dir);
+		getProjectFile(dir).saveFile(processSaveProjects(myProjects));
+	}
+	
+	private static String processSaveProjects(ArrayList<Project> list){
 		StringBuilder sb = new StringBuilder();
-		ArrayList<Project> myProjects = symProjects.get(sym);
+	
+		if (list == null)
+			return null;
 
-		if (myProjects == null)
-			return;
-
-		for (Project proj : myProjects) {
+		for (Project proj : list) {
 			sb.append("PROJECT");
 			sb.append("\t");
 			sb.append(proj.getName());
@@ -62,8 +75,13 @@ public class ProjectManager {
 
 			sb.append("\r\n");
 		}
-
-		getProjectFile(sym).saveFile(sb.toString());
+		
+		return sb.toString();
+	}
+	
+	public static void saveProjects(int sym) {
+		ArrayList<Project> myProjects = projects.get(sym);
+		getProjectFile(sym).saveFile(processSaveProjects(myProjects));
 	}
 
 	public static Project createProject(String name, int sym) {
@@ -74,6 +92,15 @@ public class ProjectManager {
 		
 		return project;
 	}
+	
+	public static Project createProject(String name, String dir) {
+		Project project = new Project(name, dir);
+		getProjects(dir).add(project);
+
+		saveProjects(dir);
+		
+		return project;
+	}
 
 	/**
 	 * Creates a file name from an open symitar session based on user id
@@ -81,6 +108,10 @@ public class ProjectManager {
 	 * @param session
 	 * @return
 	 */
+	private static SymitarFile getProjectFile(String dir) {
+		return new SymitarFile(dir,"repdev.projects");
+	}
+	
 	private static SymitarFile getProjectFile(int sym) {
 		SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
 		String prefix = "tester";
@@ -93,18 +124,24 @@ public class ProjectManager {
 
 		return new SymitarFile(sym,"repdev." + prefix + "projects", FileType.REPGEN);
 	}
-
-	private static void loadProjects(int sym) {
+	
+	private static void loadProjects(String dir){
 		ArrayList<Project> myProjs = new ArrayList<Project>();
-		String dataTemp = getProjectFile(sym).getData();
-		Project curProject = null;
+		String dataTemp = getProjectFile(dir).getData();
 
 		if (dataTemp == null) {
-			symProjects.put(sym, myProjs);
+			projects.put(dir, myProjs);
 			return;
 		}
 
-		String[] data = dataTemp.trim().split("\n");
+		processLoadProject(dataTemp, dir);
+	}
+	
+	private static void processLoadProject(String dataStr, Object key){
+		Project curProject = null;
+		ArrayList<Project> myProjs = new ArrayList<Project>();
+		
+		String[] data = dataStr.trim().split("\n");
 
 		for (String line : data) {
 			String[] parts = line.split("\t");
@@ -113,24 +150,52 @@ public class ProjectManager {
 				if (curProject != null)
 					myProjs.add(curProject);
 
-				curProject = new Project(parts[1], sym);
+				if( key instanceof Integer)
+					curProject = new Project(parts[1], (Integer)key);
+				else if( key instanceof String)
+					curProject = new Project(parts[1], (String)key);
 			} else if (parts[0].equals("FILE")) {
-				curProject.addFile(new SymitarFile(sym,parts[2].trim(), FileType.valueOf(parts[1])));
+				
+				if( key instanceof Integer)
+					curProject.addFile(new SymitarFile((Integer)key,parts[2].trim(), FileType.valueOf(parts[1])));
+				else if ( key instanceof String )
+					curProject.addFile(new SymitarFile((String)key, parts[2].trim()));
 			}
 		}
 
 		if (curProject != null)
 			myProjs.add(curProject);
 
-		symProjects.put(sym, myProjs);
+		projects.put(key, myProjs);
+	}
+	
+	
+
+	private static void loadProjects(int sym) {
+		ArrayList<Project> myProjs = new ArrayList<Project>();
+		String dataTemp = getProjectFile(sym).getData();
+
+		if (dataTemp == null) {
+			projects.put(sym, myProjs);
+			return;
+		}
+
+		processLoadProject(dataTemp, sym);
 	}
 
+	public static ArrayList<Project> getProjects(String dir){
+		if( projects.get(dir) == null)
+			loadProjects(dir);
+			
+		return projects.get(dir);
+	}
+	
 	public static ArrayList<Project> getProjects(int sym) {
-		if (symProjects.get(sym) == null) {
+		if (projects.get(sym) == null) {
 			loadProjects(sym);
 		}
 
-		return symProjects.get(sym);
+		return projects.get(sym);
 	}
 
 }

@@ -12,10 +12,24 @@ public class Project {
 	private ArrayList<SymitarFile> files = new ArrayList<SymitarFile>();
 	private String name;
 	private int sym;
-
+	private String dir;
+	
 	public Project(String name, int sym) {
 		this.name = name;
 		this.sym = sym;
+	}
+	
+	public Project(String name, String dir){
+		this.name = name;
+		this.dir = dir;
+	}
+	
+	public boolean isLocal(){
+		return dir != null && !dir.trim().equals("");
+	}
+	
+	public String getDir() {
+		return dir;
 	}
 
 	public int getSym() {

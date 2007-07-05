@@ -25,7 +25,7 @@ public class NewProjShell {
 	private NewProjShell() {
 	}
 
-	private void create(Shell parent, int sym) {
+	private void create(Shell parent) {
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 5;
 		layout.marginBottom = 5;
@@ -41,7 +41,7 @@ public class NewProjShell {
 		questionImage.setImage(shell.getDisplay().getSystemImage(SWT.ICON_QUESTION));
 
 		Label lbl = new Label(shell, SWT.NONE);
-		lbl.setText("What is the name of the project that you want to create in Sym " + sym + "?");
+		lbl.setText("What is the name of the project that you want to create?");
 
 		final Text txt = new Text(shell, SWT.BORDER);
 
@@ -98,8 +98,8 @@ public class NewProjShell {
 	}
 
 	// returns -1 on cancel
-	public static String askForName(Display display, Shell parent, int sym) {
-		me.create(parent, sym);
+	public static String askForName(Display display, Shell parent) {
+		me.create(parent);
 
 		while (!me.shell.isDisposed()) {
 			if (!display.readAndDispatch())

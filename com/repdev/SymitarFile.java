@@ -3,6 +3,9 @@ package com.repdev;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,7 +17,7 @@ import java.util.Date;
 public class SymitarFile implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private String name;
+	private String name, dir;
 	private FileType type;
 	private Date modified = new Date(0), installed = new Date(0);
 	private long size = -1;
@@ -26,9 +29,11 @@ public class SymitarFile implements Serializable {
 	 * New Local file
 	 * @param name
 	 */
-	public SymitarFile(String name){
+	public SymitarFile(String dir, String name){
+		this.dir = dir;
 		this.name = name;
 		this.local = true;
+		this.type = FileType.REPGEN;
 	}
 	
 	public SymitarFile(int sym, String name, FileType type) {
@@ -75,10 +80,18 @@ public class SymitarFile implements Serializable {
 		
 		if( !local )
 			return RepDevMain.SYMITAR_SESSIONS.get(sym).saveFile(this, data);
+		else{
+			try {
+				PrintWriter out = new PrintWriter(new FileWriter(getPath()));
+				out.write(data);
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
-		//TODO: Implement local file saving properly
 		
-		return null;
+		return SessionError.NONE;
 	}
 	
 	public boolean isLocal(){
@@ -135,5 +148,13 @@ public class SymitarFile implements Serializable {
 
 	public Date getInstalled() {
 		return installed;
+	}
+	
+	public String getDir() {
+		return dir;
+	}
+	
+	public String getPath(){
+		return dir + "\\" + name;
 	}
 }

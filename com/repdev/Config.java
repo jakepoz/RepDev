@@ -11,6 +11,8 @@ import java.util.ArrayList;
 public class Config implements Serializable {
 	private static Config me = new Config();
 	private static final long serialVersionUID = 1L;
+	
+	
 	private ArrayList<Integer> syms = new ArrayList<Integer>();
 	private String server = "127.0.0.1";
 	private int tabSize = 0; // 0 = Regular tab
@@ -19,7 +21,8 @@ public class Config implements Serializable {
 	private int runOptionsQueue = -1;
 	private int maxQueues = 3;
     private ArrayList<SymitarFile> recentFiles = new ArrayList<SymitarFile>();
-   
+    private ArrayList<String> mountedFolders = new ArrayList<String>();
+    
 	private Config() {
 	}
 
@@ -112,6 +115,17 @@ public class Config implements Serializable {
 
 	public static void setRecentFiles(ArrayList<SymitarFile> recentFiles) {
 		me.recentFiles = recentFiles;
+	}
+
+	public ArrayList<String> getMountedFolders() {
+		return me.mountedFolders;
+	}
+
+	public void setMountedFolders(ArrayList<String> mountedFolders) {
+		me.mountedFolders = mountedFolders;
+		
+		if( me.mountedFolders == null) 
+			me.mountedFolders = new ArrayList<String>();
 	}
 
 }
