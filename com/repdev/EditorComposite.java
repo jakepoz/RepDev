@@ -267,7 +267,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		}
 	}
 
-	//FIXME: Doesn't work if part of the idnent text has blank lines (With no spaces, just a \n\n).
+	//FIXME: Doesn't work if part of the indent text has blank lines (With no spaces, just a \n\n).
 	private void groupIndent(int direction, int startLine, int endLine) {
 		String tabStr = getTabStr();
 
@@ -383,11 +383,12 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		install = new ToolItem(bar, SWT.NONE);
 		install.setImage(RepDevMain.smallSymAddImage);
 		install.setToolTipText("Installs current file for onDemand use.");
+		if(file.getType() != FileType.REPGEN) install.setEnabled(false);
 		
 		run = new ToolItem(bar,SWT.NONE);
 		run.setImage(RepDevMain.smallRunImage);
 		run.setToolTipText("Opens the run report dialog.");
-		
+		if(file.getType() != FileType.REPGEN) run.setEnabled(false);
 		
 		print = new ToolItem(bar,SWT.NONE);
 		print.setImage(RepDevMain.smallPrintImage);
@@ -788,13 +789,16 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	}
 	
 	public void installRepgen(boolean confirm) {
+		if( file.getType() != FileType.REPGEN ) {
+			return;
+		}
+		
 		MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(),SWT.YES | SWT.NO | SWT.ICON_QUESTION);
 		MessageBox dialog2 = null;
 		
 		dialog.setText("Confirm Repgen Installation");
 		dialog.setMessage("Are you sure you want to save this file and install this repgen?");
-		
-
+				
 		if( !confirm || dialog.open() == SWT.YES ){
 			getShell().setCursor(getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 			
