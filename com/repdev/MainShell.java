@@ -973,7 +973,7 @@ public class MainShell {
 				} else
 					openAllItem.setEnabled(false);
 					
-				if( tree.getSelectionCount() == 1 && tree.getSelection()[0].getData() instanceof SymitarFile && ((SymitarFile)tree.getSelection()[0].getData()).getType() == FileType.REPGEN){
+				if( tree.getSelectionCount() == 1 && tree.getSelection()[0].getData() instanceof SymitarFile && ((SymitarFile)tree.getSelection()[0].getData()).getType() == FileType.REPGEN && !((SymitarFile)tree.getSelection()[0].getData()).isLocal()){
 					runMenuItem.setEnabled(true);
 				}
 				else

@@ -383,12 +383,12 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		install = new ToolItem(bar, SWT.NONE);
 		install.setImage(RepDevMain.smallSymAddImage);
 		install.setToolTipText("Installs current file for onDemand use.");
-		if(file.getType() != FileType.REPGEN) install.setEnabled(false);
+		if(file.getType() != FileType.REPGEN || file.isLocal()) install.setEnabled(false);
 		
 		run = new ToolItem(bar,SWT.NONE);
 		run.setImage(RepDevMain.smallRunImage);
 		run.setToolTipText("Opens the run report dialog.");
-		if(file.getType() != FileType.REPGEN) run.setEnabled(false);
+		if(file.getType() != FileType.REPGEN || file.isLocal()) run.setEnabled(false);
 		
 		print = new ToolItem(bar,SWT.NONE);
 		print.setImage(RepDevMain.smallPrintImage);
