@@ -394,8 +394,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		print.setImage(RepDevMain.smallPrintImage);
 		print.setToolTipText("Prints the current file to a local printer.");
 		
-
-
+		
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
 
 		if (file.getType() == FileType.REPGEN){

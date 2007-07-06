@@ -1,7 +1,6 @@
 package com.repdev;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -20,17 +19,14 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -1453,9 +1449,15 @@ public class MainShell {
 
 	private void createEditorPane(Composite self) {
 		self.setLayout(new FillLayout());
-		mainfolder = new CTabFolder(self, SWT.TOP | SWT.BORDER);
+		mainfolder = new CTabFolder(self, SWT.FLAT | SWT.TOP | SWT.BORDER);
 		mainfolder.setLayout(new FillLayout());
 		mainfolder.setSimple(false);
+		
+		mainfolder.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_DARK_BLUE), 
+                display.getSystemColor(SWT.COLOR_BLUE),
+                display.getSystemColor(SWT.COLOR_WHITE), 
+                display.getSystemColor(SWT.COLOR_WHITE)},
+                new int[] {50, 80, 100}, true);
 		
 		Menu tabContextMenu = new Menu(mainfolder);
 		mainfolder.setMenu(tabContextMenu);
