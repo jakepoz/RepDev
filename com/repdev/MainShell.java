@@ -1475,7 +1475,7 @@ public class MainShell {
 			sym = (Integer) data;
 		else if (data instanceof Project)
 			sym = ((Project) data).getSym();
-		else
+		else if( item.getParentItem() != null)
 			sym = ((Project) item.getParentItem().getData()).getSym();
 
 		return sym;
