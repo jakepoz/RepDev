@@ -1452,13 +1452,7 @@ public class MainShell {
 		mainfolder = new CTabFolder(self, SWT.FLAT | SWT.TOP | SWT.BORDER);
 		mainfolder.setLayout(new FillLayout());
 		mainfolder.setSimple(false);
-		
-		mainfolder.setSelectionBackground(new Color[]{display.getSystemColor(SWT.COLOR_DARK_BLUE), 
-                display.getSystemColor(SWT.COLOR_BLUE),
-                display.getSystemColor(SWT.COLOR_WHITE), 
-                display.getSystemColor(SWT.COLOR_WHITE)},
-                new int[] {50, 80, 100}, true);
-		
+				
 		Menu tabContextMenu = new Menu(mainfolder);
 		mainfolder.setMenu(tabContextMenu);
 				
