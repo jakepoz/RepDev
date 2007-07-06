@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public class OptionsShell {
-	Shell shell;
+	private Shell shell;
 	private static OptionsShell me = new OptionsShell();
 	private Button telnetRadio, testRadio;
 	private Text serverText;

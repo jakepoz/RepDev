@@ -8,6 +8,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -27,7 +28,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -1592,7 +1592,7 @@ public class MainShell {
 		mainfolder = new CTabFolder(self, SWT.FLAT | SWT.TOP | SWT.BORDER);
 		mainfolder.setLayout(new FillLayout());
 		mainfolder.setSimple(false);
-				
+
 		Menu tabContextMenu = new Menu(mainfolder);
 		mainfolder.setMenu(tabContextMenu);
 				
@@ -2017,6 +2017,14 @@ public class MainShell {
 			}
 		});
 		
+		final MenuItem editGotoLine = new MenuItem(editMenu,SWT.PUSH);
+		editGotoLine.setText("Goto Line\tCTRL+L");
+		editGotoLine.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				StyledText txt = ((TabTextView)mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText();
+				GotoLineShell.show(txt.getParent().getShell(),txt);
+			}
+		});
 		
 		editMenu.addMenuListener(new MenuListener(){
 
@@ -2037,6 +2045,8 @@ public class MainShell {
 					editSelectAll.setEnabled(false);
 					editFindNext.setEnabled(false);
 					editFind.setEnabled(false);
+					
+					editGotoLine.setEnabled(false);
 				}
 				else{
 					editCut.setEnabled(true);
@@ -2056,6 +2066,10 @@ public class MainShell {
 					else
 						editUndo.setEnabled(false);
 					
+					if( mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView)
+						editGotoLine.setEnabled(true);
+					else
+						editGotoLine.setEnabled(false);
 				}
 			}
 			

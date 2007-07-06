@@ -552,6 +552,10 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 					case 'P':
 						RepDevMain.mainShell.print();
 						break;
+					case 'l':
+					case 'L':
+						GotoLineShell.show(txt.getParent().getShell(),txt);
+						break;
 					}
 				} else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
 					switch(e.keyCode) {
