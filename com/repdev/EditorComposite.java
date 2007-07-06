@@ -374,7 +374,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private void buildGUI() {
 		setLayout(new FormLayout());
 
-		bar = new ToolBar(this, SWT.HORIZONTAL | SWT.WRAP);
+		bar = new ToolBar(this, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 		
 		save = new ToolItem(bar, SWT.NONE);
 		save.setImage(RepDevMain.smallActionSaveImage);
