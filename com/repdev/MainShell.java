@@ -728,8 +728,8 @@ public class MainShell {
 				
 				if (event.item == null) {
 					System.out.println("Adding data to blank section");
-					TreeItem item = new TreeItem(tree, SWT.NONE);
-					item.setText(text);
+				//	TreeItem item = new TreeItem(tree, SWT.NONE);
+					//item.setText(text);
 				}
 				else{
 					TreeItem root = (TreeItem)event.item;
@@ -740,20 +740,45 @@ public class MainShell {
 					
 					//Ok, now actually do some work
 					//TODO: Ask to overwrite
+					int overwrite;
+					System.out.println(getTreeSym(root) == getTreeSym(dragSourceItems[0]));
+					
+					if( (getTreeDir(root) == null || getTreeDir(dragSourceItems[0]) == null || getTreeDir(root).equals(getTreeDir(dragSourceItems[0]))) && getTreeSym(root) == getTreeSym(dragSourceItems[0]) )
+						overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
+					else
+						overwrite = RepeatOperationShell.ASK_TO_ALL | RepeatOperationShell.YES;
 					
 					shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 					
 					if( dragSourceItems[0].getData() instanceof SymitarFile){
 						for( TreeItem item : dragSourceItems){
+							boolean exists = false;
+							
 							SymitarFile source = (SymitarFile)item.getData();
 							SymitarFile destination;
 							
-							if( isItemLocal(root) )
+							if( isItemLocal(root) ){
 								destination = new SymitarFile(getTreeDir(root),source.getName());
+							}
 							else
 								destination = new SymitarFile(getTreeSym(root),source.getName(),source.getType());
 							
-							destination.saveFile(source.getData());
+							if( (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0)
+								exists = Util.fileExists(destination);
+							
+							if( exists && (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0 )
+							{
+								RepeatOperationShell dialog = new RepeatOperationShell(shell,"File " + destination.getName() + " already exits at the destination. Overwrite?");
+								overwrite = dialog.open();
+								
+								if( (overwrite & RepeatOperationShell.CANCEL) != 0 ){
+									shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+									return;
+								}
+							}
+							
+							if((overwrite & RepeatOperationShell.YES) != 0)
+								destination.saveFile(source.getData());
 							
 							if( root.getData() instanceof Project)
 								((Project)root.getData()).addFile(destination);
@@ -770,6 +795,8 @@ public class MainShell {
 								destination = ProjectManager.createProject(source.getName(), getTreeSym(root));
 							
 							for( SymitarFile file : source.getFiles()){
+								boolean exists = false;
+								
 								SymitarFile newFile;
 								
 								if( isItemLocal(root))
@@ -777,8 +804,23 @@ public class MainShell {
 								else
 									newFile = new SymitarFile(getTreeSym(root),file.getName(),file.getType());
 								
-								newFile.saveFile(file.getData());
+								if( (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0)
+									exists = Util.fileExists(newFile);
 								
+								if( exists && (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0 )
+								{
+									RepeatOperationShell dialog = new RepeatOperationShell(shell,"File " + newFile.getName() + " already exits at the destination. Overwrite?");
+									overwrite = dialog.open();
+									
+									if( (overwrite & RepeatOperationShell.CANCEL) != 0 ){
+										shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+										return;
+									}
+								}
+								
+								if((overwrite & RepeatOperationShell.YES) != 0)
+									newFile.saveFile(file.getData());
+										
 								destination.addFile(newFile);
 							}
 						}

@@ -87,4 +87,29 @@ public class Util {
 
 		return data;
 	}
+	
+	/**
+	 * Used to find out if a file by the given name exists yet.
+	 * Pass it a symitar file object you made, and it looks in the right places
+	 * 
+	 * Returns false if sym is not open
+	 * @param file
+	 * @return
+	 */
+	public static boolean fileExists(SymitarFile file){
+		if( file.isLocal() ){
+			for( SymitarFile cur : getFileList(file.getDir(), file.getName() )){
+				if( cur.getName().toLowerCase().equals(file.getName().toLowerCase()) )
+					return true;
+			}
+		}
+		else{
+			if( RepDevMain.SYMITAR_SESSIONS.get(file.getSym()) == null || !RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).isConnected() )
+				return false;
+			
+			return RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getFile(file)!=null;
+		}
+		
+		return false;		
+	}
 }

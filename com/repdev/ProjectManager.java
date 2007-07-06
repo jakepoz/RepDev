@@ -92,18 +92,38 @@ public class ProjectManager {
 
 	public static Project createProject(String name, int sym) {
 		Project project = new Project(name, sym);
-		getProjects(sym).add(project);
-
-		saveProjects(sym);
+		boolean exists = false;
+		
+		for( Project p : getProjects(sym))
+			if( p.getName().equals(name))
+			{
+				exists = true;
+				break;
+			}
+		
+		if( !exists ){
+			getProjects(sym).add(project);
+			saveProjects(sym);
+		}
 		
 		return project;
 	}
 	
 	public static Project createProject(String name, String dir) {
 		Project project = new Project(name, dir);
-		getProjects(dir).add(project);
-
-		saveProjects(dir);
+		boolean exists = false;
+		
+		for( Project p : getProjects(dir))
+			if( p.getName().equals(name))
+			{
+				exists = true;
+				break;
+			}
+		
+		if( !exists ){
+			getProjects(dir).add(project);
+			saveProjects(dir);
+		}
 		
 		return project;
 	}

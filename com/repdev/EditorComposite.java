@@ -92,7 +92,6 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		public TextChange(boolean commit) {
 			this.commit = true;
 		}
-
 		public TextChange(int start, int length, String replacedText, int topIndex) {
 			this.start = start;
 			this.length = length;
