@@ -209,5 +209,29 @@ public class ProjectManager {
 
 		return projects.get(sym);
 	}
+	
+	public static boolean containsProject(String dir, String name){
+		boolean exists = false;
+		
+		for( Project cur : getProjects(dir))
+			if( cur.getName().equals(name)){
+				exists = true;
+				break;
+			}
+		
+		return exists;
+	}
+	
+	public static boolean containsProject(int sym, String name){
+		boolean exists = false;
+		
+		for( Project cur : getProjects(sym))
+			if( cur.getName().equals(name)){
+				exists = true;
+				break;
+			}
+		
+		return exists;
+	}
 
 }

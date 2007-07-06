@@ -439,13 +439,22 @@ public class MainShell {
 		
 		String str = NewProjShell.askForName(display, shell);
 		
-		if (str != null) {
+		if (str != null) {		
 			Project proj = null;
 			
-			if( cur.getData() instanceof Integer)
+			//TODO: Add error message for already existing projects
+			if( cur.getData() instanceof Integer){
+				if( ProjectManager.containsProject(sym, str))
+					return;
+				
 				proj = ProjectManager.createProject(str, sym);
-			else if( cur.getData() instanceof String)
+			}
+			else if( cur.getData() instanceof String){
+				if( ProjectManager.containsProject(dir, str))
+					return;
+				
 				proj = ProjectManager.createProject(str, dir);
+			}
 				
 
 			if (proj != null) {
@@ -513,7 +522,10 @@ public class MainShell {
 				}
 			}
 			
-			ProjectManager.saveProjects(proj.getSym());
+			if( proj.isLocal() )
+				ProjectManager.saveProjects(proj.getDir());
+			else
+				ProjectManager.saveProjects(proj.getSym());
 		}
 	}
 
@@ -727,6 +739,8 @@ public class MainShell {
 					}
 					
 					//Ok, now actually do some work
+					//TODO: Ask to overwrite
+					
 					shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 					
 					if( dragSourceItems[0].getData() instanceof SymitarFile){
