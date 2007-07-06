@@ -550,7 +550,10 @@ public class MainShell {
 				item.setData(file);
 				item.setImage(getFileImage(file));
 				
-				ProjectManager.saveProjects(proj.getSym());
+				if( proj.isLocal() )
+					ProjectManager.saveProjects(proj.getDir());
+				else
+					ProjectManager.saveProjects(proj.getSym());
 			}
 
 			file.saveFile("");
@@ -724,6 +727,8 @@ public class MainShell {
 					}
 					
 					//Ok, now actually do some work
+					shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
+					
 					if( dragSourceItems[0].getData() instanceof SymitarFile){
 						for( TreeItem item : dragSourceItems){
 							SymitarFile source = (SymitarFile)item.getData();
@@ -740,25 +745,55 @@ public class MainShell {
 								((Project)root.getData()).addFile(destination);
 						}
 					}
+					else if( dragSourceItems[0].getData() instanceof Project ){
+						for( TreeItem item : dragSourceItems){
+							Project source = (Project)item.getData();
+							Project destination;
+							
+							if( isItemLocal(root))
+								destination = ProjectManager.createProject(source.getName(),getTreeDir(root));
+							else
+								destination = ProjectManager.createProject(source.getName(), getTreeSym(root));
+							
+							for( SymitarFile file : source.getFiles()){
+								SymitarFile newFile;
+								
+								if( isItemLocal(root))
+									newFile = new SymitarFile(getTreeDir(root),file.getName());
+								else
+									newFile = new SymitarFile(getTreeSym(root),file.getName(),file.getType());
+								
+								newFile.saveFile(file.getData());
+								
+								destination.addFile(newFile);
+							}
+						}
+					}
 					
-				/*	//Now get to final root and redraw tree
-					while( !(root.getData() instanceof String || root.getData() instanceof String) )
-						root = root.getParentItem();*/
+					
+					//Dont redraw if we added to sym/dir
+					if( dragSourceItems[0].getData() instanceof Project ||
+						(dragSourceItems[0].getData() instanceof SymitarFile && !(root.getData() instanceof String || root.getData() instanceof Integer))){
+						//Redraws the tree, since it do be VIRTUAL!!!!	
+						for( TreeItem victim : root.getItems())
+							victim.dispose();
 				
-					System.out.println(root);
+						root.clearAll(true);
+						root.setExpanded(false);
+						
+						tree.showItem(root);
+						Event e= new Event();
+						e.item = root;
+						tree.notifyListeners(SWT.Expand, e);
+						
+						//if( !(root.getData() instanceof String || root.getData() instanceof Integer))
+						//	root = root.getParentItem();
+						
+						//root.dispose();
+						
+					}
 					
-					//Redraws the tree, since it do be VIRTUAL!!!!
-				
-					for( TreeItem victim : root.getItems())
-						victim.dispose();
-					
-					
-					root.clearAll(true);
-					root.setExpanded(false);
-					tree.showItem(root);
-					Event e= new Event();
-					e.item = root;
-					tree.notifyListeners(SWT.Expand, e);
+					shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 				}
 			}
 		});

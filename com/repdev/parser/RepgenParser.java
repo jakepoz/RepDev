@@ -74,7 +74,10 @@ public class RepgenParser {
 			ArrayList<Token> tokens = new ArrayList<Token>();
 			String data = "";
 			
-			data = new SymitarFile(sym,fileName,FileType.REPGEN).getData();
+			if( file.isLocal() )
+				data = new SymitarFile(file.getDir(),fileName).getData();
+			else
+				data = new SymitarFile(sym,fileName,FileType.REPGEN).getData();
 			
 			if( data == null )
 				return;

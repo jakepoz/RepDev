@@ -39,7 +39,10 @@ public class ProjectManager {
 
 		projects.remove(i);
 		
-		saveProjects(sym);
+		if( project.isLocal() )
+			saveProjects(project.getDir());
+		else
+			saveProjects(sym);
 
 		if (delete)
 			for (SymitarFile file : project.getFiles())
@@ -181,6 +184,7 @@ public class ProjectManager {
 		ArrayList<Project> myProjs = new ArrayList<Project>();
 		String dataTemp = getProjectFile(sym).getData();
 
+		
 		if (dataTemp == null) {
 			projects.put(sym, myProjs);
 			return;
