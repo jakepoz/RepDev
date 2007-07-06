@@ -274,10 +274,16 @@ public class MainShell {
 	public Object openFile(SymitarFile file) {
 		boolean found = false;
 		Composite editor;
-		int sym = file.getSym();
+		Object loc;
 		
+		if( file.isLocal())
+			loc = file.getDir();
+		else
+			loc = file.getSym();
+		
+		//FIXME: Open different dirs
 		for (CTabItem c : mainfolder.getItems()) {
-			if (c.getData("file") != null && c.getData("file").equals(file) && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
+			if (c.getData("file") != null && c.getData("file").equals(file) && c.getData("loc") != null && c.getData("loc").equals(loc)) {
 				mainfolder.setSelection(c);
 				found = true;
 				return c.getControl();
@@ -290,7 +296,7 @@ public class MainShell {
 			item.setText(file.getName());
 			item.setImage(getFileImage(file));
 			item.setData("file", file);
-			item.setData("sym", sym);
+			item.setData("loc", loc);
 
 			if( file.getType() == FileType.REPORT)
 				editor = new ReportComposite(mainfolder, file);
