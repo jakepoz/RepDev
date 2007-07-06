@@ -633,7 +633,7 @@ public class MainShell {
 
 		toolbar.pack();
 
-		tree = new Tree(group, SWT.NONE | SWT.BORDER  );
+		tree = new Tree(group, SWT.NONE | SWT.BORDER | SWT.MULTI );
 		
 		for (int sym : Config.getSyms()) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
