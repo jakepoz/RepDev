@@ -591,9 +591,9 @@ public class MainShell {
 		group.setText("Project Explorer");
 		group.setLayout(new FormLayout());
 
-		ToolBar toolbar = new ToolBar(group, SWT.HORIZONTAL | SWT.WRAP);
+		ToolBar toolbar = new ToolBar(group, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
 
-		final ToolItem addSym = new ToolItem(toolbar, SWT.PUSH);
+		final ToolItem addSym = new ToolItem(toolbar, SWT.PUSH );
 		addSym.setImage(RepDevMain.smallSymAddImage);
 		addSym.setToolTipText("Add a new Sym to this list.");
 
