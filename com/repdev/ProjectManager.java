@@ -98,6 +98,7 @@ public class ProjectManager {
 			if( p.getName().equals(name))
 			{
 				exists = true;
+				project = p;
 				break;
 			}
 		
@@ -117,6 +118,7 @@ public class ProjectManager {
 			if( p.getName().equals(name))
 			{
 				exists = true;
+				project = p;
 				break;
 			}
 		

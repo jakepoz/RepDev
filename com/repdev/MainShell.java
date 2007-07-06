@@ -820,7 +820,8 @@ public class MainShell {
 								
 								if((overwrite & RepeatOperationShell.YES) != 0)
 									newFile.saveFile(file.getData());
-										
+									
+								//FIXME: Doesnt seem to alwasy work
 								destination.addFile(newFile);
 							}
 						}
