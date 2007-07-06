@@ -833,10 +833,15 @@ public class MainShell {
 						}
 					}
 					
-					
 					//Dont redraw if we added to sym/dir
 					if( dragSourceItems[0].getData() instanceof Project ||
 						(dragSourceItems[0].getData() instanceof SymitarFile && !(root.getData() instanceof String || root.getData() instanceof Integer))){
+						
+						if( root.getData() instanceof SymitarFile)
+							root = root.getParentItem().getParentItem();	
+						else if( root.getData() instanceof Project )
+							root = root.getParentItem();
+
 						//Redraws the tree, since it do be VIRTUAL!!!!	
 						for( TreeItem victim : root.getItems())
 							victim.dispose();
