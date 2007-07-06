@@ -81,7 +81,10 @@ public class ProjectManager {
 	
 	public static void saveProjects(int sym) {
 		ArrayList<Project> myProjects = getProjects(sym);
-		getProjectFile(sym).saveFile(processSaveProjects(myProjects));
+		SymitarFile file = getProjectFile(sym);
+		
+		if( file != null)
+			file.saveFile(processSaveProjects(myProjects));
 	}
 
 	public static Project createProject(String name, int sym) {
@@ -116,6 +119,9 @@ public class ProjectManager {
 		SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
 		String prefix = "tester";
 
+		if( session == null)
+			return null;
+		
 		if (session.getUserID() != null && session.getUserID().length() >= 3)
 			prefix = session.userID.substring(0, 3);
 		else if( session.getUserID() != null)

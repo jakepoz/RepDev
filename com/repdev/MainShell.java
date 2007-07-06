@@ -9,6 +9,15 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -27,7 +36,9 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -382,14 +393,8 @@ public class MainShell {
 		}
 	}
 
-	private void removeSym() {
-		TreeItem[] selection = tree.getSelection();
-		TreeItem currentItem;
+	private void removeSym(TreeItem currentItem) {
 		int sym;
-
-		if (selection.length != 1)
-			return;
-		currentItem = selection[0];
 
 		while (!(currentItem.getData() instanceof Integer)) {
 			currentItem = currentItem.getParentItem();
@@ -453,12 +458,7 @@ public class MainShell {
 		}
 	}
 
-	private void removeProject() {
-		TreeItem[] selection = tree.getSelection();
-		if (selection.length != 1)
-			return;
-
-		TreeItem cur = selection[0];
+	private void removeProject(TreeItem cur) {
 		while (cur != null && !(cur.getData() instanceof Project))
 			cur = cur.getParentItem();
 
@@ -559,25 +559,21 @@ public class MainShell {
 		}
 	}
 
-	private void removeFile() {
-		TreeItem[] selection = tree.getSelection();
-		if (selection.length != 1)
+	private void removeFile(TreeItem cur) {
+		if (!(cur.getData() instanceof SymitarFile))
 			return;
 
-		if (!(selection[0].getData() instanceof SymitarFile))
-			return;
-
-		SymitarFile file = (SymitarFile) selection[0].getData();
-		Project proj = (Project) selection[0].getParentItem().getData();
+		SymitarFile file = (SymitarFile) cur.getData();
+		Project proj = (Project) cur.getParentItem().getData();
 
 		RemFileShell.Result result = RemFileShell.confirm(display, shell, proj, file);
 
 		if (result == RemFileShell.Result.OK_KEEP) {
 			proj.removeFile(file, false);
-			selection[0].dispose();
+			cur.dispose();
 		} else if (result == RemFileShell.Result.OK_DELETE) {
 			proj.removeFile(file, true);
-			selection[0].dispose();
+			cur.dispose();
 		}
 		
 		ProjectManager.saveProjects(proj.getSym());
@@ -634,6 +630,112 @@ public class MainShell {
 		toolbar.pack();
 
 		tree = new Tree(group, SWT.NONE | SWT.BORDER | SWT.MULTI );
+		
+		//Configure drag + drop
+		Transfer[] types = new Transfer[] {TextTransfer.getInstance()};
+		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
+		
+		final DragSource source = new DragSource (tree, operations);
+		source.setTransfer(types);
+		final TreeItem[] dragSourceItem = new TreeItem[1];
+		source.addDragListener (new DragSourceListener () {
+			public void dragStart(DragSourceEvent event) {
+				TreeItem[] selection = tree.getSelection();
+				if (selection.length > 0 && selection[0].getItemCount() == 0) {
+					event.doit = true;
+					dragSourceItem[0] = selection[0];
+				} else {
+					event.doit = false;
+				}
+			};
+			public void dragSetData (DragSourceEvent event) {
+				event.data = dragSourceItem[0].getText();
+			}
+			public void dragFinished(DragSourceEvent event) {
+				if (event.detail == DND.DROP_MOVE)
+					dragSourceItem[0].dispose();
+					dragSourceItem[0] = null;
+			}
+
+		});
+		
+		DropTarget target = new DropTarget(tree, operations);
+		target.setTransfer(types);
+		target.addDropListener (new DropTargetAdapter() {
+			public void dragOver(DropTargetEvent event) {
+				event.feedback = DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
+				if (event.item != null) {
+					TreeItem item = (TreeItem)event.item;
+					Point pt = display.map(null, tree, event.x, event.y);
+					Rectangle bounds = item.getBounds();
+					if (pt.y < bounds.y + bounds.height/3) {
+						event.feedback |= DND.FEEDBACK_INSERT_BEFORE;
+					} else if (pt.y > bounds.y + 2*bounds.height/3) {
+						event.feedback |= DND.FEEDBACK_INSERT_AFTER;
+					} else {
+						event.feedback |= DND.FEEDBACK_SELECT;
+					}
+				}
+			}
+			public void drop(DropTargetEvent event) {
+				if (event.data == null) {
+					event.detail = DND.DROP_NONE;
+					return;
+				}
+				String text = (String)event.data;
+				if (event.item == null) {
+					TreeItem item = new TreeItem(tree, SWT.NONE);
+					item.setText(text);
+				} else {
+					TreeItem item = (TreeItem)event.item;
+					Point pt = display.map(null, tree, event.x, event.y);
+					Rectangle bounds = item.getBounds();
+					TreeItem parent = item.getParentItem();
+					if (parent != null) {
+						TreeItem[] items = parent.getItems();
+						int index = 0;
+						for (int i = 0; i < items.length; i++) {
+							if (items[i] == item) {
+								index = i;
+								break;
+							}
+						}
+						if (pt.y < bounds.y + bounds.height/3) {
+							TreeItem newItem = new TreeItem(parent, SWT.NONE, index);
+							newItem.setText(text);
+						} else if (pt.y > bounds.y + 2*bounds.height/3) {
+							TreeItem newItem = new TreeItem(parent, SWT.NONE, index+1);
+							newItem.setText(text);
+						} else {
+							TreeItem newItem = new TreeItem(item, SWT.NONE);
+							newItem.setText(text);
+						}
+						
+					} else {
+						TreeItem[] items = tree.getItems();
+						int index = 0;
+						for (int i = 0; i < items.length; i++) {
+							if (items[i] == item) {
+								index = i;
+								break;
+							}
+						}
+						if (pt.y < bounds.y + bounds.height/3) {
+							TreeItem newItem = new TreeItem(tree, SWT.NONE, index);
+							newItem.setText(text);
+						} else if (pt.y > bounds.y + 2*bounds.height/3) {
+							TreeItem newItem = new TreeItem(tree, SWT.NONE, index+1);
+							newItem.setText(text);
+						} else {
+							TreeItem newItem = new TreeItem(item, SWT.NONE);
+							newItem.setText(text);
+						}
+					}
+					
+					
+				}
+			}
+		});
 		
 		for (int sym : Config.getSyms()) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
@@ -904,20 +1006,22 @@ public class MainShell {
 		deleteFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] selection = tree.getSelection();
-				if (selection.length != 1)
+				
+				if (selection.length == 0)
 					return;
 
-				TreeItem cur = selection[0];
-				Object data = cur.getData();
-
-				if (data instanceof Integer)
-					removeSym();
-				if( data instanceof String)
-					removeDir();
-				else if (data instanceof Project)
-					removeProject();
-				else
-					removeFile();
+				for( TreeItem cur : selection){
+					Object data = cur.getData();
+	
+					if (data instanceof Integer)
+						removeSym(cur);
+					if( data instanceof String)
+						removeDir(cur);
+					else if (data instanceof Project)
+						removeProject(cur);
+					else
+						removeFile(cur);
+				}
 
 			}
 		});
@@ -969,18 +1073,32 @@ public class MainShell {
 				newFreeFile.setEnabled(false);
 				newProject.setEnabled(false);
 				openFile.setEnabled(false);
-				deleteFile.setEnabled(tree.getSelectionCount() != 0);
+				
+				deleteFile.setEnabled(false);
 				
 				if( tree.getSelectionCount() == 0)
 					return;
+				
+				//Only allow deletes if all selections are same type
+				Object first = tree.getSelection()[0].getData();
+				boolean allSameType = true;
+				
+				for( TreeItem item : tree.getSelection()){
+					if( !(item.getData().getClass().isInstance(first))){
+						allSameType = false;
+						break;
+					}
+				}
+				
+				deleteFile.setEnabled(allSameType);
+				
 				
 				if( tree.getSelectionCount() == 1){
 					newFreeFile.setEnabled(true);
 					newProject.setEnabled(true);
 					openFile.setEnabled(true);
 				}
-				
-				
+	
 				
 				if ( !(tree.getSelection()[0].getData() instanceof Integer || tree.getSelection()[0].getData() instanceof String) && tree.getSelectionCount() == 1) {
 					importFilem.setEnabled(true);
@@ -1122,7 +1240,7 @@ public class MainShell {
 		
 		remSym.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				removeSym();
+				removeSym((TreeItem)e.item);
 			}
 		});
 		addProj.addSelectionListener(new SelectionAdapter() {
@@ -1132,7 +1250,7 @@ public class MainShell {
 		});
 		remProj.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				removeProject();
+				removeProject((TreeItem)e.item);
 			}
 		});
 		importFile.addSelectionListener(new SelectionAdapter() {
@@ -1142,7 +1260,7 @@ public class MainShell {
 		});
 		remFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				removeFile();
+				removeFile((TreeItem)e.item);
 			}
 		});
 		newFile.addSelectionListener(new SelectionAdapter() {
@@ -1165,15 +1283,8 @@ public class MainShell {
 		tree.setLayoutData(frmTree);
 	}
 
-	private void removeDir() {
-		TreeItem[] selection = tree.getSelection();
-		TreeItem currentItem;
+	private void removeDir(TreeItem currentItem) {
 		String dir;
-
-		if (selection.length != 1)
-			return;
-		
-		currentItem = selection[0];
 
 		while (!(currentItem.getData() instanceof String)) {
 			currentItem = currentItem.getParentItem();
