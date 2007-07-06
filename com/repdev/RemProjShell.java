@@ -29,7 +29,7 @@ public class RemProjShell {
 		OK_DELETE, OK_KEEP, CANCEL
 	};
 
-	private void create(Shell parent, int sym, Project project) {
+	private void create(Shell parent, Project project) {
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 5;
 		layout.marginBottom = 5;
@@ -45,7 +45,11 @@ public class RemProjShell {
 		questionImage.setImage(shell.getDisplay().getSystemImage(SWT.ICON_QUESTION));
 
 		Label lbl = new Label(shell, SWT.NONE);
-		lbl.setText("Are you sure you want to delete project '" + project.getName() + "' from Sym " + sym + "?");
+		
+		if( project.isLocal())
+			lbl.setText("Are you sure you want to delete project '" + project.getName() + "' from Sym " + project.getSym() + "?");
+		else
+			lbl.setText("Are you sure you want to delete project '" + project.getName() + "' from directory " + project.getDir() + "?");
 
 		final Button radioDelete = new Button(shell, SWT.RADIO);
 		radioDelete.setText("Also delete the files in the project from the server");
@@ -118,7 +122,7 @@ public class RemProjShell {
 
 	// returns -1 on cancel
 	public static Result confirm(Display display, Shell parent, Project project) {
-		me.create(parent, project.getSym(), project);
+		me.create(parent, project);
 
 		while (!me.shell.isDisposed()) {
 			if (!display.readAndDispatch())
