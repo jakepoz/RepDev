@@ -653,12 +653,12 @@ public class MainShell {
 
 		Menu treeMenu = new Menu(tree);
 
-		Menu newMenu = new Menu(treeMenu);
+		final Menu newMenu = new Menu(treeMenu);
 		MenuItem newItem = new MenuItem(treeMenu, SWT.CASCADE);
 		newItem.setMenu(newMenu);
 		newItem.setText("New...");
 
-		MenuItem newFreeFile = new MenuItem(newMenu, SWT.NONE);
+		final MenuItem newFreeFile = new MenuItem(newMenu, SWT.NONE);
 		newFreeFile.setImage(RepDevMain.smallFileNewImage);
 		newFreeFile.setText("New File");
 		newFreeFile.addSelectionListener(new SelectionAdapter() {
@@ -693,7 +693,7 @@ public class MainShell {
 
 		new MenuItem(newMenu, SWT.SEPARATOR);
 
-		MenuItem newProject = new MenuItem(newMenu, SWT.NONE);
+		final MenuItem newProject = new MenuItem(newMenu, SWT.NONE);
 		newProject.setText("Project");
 		newProject.setImage(RepDevMain.smallProjectAddImage);
 		newProject.addSelectionListener(new SelectionAdapter() {
@@ -898,7 +898,7 @@ public class MainShell {
 
 		new MenuItem(treeMenu, SWT.SEPARATOR);
 
-		MenuItem deleteFile = new MenuItem(treeMenu, SWT.NONE);
+		final MenuItem deleteFile = new MenuItem(treeMenu, SWT.NONE);
 		deleteFile.setText("Remove");
 		deleteFile.setImage(RepDevMain.smallDeleteImage);
 		deleteFile.addSelectionListener(new SelectionAdapter() {
@@ -959,25 +959,41 @@ public class MainShell {
 			public void menuHidden(MenuEvent e) {
 			}
 
-			public void menuShown(MenuEvent e) {
-				if ((tree.getSelection()[0].getData() instanceof Integer || tree.getSelection()[0].getData() instanceof String) && tree.getSelectionCount() == 1) {
-					importFilem.setEnabled(false);
-					newProjectFile.setEnabled(false);
-				} else {
+			public void menuShown(MenuEvent e) {	
+				//Disable everything but remove first, then add menu options later
+				newFile.setEnabled(false);
+				newProjectFile.setEnabled(false);
+				importFilem.setEnabled(false);
+				openAllItem.setEnabled(false);
+				runMenuItem.setEnabled(false);
+				newFreeFile.setEnabled(false);
+				newProject.setEnabled(false);
+				openFile.setEnabled(false);
+				deleteFile.setEnabled(tree.getSelectionCount() != 0);
+				
+				if( tree.getSelectionCount() == 0)
+					return;
+				
+				if( tree.getSelectionCount() == 1){
+					newFreeFile.setEnabled(true);
+					newProject.setEnabled(true);
+					openFile.setEnabled(true);
+				}
+				
+				
+				
+				if ( !(tree.getSelection()[0].getData() instanceof Integer || tree.getSelection()[0].getData() instanceof String) && tree.getSelectionCount() == 1) {
 					importFilem.setEnabled(true);
 					newProjectFile.setEnabled(true);
 				}
 				
 				if( tree.getSelection()[0].getData() instanceof Project && tree.getSelectionCount() == 1 ) {
 					openAllItem.setEnabled(true);
-				} else
-					openAllItem.setEnabled(false);
+				} 
 					
-				if( tree.getSelectionCount() == 1 && tree.getSelection()[0].getData() instanceof SymitarFile && ((SymitarFile)tree.getSelection()[0].getData()).getType() == FileType.REPGEN && !((SymitarFile)tree.getSelection()[0].getData()).isLocal()){
+				if( tree.getSelectionCount() == 1 && tree.getSelection()[0].getData() instanceof SymitarFile && ((SymitarFile)tree.getSelection()[0].getData()).getType() == FileType.REPGEN && !((SymitarFile)tree.getSelection()[0].getData()).isLocal())
 					runMenuItem.setEnabled(true);
-				}
-				else
-					runMenuItem.setEnabled(false);
+				
 			}
 
 		});

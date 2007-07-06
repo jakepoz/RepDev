@@ -1,47 +1,173 @@
-SYSTEMDATE|Current banking date|DATE|
 SYSACTUALDATE|Actual calendar date|DATE|
 SYSACTUALTIME|Actual clock time on the server|NUMBER|
+SYSCLIENTNUMBER|Client Number of the Credit Union|NUMBER|
 SYSCONSOLENUM|Console number of user running this repgen|NUMBER|
+SYSSYMDIRECTORY|SYM Number|NUMBER|
+SYSTEMDATE|Current banking date|DATE|
 SYSTEMEMOMODE|Memo Mode|NUMBER|
-
 SYSUSERNAME|User name of current user|CHARACTER|
 SYSUSERNUMBER|User number of current user|NUMBER|
 SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 
-SYSCLIENTNUMBER|Client Number of the Credit Union|NUMBER|
-SYSSYMDIRECTORY|SYM Number|NUMBER|
+@CARDORDINAL|When a card number is used to identify an account and the Card record is verified while looking up the account, the Card ordinal is passed to this variable|NUMBER|
 
-@LOANPROJECTAPR|APR|RATE|
-@LOANPROJECTBALLOONAMOUNT|Baloon Amount|MONEY|
-@LOANPROJECTBALLOONDATE|Baloon Date|DATE|
-@LOANPROJECTCALCULATIONTYPE|Calculation Type|CODE|3
-@LOANPROJECTDUEDAY1|Due day 1|CODE|31
-@LOANPROJECTDUEDAY2|Dur day 2|CODE|31
-@LOANPROJECTESCROWAMOUNT|Escrow Amount|MONEY|
-@LOANPROJECTFIRSTDUEDATE|Fiest Due Date|DATE|
-@LOANPROJECTINSURANCETYPE|Insurance Type|CODE|99
-@LOANPROJECTINTERESTRATE|Interest Rate|RATE|
-@LOANPROJECTINTERESTTYPE|Interest Type|CODE|99
-@LOANPROJECTLOANAMOUNT|Loan Amount|MONEY|
-@LOANPROJECTLOANDATE|Loan Date|DATE|
-@LOANPROJECTMATURITYDATE|Maturity Date|DATE|
-@LOANPROJECTPAYMENT|Payment Amount|MONEY|
-@LOANPROJECTPAYMENTFREQUENCY|Payment Frequency|CODE|14
-@LOANPROJECTPAYMENTSKIPS|Payment Skip|CODE|9
-@LOANPROJECTPAYMENTSKIPSTARTDAY|Payment Skip Day|CODE|1231
-@LOANPROJECTPAYMENTTYPE|Payment Type|CODE|1
-@LOANPROJECTPAYOFFDATE|Payoff Date|DATE|
-@LOANPROJECTPROMO1BALANCE|Promo 1 Balance|MONEY|
-@LOANPROJECTPROMO2BALANCE|Promo 2 Balance|MONEY|
-@LOANPROJECTPREPAIDFINANCECHG|Prepaid Finance Charge|MONEY|
-@LOANPROJECTPROMO2RATE|Promo 2 Rate|RATE|
-@LOANPROJECTPROMO1RATE|Promo 1 Rate|RATE|
-@LOANPROJECTSINGLEPREMIUM|Single Premium|CODE|2
-@LOANPROJECTUNPAIDINTEREST|Unpaid Interest|MONEY|
+@DIVPROJECTAPY|APY|RATE|
+@DIVPROJECTCALCULATIONTYPE|(0) Calculate a dividend projection ; (1) Calculate an APY|CODE|1
+@DIVPROJECTDEPAMOUNT|Deposit Amount|MONEY|
+@DIVPROJECTDEPDAY1|Day of Start Date|CODE|31
+@DIVPROJECTDEPDAY2|2nd Day of Month for Semi Monthly Recurring Deposits|CODE|31
+@DIVPROJECTDEPFREQUENCY|(0) [Not currently used] ; (1) Annual ; (2) Semiannual ; (3) Quarterly ; (4) Monthly ; (5) Semimonthly ; (6) Biweekly skip first ; (7) Biweekly skip last ; (8) Biweekly ; (9) Weekly|CODE|9
+@DIVPROJECTDEPSTARTDATE|Deposit Start Date|DATE|
+@DIVPROJECTDIVPOSTCODE|Dividend Post Code ; (0) Deposit to Share ; (1) Withdraw by Check or Transfer if dividend calculation, Dividends Required to be Withdrawn or Transferred if APY|CODE|1
+@DIVPROJECTDIVRATE|Dividend Rate|RATE|
+@DIVPROJECTDIVRATEMARGIN|Dividend Rate Margin|RATE|
+@DIVPROJECTDIVRATEMARGINSIGN|Dividend Rate Margin Sign|NUMBER|
+@DIVPROJECTDIVTYPE|Dividend Type|CODE|99
+@DIVPROJECTENDDATE|End Date|DATE|
+@DIVPROJECTERROR|Projection Error|CHARACTER|80
+@DIVPROJECTMATURITYDATE|Maturity Date|DATE|
+@DIVPROJECTOPENBALANCE|Open Balance|MONEY|
+@DIVPROJECTOPENDATE|Open Date|DATE|
+@DIVPROJECTTERMFREQUENCY|Term Frequency ; (0) Months ; (1) Days|CODE|1
+@DIVPROJECTTERMPERIOD|Term Period|CODE|9999
+@DIVPROJECTTOTALAPYDAYCOUNT|Number of days in the APY Count|NUMBER|
+@DIVPROJECTTOTALBALANCE|Total Balance After All Deposits and Withdraws|MONEY|
+@DIVPROJECTTOTALDEPOSITS|Total Deposits|MONEY|
+@DIVPROJECTTOTALDIVIDENDS|Total Dividends|MONEY|
+@DIVPROJECTTOTALENDDATE|End Date|DATE|
+@DIVPROJECTTOTALMATURITYCOUNT|Total Number of Maturity Count|NUMBER|
+@DIVPROJECTTOTALWITHDRAWALS|Total Dividend Withdraws|MONEY|
+
+@ENVARGCHAR1|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR2|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR3|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR4|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR5|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR6|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR7|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR8|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR9|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCHAR10|Character Value passed to a subroutine|CHARACTER|132
+@ENVARGCODE1|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE2|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE3|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE4|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE5|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE6|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE7|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE8|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE9|Code Value passed to a subroutine|CODE|9999
+@ENVARGCODE10|Code Value passed to a subroutine|CODE|9999
+@ENVARGDATE1|Date Value passed to a subroutine|DATE|
+@ENVARGDATE2|Date Value passed to a subroutine|DATE|
+@ENVARGDATE3|Date Value passed to a subroutine|DATE|
+@ENVARGDATE4|Date Value passed to a subroutine|DATE|
+@ENVARGDATE5|Date Value passed to a subroutine|DATE|
+@ENVARGDATE6|Date Value passed to a subroutine|DATE|
+@ENVARGDATE7|Date Value passed to a subroutine|DATE|
+@ENVARGDATE8|Date Value passed to a subroutine|DATE|
+@ENVARGDATE9|Date Value passed to a subroutine|DATE|
+@ENVARGDATE10|Date Value passed to a subroutine|DATE|
+@ENVARGMONEY1|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY2|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY3|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY4|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY5|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY6|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY7|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY8|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY9|Money Value passed to a subroutine|MONEY|
+@ENVARGMONEY10|Money Value passed to a subroutine|MONEY|
+@ENVARGNUMBER1|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER2|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER3|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER4|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER5|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER6|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER7|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER8|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER9|Number Value passed to a subroutine|NUMBER|
+@ENVARGNUMBER10|Number Value passed to a subroutine|NUMBER|
+@ENVARGRATE1|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE2|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE3|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE4|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE5|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE6|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE7|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE8|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE9|Rate Value passed to a subroutine|RATE|
+@ENVARGRATE10|Rate Value passed to a subroutine|RATE|
+
+@ENVPARAMCHAR1|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR2|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR3|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR4|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR5|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR6|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR7|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR8|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR9|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR10|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCODE1|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE2|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE3|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE4|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE5|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE6|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE7|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE8|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE9|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMCODE10|Code Value passed into this subroutine|CODE|9999
+@ENVPARAMDATE1|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE2|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE3|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE4|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE5|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE6|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE7|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE8|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE9|Date Value passed into this subroutine|DATE|
+@ENVPARAMDATE10|Date Value passed into this subroutine|DATE|
+@ENVPARAMERRORTEXT|Error text|CHARACTER|132
+@ENVPARAMMONEY1|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY2|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY3|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY4|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY5|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY6|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY7|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY8|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY9|Money Value passed into this subroutine|MONEY|
+@ENVPARAMMONEY10|Money Value passed into this subroutine|MONEY|
+@ENVPARAMNUMBER1|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER2|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER3|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER4|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER5|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER6|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER7|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER8|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER9|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMNUMBER10|Number Value passed into this subroutine|NUMBER|
+@ENVPARAMRATE1|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE2|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE3|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE4|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE5|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE6|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE7|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE8|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE9|Rate Value passed into this subroutine|RATE|
+@ENVPARAMRATE10|Rate Value passed into this subroutine|RATE|
 
 @LOANPROJECTAMOUNTPASTDUE|Amount Past Due|MONEY|
 @LOANPROJECTAMOUNTPAYOFF|Payoff Amount|MONEY|
+@LOANPROJECTAPR|APR|RATE|
+@LOANPROJECTBALLOONAMOUNT|Balloon Amount|MONEY|
+@LOANPROJECTBALLOONDATE|Balloon Date|DATE|
 @LOANPROJECTBILLEDFEEPAYOFF|The amount due on a non-interest-accruing periodic fee a member must pay for having available certain types of credit|MONEY|
+@LOANPROJECTCALCULATIONTYPE|Calculation Type|CODE|3
 @LOANPROJECTCASHADVPRINCIPAL|Cash Advance Principal|MONEY|
 @LOANPROJECTCOUNTPASTDUE|Number Of Payments Past Due|NUMBER|
 @LOANPROJECTCUTOFFCASHADVINT|Cash Adv Interest|MONEY|
@@ -49,53 +175,75 @@ SYSSYMDIRECTORY|SYM Number|NUMBER|
 @LOANPROJECTCUTOFFPURCHASEINT|Purchase Interest|MONEY|
 @LOANPROJECTDISABILITY|Disability Total Premium|MONEY|
 @LOANPROJECTDISABILITYERROR|Error Msg From LIABILITY Projection|CHARACTER|80
+@LOANPROJECTDUEDAY1|Due day 1|CODE|31
+@LOANPROJECTDUEDAY2|Due day 2|CODE|31
 @LOANPROJECTERROR|Error Msg from PROJECTION|CHARACTER|80
+@LOANPROJECTESCROWAMOUNT|Escrow Amount|MONEY|
 @LOANPROJECTFEEPRINCIPAL|Fee Principal|MONEY|
 @LOANPROJECTFINALDUEDATE|Final Due Date|DATE|
 @LOANPROJECTFINALPAYMENT|Final Payment|MONEY|
+@LOANPROJECTFIRSTDUEDATE|First Due Date|DATE|
 @LOANPROJECTINSURANCEPAYOFF|The amount of remaining insurance the member must pay at the time of payoff|MONEY|
+@LOANPROJECTINSURANCETYPE|Insurance Type|CODE|99
 @LOANPROJECTINTERESTPAYOFF1|The amount of the loan balance due to accrued interest|MONEY|
 @LOANPROJECTINTERESTPAYOFF2|The amount of the loan balance due to accrued interest|MONEY|
+@LOANPROJECTINTERESTRATE|Interest Rate|RATE|
+@LOANPROJECTINTERESTTYPE|Interest Type|CODE|99
 @LOANPROJECTLIFE|Life Insurance Total Premium|MONEY|
 @LOANPROJECTLIFEERROR|Error Msg From LIFE Projection|CHARACTER|80
+@LOANPROJECTLOANAMOUNT|Loan Amount|MONEY|
+@LOANPROJECTLOANDATE|Loan Date|DATE|
+@LOANPROJECTMATURITYDATE|Maturity Date|DATE|
+@LOANPROJECTPAYMENT|Payment Amount|MONEY|
 @LOANPROJECTPAYMENTCOUNT|Payment Count|NUMBER|
+@LOANPROJECTPAYMENTFREQUENCY|Payment Frequency|CODE|14
+@LOANPROJECTPAYMENTSKIPS|Payment Skip|CODE|9
+@LOANPROJECTPAYMENTSKIPSTARTDAY|Payment Skip Day|CODE|1231
+@LOANPROJECTPAYMENTTYPE|Payment Type|CODE|1
+@LOANPROJECTPAYOFFDATE|Payoff Date|DATE|
+@LOANPROJECTPREPAIDFINANCECHG|Prepaid Finance Charge|MONEY|
+@LOANPROJECTPROMO1BALANCE|Promo 1 Balance|MONEY|
+@LOANPROJECTPROMO1RATE|Promo 1 Rate|RATE|
+@LOANPROJECTPROMO2BALANCE|Promo 2 Balance|MONEY|
+@LOANPROJECTPROMO2RATE|Promo 2 Rate|RATE|
 @LOANPROJECTPURCHASEPRINCIPAL|Purchase Principal|MONEY|
 @LOANPROJECTSALESTAXPAYOFF|The amount of remaining sales tax the member must pay to the state at the time of payoff|MONEY|
+@LOANPROJECTSINGLEPREMIUM|Single Premium|CODE|2
 @LOANPROJECTTERMINATEFEEPAYOFF|The optional fee charged for a lease loan payoff before the Balloon Date|MONEY|
 @LOANPROJECTTOTALESCROW|Total Escrow|MONEY|
 @LOANPROJECTTOTALINTEREST|Total Interest|MONEY|
 @LOANPROJECTTOTALPAYMENTS|Total Payments|MONEY|
 @LOANPROJECTUNPAIDCASHADVINT|Unpaid Cash Adv Interest|MONEY|
+@LOANPROJECTUNPAIDINTEREST|Unpaid Interest|MONEY|
 @LOANPROJECTUNPAIDPURCHASEINT|Unpaid Purchase Interest|MONEY|
 
-
-@DIVPROJECTCALCULATIONTYPE|(0) Calculate a dividend projection ; (1) Calculate an APY|CODE|1
-@DIVPROJECTDEPAMOUNT|Deposit Amount|MONEY|
-@DIVPROJECTDEPDAY1|Day of Start Date|CODE|31
-@DIVPROJECTDEPDAY2|2nd Day of Month for Semi Monthly Recurring Deposits|CODE|31
-@DIVPROJECTDEPFREQUENCY|(0) [Not currently used] ; (1) Annual ; (2) Semiannual ; (3) Quarterly ; (4) Monthly ; (5) Semimonthly ; (6) Biweekly skip first ; (7) Biweekly skip last ; (8) Biweekly ; (9) Weekly|CODE|9
-@DIVPROJECTDEPSTARTDATE|Deposit Start Date|DATE|
-@DIVPROJECTDIVTYPE|Dividend Type|CODE|99
-@DIVPROJECTDIVPOSTCODE|Dividend Post Code ; (0) Deposit to Share ; (1) Withdraw by Check or Transfer if dividend calculation, Dividends Required to be Withdrawn or Transferred if APY|CODE|1
-@DIVPROJECTDIVRATE|Dividend Rate|RATE|
-@DIVPROJECTENDDATE|End Date|DATE|
-@DIVPROJECTMATURITYDATE|Maturity Date|DATE|
-@DIVPROJECTOPENBALANCE|Open Balance|MONEY|
-@DIVPROJECTOPENDATE|Open Date|DATE|
-@DIVPROJECTTERMFREQUENCY|Term Frequency ; (0) Months ; (1) Days|CODE|1
-@DIVPROJECTTERMPERIOD|Term Period|CODE|9999
-@DIVPROJECTDIVRATEMARGIN|Dividend Rate Margin|RATE|
-@DIVPROJECTDIVRATEMARGINSIGN|Dividend Rate Margin Sign|NUMBER|
-
-@DIVPROJECTAPY|APY|RATE|
-@DIVPROJECTERROR|Projection Error|CHARACTER|80
-@DIVPROJECTTOTALMATURITYCOUNT|Total Number of Maturity Count|NUMBER|
-@DIVPROJECTTOTALAPYDAYCOUNT|Number of days in the APY Count|NUMBER|
-@DIVPROJECTTOTALBALANCE|Total Balance After All Deposits and Withdraws|MONEY|
-@DIVPROJECTTOTALDEPOSITS|Total Deposits|MONEY|
-@DIVPROJECTTOTALDIVIDENDS|Total Dividends|MONEY|
-@DIVPROJECTTOTALENDDATE|End Date|DATE|
-@DIVPROJECTTOTALWITHDRAWALS|Total Dividend Withdraws|MONEY|
+@PREFORDINAL|This variable passes the zero-based ordinal of the Preference record through which access to the member's account data was authorized. If the member used a card to access the account|NUMBER|
+@RGANSAMOUNT|This variables pass the answer back before the next step of the specfile is executed|MONEY|
+@RGANSDATE|This variables pass the answer back before the next step of the specfile is executed|DATE|
+@RGANSNUM|This variables pass the answer back before the next step of the specfile is executed|NUMBER|
+@RGANSRATE|This variables pass the answer back before the next step of the specfile is executed|RATE|
+@RGANSTEXT|This variables pass the answer back before the next step of the specfile is executed|CHARACTER|
+@RGDATATYPE|This variable specifies the data type requested or the completion of the last step of the specfile ; 0 = no input required ; 1 = character ; 2 = rate ; 3 = date ; 4 = number ; 5 = code ; 6 = money to $999,999,999,999.99 ; 7 = money to 16 digit
+@RGDEFAMOUNT|This variables is used to pass information, a prompt, and a default value|MONEY|
+@RGDEFDATE|This variables is used to pass information, a prompt, and a default value|DATE|
+@RGDEFNUM|This variables is used to pass information, a prompt, and a default value|NUMBER|
+@RGDEFRATE|This variables is used to pass information, a prompt, and a default value|RATE|
+@RGDEFTEXT|This variables is used to pass information, a prompt, and a default value|CHARACTER|
+@RGMAXCODEWIDTH|This variable defines the maximum value of a requested code, or the maximum number of characters that can be returned in a response|NUMBER|
+@RGPROMPT|This variables is used to pass information, a prompt, and a default value|CHARACTER|
+@RGSCREENCLEAR|This variable recommends that the screen be cleared before displaying information to the member from this step of the specfile|CODE|
+@RGSESSION|SymConnect specfiles can be executed in several steps. @RGSESSION can be used as an index location to store data needed in more than one step.|NUMBER|
+@RGSTATE|This variable identifies the point at which the specfile should start or continue execution at each step.|CHARACTER|
+@RGUSERCHR1|This variable pass character data to and from the specfile at each step of execution|CHARACTER|
+@RGUSERCHR2|This variable pass character data to and from the specfile at each step of execution|CHARACTER|
+@RGUSERCHR3|This variable pass character data to and from the specfile at each step of execution|CHARACTER|
+@RGUSERCHR4|This variable pass character data to and from the specfile at each step of execution|CHARACTER|
+@RGUSERCHR5|This variable pass character data to and from the specfile at each step of execution|CHARACTER|
+@RGUSERNUM1|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
+@RGUSERNUM2|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
+@RGUSERNUM3|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
+@RGUSERNUM4|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
+@RGUSERNUM5|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
 
 @VALIDATECDAMOUNT|Cash dispersed amount|MONEY|
 @VALIDATECHARACTERINPUT|Value entered by user|CHARACTER|
@@ -132,131 +280,3 @@ SYSSYMDIRECTORY|SYM Number|NUMBER|
 @VALIDATETCPRODUCT|Travelers check product code [TC TRANSACTION]|NUMBER|
 @VALIDATETRANCODESTATE|(0) Before ; (1) At ; (2) After [except for SP, SC, MP and FE codes]|CHARACTER|2
 @VALIDATEWDAMOUNT|Withdraw amount requested [certificate penalty only]|MONEY|
-
-@ENVPARAMNUMBER1||NUMBER|
-@ENVPARAMNUMBER2||NUMBER|
-@ENVPARAMNUMBER3||NUMBER|
-@ENVPARAMNUMBER4||NUMBER|
-@ENVPARAMNUMBER5||NUMBER|
-@ENVPARAMNUMBER6||NUMBER|
-@ENVPARAMNUMBER7||NUMBER|
-@ENVPARAMNUMBER8||NUMBER|
-@ENVPARAMNUMBER9||NUMBER|
-@ENVPARAMNUMBER10||NUMBER|
-@ENVARGNUMBER1||NUMBER|
-@ENVARGNUMBER2||NUMBER|
-@ENVARGNUMBER3||NUMBER|
-@ENVARGNUMBER4||NUMBER|
-@ENVARGNUMBER5||NUMBER|
-@ENVARGNUMBER6||NUMBER|
-@ENVARGNUMBER7||NUMBER|
-@ENVARGNUMBER8||NUMBER|
-@ENVARGNUMBER9||NUMBER|
-@ENVARGNUMBER10||NUMBER|
-
-@ENVPARAMCHAR1||CHARACTER|132
-@ENVPARAMCHAR2||CHARACTER|132
-@ENVPARAMCHAR3||CHARACTER|132
-@ENVPARAMCHAR4||CHARACTER|132
-@ENVPARAMCHAR5||CHARACTER|132
-@ENVPARAMCHAR6||CHARACTER|132
-@ENVPARAMCHAR7||CHARACTER|132
-@ENVPARAMCHAR8||CHARACTER|132
-@ENVPARAMCHAR9||CHARACTER|132
-@ENVPARAMCHAR10||CHARACTER|132
-@ENVARGCHAR1||CHARACTER|132
-@ENVARGCHAR2||CHARACTER|132
-@ENVARGCHAR3||CHARACTER|132
-@ENVARGCHAR4||CHARACTER|132
-@ENVARGCHAR5||CHARACTER|132
-@ENVARGCHAR6||CHARACTER|132
-@ENVARGCHAR7||CHARACTER|132
-@ENVARGCHAR8||CHARACTER|132
-@ENVARGCHAR9||CHARACTER|132
-@ENVARGCHAR10||CHARACTER|132
-
-@ENVPARAMMONEY1||MONEY|
-@ENVPARAMMONEY2||MONEY|
-@ENVPARAMMONEY3||MONEY|
-@ENVPARAMMONEY4||MONEY|
-@ENVPARAMMONEY5||MONEY|
-@ENVPARAMMONEY6||MONEY|
-@ENVPARAMMONEY7||MONEY|
-@ENVPARAMMONEY8||MONEY|
-@ENVPARAMMONEY9||MONEY|
-@ENVPARAMMONEY10||MONEY|
-@ENVARGMONEY1||MONEY|
-@ENVARGMONEY2||MONEY|
-@ENVARGMONEY3||MONEY|
-@ENVARGMONEY4||MONEY|
-@ENVARGMONEY5||MONEY|
-@ENVARGMONEY6||MONEY|
-@ENVARGMONEY7||MONEY|
-@ENVARGMONEY8||MONEY|
-@ENVARGMONEY9||MONEY|
-@ENVARGMONEY10||MONEY|
-
-@ENVPARAMCODE1||CODE|9999
-@ENVPARAMCODE2||CODE|9999
-@ENVPARAMCODE3||CODE|9999
-@ENVPARAMCODE4||CODE|9999
-@ENVPARAMCODE5||CODE|9999
-@ENVPARAMCODE6||CODE|9999
-@ENVPARAMCODE7||CODE|9999
-@ENVPARAMCODE8||CODE|9999
-@ENVPARAMCODE9||CODE|9999
-@ENVPARAMCODE10||CODE|9999
-@ENVARGCODE1||CODE|9999
-@ENVARGCODE2||CODE|9999
-@ENVARGCODE3||CODE|9999|
-@ENVARGCODE4||CODE|9999
-@ENVARGCODE5||CODE|9999|
-@ENVARGCODE6||CODE|9999
-@ENVARGCODE7||CODE|9999
-@ENVARGCODE8||CODE|9999
-@ENVARGCODE9||CODE|9999
-@ENVARGCODE10||CODE|9999
-
-@ENVPARAMDATE1||DATE|
-@ENVPARAMDATE2||DATE|
-@ENVPARAMDATE3||DATE|
-@ENVPARAMDATE4||DATE|
-@ENVPARAMDATE5||DATE|
-@ENVPARAMDATE6||DATE|
-@ENVPARAMDATE7||DATE|
-@ENVPARAMDATE8||DATE|
-@ENVPARAMDATE9||DATE|
-@ENVPARAMDATE10||DATE|
-@ENVARGDATE1||DATE|
-@ENVARGDATE2||DATE|
-@ENVARGDATE3||DATE|
-@ENVARGDATE4||DATE|
-@ENVARGDATE5||DATE|
-@ENVARGDATE6||DATE|
-@ENVARGDATE7||DATE|
-@ENVARGDATE8||DATE|
-@ENVARGDATE9||DATE|
-@ENVARGDATE10||DATE|
-
-@ENVPARAMRATE1||RATE|
-@ENVPARAMRATE2||RATE|
-@ENVPARAMRATE3||RATE|
-@ENVPARAMRATE4||RATE|
-@ENVPARAMRATE5||RATE|
-@ENVPARAMRATE6||RATE|
-@ENVPARAMRATE7||RATE|
-@ENVPARAMRATE8||RATE|
-@ENVPARAMRATE9||RATE|
-@ENVPARAMRATE10||RATE|
-@ENVARGRATE1||RATE|
-@ENVARGRATE2||RATE|
-@ENVARGRATE3||RATE|
-@ENVARGRATE4||RATE|
-@ENVARGRATE5||RATE|
-@ENVARGRATE6||RATE|
-@ENVARGRATE7||RATE|
-@ENVARGRATE8||RATE|
-@ENVARGRATE9||RATE|
-@ENVARGRATE10||RATE|
-
-@ENVPARAMERRORTEXT|Error text|CHARACTER|132
