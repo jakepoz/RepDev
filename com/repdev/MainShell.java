@@ -1,6 +1,7 @@
 package com.repdev;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -82,6 +83,9 @@ public class MainShell {
 	private Table tblErrors, tblTasks; 
 	private FindReplaceShell findReplaceShell;
 	private final int MAX_RECENTS = 5;
+	
+	//Used for DND
+	private TreeItem[] dragSourceItems;
 	
 	// Status bar stuff...	
 	private Composite statusBar;
@@ -572,7 +576,10 @@ public class MainShell {
 			cur.dispose();
 		}
 		
-		ProjectManager.saveProjects(proj.getSym());
+		if( !proj.isLocal() )
+			ProjectManager.saveProjects(proj.getSym());
+		else
+			ProjectManager.saveProjects(proj.getDir());
 
 		tree.notifyListeners(SWT.Selection, null);
 	}
@@ -633,24 +640,42 @@ public class MainShell {
 		
 		final DragSource source = new DragSource (tree, operations);
 		source.setTransfer(types);
-		final TreeItem[] dragSourceItem = new TreeItem[1];
+		
+		
 		source.addDragListener (new DragSourceListener () {
-			public void dragStart(DragSourceEvent event) {
-				TreeItem[] selection = tree.getSelection();
-				if (selection.length > 0 && selection[0].getItemCount() == 0) {
-					event.doit = true;
-					dragSourceItem[0] = selection[0];
-				} else {
-					event.doit = false;
+			public void dragStart(DragSourceEvent event) {		
+				if( tree.getSelectionCount() == 0){
+					event.doit=false;
+					return;
 				}
+				
+				//Only allow if all thiings are the same type
+				Object first = tree.getSelection()[0].getData();
+				boolean allSameType = true;
+				
+				for( TreeItem item : tree.getSelection()){
+					if( !(item.getData().getClass().isInstance(first))){
+						allSameType = false;
+						break;
+					}
+				}
+				
+				if( allSameType && !(first instanceof Integer || first instanceof String) ){
+					dragSourceItems = tree.getSelection();
+					event.doit=true;
+				}
+				else
+					event.doit=false;
 			};
 			public void dragSetData (DragSourceEvent event) {
-				event.data = dragSourceItem[0].getText();
+				event.data = Arrays.asList(dragSourceItems).toString();
 			}
 			public void dragFinished(DragSourceEvent event) {
-				if (event.detail == DND.DROP_MOVE)
-					dragSourceItem[0].dispose();
-					dragSourceItem[0] = null;
+				//Remove old things from table
+				//TODO: Add Move stuff later
+				//for( TreeItem item : dragSourceItems){
+				//	item.dispose();
+				//}
 			}
 
 		});
@@ -671,64 +696,69 @@ public class MainShell {
 					} else {
 						event.feedback |= DND.FEEDBACK_SELECT;
 					}
+					
 				}
+				else
+					event.feedback = DND.FEEDBACK_NONE;
 			}
+			
 			public void drop(DropTargetEvent event) {
 				if (event.data == null) {
 					event.detail = DND.DROP_NONE;
 					return;
 				}
+				
 				String text = (String)event.data;
+				System.out.println("Event.data: " + text);
+				
 				if (event.item == null) {
+					System.out.println("Adding data to blank section");
 					TreeItem item = new TreeItem(tree, SWT.NONE);
 					item.setText(text);
-				} else {
-					TreeItem item = (TreeItem)event.item;
-					Point pt = display.map(null, tree, event.x, event.y);
-					Rectangle bounds = item.getBounds();
-					TreeItem parent = item.getParentItem();
-					if (parent != null) {
-						TreeItem[] items = parent.getItems();
-						int index = 0;
-						for (int i = 0; i < items.length; i++) {
-							if (items[i] == item) {
-								index = i;
-								break;
-							}
-						}
-						if (pt.y < bounds.y + bounds.height/3) {
-							TreeItem newItem = new TreeItem(parent, SWT.NONE, index);
-							newItem.setText(text);
-						} else if (pt.y > bounds.y + 2*bounds.height/3) {
-							TreeItem newItem = new TreeItem(parent, SWT.NONE, index+1);
-							newItem.setText(text);
-						} else {
-							TreeItem newItem = new TreeItem(item, SWT.NONE);
-							newItem.setText(text);
-						}
-						
-					} else {
-						TreeItem[] items = tree.getItems();
-						int index = 0;
-						for (int i = 0; i < items.length; i++) {
-							if (items[i] == item) {
-								index = i;
-								break;
-							}
-						}
-						if (pt.y < bounds.y + bounds.height/3) {
-							TreeItem newItem = new TreeItem(tree, SWT.NONE, index);
-							newItem.setText(text);
-						} else if (pt.y > bounds.y + 2*bounds.height/3) {
-							TreeItem newItem = new TreeItem(tree, SWT.NONE, index+1);
-							newItem.setText(text);
-						} else {
-							TreeItem newItem = new TreeItem(item, SWT.NONE);
-							newItem.setText(text);
+				}
+				else{
+					TreeItem root = (TreeItem)event.item;
+					
+					if( root.getData() instanceof SymitarFile ){
+						root = root.getParentItem();
+					}
+					
+					//Ok, now actually do some work
+					if( dragSourceItems[0].getData() instanceof SymitarFile){
+						for( TreeItem item : dragSourceItems){
+							SymitarFile source = (SymitarFile)item.getData();
+							SymitarFile destination;
+							
+							if( isItemLocal(root) )
+								destination = new SymitarFile(getTreeDir(root),source.getName());
+							else
+								destination = new SymitarFile(getTreeSym(root),source.getName(),source.getType());
+							
+							destination.saveFile(source.getData());
+							
+							if( root.getData() instanceof Project)
+								((Project)root.getData()).addFile(destination);
 						}
 					}
 					
+				/*	//Now get to final root and redraw tree
+					while( !(root.getData() instanceof String || root.getData() instanceof String) )
+						root = root.getParentItem();*/
+				
+					System.out.println(root);
 					
+					//Redraws the tree, since it do be VIRTUAL!!!!
+				
+					for( TreeItem victim : root.getItems())
+						victim.dispose();
+					
+					
+					root.clearAll(true);
+					root.setExpanded(false);
+					tree.showItem(root);
+					Event e= new Event();
+					e.item = root;
+					tree.notifyListeners(SWT.Expand, e);
 				}
 			}
 		});
@@ -1160,9 +1190,7 @@ public class MainShell {
 					for (SymitarFile file : ((Project) root.getData()).getFiles()) {
 						TreeItem item = new TreeItem(root, SWT.NONE);
 						item.setText(file.getName());
-
 						item.setImage(getFileImage(file));
-
 						item.setData(file);
 					}
 				}
@@ -1236,7 +1264,7 @@ public class MainShell {
 		
 		remSym.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				removeSym((TreeItem)e.item);
+				removeSym(tree.getSelection()[0]);
 			}
 		});
 		addProj.addSelectionListener(new SelectionAdapter() {
@@ -1246,7 +1274,7 @@ public class MainShell {
 		});
 		remProj.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				removeProject((TreeItem)e.item);
+				removeProject(tree.getSelection()[0]);
 			}
 		});
 		importFile.addSelectionListener(new SelectionAdapter() {
@@ -1256,7 +1284,7 @@ public class MainShell {
 		});
 		remFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				removeFile((TreeItem)e.item);
+				removeFile(tree.getSelection()[0]);
 			}
 		});
 		newFile.addSelectionListener(new SelectionAdapter() {
@@ -1347,28 +1375,35 @@ public class MainShell {
 		dialog.open();
 	}
 
-	/**
-	 * 
-	 * @return Sym of currently selected tree item
-	 */
-	private int getCurrentTreeSym() {
+	private int getTreeSym(TreeItem item){
 		int sym = -1;
-		Object data = tree.getSelection()[0].getData();
+		Object data = item.getData();
 
 		if (data instanceof Integer)
 			sym = (Integer) data;
 		else if (data instanceof Project)
 			sym = ((Project) data).getSym();
 		else
-			sym = ((Project) tree.getSelection()[0].getParentItem().getData()).getSym();
+			sym = ((Project) item.getParentItem().getData()).getSym();
 
 		return sym;
 	}
 	
-	private String getCurrentTreeDir(){
+	/**
+	 * 
+	 * @return Sym of currently selected tree item
+	 */
+	private int getCurrentTreeSym() {
+		if( tree.getSelectionCount()== 0)
+			return -1;
+		
+		return getTreeSym(tree.getSelection()[0]);
+	}
+	
+	private String getTreeDir(TreeItem item){
 		String dir = "";
 		
-		Object data = tree.getSelection()[0].getData();
+		Object data = item.getData();
 
 		if( data instanceof Integer)
 			return null;
@@ -1377,14 +1412,20 @@ public class MainShell {
 		else if (data instanceof Project)
 			dir = ((Project) data).getDir();
 		else
-			dir = ((Project) tree.getSelection()[0].getParentItem().getData()).getDir();
+			dir = ((Project) item.getParentItem().getData()).getDir();
 
 		return dir;
 	}
 	
-	private boolean isCurrentItemLocal(){
+	private String getCurrentTreeDir(){
+		if( tree.getSelectionCount()== 0)
+			return "";
 		
-		Object data = tree.getSelection()[0].getData();
+		return getTreeDir(tree.getSelection()[0]);
+	}
+	
+	private boolean isItemLocal(TreeItem item){
+		Object data = item.getData();
 
 		if( data instanceof String)
 			return true;
@@ -1392,10 +1433,17 @@ public class MainShell {
 			return false;
 		else if (data instanceof Project)
 			return ((Project) data).getDir() != null;
-		else if( ((Project) tree.getSelection()[0].getParentItem().getData()).getDir() != null)
+		else if( ((Project) item.getParentItem().getData()).getDir() != null)
 			return false;
 
 		return true;
+	}
+	
+	private boolean isCurrentItemLocal(){
+		if( tree.getSelectionCount()== 0)
+			return false;
+		
+		return isItemLocal(tree.getSelection()[0]);		
 	}
 	
 	private Image drawSymOverImage(Image img, int sym){
