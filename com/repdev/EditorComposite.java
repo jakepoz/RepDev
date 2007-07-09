@@ -265,8 +265,8 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 			lastLine = txt.getLineAtOffset(txt.getCaretOffset());
 		}
 	}
-
-	//FIXME: Doesn't work if part of the indent text has blank lines (With no spaces, just a \n\n).
+	
+	//TODO: Allow for unindenting single lines
 	private void groupIndent(int direction, int startLine, int endLine) {
 		String tabStr = getTabStr();
 
@@ -293,7 +293,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 						endOffset = txt.getOffsetAtLine(i + 1);
 
 					if( endOffset - 1 <= startOffset)
-						line = "";
+						line = "\n";
 					else
 						line = txt.getText(startOffset, endOffset - 1);		
 
@@ -316,7 +316,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 					endOffset = txt.getOffsetAtLine(i + 1);
 
 				if( endOffset - 1 <= startOffset)
-					line = "";
+					line = "\n";
 				else
 					line = txt.getText(startOffset, endOffset - 1);			
 				
@@ -554,6 +554,10 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 					case 'l':
 					case 'L':
 						GotoLineShell.show(txt.getParent().getShell(),txt);
+						break;
+					case 'U':
+					case 'u':
+						surroundEachLineWith("PRINT \"", "\"", true);
 						break;
 					}
 				} else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
@@ -823,6 +827,26 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 			
 			dialog2.open();
 		}
+	}
+	
+	//TODO: Finish this method, make it allow end be more than 1 line
+	public void surroundEachLineWith(String start, String end, boolean escapeQuotes){
+		if( txt.getSelectionCount() == 0)
+			return;
+		
+		int startLine = txt.getLineAtOffset(txt.getSelection().x);
+		int endLine = txt.getLineAtOffset(txt.getSelection().y);
+		
+
+		for( int i = startLine; i < endLine; i++ ){
+			String line = txt.getText(txt.getOffsetAtLine(i), txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)));
+			
+			txt.replaceTextRange(txt.getOffsetAtLine(i),
+					             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
+					             start + line.substring(0,line.length()-2).replaceAll("\"", "\"+CTRLCHR(34)+\"") + end + "\r\n" );
+		}
+		
+		commitUndo();
 	}
 
 	public RepgenParser getParser() {

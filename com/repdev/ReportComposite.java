@@ -175,8 +175,10 @@ public class ReportComposite extends Composite implements TabTextView{
 
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						if( e.text.equals("local"))
+						if( e.text.equals("local")){
+							openTableItem(item);
 							RepDevMain.mainShell.print();
+						}
 						else if(e.text.equals("lpt"))
 							LPTPrintShell.print(getDisplay(), getShell(), new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT));
 					}
@@ -197,6 +199,13 @@ public class ReportComposite extends Composite implements TabTextView{
 			txt.setText("Error loading file");
 	}
 	
+	protected void openTableItem(PrintItem item) {
+		String data = new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT).getData();
+	
+		if( data != null)
+			txt.setText( data);
+	}
+
 	private void openTableItem(){
 		PrintItem item = null;
 		
@@ -205,10 +214,6 @@ public class ReportComposite extends Composite implements TabTextView{
 		else
 			item = (PrintItem)table.getSelection()[0].getData();
 		
-		String data = new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT).getData();
-		
-		if( data != null)
-			txt.setText( data);
-		
+		openTableItem(item);
 	}
 }

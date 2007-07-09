@@ -230,7 +230,7 @@ public class RunReportShell {
 						promptReady = false;
 										
 						//Process SWT messages here until the prompt is ready or has been cancelled, this way we know when the button is clicked.
-						while (!promptReady && !shell.isDisposed()) {
+						while (!promptReady && shell != null && !shell.isDisposed()) {
 							if (!display.readAndDispatch())
 								display.sleep();
 						}
@@ -424,6 +424,7 @@ public class RunReportShell {
 		
 		doEnable();
 		
+		shell.setDefaultButton(runButton);
 		shell.pack();
 		shell.open();
 		shell.setMinimumSize(shell.getSize().x + 100, shell.getSize().y + 50);
