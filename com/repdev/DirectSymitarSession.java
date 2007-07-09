@@ -21,7 +21,8 @@ import org.eclipse.swt.widgets.Text;
 /**
  * This is the main connection object to the Symitar host, it provides all the routines you would need to connect
  * 
- * Each action leaves no side effects for any other one in general, but the run repgen mode is a bit special
+ * Each action leaves no side effects for any other one in general, but the run repgen mode is a bit special, as it as an interface 
+ * that it uses to get prompts which could technically use a backwards form of recursion to mess everything up.
  * 
  * Provides classes and methods also to help in reading commands from the server, parsing them, creating new ones, etc.
  * 
@@ -190,7 +191,8 @@ public class DirectSymitarSession extends SymitarSession {
 
 		// Returns string containing any file data sent in this message
 		public String getFileData() {
-			if( data.indexOf(Character.toString((char) 253)) != -1 )
+			
+			if( data.indexOf(Character.toString((char) 253)) != -1 && data.indexOf(Character.toString((char) 254)) != -1)
 				return data.substring(data.indexOf(Character.toString((char) 253)) + 1, data.indexOf(Character.toString((char) 254)));
 			else
 				return "";
