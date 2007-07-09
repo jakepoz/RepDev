@@ -797,7 +797,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	}
 	
 	public void installRepgen(boolean confirm) {
-		if( file.getType() != FileType.REPGEN ) {
+		if( file.getType() != FileType.REPGEN || file.isLocal() ) {
 			return;
 		}
 		
@@ -835,4 +835,9 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	public void setParser(RepgenParser parser) {
 		this.parser = parser;
 	}
+	
+	public SymitarFile getFile() {
+		return file;
+	}
+	
 }

@@ -1711,7 +1711,8 @@ public class MainShell {
 						&& (Boolean) mainfolder.getSelection().getData("modified") ) );
 				
 				saveAll.setEnabled(flag);
-				installRepgen.setEnabled( (flag && (mainfolder.getSelection().getControl() instanceof EditorComposite)) );
+				installRepgen.setEnabled( (flag && (mainfolder.getSelection().getControl() instanceof EditorComposite) &&
+						!((EditorComposite)mainfolder.getSelection().getControl()).getFile().isLocal()) );
 				
 				closeOthers.setEnabled(mainfolder.getItems().length>1);
 				
