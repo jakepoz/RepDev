@@ -5,6 +5,20 @@ public class Variable implements Comparable {
 	private String name, filename, type;
 	boolean constant;
 	private int pos;
+	
+	public Variable(Variable old){
+		if( old.name != null)
+			this.name = new String(old.name);
+		
+		if( old.filename != null)
+			this.filename = new String(old.filename);
+		
+		if( old.type != null)
+			this.type = new String(old.type);
+		
+		this.constant = old.constant;
+		this.pos = old.pos;	
+	}
 
 	public Variable(String name, String filename, int pos, String type) {
 		this.name = name;

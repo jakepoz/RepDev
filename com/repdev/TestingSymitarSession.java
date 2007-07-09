@@ -135,7 +135,6 @@ public class TestingSymitarSession extends SymitarSession {
 
 	@Override
 	public SessionError runBatchFM(String name, String title) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -181,13 +180,11 @@ public class TestingSymitarSession extends SymitarSession {
 
 	@Override
 	public SessionError printFileLPT(SymitarFile file, int queue, boolean formsOverride, int formLength, int startPage, int endPage, int copies, boolean landscape, boolean duplex, int queuePriority) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public SessionError printFileTPT(SymitarFile file, int queue) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -203,25 +200,24 @@ public class TestingSymitarSession extends SymitarSession {
 
 	@Override
 	public boolean isSeqRunning(int seq) {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
 	public void terminateRepgen(int seq) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public ArrayList<PrintItem> getPrintItems(String query, int limit) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	@Override
 	public ArrayList<PrintItem> getPrintItems(int seq) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

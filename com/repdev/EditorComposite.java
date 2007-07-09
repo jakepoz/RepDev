@@ -414,8 +414,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 				RepDevMain.mainShell.setLineColumn( line+1, txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1 );
 			}
 
-			public void focusLost(FocusEvent e) {
-				// TODO Auto-generated method stub
+			public void focusLost(FocusEvent e){
 			}
 			
 		});
@@ -691,8 +690,6 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		contextMenu.addMenuListener(new MenuListener() {
 
 			public void menuHidden(MenuEvent e) {
-				// TODO Auto-generated method stub
-
 			}
 
 			public void menuShown(MenuEvent e) {
@@ -740,7 +737,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		
 		run.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				RepDevMain.mainShell.runReport();			
+				RepDevMain.mainShell.runReport(file);			
 			}
 		});
 

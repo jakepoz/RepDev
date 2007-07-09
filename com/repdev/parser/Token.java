@@ -29,7 +29,7 @@ public class Token {
 		if( old == null)
 		  return;
 		
-		this.str = old.str;
+		this.str = new String(old.str);
 		this.pos = old.pos;
 		this.commentDepth = old.commentDepth;
 		this.afterDepth = old.afterDepth;

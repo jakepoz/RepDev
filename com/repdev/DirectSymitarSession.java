@@ -592,19 +592,17 @@ public class DirectSymitarSession extends SymitarSession {
 
 	@Override
 	public SessionError printFileTPT(SymitarFile file, int queue) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public SessionError removeFile(SymitarFile file) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public SessionError runBatchFM(String name, String title) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
@@ -998,8 +996,7 @@ public class DirectSymitarSession extends SymitarSession {
 
 	@Override
 	public void terminateRepgen(int seq) {
-		// TODO Auto-generated method stub
-		
+	
 	}
 
 	@Override
@@ -1030,7 +1027,6 @@ public class DirectSymitarSession extends SymitarSession {
 						
 						items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),date ));
 					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

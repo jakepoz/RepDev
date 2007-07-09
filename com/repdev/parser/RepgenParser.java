@@ -469,6 +469,7 @@ public class RepgenParser {
 		for(int i=Math.max(0,ftoken-1);i<fixspot;i++)
 			tokens.get(i).setNearTokens(tokens,i);
 		
+		//FIXME: This doesn't always work...
 		if(tokens.size()>1) {
 			//Go through and merge multi tokens into single ones, ex. db fields and records
 			

@@ -281,7 +281,6 @@ public class MainShell {
 		else
 			loc = file.getSym();
 		
-		//FIXME: Open different dirs
 		for (CTabItem c : mainfolder.getItems()) {
 			if (c.getData("file") != null && c.getData("file").equals(file) && c.getData("loc") != null && c.getData("loc").equals(loc)) {
 				mainfolder.setSelection(c);
@@ -744,8 +743,6 @@ public class MainShell {
 						root = root.getParentItem();
 					}
 					
-					//Ok, now actually do some work
-					//TODO: Ask to overwrite
 					int overwrite;
 					System.out.println(getTreeSym(root) == getTreeSym(dragSourceItems[0]));
 					
@@ -827,7 +824,6 @@ public class MainShell {
 								if((overwrite & RepeatOperationShell.YES) != 0)
 									newFile.saveFile(file.getData());
 									
-								//FIXME: Doesnt seem to alwasy work
 								destination.addFile(newFile);
 							}
 						}
@@ -1474,7 +1470,11 @@ public class MainShell {
 		if( !(data instanceof SymitarFile) )
 			return;
 		
-		RunReportShell dialog = new RunReportShell(shell,(SymitarFile)data);
+		runReport((SymitarFile)data);		
+	}
+	
+	public void runReport(SymitarFile file){
+		RunReportShell dialog = new RunReportShell(shell,file);
 		dialog.open();
 	}
 
@@ -1875,8 +1875,6 @@ public class MainShell {
 		fileMenu.addMenuListener(new MenuListener(){
 
 			public void menuHidden(MenuEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 
 			public void menuShown(MenuEvent e) {
@@ -2041,9 +2039,7 @@ public class MainShell {
 		
 		editMenu.addMenuListener(new MenuListener(){
 
-			public void menuHidden(MenuEvent e) {
-				// TODO Auto-generated method stub
-				
+			public void menuHidden(MenuEvent e) {		
 			}
 
 			public void menuShown(MenuEvent e) {

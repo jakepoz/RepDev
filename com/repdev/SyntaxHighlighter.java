@@ -119,6 +119,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		else if (RepgenParser.getSpecialvars().contains(tok.getStr()))
 			return VARIABLES.getRange(tok.getStart(), tok.length());
 
+		//FIXME: Add locks to variables structure, we seem to be crashing sometimes
 		for (Variable var : parser.getLvars()) {
 			if (var.getName().equals(tok.getStr()))
 				isVar = true;

@@ -242,18 +242,18 @@ public class FindReplaceShell {
 	protected void replaceAll() {
 		init();
 		
-		//TODO: WRAP FEATURE CAN REALLY SCREW THINGS UP, EX
-		//REPLACE ANUMBER WITH MYANUMBER WILL KILL IT IF REPLACEALL AND WRAP ARE USED
-		
 		if( !replace )
 			return;
 		
 		txt.setRedraw(false);
-		
+				
 		if( parser != null)
 			parser.setReparse(false);
 		
-		while(true){
+		if( wrapButton.getSelection() && replaceText.getText().contains(findText.getText()))
+			wrapButton.setSelection(false);
+		
+		while(true){		
 			if( !find() )
 				break;
 			
