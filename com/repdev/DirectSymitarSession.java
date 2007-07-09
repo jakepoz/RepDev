@@ -90,8 +90,16 @@ public class DirectSymitarSession extends SymitarSession {
 				}
 			}
 
-			writeLog("WINDOWSLEVEL=3\n", "$ ");
-			write("sym " + sym + "\r");
+			//FIXME: Logons borked
+			write("WINDOWSLEVEL=3\n");
+			
+			temp = readUntil( "$ ", "SymStart~Global");
+			
+			System.out.println(temp);
+			
+			
+			if( temp.contains("$ ") )
+				write("sym " + sym + "\r");
 
 			Command current;
 
