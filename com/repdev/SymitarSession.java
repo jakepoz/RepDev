@@ -114,12 +114,18 @@ public abstract class SymitarSession {
 	public abstract SessionError runBatchFM(String file, String title);
 
 	public abstract ArrayList<PrintItem> getPrintItems( String query, int limit );
-	public abstract ArrayList<PrintItem> getPrintItems( int seq );
+	public abstract ArrayList<PrintItem> getPrintItems( Sequence seq );
 	
 	/**
 	 * Goes through past several batch output files in print control
 	 * If certain time is given, just returns that one, 
 	 * if it's -1, then finds last couple
+	 * 
+	 * The time specifier is important for the following reason:
+	 * If two instance of a samed named repgen are being run at the same time (usually long reports),
+	 * we only want to pick the one that we started ourselves. This option is currently
+	 * only used by the Run Report feature.
+	 * 
 	 * @param reportName
 	 * @param time
 	 * @param limit
@@ -127,9 +133,9 @@ public abstract class SymitarSession {
 	 */
 	
 	//TODO: Do not take a time, but a regular Date object
-	public ArrayList<Integer> getReportSeqs( String reportName, int time, int search, int limit){
+	public ArrayList<Sequence> getReportSeqs( String reportName, int time, int search, int limit){
 		ArrayList<PrintItem> items = getPrintItems("REPWRITER", search);
-		ArrayList<Integer> newItems = new ArrayList<Integer>();
+		ArrayList<Sequence> newItems = new ArrayList<Sequence>();
 		
 		//More than likely, if we are looking for anything, it will be the newest one first
 		Collections.reverse(items);
@@ -151,7 +157,7 @@ public abstract class SymitarSession {
 			String name = file.substring(0,file.indexOf("\n"));
 			
 			if( (time == -1 || curTime - 1 == time || curTime == time || curTime +1 == time ) && name.equals(reportName) ){
-				newItems.add(cur.getBatchSeq());
+				newItems.add(new Sequence(sym,cur.getBatchSeq(), cur.getDate()));
 				
 				//If we have matched it, then we are done
 				if( time != -1 || newItems.size() >= limit )

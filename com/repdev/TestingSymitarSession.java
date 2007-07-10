@@ -216,7 +216,7 @@ public class TestingSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public ArrayList<PrintItem> getPrintItems(int seq) {
+	public ArrayList<PrintItem> getPrintItems(Sequence seq) {
 
 		return null;
 	}

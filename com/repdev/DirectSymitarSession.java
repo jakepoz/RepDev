@@ -9,6 +9,8 @@ import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -1044,15 +1046,19 @@ public class DirectSymitarSession extends SymitarSession {
 			e.printStackTrace();
 		}
 		
+		Collections.sort(items);
+		
 		return items;
 	}
 
 	@Override
-	public synchronized ArrayList<PrintItem> getPrintItems(int seq) {
+	public synchronized ArrayList<PrintItem> getPrintItems(Sequence seq) {
 		ArrayList<PrintItem> items = new ArrayList<PrintItem>();
-		ArrayList<PrintItem> trimmedItems = new ArrayList<PrintItem>();
+		
 		Command cur;
-		Date maxDate = new Date(0);
+		
+		Calendar seqCal = new GregorianCalendar();
+		seqCal.setTime(seq.getDate());
 		
 		if( !connected )
 			return null;
@@ -1060,7 +1066,7 @@ public class DirectSymitarSession extends SymitarSession {
 		Command getItems = new Command("File");
 		getItems.getParameters().put("Action", "List");
 		getItems.getParameters().put("MaxCount", "150");
-		getItems.getParameters().put("Query", "BATCH " + seq);
+		getItems.getParameters().put("Query", "BATCH " + seq.getSeq());
 		getItems.getParameters().put("Type", "Report");
 		
 		write(getItems);
@@ -1073,36 +1079,26 @@ public class DirectSymitarSession extends SymitarSession {
 				if( cur.getParameters().get("Sequence") != null ){
 					try {
 					   Date date = Util.parseDate(cur.getParameters().get("Date"), cur.getParameters().get("Time"));
-						
-						items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),date ));
+					   Calendar curCal = new GregorianCalendar();
+					   curCal.setTime(date);
+					   
+					   if( curCal.get(Calendar.DAY_OF_YEAR) == seqCal.get(Calendar.DAY_OF_YEAR))
+						   items.add( new PrintItem(cur.getParameters().get("Title"),Integer.parseInt(cur.getParameters().get("Sequence")),Integer.parseInt(cur.getParameters().get("Size")),Integer.parseInt(cur.getParameters().get("PageCount")),Integer.parseInt(cur.getParameters().get("BatchSeq")),date ));
 					} catch (NumberFormatException e) {
 						e.printStackTrace();
 					}
 				}
 					
 			}
-			
-			for( PrintItem item : items ){
-				if( item.getDate().compareTo(maxDate) == 1 || maxDate.getTime() == 0 )
-					maxDate = item.getDate();
-			}
-			
-			for( PrintItem item : items){
-				Calendar maxCal = new GregorianCalendar();
-				maxCal.setTime(maxDate);
-				
-				Calendar curCal = new GregorianCalendar();
-				curCal.setTime(item.getDate());
-				
-				if( maxCal.get(Calendar.DAY_OF_YEAR) == curCal.get(Calendar.DAY_OF_YEAR) )
-					trimmedItems.add(item);
-			}
-			
+					
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		return trimmedItems;
+		Collections.sort(items);
+
+		
+		return items;
 	}
 
 }

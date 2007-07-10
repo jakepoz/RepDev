@@ -235,12 +235,12 @@ public class MainShell {
 		shell.setMinimumSize(3 * MIN_COMP_SIZE, 3 * MIN_COMP_SIZE);
 	}
 	
-	public Object openFile(int seq, int sym){
+	public Object openFile(Sequence seq, int sym){
 		boolean found = false;
 		Composite editor;
 		
 		for (CTabItem c : mainfolder.getItems()) {
-			if (c.getData("seq") != null && (Integer)c.getData("seq") == seq && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
+			if (c.getData("seq") != null && (Sequence)c.getData("seq") == seq && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
 				mainfolder.setSelection(c);
 				found = true;
 				return c.getControl();
@@ -257,7 +257,7 @@ public class MainShell {
 
 			item.setImage(drawSymOverImage(RepDevMain.smallReportsImage,sym));
 			
-			editor = new ReportComposite(mainfolder, seq, sym);
+			editor = new ReportComposite(mainfolder, seq);
 		
 			item.setControl(editor);
 
@@ -997,11 +997,10 @@ public class MainShell {
 				
 				SymitarFile file = (SymitarFile)data;
 				
-				ArrayList<Integer> seqs = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getReportSeqs(file.getName(), -1, 40,1);
+				ArrayList<Sequence> seqs = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getReportSeqs(file.getName(), -1, 40,1);
 				
 				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 				
-				//FIXME: This whole thing only works if the last run is the current date
 				if( seqs != null && seqs.size() > 0){
 					openFile(seqs.get(0), file.getSym());
 				}
@@ -1033,7 +1032,7 @@ public class MainShell {
 				
 				final SymitarFile file = (SymitarFile)obj;
 				
-				ArrayList<Integer> seqs = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getReportSeqs(file.getName(), -1, 40,10);
+				ArrayList<Sequence> seqs = RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getReportSeqs(file.getName(), -1, 40,10);
 				
 				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 				
@@ -1059,8 +1058,8 @@ public class MainShell {
 					data = new  FormData();
 
 					int i = 0;
-					for(int seq : seqs){
-						combo.add("Sequence: " + seq);
+					for(Sequence seq : seqs){
+						combo.add(seq.toString());
 						combo.setData(String.valueOf(i), seq);
 						i++;
 					}
@@ -1084,7 +1083,7 @@ public class MainShell {
 
 						@Override
 						public void widgetSelected(SelectionEvent e) {
-							openFile((Integer)combo.getData(String.valueOf(combo.getSelectionIndex())), file.getSym());
+							openFile((Sequence)combo.getData(String.valueOf(combo.getSelectionIndex())), file.getSym());
 							dialog.close();
 						}
 						

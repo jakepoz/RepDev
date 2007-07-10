@@ -280,7 +280,7 @@ public class RunReportShell {
 								ioText.setText("Repgen Run Finished, Looking up output files\n");
 								progressBar.setSelection(85);
 								
-								for( int seq : RepDevMain.SYMITAR_SESSIONS.get(sym).getReportSeqs(file.getName(), time, 10,1) ){
+								for( Sequence seq : RepDevMain.SYMITAR_SESSIONS.get(sym).getReportSeqs(file.getName(), time, 10,1) ){
 									ioText.setText(ioText.getText()+"\nOutput Sequence: " + seq);
 									RepDevMain.mainShell.openFile(seq, sym);
 								}

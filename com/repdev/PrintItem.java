@@ -1,7 +1,9 @@
 package com.repdev;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-public class PrintItem{
+public class PrintItem implements Comparable{
 		String title;
 		int seq, size, pages, batchSeq;
 		Date date;
@@ -62,5 +64,28 @@ public class PrintItem{
 
 		public void setTitle(String title) {
 			this.title = title;
+		}
+
+		public int compareTo(Object arg0) {
+			if( !(arg0 instanceof PrintItem))
+				return 0;
+			
+			PrintItem arg = (PrintItem) arg0;
+			
+			Calendar cal0 = new GregorianCalendar();
+			cal0.setTime(getDate());
+			
+			Calendar cal1 = new GregorianCalendar();
+			cal1.setTime(arg.getDate());
+			
+			if( cal0.get(Calendar.DAY_OF_YEAR) == cal1.get(Calendar.DAY_OF_YEAR))
+				if( getBatchSeq() < arg.getBatchSeq() )
+					return -1;
+				else if( getBatchSeq() > arg.getBatchSeq() )
+					return 1;
+				else 
+					return 0;
+			else
+				return cal0.compareTo(cal1);	
 		}		
 	}

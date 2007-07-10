@@ -27,7 +27,8 @@ public class ReportComposite extends Composite implements TabTextView{
 	private StyledText txt;
 	private Table table;
 	private SymitarFile file = null;
-	private int sym, seq = -1;
+	private Sequence seq;
+	private int sym;
 
 	/**
 	 * Either send a single report to view as a SymitarFile, or a batch seq to view a bnch from the same run
@@ -44,10 +45,10 @@ public class ReportComposite extends Composite implements TabTextView{
 		buildGUI();
 	}
 	
-	public ReportComposite(Composite parent, int batchSeq, int sym) {
+	public ReportComposite(Composite parent, Sequence seq) {
 		super(parent, SWT.NONE);
-		this.seq = batchSeq;
-		this.sym = sym;
+		this.seq = seq;
+		this.sym = seq.getSym();
 		
 		buildGUI();
 	}
