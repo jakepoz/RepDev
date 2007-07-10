@@ -40,6 +40,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
@@ -1460,7 +1461,7 @@ public class MainShell {
 		// Layout Stuff
 		RowLayout slayout = new RowLayout();
 		slayout.spacing = 5;
-		
+
 		statusBar.setLayout(slayout);
 		FormData statusBarData = new FormData();
 		statusBarData.left = new FormAttachment(0);
@@ -1474,16 +1475,15 @@ public class MainShell {
 	    verLabel.setSize(100,16);
 	    
 	    new Label(statusBar,SWT.SEPARATOR);
-	    
+	   
 	    lineColumn = new Label(statusBar, SWT.NONE);
-	    lineColumn.setSize(150,16);
-	    lineColumn.setText("Location: 0 : 0                        ");
-	    	    	    	    
-	    //statusBar.pack();
+	    
+	    setLineColumn(0,0);
 	}
 	
 	public void setLineColumn(int line, int col) {
 		lineColumn.setText("Location: " + line + " : " + col);
+		statusBar.pack();
 	}
 	
 	protected void runReport() {

@@ -90,7 +90,6 @@ public class DirectSymitarSession extends SymitarSession {
 				}
 			}
 
-			//FIXME: Logons borked
 			write("WINDOWSLEVEL=3\n");
 			
 			temp = readUntil( "$ ", "SymStart~Global");

@@ -8,6 +8,7 @@ SYSTEMEMOMODE|Memo Mode|NUMBER|
 SYSUSERNAME|User name of current user|CHARACTER|
 SYSUSERNUMBER|User number of current user|NUMBER|
 SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
+PREVSYSTEMDATE|The last SYSTEMDATE for the current sym|DATE|
 
 @CARDORDINAL|When a card number is used to identify an account and the Card record is verified while looking up the account, the Card ordinal is passed to this variable|NUMBER|
 
@@ -216,6 +217,191 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @LOANPROJECTUNPAIDCASHADVINT|Unpaid Cash Adv Interest|MONEY|
 @LOANPROJECTUNPAIDINTEREST|Unpaid Interest|MONEY|
 @LOANPROJECTUNPAIDPURCHASEINT|Unpaid Purchase Interest|MONEY|
+@MCWCHRDATA1|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA2|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA3|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA4|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA5|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA6|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA7|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA8|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA9|Character variable for Symitar internal use|CHARACTER|
+@MCWCHRDATA10|Character variable for Symitar internal use|CHARACTER|
+@MCWDATATYPE|A numeric variable with valid values of 0, 1, and 2. ; (0) indicates that the specfile has only one state. The specfile runs once, produces output, and is done. ; (1) indicates that the specfile has multiple states, and that the current state requires some user input to advance to the next state. ; (2) indicates that the specfile has multiple states, and this is the final state.|CODE|2
+@MCWDATEDATA1|Date variable for Symitar internal use|DATE|
+@MCWDATEDATA2|Date variable for Symitar internal use|DATE|
+@MCWDATEDATA3|Date variable for Symitar internal use|DATE|
+@MCWDATEDATA4|Date variable for Symitar internal use|DATE|
+@MCWDATEDATA5|Date variable for Symitar internal use|DATE|
+@MCWINPUTLETTERFILE|An alphanumeric variable passed into the specfile. It contains the name of a letter file containing user input entered in the previous state.|CHARACTER|
+@MCWMONEYDATA1|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA2|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA3|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA4|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA5|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA6|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA7|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA8|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA9|Money variable for Symitar internal use|MONEY|
+@MCWMONEYDATA10|Money variable for Symitar internal use|MONEY|
+@MCWNUMDATA1|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA2|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA3|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA4|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA5|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA6|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA7|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA8|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA9|Number variable for Symitar internal use|NUMBER|
+@MCWNUMDATA10|Number variable for Symitar internal use|NUMBER|
+@MCWPREFLOCATOR|you access items in the Preference record, such as a member's preferred language, thereby allowing a script author to match the language used elsewhere in NTMC. This enables you to easily determine language preferences and access rights in custom scripts.|NUMBER|
+@MCWRATEDATA1|Rate variable for Symitar internal use|RATE|
+@MCWRATEDATA2|Rate variable for Symitar internal use|RATE|
+@MCWRATEDATA3|Rate variable for Symitar internal use|RATE|
+@MCWRATEDATA4|Rate variable for Symitar internal use|RATE|
+@MCWRATEDATA5|Rate variable for Symitar internal use|RATE|
+@MCWSESSIONNUMBER|A numeric variable passed into the specfile each time the specfile is invoked through the MemberConnect program. It contains a number from 1 to 100. This allows up to 100 concurrent users to run an interactive specfile.|NUMBER|
+@MCWSTATE|An alphanumeric variable used to control program flow within the Report Generator PRINT section. Valid values are any alphanumeric text string up to 20 characters in length. The initial state passed into the PRINT section when the specfile is invoked through MemberConnect must be START. The final @MCWSTATE must be set to END to enable the specfile to terminate properly.|CHARACTER|
+@MCWUSERAMOUNT1|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT2|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT3|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT4|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT5|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT6|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT7|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT8|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT9|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT10|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT11|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT12|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT13|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT14|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERAMOUNT15|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
+@MCWUSERCHAR1|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR2|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR3|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR4|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR5|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR6|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR7|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR8|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR9|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR10|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR11|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR12|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR13|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR14|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR15|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR16|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR17|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR18|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR19|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR20|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR21|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR22|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR23|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR24|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR25|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR26|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR27|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR28|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR29|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR30|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR31|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR32|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR33|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR34|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR35|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR36|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR37|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR38|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR39|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR40|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR41|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR42|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR43|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR44|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR45|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR46|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR47|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR48|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR49|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCHAR50|Character variable used to pass information to and from, within an MCW Specfile|CHARACTER|
+@MCWUSERCODE1|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE2|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE3|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE4|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE5|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE6|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE7|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE8|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE9|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE10|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE11|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE12|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE13|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE14|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERCODE15|Code variable used to pass information to and from, within an MCW Specfile|CODE|
+@MCWUSERDATE1|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE2|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE3|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE4|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE5|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE6|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE7|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE8|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE9|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE10|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE11|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE12|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE13|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE14|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERDATE15|Date variable used to pass information to and from, within an MCW Specfile|DATE|
+@MCWUSERFLOAT1|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT2|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT3|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT4|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT5|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT6|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT7|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT8|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT9|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT10|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT11|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT12|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT13|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT14|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERFLOAT15|Float variable used to pass information to and from, within an MCW Specfile|FLOAT|
+@MCWUSERNUMBER1|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER2|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER3|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER4|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER5|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER6|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER7|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER8|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER9|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER10|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER11|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER12|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER13|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER14|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERNUMBER15|Number variable used to pass information to and from, within an MCW Specfile|NUMBER|
+@MCWUSERRATE1|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE2|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE3|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE4|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE5|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE6|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE7|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE8|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE9|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE10|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE11|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE12|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE13|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE14|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
+@MCWUSERRATE15|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
 
 @PREFORDINAL|This variable passes the zero-based ordinal of the Preference record through which access to the member's account data was authorized. If the member used a card to access the account|NUMBER|
 @RGANSAMOUNT|This variables pass the answer back before the next step of the specfile is executed|MONEY|

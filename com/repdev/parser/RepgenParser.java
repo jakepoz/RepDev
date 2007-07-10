@@ -176,21 +176,23 @@ public class RepgenParser {
 				errorList.add(new Error(result));
 
 				// Variable checking
-				 for (final Variable var : lvars) {
-					if (var.getFilename().equals(file.getName())) {
-						int count = 0;
-
-						for (Variable var2 : lvars)
-							if (var2.equals(var))
-								count++;
-
-						if (count > 1 && !tblErrors.isDisposed())
-							display.syncExec(new Runnable() {
-								public void run() {
-									if (!txt.isDisposed())
-										errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
-								}
-							});
+				synchronized(lvars){
+					 for (final Variable var : lvars) {
+						if (var.getFilename().equals(file.getName())) {
+							int count = 0;
+	
+							for (Variable var2 : lvars)
+								if (var2.equals(var))
+									count++;
+	
+							if (count > 1 && !tblErrors.isDisposed())
+								display.syncExec(new Runnable() {
+									public void run() {
+										if (!txt.isDisposed())
+											errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
+									}
+								});
+						}
 					}
 				}
 				 
@@ -605,11 +607,15 @@ public class RepgenParser {
 		boolean changed = false, exists = false;
 		
 		int c = 0;
-		while( c < lvars.size() ){
-			if( lvars.get(c).getFilename().equals(fileName))
-				oldvars.add(lvars.remove(c));
-			else
-				c++;
+		
+		//Still needs synchronizing, as the method level synchronized doesn't effect calls from the background parsers
+		synchronized(lvars){
+			while( c < lvars.size() ){
+				if( lvars.get(c).getFilename().equals(fileName))
+					oldvars.add(lvars.remove(c));
+				else
+					c++;
+			}
 		}
 		
 		System.out.println("Parsing vars for " + fileName);
@@ -707,7 +713,10 @@ public class RepgenParser {
 			}
 		}
 
-		lvars.addAll(newvars);
+		//Still needs synchronizing, as the method level synchronized doesn't effect calls from the background parsers
+		synchronized(lvars){
+			lvars.addAll(newvars);
+		}
 
 		if (changed && fileName.equals(file.getName()))
 			txt.redrawRange(0, txt.getText().length(), false);
