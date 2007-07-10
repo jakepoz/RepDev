@@ -1756,12 +1756,11 @@ public class MainShell {
 		
 		mainfolder.addCTabFolder2Listener(new CTabFolder2Adapter(){
 			public void close(CTabFolderEvent event) {
-				event.doit = confirmClose( mainfolder.getSelection() );						
+				event.doit = confirmClose( (CTabItem)event.item );						
 			}		
 		});
 	}
 
-	//TODO: Sym null error, closing tabs other than current one
 	private boolean confirmClose(CTabItem item) {
 		if (item != null && item.getData("modified") != null && ((Boolean) item.getData("modified"))) {
 			MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO | SWT.CANCEL);
