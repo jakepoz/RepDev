@@ -644,6 +644,11 @@ public class MainShell {
 		importFile.setImage(RepDevMain.smallImportImage);
 		importFile.setToolTipText("Import Existing Files to your current project.");
 		importFile.setEnabled(false);
+		
+		final ToolItem openFileToolbar = new ToolItem(toolbar, SWT.PUSH);
+		openFileToolbar.setImage(RepDevMain.smallFileOpenImage);
+		openFileToolbar.setToolTipText("Open a file on the symitar server that's not in a project");
+		openFileToolbar.setEnabled(false);
 
 		final ToolItem remFile = new ToolItem(toolbar, SWT.PUSH);
 		remFile.setImage(RepDevMain.smallFileRemoveImage);
@@ -1307,8 +1312,11 @@ public class MainShell {
 					importFile.setEnabled(false);
 					newFile.setEnabled(false);
 					remFile.setEnabled(false);
+					openFileToolbar.setEnabled(false);
 					return;
 				}
+				else
+					openFileToolbar.setEnabled(true);
 
 				Object data = ((TreeItem) selection[0]).getData();
 				if (data instanceof Integer) {
@@ -1391,6 +1399,19 @@ public class MainShell {
 				newFileInProject();
 			}
 		});
+		openFileToolbar.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog;
+				
+				if( isCurrentItemLocal() )
+					dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeDir());
+				else
+					dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeSym());
+
+				for (SymitarFile file : dialog.open())
+					openFile(file);
+			}
+		});
 
 		FormData frmToolbar = new FormData();
 		frmToolbar.top = new FormAttachment(0);
@@ -1432,6 +1453,7 @@ public class MainShell {
 		tree.notifyListeners(SWT.Selection, null);
 	}
 
+	//TODO: Cuts off text, Doesn't work right always
 	public void createStatusBar() {
 		statusBar = new Composite( shell, SWT.BORDER | SWT.SHADOW_IN );
 		
@@ -1739,11 +1761,16 @@ public class MainShell {
 		});
 	}
 
+	//TODO: Sym null error, closing tabs other than current one
 	private boolean confirmClose(CTabItem item) {
 		if (item != null && item.getData("modified") != null && ((Boolean) item.getData("modified"))) {
 			MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO | SWT.CANCEL);
 			dialog.setText("Confirm File Close");
-			dialog.setMessage("The file '" + item.getData("file") + "' on Sym " + item.getData("sym") + " has been modified, do you want to save it before closing it?");
+			
+			if( item.getData("loc") instanceof Integer )
+				dialog.setMessage("The file '" + item.getData("file") + "' on Sym " + item.getData("loc") + " has been modified, do you want to save it before closing it?");
+			else
+				dialog.setMessage("The file '" + item.getData("file") + "' in directory " + item.getData("loc") + " has been modified, do you want to save it before closing it?");
 
 			int result = dialog.open();
 
