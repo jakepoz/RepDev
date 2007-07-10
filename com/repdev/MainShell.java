@@ -250,7 +250,7 @@ public class MainShell {
 		if (!found) {
 			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
 
-			item.setText("Sequence View: " + seq);
+			item.setText("Sequence View: " + seq.getSeq());
 			
 			item.setData("seq", seq);
 			item.setData("sym", sym);
