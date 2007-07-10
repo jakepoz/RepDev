@@ -1458,8 +1458,8 @@ public class MainShell {
 		statusBar = new Composite( shell, SWT.BORDER | SWT.SHADOW_IN );
 		
 		// Layout Stuff
-		RowLayout slayout = new RowLayout();
-		slayout.spacing = 5;
+		FormLayout slayout = new FormLayout();
+		
 
 		statusBar.setLayout(slayout);
 		FormData statusBarData = new FormData();
@@ -1472,17 +1472,37 @@ public class MainShell {
 	    final Label verLabel = new Label(statusBar, SWT.NONE );
 	    verLabel.setText( "RepDev " + RepDevMain.VERSION + " ");
 	    verLabel.setSize(100,16);
+	    FormData data = new FormData();
+	    data.left = new FormAttachment(0);
+	    verLabel.setLayoutData(data);
 	    
-	    new Label(statusBar,SWT.SEPARATOR);
-	   
+	    Label sep1 = new Label(statusBar,SWT.SEPARATOR);
+	    data = new FormData();
+	    data.left = new FormAttachment(verLabel);
+	    sep1.setLayoutData(data);
+	    
 	    lineColumn = new Label(statusBar, SWT.NONE);
+	    data = new FormData();
+	    data.left = new FormAttachment(sep1);
+	    lineColumn.setLayoutData(data);
 	    
-	    setLineColumn(0,0);
+	    setLineColumn();
 	}
 	
-	public void setLineColumn(int line, int col) {
-		lineColumn.setText("Location: " + line + " : " + col);
-		statusBar.pack();
+	public void setLineColumn() {
+		int line, col;
+		
+		if( mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof TabTextView )
+		{
+			StyledText txt = ((TabTextView)mainfolder.getSelection().getControl()).getStyledText(); 
+			line = txt.getLineAtOffset(txt.getCaretOffset()) ;
+			col = txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1;
+			
+			lineColumn.setText("Location: " + (line + 1) + " : " + col);
+			statusBar.pack();
+		}
+		else
+			lineColumn.setText("");
 	}
 	
 	protected void runReport() {
@@ -1637,6 +1657,7 @@ public class MainShell {
 				if( mainfolder.getSelectionIndex() != -1){
 					if( confirmClose(mainfolder.getSelection()) ){
 						mainfolder.getSelection().dispose();
+						setLineColumn();
 					}
 				}
 			}
@@ -1755,7 +1776,8 @@ public class MainShell {
 		
 		mainfolder.addCTabFolder2Listener(new CTabFolder2Adapter(){
 			public void close(CTabFolderEvent event) {
-				event.doit = confirmClose( (CTabItem)event.item );						
+				event.doit = confirmClose( (CTabItem)event.item );
+				setLineColumn();
 			}		
 		});
 	}
