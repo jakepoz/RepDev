@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 
+import sun.security.x509.AVA;
+
 /**
  * This is the main connection object to the Symitar host, it provides all the routines you would need to connect
  * 
@@ -474,7 +476,7 @@ public class DirectSymitarSession extends SymitarSession {
 				current = readNextCommand();
 			} catch (IOException e) {
 				e.printStackTrace();
-				return null;
+				return toRet;
 			}
 
 			log(current.toString());
@@ -650,7 +652,13 @@ public class DirectSymitarSession extends SymitarSession {
 		Command cur, old;
 		boolean isError = false;
 		int[] queueCounts = new int[9999];
-		int maxQ = 0, seq = -1, time = 0;
+		boolean[] queueAvailable = new boolean[9999];
+		
+		//We cannot use queueCounts as an availbility thing, though it would be nice
+		//The two arrays are parsed seperately, queueCounts from the list of queus and wahts in them
+		//queueAvailable is from a seperate request saying which ones can actually run repwriters
+		
+		int seq = -1, time = 0;
 		
 		for( int i = 0; i < queueCounts.length; i++)
 			queueCounts[i] = -1;
@@ -745,25 +753,32 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") ){
 				log(cur);
 				if( cur.getParameters().get("Action").equals("DisplayLine") && cur.getParameters().get("Text").contains("Batch Queues Available:")){
+					String line = cur.getParameters().get("Text");				
+					String[] tempQueues = line.substring(line.indexOf(":") + 1).split(",");
 					
-					//FIXME: Only a temporary fix, must eventually allow for ranges of queues
-					String[] tempQueues = cur.getParameters().get("Text").substring(cur.getParameters().get("Text").indexOf(":") + 1).split("-|,");
-					int[] parsedQueues = new int[tempQueues.length];
 					int i = 0;
-					maxQ = 1;
 					
 					for( String temp : tempQueues){
-						parsedQueues[i] = Integer.parseInt(temp.trim());
-					
-						if( parsedQueues[i] > maxQ)
-							maxQ = parsedQueues[i];
+						temp = temp.trim();
+						
+						if( temp.contains("-"))
+						{
+							String[] tempList = temp.split("-");
+							
+							int start = Integer.parseInt(tempList[0].trim());
+							int end = Integer.parseInt(tempList[1].trim());
+							
+							for( int x = start; x <= end; x++){
+								queueAvailable[x]=true;
+							}
+						}
+						else
+						{
+							queueAvailable[Integer.parseInt(temp)] = true;
+						}
 						
 						i++;
 					}
-					
-					log( "MAX Q: " + maxQ);
-					
-					//maxQ = Integer.parseInt(cur.getParameters().get("Text").substring(cur.getParameters().get("Text").indexOf("-")+1));
 				}
 			}
 			
@@ -785,22 +800,24 @@ public class DirectSymitarSession extends SymitarSession {
 				else if( cur.getParameters().get("Action").equals("QueueEmpty"))
 					queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))] = 0;
 			}
+			int lastGood = -1;
 			
-			int freeQ;
-			
-			for( freeQ = 0; freeQ < queueCounts.length; freeQ++)
-				if( queueCounts[freeQ] == -1){
-					freeQ--;
-					break;
+			if( (queue != -1 && !queueAvailable[queue]) || queue == -1 )
+			{
+				for( queue = 0; queue < queueCounts.length; queue++)
+				{
+					if( queueAvailable[queue])
+						lastGood = queue;
+
+					if( queueAvailable[queue] && queueCounts[queue] == 0)
+						break;
 				}
-				else if (queueCounts[freeQ] == 0)
-					break;
+				
+				queue = lastGood;
+			}
 			
-			if( queue == -1)
-				write( "" + Math.min(freeQ,maxQ) + "\r");
-			else
-				write( "" + Math.min(queue,maxQ) + "\r");
-			
+			write( "" + queue + "\r");
+
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
