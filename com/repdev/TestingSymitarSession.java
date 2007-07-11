@@ -221,4 +221,10 @@ public class TestingSymitarSession extends SymitarSession {
 		return null;
 	}
 
+	@Override
+	public boolean fileExists(SymitarFile file) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

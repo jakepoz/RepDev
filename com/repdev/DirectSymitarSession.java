@@ -401,6 +401,11 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
+	public synchronized boolean fileExists(SymitarFile file){
+		return getFileList(file.getType(), file.getName()).size() > 0;
+	}
+	
+	@Override
 	public synchronized String getFile(SymitarFile file) {
 		StringBuilder data = new StringBuilder();
 

@@ -50,6 +50,8 @@ public abstract class SymitarSession {
 	 */
 	public abstract String getFile(SymitarFile file);
 
+	public abstract boolean fileExists(SymitarFile file);
+	
 	public abstract SessionError removeFile(SymitarFile file);
 
 	/**

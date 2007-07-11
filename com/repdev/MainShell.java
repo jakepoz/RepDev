@@ -773,7 +773,6 @@ public class MainShell {
 					
 					int overwrite;
 					//TODO: Always seems to ask for permission to overwrite...
-					System.out.println(getTreeSym(root) == getTreeSym(dragSourceItems[0]));
 					
 					if( (getTreeDir(root) == null || getTreeDir(dragSourceItems[0]) == null || getTreeDir(root).equals(getTreeDir(dragSourceItems[0]))) && getTreeSym(root) == getTreeSym(dragSourceItems[0]) )
 						overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
@@ -797,6 +796,8 @@ public class MainShell {
 							
 							if( (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0)
 								exists = Util.fileExists(destination);
+							
+							System.out.println("exists: " + exists);
 							
 							if( exists && (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0 )
 							{

@@ -107,7 +107,7 @@ public class Util {
 			if( RepDevMain.SYMITAR_SESSIONS.get(file.getSym()) == null || !RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).isConnected() )
 				return false;
 			
-			return RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).getFile(file)!=null;
+			return RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).fileExists(file);
 		}
 		
 		return false;		

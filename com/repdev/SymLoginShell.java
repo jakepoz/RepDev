@@ -215,6 +215,7 @@ public class SymLoginShell {
 			return;
 		}
 		else{
+			me.result = -1;
 			error.showError();
 		}
 	}

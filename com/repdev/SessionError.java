@@ -10,7 +10,7 @@ public enum SessionError {
 	
 	public void showError(){
 		MessageBox dialog = new MessageBox(new Shell(),SWT.OK | SWT.ICON_ERROR);
-		dialog.setText("Error logging into host");
+		dialog.setText("Error in host connection");
 		dialog.setMessage("Error connecting to server, check network connections");
 		
 	
