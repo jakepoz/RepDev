@@ -88,7 +88,14 @@ public class SymitarFile implements Serializable {
 			data += "\n";
 		
 		if( !local )
-			return RepDevMain.SYMITAR_SESSIONS.get(sym).saveFile(this, data);
+		{
+			SessionError error = RepDevMain.SYMITAR_SESSIONS.get(sym).saveFile(this, data);
+			
+			if( error != SessionError.NONE)
+				error.showError();
+			
+			return error;
+		}
 		else{
 			try {
 				PrintWriter out = new PrintWriter(new FileWriter(getPath()));

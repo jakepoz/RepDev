@@ -879,6 +879,9 @@ public class DirectSymitarSession extends SymitarSession {
 			else{
 				System.out.println("Save file command:\n" + current.toString()+ "\n");
 			}
+			
+			if( current.getParameters().get("Status") != null && current.getParameters().get("Status").contains("Filename is too long") )
+				return SessionError.FILENAME_TOO_LONG;
 
 			String[] badList = current.getParameters().get("BadCharList").split(",");
 

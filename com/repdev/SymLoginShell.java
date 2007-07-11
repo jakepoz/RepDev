@@ -215,21 +215,7 @@ public class SymLoginShell {
 			return;
 		}
 		else{
-			MessageBox dialog = new MessageBox(new Shell(),SWT.OK | SWT.ICON_ERROR);
-			dialog.setText("Error logging into host");
-			dialog.setMessage("Error connecting to server, check network connections");
-			me.result = -1;
-		
-			if( error == SessionError.CONSOLE_BLOCKED)
-				dialog.setMessage("This console has been blocked");
-			else if( error == SessionError.SERVER_NOT_FOUND)
-				dialog.setMessage("Server not found, please check network connections");
-			else if( error == SessionError.USERID_INVALID)
-				dialog.setMessage("Invalid User ID");
-			else if( error == SessionError.AIX_LOGIN_WRONG)
-				dialog.setMessage("AIX Login information is incorrect");
-			
-			dialog.open();
+			error.showError();
 		}
 	}
 

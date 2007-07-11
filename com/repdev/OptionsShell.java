@@ -84,7 +84,7 @@ public class OptionsShell {
 		maxQueuesLabel.setText("Number of Queues:");
 		
 		maxQueuesSpinner = new Spinner(serverGroup, SWT.BORDER);
-		maxQueuesSpinner.setMaximum(99);
+		maxQueuesSpinner.setMaximum(9999);
 		maxQueuesSpinner.setMinimum(0);
 		maxQueuesSpinner.setSelection(Config.getMaxQueues());		
 		

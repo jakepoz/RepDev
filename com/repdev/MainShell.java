@@ -561,22 +561,26 @@ public class MainShell {
 
 			Project proj = (Project) cur.getData();
 
-			if (!proj.hasFile(file)) {
-				proj.addFile(file);
-				TreeItem item = new TreeItem(cur, SWT.NONE);
-				item.setText(file.getName());
-				item.setData(file);
-				item.setImage(getFileImage(file));
+			SessionError error = file.saveFile("");
+			
+			if( error == SessionError.NONE){
+				if (!proj.hasFile(file)) {
+					proj.addFile(file);
+					TreeItem item = new TreeItem(cur, SWT.NONE);
+					item.setText(file.getName());
+					item.setData(file);
+					item.setImage(getFileImage(file));
+					
+					if( proj.isLocal() )
+						ProjectManager.saveProjects(proj.getDir());
+					else
+						ProjectManager.saveProjects(proj.getSym());
+				}
 				
-				if( proj.isLocal() )
-					ProjectManager.saveProjects(proj.getDir());
-				else
-					ProjectManager.saveProjects(proj.getSym());
+				openFile(file);
+				tree.notifyListeners(SWT.Selection, null);
 			}
-
-			file.saveFile("");
-			openFile(file);
-			tree.notifyListeners(SWT.Selection, null);
+			
 		}
 	}
 
@@ -786,10 +790,12 @@ public class MainShell {
 								}
 							}
 							
-							if((overwrite & RepeatOperationShell.YES) != 0)
-								destination.saveFile(source.getData());
+							SessionError error = null;
 							
-							if( root.getData() instanceof Project)
+							if((overwrite & RepeatOperationShell.YES) != 0)
+								error = destination.saveFile(source.getData());
+							
+							if( error == SessionError.NONE && root.getData() instanceof Project)
 								((Project)root.getData()).addFile(destination);
 						}
 					}
@@ -827,10 +833,13 @@ public class MainShell {
 									}
 								}
 								
+								SessionError error = null;
+								
 								if((overwrite & RepeatOperationShell.YES) != 0)
-									newFile.saveFile(file.getData());
+									error = newFile.saveFile(file.getData());
 									
-								destination.addFile(newFile);
+								if( error == SessionError.NONE)
+									destination.addFile(newFile);
 							}
 						}
 					}

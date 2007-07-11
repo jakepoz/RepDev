@@ -138,7 +138,7 @@ public class FileDialog {
 
 		nameText.addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
-				createList();
+ 				createList();
 
 				if (table.getItemCount() == 1 && !isTemplate()) {
 					if (mode == Mode.SAVE) {
