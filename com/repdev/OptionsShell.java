@@ -160,7 +160,7 @@ public class OptionsShell {
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(serverGroup);
-		//data.bottom = new FormAttachment(devGroup);
+		if(!RepDevMain.DEVELOPER) data.bottom = new FormAttachment(cancel);
 		editorGroup.setLayoutData(data);
 		
 		data = new FormData();
