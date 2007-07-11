@@ -745,7 +745,25 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") ){
 				log(cur);
 				if( cur.getParameters().get("Action").equals("DisplayLine") && cur.getParameters().get("Text").contains("Batch Queues Available:")){
-					maxQ = Integer.parseInt(cur.getParameters().get("Text").substring(cur.getParameters().get("Text").indexOf("-")+1));
+					
+					//FIXME: Only a temporary fix, must eventually allow for ranges of queues
+					String[] tempQueues = cur.getParameters().get("Text").substring(cur.getParameters().get("Text").indexOf(":") + 1).split("-|,");
+					int[] parsedQueues = new int[tempQueues.length];
+					int i = 0;
+					maxQ = 1;
+					
+					for( String temp : tempQueues){
+						parsedQueues[i] = Integer.parseInt(temp.trim());
+					
+						if( parsedQueues[i] > maxQ)
+							maxQ = parsedQueues[i];
+						
+						i++;
+					}
+					
+					log( "MAX Q: " + maxQ);
+					
+					//maxQ = Integer.parseInt(cur.getParameters().get("Text").substring(cur.getParameters().get("Text").indexOf("-")+1));
 				}
 			}
 			

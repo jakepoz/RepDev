@@ -1169,10 +1169,10 @@ public class MainShell {
 
 				for( TreeItem cur : selection){
 					Object data = cur.getData();
-	
+				
 					if (data instanceof Integer)
 						removeSym(cur);
-					if( data instanceof String)
+					else if( data instanceof String)
 						removeDir(cur);
 					else if (data instanceof Project)
 						removeProject(cur);
