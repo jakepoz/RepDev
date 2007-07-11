@@ -426,8 +426,10 @@ public class DirectSymitarSession extends SymitarSession {
 		try {
 			while (true) {
 				current = readNextCommand();
-
-				if (current.getParameters().get("Status") != null)
+				
+				if (current.getParameters().get("Status") != null && current.getParameters().get("Status").contains("No such file or directory"))
+					return "";
+				else if( current.getParameters().get("Status") != null )
 					return null;
 
 				if (current.getParameters().get("Done") != null)
@@ -838,6 +840,9 @@ public class DirectSymitarSession extends SymitarSession {
 
 		if (!connected)
 			return SessionError.NOT_CONNECTED;
+		
+		if( file == null || text == null)
+			return SessionError.ARGUMENT_ERROR;
 
 		log("Saving file: " + file);
 		

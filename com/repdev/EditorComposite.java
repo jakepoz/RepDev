@@ -53,6 +53,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private ToolBar bar;
 	private ToolItem save, install, print, run;
 	private StyledText txt;
+	private CTabItem tabItem;
 
 	private static final int UNDO_LIMIT = 500;
 	private Stack<TextChange> undos = new Stack<TextChange>();
@@ -121,9 +122,10 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		}
 	}
 
-	public EditorComposite(Composite parent, SymitarFile file) {
+	public EditorComposite(Composite parent, CTabItem tabItem, SymitarFile file) {
 		super(parent, SWT.NONE);
 		this.file = file;
+		this.tabItem = tabItem;
 		this.sym = file.getSym();
 
 		buildGUI();
@@ -713,8 +715,11 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 
 		String str = file.getData();
 		
-		if (str == null)
-			str = "";
+		if (str == null){
+			tabItem.dispose();
+			return;
+		}
+		
 		txt.setText(str);
 
 		suggest.close();

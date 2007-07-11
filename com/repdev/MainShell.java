@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -257,11 +258,17 @@ public class MainShell {
 
 			item.setImage(drawSymOverImage(RepDevMain.smallReportsImage,sym));
 			
-			editor = new ReportComposite(mainfolder, seq);
+			editor = new ReportComposite(mainfolder, item, seq);
 		
+			//If anything goes wrong initializing the error, it will dispose of the current item
+			//So, then we shouldn't do anything
+			if( item.isDisposed())
+				return null;
+			
+			mainfolder.setSelection(item);
 			item.setControl(editor);
 
-			mainfolder.setSelection(item);
+			
 			
 			//Attach find/replace shell here as well (in addition to folder listener)
 			findReplaceShell.attach(((ReportComposite)editor).getStyledText(),false);
@@ -299,13 +306,24 @@ public class MainShell {
 			item.setData("loc", loc);
 
 			if( file.getType() == FileType.REPORT)
-				editor = new ReportComposite(mainfolder, file);
+				editor = new ReportComposite(mainfolder, item, file);
 			else
-				editor = new EditorComposite(mainfolder, file);
+				editor = new EditorComposite(mainfolder, item, file);
 			
+			//If anything goes wrong creating the Editor, we want to fail here
+			//It will dispose of the item to indicate this fault.
+			if( item.isDisposed()){
+				MessageBox dialog = new MessageBox(shell,SWT.ICON_ERROR | SWT.OK);
+				dialog.setMessage("There has been an error loading this file, the filename is probably too long");
+				dialog.setText("Error");
+				dialog.open();
+				
+				return null;
+			}
+			
+			mainfolder.setSelection(item);
 			item.setControl(editor);
 
-			mainfolder.setSelection(item);
 			
 			//Attach find/replace shell here as well (in addition to folder listener)
 			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(),true);
@@ -2228,6 +2246,11 @@ public class MainShell {
 			}
 		
 		}
+	}
+
+	public void closeCurrentTab() {
+		System.out.println(mainfolder.getSelection());
+		mainfolder.getSelection().dispose();
 	}
 	
 }

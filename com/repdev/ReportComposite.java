@@ -3,6 +3,7 @@ package com.repdev;
 import java.text.DateFormat;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.KeyAdapter;
@@ -28,6 +29,7 @@ public class ReportComposite extends Composite implements TabTextView{
 	private Table table;
 	private SymitarFile file = null;
 	private Sequence seq;
+	private CTabItem tabItem;
 	private int sym;
 
 	/**
@@ -37,18 +39,20 @@ public class ReportComposite extends Composite implements TabTextView{
 	 * @param sym
 	 * @param seq
 	 */
-	public ReportComposite(Composite parent, SymitarFile file) {
+	public ReportComposite(Composite parent, CTabItem item, SymitarFile file) {
 		super(parent, SWT.NONE);
 		this.file = file;
 		this.sym = file.getSym();
+		this.tabItem = item;
 		
 		buildGUI();
 	}
 	
-	public ReportComposite(Composite parent, Sequence seq) {
+	public ReportComposite(Composite parent, CTabItem item, Sequence seq) {
 		super(parent, SWT.NONE);
 		this.seq = seq;
 		this.sym = seq.getSym();
+		this.tabItem = item;
 		
 		buildGUI();
 	}
