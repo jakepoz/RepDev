@@ -10,7 +10,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
@@ -23,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 public class OptionsShell {
 	private Shell shell;
 	private static OptionsShell me = new OptionsShell();
-	private Button telnetRadio, testRadio;
+	private Button telnetRadio, testRadio, devForgetBox;
 	private Text serverText;
 	private Spinner tabSpinner;
 	private Label serverLabel;
@@ -52,7 +51,7 @@ public class OptionsShell {
 		layout.marginRight = 5;
 		layout.spacing = 5;
 		serverGroup.setLayout(layout);
-
+		
 		telnetRadio = new Button(serverGroup, SWT.RADIO);
 		telnetRadio.setText("Direct Symitar Session");
 		telnetRadio.addSelectionListener(new SelectionAdapter() {
@@ -108,6 +107,7 @@ public class OptionsShell {
 					Config.setServer(serverText.getText());
 
 				Config.setMaxQueues(maxQueuesSpinner.getSelection());
+				RepDevMain.FORGET_PASS_ON_EXIT = devForgetBox.getSelection();
 				
 				shell.close();
 			}
@@ -130,7 +130,25 @@ public class OptionsShell {
 		tabSpinner.setMaximum(99);
 		tabSpinner.setMinimum(0);
 		tabSpinner.setSelection(Config.getTabSize());
-
+		
+		/// Developer Options (dev's only :D)
+		Group devGroup = new Group(shell, SWT.NONE);
+		devGroup.setText("Developer Options");
+		layout = new FormLayout();
+		layout.marginTop = 5;
+		layout.marginBottom = 5;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		layout.spacing = 5;
+		devGroup.setLayout(layout);
+		
+		Label devNotice = new Label(devGroup, SWT.NONE);
+		devNotice.setText("Developer mode enabled");
+				
+		devForgetBox = new Button(devGroup, SWT.CHECK);
+		devForgetBox.setText("Forget Passwords on exit");
+		devForgetBox.setSelection(RepDevMain.FORGET_PASS_ON_EXIT);
+		
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
@@ -142,9 +160,19 @@ public class OptionsShell {
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(serverGroup);
-		data.bottom = new FormAttachment(cancel);
+		//data.bottom = new FormAttachment(devGroup);
 		editorGroup.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		data.top = new FormAttachment(editorGroup);
+		data.bottom = new FormAttachment(cancel);
+		devGroup.setLayoutData(data);
 
+		if( !RepDevMain.DEVELOPER ) devGroup.setVisible(false);
+		
+		// Connection options
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
@@ -177,6 +205,7 @@ public class OptionsShell {
 		data.top   = new FormAttachment(serverText);
 		maxQueuesSpinner.setLayoutData(data);
 
+		// Editor options
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
@@ -187,7 +216,19 @@ public class OptionsShell {
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(0);
 		tabSpinner.setLayoutData(data);
-
+		
+		// Developer Options
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(0);
+		devNotice.setLayoutData(data);
+				
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(devNotice);
+		devForgetBox.setLayoutData(data);
+		
+		// Ok/Cancel buttons
 		data = new FormData();
 		data.right = new FormAttachment(100);
 		data.bottom = new FormAttachment(100);
