@@ -1605,10 +1605,8 @@ public class MainShell {
 			return false;
 		else if (data instanceof Project)
 			return ((Project) data).getDir() != null;
-		else if( ((Project) item.getParentItem().getData()).getDir() != null)
-			return false;
-
-		return true;
+		else
+			return ((SymitarFile) data).isLocal();
 	}
 	
 	private boolean isCurrentItemLocal(){
@@ -1728,6 +1726,7 @@ public class MainShell {
 		});
 
 		final MenuItem separator = new MenuItem(tabContextMenu, SWT.SEPARATOR );
+		
 		
 		final MenuItem save = new MenuItem(tabContextMenu, SWT.None );
 		save.setText("Save");
@@ -1996,6 +1995,7 @@ public class MainShell {
 //				Indicator used for creating recents list
 				MenuItem staticSeperator = new MenuItem(fileMenu,SWT.SEPARATOR);
 				
+				//TODO: Save and Save As options
 				MenuItem fileExit = new MenuItem(fileMenu, SWT.PUSH);
 				fileExit.setText("E&xit");
 				fileExit.setImage(RepDevMain.smallExitImage);

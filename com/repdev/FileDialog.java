@@ -92,6 +92,7 @@ public class FileDialog {
 		
 		typeCombo.select(0);
 
+		//TODO: Sortable columns
 		table = new Table(shell, (mode == Mode.OPEN ? SWT.MULTI : SWT.SINGLE) | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		table.setLinesVisible(false);
 		table.setHeaderVisible(true);
@@ -278,27 +279,38 @@ public class FileDialog {
 		table.removeAll();
 		ArrayList<SymitarFile> fileList = new ArrayList<SymitarFile>();
 		
-		if( dir == null ){
-			SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
-			fileList = session.getFileList(FileType.valueOf(typeCombo.getText()), nameText.getText());
-		}
-		else{
-			fileList = Util.getFileList(dir, nameText.getText());
-		}
+		table.setRedraw(false);
+		shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 		
-		
-		for (SymitarFile cur : fileList) {
-			TableItem item = new TableItem(table, SWT.NONE);
-			item.setText(0, cur.getName());
+		try{
+			if( dir == null ){
+				SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
+				fileList = session.getFileList(FileType.valueOf(typeCombo.getText()), nameText.getText());
+			}
+			else{
+				fileList = Util.getFileList(dir, nameText.getText());
+			}
 			
-			if( cur.getType() == FileType.REPGEN )
-				item.setImage(0, RepDevMain.smallRepGenImage);
-			else
-				item.setImage(0, RepDevMain.smallFileImage);
-			
-			item.setText(1, Util.getByteStr(cur.getSize()));
-			item.setText(2,DateFormat.getDateTimeInstance().format(cur.getModified()));
-			item.setData(cur);
+			for (SymitarFile cur : fileList) {
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(0, cur.getName());
+				
+				if( cur.getType() == FileType.REPGEN )
+					item.setImage(0, RepDevMain.smallRepGenImage);
+				else
+					item.setImage(0, RepDevMain.smallFileImage);
+				
+				item.setText(1, Util.getByteStr(cur.getSize()));
+				item.setText(2,DateFormat.getDateTimeInstance().format(cur.getModified()));
+				item.setData(cur);
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			table.setRedraw(true);
+			shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 		}
 
 		if (table.getItemCount() > 0)

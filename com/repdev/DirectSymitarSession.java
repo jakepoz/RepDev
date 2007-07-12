@@ -484,7 +484,7 @@ public class DirectSymitarSession extends SymitarSession {
 				return toRet;
 			}
 
-			log(current.toString());
+			//log(current.toString());
 
 			if (current.getParameters().get("Status") != null)
 				break;
