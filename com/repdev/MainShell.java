@@ -772,8 +772,7 @@ public class MainShell {
 					}
 					
 					int overwrite;
-					//TODO: Always seems to ask for permission to overwrite...
-					
+
 					if( (getTreeDir(root) == null || getTreeDir(dragSourceItems[0]) == null || getTreeDir(root).equals(getTreeDir(dragSourceItems[0]))) && getTreeSym(root) == getTreeSym(dragSourceItems[0]) )
 						overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
 					else
@@ -1863,9 +1862,16 @@ public class MainShell {
 				if( o instanceof EditorComposite)
 					editor = (EditorComposite)o;
 				
-				if( error.getLine() >= 0 && editor != null ){
+				if( error.getLine() >= 0 && editor != null ){	
 				 	editor.getStyledText().setTopIndex(Math.max(0, error.getLine() - 10));
-				 	editor.getStyledText().setCaretOffset(Math.min(editor.getStyledText().getOffsetAtLine(Math.max(0,error.getLine() - 1))+ Math.max(0,error.getCol() - 1 ),editor.getStyledText().getCharCount()-1 ));
+				 	
+				 	try{
+				 		editor.getStyledText().setCaretOffset(Math.min(editor.getStyledText().getOffsetAtLine(Math.max(0,error.getLine() - 1))+ Math.max(0,error.getCol() - 1 ),editor.getStyledText().getCharCount()-1 ));
+				 	}
+				 	catch(IllegalArgumentException ex){
+				 		//Just ignore it
+				 	}
+				 	
 				 	editor.getStyledText().setFocus();
 				}				
 			}

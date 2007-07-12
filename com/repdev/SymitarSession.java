@@ -135,6 +135,7 @@ public abstract class SymitarSession {
 	 */
 	
 	//TODO: Do not take a time, but a regular Date object
+	//TODO: Only works if the reportName is the only one in it
 	public ArrayList<Sequence> getReportSeqs( String reportName, int time, int search, int limit){
 		ArrayList<PrintItem> items = getPrintItems("REPWRITER", search);
 		ArrayList<Sequence> newItems = new ArrayList<Sequence>();

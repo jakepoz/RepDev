@@ -439,6 +439,8 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 
 		});
 
+		
+		//Place any auto complete things in here
 		txt.addVerifyListener(new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
 				if (e.text.equals("\t")) {

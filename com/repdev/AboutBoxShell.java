@@ -2,6 +2,7 @@ package com.repdev;
 
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -44,7 +45,7 @@ public class AboutBoxShell {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 1;
 		gridLayout.makeColumnsEqualWidth = false;
-		sShell = new Shell();
+		sShell = new Shell(Display.getCurrent(),SWT.DIALOG_TRIM);
 		sShell.setText("About RepDev");
 		sShell.setLayout(gridLayout);
 		sShell.setSize(new Point(400, 400));
