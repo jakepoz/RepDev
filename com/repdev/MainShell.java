@@ -68,6 +68,9 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import com.repdev.compare.LineRangeComparator;
+import com.repdev.compare.RangeDifference;
+import com.repdev.compare.RangeDifferencer;
 import com.repdev.parser.Error;
 
 /**
@@ -1215,6 +1218,17 @@ public class MainShell {
 			}
 
 		});
+		
+		final MenuItem compareFile = new MenuItem(treeMenu, SWT.NONE);
+		compareFile.setText("Compare");
+		//importFilem.setImage(RepDevMain.smallImportImage);
+		compareFile.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				compare();
+			}
+
+		}); 
 
 		treeMenu.addMenuListener(new MenuListener() {
 
@@ -1455,6 +1469,35 @@ public class MainShell {
 		tree.setLayoutData(frmTree);
 	}
 
+	protected void compare() {
+		if( tree.getSelectionCount() != 2)
+			return;
+		
+		if( !(tree.getSelection()[0].getData() instanceof SymitarFile) )
+			return;
+		
+		if( !(tree.getSelection()[1].getData() instanceof SymitarFile) )
+			return;
+		
+		/*LineRangeComparator left = new LineRangeComparator(((TabTextView)mainfolder.getItem(0).getControl()).getStyledText());
+		LineRangeComparator right = new LineRangeComparator(((TabTextView)mainfolder.getItem(1).getControl()).getStyledText());	
+				
+		for( RangeDifference diff : RangeDifferencer.findDifferences(left, right) ){
+			System.out.println(diff);
+		}*/
+		
+		CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
+
+		item.setText("Compare Text");
+		//item.setImage(getFileImage(file));
+		//item.setData("file", file);
+		//item.setData("loc", loc);
+
+		item.setControl(new CompareComposite(mainfolder,item,(SymitarFile)tree.getSelection()[0].getData(),(SymitarFile)tree.getSelection()[1].getData()));
+		
+		mainfolder.setSelection(item);
+	}
+
 	private void removeDir(TreeItem currentItem) {
 		String dir;
 
@@ -1647,7 +1690,7 @@ public class MainShell {
 		return new Image(display, imageData, maskData);
 	}
 
-	private Image getFileImage(SymitarFile file) {
+	public Image getFileImage(SymitarFile file) {
 		Image img;
 
 		if( file.isLocal() )

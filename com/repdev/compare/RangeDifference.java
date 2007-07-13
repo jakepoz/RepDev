@@ -220,7 +220,27 @@ public class RangeDifference {
 	}
 	
 	public String toString() {
-		String string = "Left: " + toRangeString(fLeftStart, fLeftLength) + " Right: " + toRangeString(fRightStart, fRightLength); //$NON-NLS-1$ //$NON-NLS-2$
+		String string = "Kind: ";
+		
+		switch(fKind){
+		case 0:
+			string += "No Change";
+			break;
+		case 1:
+			string += "Conflict";
+			break;
+		case 2:
+			string += "Right";
+			break;
+		case 3:
+			string += "Left";
+			break;
+		case 4:
+			string += "Ancestor";
+			break;
+		}
+		
+		string +=" Left: " + toRangeString(fLeftStart, fLeftLength) + " Right: " + toRangeString(fRightStart, fRightLength); //$NON-NLS-1$ //$NON-NLS-2$
 		if (lAncestorLength > 0 || lAncestorStart> 0)
 			string += " Ancestor: " + toRangeString(lAncestorStart, lAncestorLength); //$NON-NLS-1$
 		return string;

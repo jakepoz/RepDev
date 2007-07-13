@@ -27,8 +27,44 @@ public class LineRangeComparator implements IRangeComparator {
 			return false;
 		
 		StyledText otherTxt = ((LineRangeComparator)other).getTxt();
+		String myLine, otherLine;
 		
-		return txt.getText(txt.getOffsetAtLine(thisIndex),txt.getOffsetAtLine(Math.min(thisIndex+1,txt.getLineCount()-1))).equals(otherTxt.getText(otherTxt.getOffsetAtLine(thisIndex),otherTxt.getOffsetAtLine(Math.min(thisIndex+1,otherTxt.getLineCount()-1))));
+		//Don't try what we can't request
+		if( thisIndex > txt.getLineCount() - 1)
+			return false;
+		
+		if( otherIndex > otherTxt.getLineCount() - 1)
+			return false;
+		
+		//Get my line first
+		int startOffset = txt.getOffsetAtLine(thisIndex);
+		int endOffset;
+		
+		if( thisIndex >= txt.getLineCount() - 1 )
+			endOffset = txt.getCharCount() ;
+		else
+			endOffset = txt.getOffsetAtLine(thisIndex + 1);
+
+		if( endOffset - 1 <= startOffset)
+			myLine = "\n";
+		else
+			myLine = txt.getText(startOffset, endOffset - 2);			
+		
+		//Get the other line
+		startOffset = otherTxt.getOffsetAtLine(otherIndex);
+		endOffset = 0;
+		
+		if( otherIndex >= otherTxt.getLineCount() - 1 )
+			endOffset = otherTxt.getCharCount() ;
+		else
+			endOffset = otherTxt.getOffsetAtLine(otherIndex + 1);
+
+		if( endOffset - 1 <= startOffset)
+			otherLine = "\n";
+		else
+			otherLine = otherTxt.getText(startOffset, endOffset - 2);	
+		
+		return myLine.equals(otherLine);
 	}
 
 	public boolean skipRangeComparison(int length, int maxLength, IRangeComparator other) {
