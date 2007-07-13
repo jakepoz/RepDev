@@ -1,3 +1,4 @@
+PREVSYSTEMDATE|The last SYSTEMDATE for the current sym|DATE|
 SYSACTUALDATE|Actual calendar date|DATE|
 SYSACTUALTIME|Actual clock time on the server|NUMBER|
 SYSCLIENTNUMBER|Client Number of the Credit Union|NUMBER|
@@ -8,9 +9,27 @@ SYSTEMEMOMODE|Memo Mode|NUMBER|
 SYSUSERNAME|User name of current user|CHARACTER|
 SYSUSERNUMBER|User number of current user|NUMBER|
 SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
-PREVSYSTEMDATE|The last SYSTEMDATE for the current sym|DATE|
+
+@AUDIODATATYPE|Determines the type of data to be input. See RD.AUDIO.DEF.|NUMBER|
+@AUDIOLINENUMBER|Contains the line number within the audio poster where the current session is running. Currently the audio poster supports up to 128 lines|NUMBER|128
+@AUDIOMESSAGEINFO1|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO2|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO3|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO4|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO5|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO6|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO7|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO8|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO9|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOMESSAGEINFO10|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
+@AUDIOSTATE|Contains the step the specfile is at during its execution. @AUDIOSTATE always begins with the character value START as the first state.|CHARACTER|
+@AUDIOUSERINPUT|Replaces the old variable @AUDIOINPUT. At the beginning of each state, this variable contains the caller's input from the previous prompt. This variable is a character string|CHARACTER|
 
 @CARDORDINAL|When a card number is used to identify an account and the Card record is verified while looking up the account, the Card ordinal is passed to this variable|NUMBER|
+
+@CERTIFICATEEFFECTIVEDATE|Episys sets this variable to the effective date of the certificate agreement.|DATE|
+@CERTIFICATEID|Episys sets this variable to the Share ID of the certificate. This information is also available by referencing SHARE:ID|CHARACTER|
+@CERTIFICATERENEWAL|Information passed to the spec file ; (0) the specfile is printing a new certificate agreement during Teller Transactions ; (1) the specfile is printing a renewing certificate during Daily Posting.|CODE|1
 
 @DIVPROJECTAPY|APY|RATE|
 @DIVPROJECTCALCULATIONTYPE|(0) Calculate a dividend projection ; (1) Calculate an APY|CODE|1
@@ -162,6 +181,24 @@ PREVSYSTEMDATE|The last SYSTEMDATE for the current sym|DATE|
 @ENVPARAMRATE9|Rate Value passed into this subroutine|RATE|
 @ENVPARAMRATE10|Rate Value passed into this subroutine|RATE|
 
+@HBANSWERAMOUNT|Answer Amount|MONEY|
+@HBANSWERDATE|Answer Date|DATE|
+@HBANSWERNUM|Answer Number|NUMBER|
+@HBANSWERRATE|Answer Rate|RATE|
+@HBANSWERTEXT|Answer Character|CHARACTER|
+@HBDATATYPE|Data Type|NUMBER|
+@HBDEFAULTAMOUNT|Default Amount|MONEY|
+@HBDEFAULTDATE|Default Date|DATE|
+@HBDEFAULTNUM|Default Number|NUMBER|
+@HBDEFAULTRATE|Default Rate|RATE|
+@HBDEFAULTTEXT|Default Character|CHARACTER|
+@HBHELPCODE|Help Code|CODE|
+@HBLINENUMBER|Line Number|NUMBER|
+@HBMAXCODEWIDTH|Max Code Width|NUMBER|
+@HBPROMPT|Prompt|CHARACTER|
+@HBSCREENCLEAR|Clear Screen|NUMBER|
+@HBSTATE|Hombanking State|CHARACTER|
+
 @LOANPROJECTAMOUNTPASTDUE|Amount Past Due|MONEY|
 @LOANPROJECTAMOUNTPAYOFF|Payoff Amount|MONEY|
 @LOANPROJECTAPR|APR|RATE|
@@ -217,6 +254,7 @@ PREVSYSTEMDATE|The last SYSTEMDATE for the current sym|DATE|
 @LOANPROJECTUNPAIDCASHADVINT|Unpaid Cash Adv Interest|MONEY|
 @LOANPROJECTUNPAIDINTEREST|Unpaid Interest|MONEY|
 @LOANPROJECTUNPAIDPURCHASEINT|Unpaid Purchase Interest|MONEY|
+
 @MCWCHRDATA1|Character variable for Symitar internal use|CHARACTER|
 @MCWCHRDATA2|Character variable for Symitar internal use|CHARACTER|
 @MCWCHRDATA3|Character variable for Symitar internal use|CHARACTER|
@@ -404,12 +442,13 @@ PREVSYSTEMDATE|The last SYSTEMDATE for the current sym|DATE|
 @MCWUSERRATE15|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
 
 @PREFORDINAL|This variable passes the zero-based ordinal of the Preference record through which access to the member's account data was authorized. If the member used a card to access the account|NUMBER|
+
 @RGANSAMOUNT|This variables pass the answer back before the next step of the specfile is executed|MONEY|
 @RGANSDATE|This variables pass the answer back before the next step of the specfile is executed|DATE|
 @RGANSNUM|This variables pass the answer back before the next step of the specfile is executed|NUMBER|
 @RGANSRATE|This variables pass the answer back before the next step of the specfile is executed|RATE|
 @RGANSTEXT|This variables pass the answer back before the next step of the specfile is executed|CHARACTER|
-@RGDATATYPE|This variable specifies the data type requested or the completion of the last step of the specfile ; 0 = no input required ; 1 = character ; 2 = rate ; 3 = date ; 4 = number ; 5 = code ; 6 = money to $999,999,999,999.99 ; 7 = money to 16 digit
+@RGDATATYPE|This variable specifies the data type requested or the completion of the last step of the specfile ; 0 = no input required ; 1 = character ; 2 = rate ; 3 = date ; 4 = number ; 5 = code ; 6 = money to $999,999,999,999.99 ; 7 = money to 16 digits ; 8 = yes/no ; 9 = end Report Generator specfile |NUMBER|
 @RGDEFAMOUNT|This variables is used to pass information, a prompt, and a default value|MONEY|
 @RGDEFDATE|This variables is used to pass information, a prompt, and a default value|DATE|
 @RGDEFNUM|This variables is used to pass information, a prompt, and a default value|NUMBER|
