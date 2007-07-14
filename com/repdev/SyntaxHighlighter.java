@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
+import org.eclipse.swt.custom.LineBackgroundEvent;
+import org.eclipse.swt.custom.LineBackgroundListener;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
@@ -25,7 +27,7 @@ import com.repdev.parser.Variable;
  * @author Jake Poznanski
  *
  */
-public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListener {
+public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListener, LineBackgroundListener {
 	private static final String FONT_NAME = "Courier New";
 	private static final int FONT_SIZE = 11;
 
@@ -41,6 +43,9 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	private StyledText txt;
 	private SymitarFile file;
 	private int sym;
+	
+	private int[] customLines = null;
+	private Color customColor;
 
 	static {
 		Font cur = null;
@@ -59,10 +64,33 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		this.file = parser.getFile();
 		this.sym = parser.getSym();
 		
+		txt.setForeground(FORECOLOR);
+		txt.setBackground(BACKCOLOR);
+		txt.addExtendedModifyListener(this);
+		txt.addLineStyleListener(this);
+		if (FONT != null)
+			txt.setFont(FONT);
+	}
+	
+	/**
+	 * This is used by compare composite to set custom background for sections with diffs
+	 * @param parser
+	 * @param customLineColor
+	 * @param customLines
+	 */
+	public SyntaxHighlighter(RepgenParser parser, RGB customLineColor, int[] customLines){
+		this.parser = parser;
+		this.txt = parser.getTxt();
+		this.file = parser.getFile();
+		this.sym = parser.getSym();
+		
+		this.customColor = new Color(Display.getCurrent(),customLineColor);
+		this.customLines = customLines;
 	
 		txt.setForeground(FORECOLOR);
 		txt.setBackground(BACKCOLOR);
 		txt.addExtendedModifyListener(this);
+		txt.addLineBackgroundListener(this);
 		txt.addLineStyleListener(this);
 		if (FONT != null)
 			txt.setFont(FONT);
@@ -154,11 +182,27 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		}
 
 		StyleRange[] result = new StyleRange[ltoken - ftoken];
+		
 		for (int i = ftoken; i < ltoken; i++)
 			result[i - ftoken] = getStyle(ltokens.get(i));
-
+		
 		event.styles = result;
+	}
 
+	public void lineGetBackground(LineBackgroundEvent event) {
+		boolean go = false;
+		
+	
+		for( int i : customLines)
+			if( i == txt.getLineAtOffset(event.lineOffset) )
+			{
+				go = true;
+				break;
+			}
+		
+		if( go ){
+			event.lineBackground = customColor;
+		}
 	}
 
 }
