@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -98,6 +99,7 @@ public class BasicCompareComposite extends Composite{
 		leftTxt.addKeyListener(new KeyListener(){
 
 			public void keyPressed(KeyEvent e) {
+				syncViewport(leftTxt);
 				center.redraw();
 			}
 
@@ -111,6 +113,7 @@ public class BasicCompareComposite extends Composite{
 		leftTxt.getVerticalBar().addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				 syncViewport(leftTxt);
 				 center.redraw();
 			}		
 		});
@@ -119,6 +122,31 @@ public class BasicCompareComposite extends Composite{
 		GridData data = new GridData(SWT.NONE, SWT.FILL, false, true,1,1);
 		data.widthHint = getCenterWidth();
 		center.setLayoutData(data);
+		
+		rightTxt = new StyledText(this,SWT.READ_ONLY | SWT.H_SCROLL |SWT.V_SCROLL| SWT.BORDER);
+		rightTxt.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,1));
+		rightTxt.addKeyListener(new KeyListener(){
+
+			public void keyPressed(KeyEvent e) {
+				syncViewport(rightTxt);
+				center.redraw();
+			}
+
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		rightTxt.getVerticalBar().setVisible(false);
+		rightTxt.getVerticalBar().addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				 syncViewport(rightTxt);
+				 center.redraw();
+			}		
+		});
+		
 		center.addPaintListener(new PaintListener(){
 
 			public void paintControl(PaintEvent e) {
@@ -129,7 +157,7 @@ public class BasicCompareComposite extends Composite{
 				
 				int lineHeight= leftTxt.getLineHeight();
 	
-				int visibleHeight= rightTxt.getBounds().height;
+				int visibleHeight= leftTxt.getClientArea().height;
 
 				Point size= center.getSize();
 				int x= 0;
@@ -148,7 +176,10 @@ public class BasicCompareComposite extends Composite{
 					Point region= new Point(0, 0);
 				
 					for( RangeDifference diff : diffs)
-					{					
+					{				
+						if( diff.kind() == RangeDifference.NOCHANGE )
+							continue;
+						
 						region.x = diff.leftStart();
 						region.y = diff.leftLength();
 						
@@ -226,28 +257,6 @@ public class BasicCompareComposite extends Composite{
 			
 		});
 		
-		rightTxt = new StyledText(this,SWT.READ_ONLY | SWT.H_SCROLL |SWT.V_SCROLL| SWT.BORDER);
-		rightTxt.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,1));
-		rightTxt.addKeyListener(new KeyListener(){
-
-			public void keyPressed(KeyEvent e) {
-				center.redraw();
-			}
-
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-		});
-		rightTxt.getVerticalBar().setVisible(false);
-		rightTxt.getVerticalBar().addSelectionListener(new SelectionAdapter(){
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				 center.redraw();
-			}		
-		});
-		
 		//Horizontal scroll sync
 		hsynchViewport(leftTxt, rightTxt);
 		hsynchViewport(rightTxt, leftTxt);
@@ -259,6 +268,7 @@ public class BasicCompareComposite extends Composite{
 			public void widgetSelected(SelectionEvent e) {
 				int vpos= slider.getSelection();
 				synchronizedScrollVertical(vpos);
+	
 			}	
 		});
 		
@@ -269,12 +279,13 @@ public class BasicCompareComposite extends Composite{
 		
 		leftTxt.redrawRange(0,leftTxt.getCharCount(),true);
 		rightTxt.redrawRange(0,rightTxt.getCharCount(),true);
+		
 	}
 	
 	protected void refreshDiffs() {
 		//Perform the diff
-		diffs = RangeDifferencer.findDifferences(new LineRangeComparator(leftTxt), new LineRangeComparator(rightTxt));
-		
+		diffs = RangeDifferencer.findRanges(new LineRangeComparator(leftTxt), new LineRangeComparator(rightTxt));
+		updateVScrollBar();
 	}
 	
 	private int[] getCenterCurvePoints(int startx, int starty, int endx, int endy) {
@@ -323,167 +334,209 @@ public class BasicCompareComposite extends Composite{
 	
 	
 	private void synchronizedScrollVertical(int vpos) {
-		//scrollVertical(vpos, vpos, vpos, null);
+		scrollVertical(vpos, vpos, null);
+		/*System.out.println("Virtual height: " + getVirtualHeight());
+		System.out.println("Viewport Height: " + getViewportHeight());
+		
+		for( int i = 0; i < 25; i++){
+			System.out.println(i + "Real to Virtual " + realToVirtualPosition(leftTxt, i));
+		}
+		
+		for( int i =0; i < 300; i+= 18){
+			System.out.println(i + "Virt to Real " + virtualToRealPosition(leftTxt, i));
+		}*/
+
 	}
 	
 	
-//	/*
-//	 * Calculates virtual height (in lines) of views by adding the maximum of corresponding diffs.
-//	 */
-//	private int getVirtualHeight() {
-//		int h= 1;
-//		if (fAllDiffs != null) {
-//			Iterator e= fAllDiffs.iterator();
-//			for (int i= 0; e.hasNext(); i++) {
-//				Diff diff= (Diff) e.next();
-//				h+= diff.getMaxDiffHeight();
-//			}
-//		}
-//		return h;
-//	}
-//	
-//	/*
-//	 * Calculates height (in lines) of right view by adding the height of the right diffs.
-//	 */
-//	private int getRightHeight() {
-//		int h= 1;
-//		if (fAllDiffs != null) {
-//			Iterator e= fAllDiffs.iterator();
-//			for (int i= 0; e.hasNext(); i++) {
-//				Diff diff= (Diff) e.next();
-//				h+= diff.getRightHeight();
-//			}
-//		}
-//		return h;
-//	}
-//	
-//	/*
-//	 * The height of the TextEditors in lines.
-//	 */
-//	private int getViewportHeight() {
-//		StyledText te= fLeft.getTextWidget();
-//		
-//		int vh= te.getClientArea().height;
-//		if (vh == 0) {
-//			Rectangle trim= te.computeTrim(0, 0, 0, 0);
-//			int scrollbarHeight= trim.height;
-//			
-//			int headerHeight= getHeaderHeight();
-//	
-//			Composite composite= (Composite) getControl();
-//			Rectangle r= composite.getClientArea();
-//							
-//			vh= r.height-headerHeight-scrollbarHeight;
-//		}															
-//
-//		return vh / te.getLineHeight();
-//	}
-//	
-//	/*
-//	 * Returns the virtual position for the given view position.
-//	 */
-//	private int realToVirtualPosition(MergeSourceViewer w, int vpos) {
-//
-//		if (! fSynchronizedScrolling || fAllDiffs == null)
-//			return vpos;
-//				
-//		int viewPos= 0;		// real view position
-//		int virtualPos= 0;	// virtual position
-//		Point region= new Point(0, 0);
-//		
-//		Iterator e= fAllDiffs.iterator();
-//		while (e.hasNext()) {
-//			Diff diff= (Diff) e.next();
-//			Position pos= diff.getPosition(w);
-//			w.getLineRange(pos, region);
-//			int realHeight= region.y;
-//			int virtualHeight= diff.getMaxDiffHeight();
-//			if (vpos <= viewPos + realHeight) {	// OK, found!
-//				vpos-= viewPos;	// make relative to this slot
-//				// now scale position within this slot to virtual slot
-//				if (realHeight <= 0)
-//					vpos= 0;
-//				else
-//					vpos= (vpos*virtualHeight)/realHeight;
-//				return virtualPos+vpos;
-//			}
-//			viewPos+= realHeight;
-//			virtualPos+= virtualHeight;
-//		}
-//		return virtualPos;
-//	}
-//		
-//	private void scrollVertical(int avpos, int lvpos, int rvpos, MergeSourceViewer allBut) {
-//						
-//		int s= 0;
-//		
-//		if (fSynchronizedScrolling) {
-//			s= getVirtualHeight() - rvpos;
-//			int height= fRight.getViewportLines()/4;
-//			if (s < 0)
-//				s= 0;
-//			if (s > height)
-//				s= height;
-//		}
-//
-//		fInScrolling= true;
-//				
-//		if (isThreeWay() && allBut != fAncestor) {
-//			if (fSynchronizedScrolling || allBut == null) {
-//				int y= virtualToRealPosition(fAncestor, avpos+s)-s;
-//				fAncestor.vscroll(y);
-//			}
-//		}
-//
-//		if (allBut != fLeft) {
-//			if (fSynchronizedScrolling || allBut == null) {
-//				int y= virtualToRealPosition(fLeft, lvpos+s)-s;
-//				fLeft.vscroll(y);
-//			}
-//		}
-//
-//		if (allBut != fRight) {
-//			if (fSynchronizedScrolling || allBut == null) {
-//				int y= virtualToRealPosition(fRight, rvpos+s)-s;
-//				fRight.vscroll(y);
-//			}
-//		}
-//		
-//		fInScrolling= false;
-//		
-//		if (isThreeWay() && fAncestorCanvas != null)
-//			fAncestorCanvas.repaint();
-//		
-//		if (fLeftCanvas != null)
-//			fLeftCanvas.repaint();
-//		
-//		Control center= getCenterControl();
-//		if (center instanceof BufferedCanvas)
-//			((BufferedCanvas)center).repaint();
-//		
-//		if (fRightCanvas != null)
-//			fRightCanvas.repaint();
-//	}
-//		
-//	/*
-//	 * Updates Scrollbars with viewports.
-//	 */
-//	private void syncViewport(MergeSourceViewer w) {
-//		
-//		if (fInScrolling)
-//			return;
-//
-//		int ix= w.getTopIndex();
-//		int ix2= w.getDocumentRegionOffset();
-//		
-//		int viewPosition= realToVirtualPosition(w, ix-ix2);
-//				
-//		scrollVertical(viewPosition, viewPosition, viewPosition, w);	// scroll all but the given views
-//		
-//		if (fVScrollBar != null) {
-//			int value= Math.max(0, Math.min(viewPosition, getVirtualHeight() - getViewportHeight()));
-//			fVScrollBar.setSelection(value);
-//			//refreshBirdEyeView();
-//		}
-//	}
+	/*
+	 * Calculates virtual height (in lines) of views by adding the maximum of corresponding diffs.
+	 */
+	private int getVirtualHeight() {
+		/*int h= 1;
+		if (diffs != null) {
+			for( RangeDifference diff : diffs){
+				h += diff.getMaxDiffHeight();
+			}
+		}
+		return h;*/
+		return Math.max(leftTxt.getLineCount(), rightTxt.getLineCount());
+	}
+	
+	/*
+	 * Calculates height (in lines) of right view by adding the height of the right diffs.
+	 */
+	private int getRightHeight() {
+		/*int h= 1;
+		if (fAllDiffs != null) {
+			Iterator e= fAllDiffs.iterator();
+			for (int i= 0; e.hasNext(); i++) {
+				Diff diff= (Diff) e.next();
+				h+= diff.getRightHeight();
+			}
+		}
+		return h;*/
+		return rightTxt.getLineCount();
+	}
+	
+	/*
+	 * The height of the TextEditors in lines.
+	 */
+	private int getViewportHeight() {
+		StyledText te= leftTxt;
+		
+		int vh= te.getClientArea().height;
+
+		
+		return vh / te.getLineHeight();
+	}
+	
+	/*
+	 * Returns the virtual position for the given view position.
+	 * 
+	 * Line to pixel scroll value
+	 */
+	private int realToVirtualPosition(StyledText txt, int vpos) {
+		if (diffs == null)
+			return vpos;
+				
+		int viewPos= 0;		// real view position
+		int virtualPos= 0;	// virtual position
+		Point region= new Point(0, 0);
+		
+		for( RangeDifference diff : diffs){
+			//Position pos= diff.getPosition(w);
+			//w.getLineRange(pos, region);
+			if( txt == leftTxt){
+				region.y = leftTxt.getLineHeight() * diff.leftLength();
+			}
+			else{
+				region.y = rightTxt.getLineHeight() * diff.rightLength();
+			}
+				
+			int realHeight= diff.getMaxDiffHeight();
+			int virtualHeight= region.y;
+			if (vpos <= viewPos + realHeight) {	// OK, found!
+				vpos-= viewPos;	// make relative to this slot
+				// now scale position within this slot to virtual slot
+				if (realHeight <= 0)
+					vpos= 0;
+				else
+					vpos= (vpos*virtualHeight)/realHeight;
+				return virtualPos+vpos;
+			}
+			viewPos+= realHeight;
+			virtualPos+= virtualHeight;
+		}
+		return virtualPos;
+	}
+		
+	private void scrollVertical( int lvpos, int rvpos, StyledText allBut) {
+						
+		int s= 0;
+		
+		s= getVirtualHeight() - rvpos;
+		int height= getViewportHeight();
+		if (s < 0)
+			s= 0;
+		if (s > height)
+			s= height;
+
+		fInScrolling= true;
+				
+		if (allBut != leftTxt) {
+			int y= realToVirtualPosition(leftTxt, lvpos+s)-s;
+			//leftTxt.getVerticalBar().setSelection(y);
+			leftTxt.setTopIndex(virtualToRealPosition(leftTxt, y));
+		}
+
+		if (allBut != rightTxt) {
+			int y= realToVirtualPosition(rightTxt, rvpos+s)-s;
+			//rightTxt.getVerticalBar().setSelection(y);
+			rightTxt.setTopIndex(virtualToRealPosition(rightTxt, y));
+		}
+		
+		fInScrolling= false;
+		
+		center.redraw();
+	}
+		
+	/*
+	 * Updates Scrollbars with viewports.
+	 */
+	private void syncViewport(StyledText txt) {
+		
+		if (fInScrolling)
+			return;
+
+		int ix= txt.getTopIndex();
+		//int ix2= txt.getDocumentRegionOffset();
+		//int ix2 = 0;
+		int ix2 = 0;
+		
+		//int viewPosition= realToVirtualPosition(txt, ix-ix2);
+		int viewPosition = ix;
+				
+		scrollVertical(viewPosition, viewPosition, txt);	// scroll all but the given views
+		
+		if (slider != null) {
+			int value= Math.max(0, Math.min(viewPosition, getVirtualHeight() - getViewportHeight()));
+			slider.setSelection(value);
+			//refreshBirdEyeView();
+		}
+	}
+	
+	/**
+	 */
+	private void updateVScrollBar() {
+		int virtualHeight= getVirtualHeight();
+		int viewPortHeight= getViewportHeight();
+		int pageIncrement= viewPortHeight-1;
+		int thumb= (viewPortHeight > virtualHeight) ? virtualHeight : viewPortHeight;
+					
+		slider.setPageIncrement(pageIncrement);
+		slider.setMaximum(virtualHeight);
+		slider.setThumb(thumb);				
+	}
+	
+	/*
+	 * maps given virtual position into a real view position of this view.
+	 * 
+	 * Pixel scroll value to line
+	 */
+	private int virtualToRealPosition(StyledText txt, int v) {
+		if (diffs == null)
+			return v;
+					
+		int virtualPos= 0;
+		int viewPos= 0;
+		Point region= new Point(0, 0);
+		
+		for( RangeDifference diff : diffs){
+			Point pos = new Point(0,0);
+			
+			if( txt == leftTxt){
+				region.y = leftTxt.getLineHeight() * diff.leftLength();
+			}
+			else{
+				region.y = rightTxt.getLineHeight() * diff.rightLength();
+			}
+			
+			int viewHeight= diff.getMaxDiffHeight();
+			int virtualHeight= region.y;
+			if (v < (virtualPos + virtualHeight)) {
+				v-= virtualPos;		// make relative to this slot
+				if (viewHeight <= 0) {
+					v= 0;
+				} else {
+					v= (int) (v * ((double)viewHeight/virtualHeight));
+				}
+				return viewPos+v;
+			}
+			virtualPos+= virtualHeight;
+			viewPos+= viewHeight;
+		}
+		return viewPos;
+	}
+	
 }

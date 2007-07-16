@@ -82,11 +82,13 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 		System.out.println(Arrays.asList(diffs));
 		
 		for( RangeDifference diff : diffs){
-			for( int i = diff.leftStart(); i < diff.leftEnd(); i++)
-				lLines.add(i);
-			
-			for( int i = diff.rightStart(); i < diff.rightEnd(); i++)
-				rLines.add(i);
+			if( diff.kind() != RangeDifference.NOCHANGE ){
+				for( int i = diff.leftStart(); i < diff.leftEnd(); i++)
+					lLines.add(i);
+				
+				for( int i = diff.rightStart(); i < diff.rightEnd(); i++)
+					rLines.add(i);
+			}
 		}
 		
 		lIntLines = new int[lLines.size()];

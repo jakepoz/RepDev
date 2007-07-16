@@ -249,4 +249,8 @@ public class RangeDifference {
 	private String toRangeString(int start, int length) {
 		return "(" + start + ", " + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
+	
+	public int getMaxDiffHeight(){
+		return Math.max(fLeftLength, fRightLength);
+	}
 }
