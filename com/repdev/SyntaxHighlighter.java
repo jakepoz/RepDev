@@ -188,11 +188,15 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		
 		event.styles = result;
 	}
+	
+	public void setCustomLines(int[] lines)
+	{
+		customLines = lines;
+	}
 
 	public void lineGetBackground(LineBackgroundEvent event) {
 		boolean go = false;
 		
-	
 		for( int i : customLines)
 			if( i == txt.getLineAtOffset(event.lineOffset) )
 			{

@@ -24,6 +24,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -35,59 +36,62 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Slider;
 
-import com.repdev.FileType;
-import com.repdev.RepDevMain;
-import com.repdev.SymitarFile;
-import com.repdev.SyntaxHighlighter;
-import com.repdev.TabView;
-import com.repdev.parser.RepgenParser;
-
-
-public class BasicCompareComposite extends Composite implements TabView{
-	private SymitarFile left, right;
-	private StyledText leftTxt, rightTxt;
-	private SyntaxHighlighter leftHighlighter, rightHighlighter;
-	private RepgenParser leftParser, rightParser;
+/**
+ * How to use:
+ * It's a standard SWT Composite, not much too it, add it as a control somewhere
+ * 
+ * getLeft/RightTxt return a styledtext you can work with
+ * refreshDiff() redoes that
+ * @author poznanja
+ *
+ */
+public class BasicCompareComposite extends Composite{
+	protected StyledText leftTxt, rightTxt;
 	private Composite parent;
 	private Canvas center;
 	private Slider slider;
 	private double[] fBasicCenterCurve;
-	private RangeDifference[] diffs;
+	protected RangeDifference[] diffs;
 	private boolean fInScrolling;
+	private String leftName, rightName;
+	private Image leftImage, rightImage;
 	
-	public BasicCompareComposite(Composite parent, CTabItem tabItem, SymitarFile leftFile, SymitarFile rightFile){
+	public BasicCompareComposite(Composite parent, String leftName, String rightName, Image leftImage, Image rightImage){
 		super(parent,SWT.NONE);
-		this.left = leftFile;
-		this.right = rightFile;
+		this.leftName = leftName;
+		this.leftImage= leftImage;
+		this.rightName = rightName;
+		this.rightImage = rightImage;
 		this.parent = parent;
-		
+
 		buildGUI();
 	}
 
-	private void buildGUI() {
+	public void buildGUI() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns =6;
 		setLayout(layout);
 		
 		final Label imageLeft = new Label(this,SWT.NONE);
-		imageLeft.setImage(RepDevMain.mainShell.getFileImage(left));
+		imageLeft.setImage(leftImage);
 		
 		Label nameLeft = new Label(this,SWT.NONE);	
-		nameLeft.setText(left.getName());
+		nameLeft.setText(leftName);
 		nameLeft.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
 		
 		Label sep1 = new Label(this,SWT.NONE);
 		sep1.setLayoutData(new GridData(SWT.NONE,SWT.NONE,false,false));
 		
 		final Label imageRight = new Label(this,SWT.NONE);
-		imageRight.setImage(RepDevMain.mainShell.getFileImage(right));
+		imageRight.setImage(rightImage);
 		
 		Label nameRight = new Label(this,SWT.NONE);
-		nameRight.setText(right.getName());
+		nameRight.setText(rightName);
 		nameLeft.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
 		
 		Label sep2 = new Label(this,SWT.NONE);
 		sep2.setLayoutData(new GridData(SWT.NONE,SWT.NONE,false,false));
+		
 		
 		leftTxt = new StyledText(this,SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL| SWT.BORDER);
 		leftTxt.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,2,1));
@@ -258,74 +262,19 @@ public class BasicCompareComposite extends Composite implements TabView{
 			}	
 		});
 		
+		refreshDiffs();
+		
 		//If we layout now, before we add any text, then the two texts will be the same width
 		pack();
 		
-		String sData = left.getData();
-		
-		if( sData == null )
-			return;
-		
-		leftTxt.setText(sData);
-		
-		sData = right.getData();
-		
-		if( sData == null)
-			return;
-			
-		rightTxt.setText(sData);
-		
+		leftTxt.redrawRange(0,leftTxt.getCharCount(),true);
+		rightTxt.redrawRange(0,rightTxt.getCharCount(),true);
+	}
+	
+	protected void refreshDiffs() {
 		//Perform the diff
 		diffs = RangeDifferencer.findDifferences(new LineRangeComparator(leftTxt), new LineRangeComparator(rightTxt));
 		
-		//Create custom diffs line
-		ArrayList<Integer> lLines = new ArrayList<Integer>(), rLines = new ArrayList<Integer>();
-		
-		System.out.println(Arrays.asList(diffs));
-		
-		for( RangeDifference diff : diffs){
-			for( int i = diff.leftStart(); i < diff.leftEnd(); i++)
-				lLines.add(i);
-			
-			for( int i = diff.rightStart(); i < diff.rightEnd(); i++)
-				rLines.add(i);
-		}
-		
-		int[] lIntLines = new int[lLines.size()], rIntLines = new int[rLines.size()];
-		int count = 0;
-		
-		for( int i : lLines )
-		{
-			lIntLines[count] = i;
-			count++;
-		}
-		
-		count = 0;
-		
-		for( int i : rLines )
-		{
-			rIntLines[count] = i;
-			count++;
-		}
-		
-		if( left.getType() == FileType.REPGEN)
-		{
-			leftParser = new RepgenParser(leftTxt, left);
-			leftHighlighter = new SyntaxHighlighter(leftParser, new RGB(247,247,247),lIntLines);
-			leftParser.reparseAll();
-			leftTxt.redrawRange(0,leftTxt.getCharCount(),true);
-		}
-		
-		if( right.getType() == FileType.REPGEN)
-		{
-			rightParser = new RepgenParser(rightTxt, right);
-			rightHighlighter = new SyntaxHighlighter(rightParser, new RGB(247,247,247),rIntLines);
-			rightParser.reparseAll();
-			rightTxt.redrawRange(0,rightTxt.getCharCount(),true);
-		}
-		
-		
-		System.out.println(Arrays.asList(leftTxt.getStyleRanges()));
 	}
 	
 	private int[] getCenterCurvePoints(int startx, int starty, int endx, int endy) {

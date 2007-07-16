@@ -1494,7 +1494,7 @@ public class MainShell {
 		//item.setData("file", file);
 		//item.setData("loc", loc);
 
-		item.setControl(new BasicCompareComposite(mainfolder,item,(SymitarFile)tree.getSelection()[0].getData(),(SymitarFile)tree.getSelection()[1].getData()));
+		item.setControl(new CompareComposite(mainfolder,item,(SymitarFile)tree.getSelection()[0].getData(),(SymitarFile)tree.getSelection()[1].getData()));
 		
 		mainfolder.setSelection(item);
 	}
