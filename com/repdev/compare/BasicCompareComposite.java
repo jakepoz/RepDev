@@ -1,10 +1,17 @@
-package com.repdev;
+/**
+ * VERY IMPORTANT LICENSE INFORMATION!!!
+ * 
+ * This code is technically under the EPL vs GPL for all other packages in this project!!! (As well as com.repdev.compare)
+ * 
+ * I am porting it over ASAP to it's own SF.net project that will be a SWT Control
+ * for comparing two text files that we will use the object code version in this
+ * GPL program. If anyone has any issues with this slight delay, please be patient!
+ */
+
+package com.repdev.compare;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-
-
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
@@ -19,23 +26,24 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Slider;
 
-import com.repdev.compare.LineRangeComparator;
-import com.repdev.compare.RangeDifference;
-import com.repdev.compare.RangeDifferencer;
+import com.repdev.FileType;
+import com.repdev.RepDevMain;
+import com.repdev.SymitarFile;
+import com.repdev.SyntaxHighlighter;
+import com.repdev.TabView;
 import com.repdev.parser.RepgenParser;
 
-public class CompareComposite extends Composite implements TabView{
+
+public class BasicCompareComposite extends Composite implements TabView{
 	private SymitarFile left, right;
 	private StyledText leftTxt, rightTxt;
 	private SyntaxHighlighter leftHighlighter, rightHighlighter;
@@ -47,7 +55,7 @@ public class CompareComposite extends Composite implements TabView{
 	private RangeDifference[] diffs;
 	private boolean fInScrolling;
 	
-	public CompareComposite(Composite parent, CTabItem tabItem, SymitarFile leftFile, SymitarFile rightFile){
+	public BasicCompareComposite(Composite parent, CTabItem tabItem, SymitarFile leftFile, SymitarFile rightFile){
 		super(parent,SWT.NONE);
 		this.left = leftFile;
 		this.right = rightFile;
@@ -96,6 +104,12 @@ public class CompareComposite extends Composite implements TabView{
 			
 		});
 		leftTxt.getVerticalBar().setVisible(false);
+		leftTxt.getVerticalBar().addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				 center.redraw();
+			}		
+		});
 		
 		center = new Canvas(this,SWT.NONE);
 		GridData data = new GridData(SWT.NONE, SWT.FILL, false, true,1,1);
@@ -119,17 +133,6 @@ public class CompareComposite extends Composite implements TabView{
 						
 				g.setBackground(center.getBackground());
 				g.fillRectangle(x+1, 0, w-2, size.y);
-				
-				/*if (!fIsMotif) {
-					// draw thin line between center ruler and both texts
-					g.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-					g.fillRectangle(0, 0, 1, size.y);
-					g.fillRectangle(w-1, 0, 1, size.y);
-				}
-					
-				if (! fHighlightRanges)
-					return;*/
-
 				
 				if (diffs != null) {
 					
@@ -213,18 +216,6 @@ public class CompareComposite extends Composite implements TabView{
 								g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
 							}
 						}
-						
-						/*if (fUseSingleLine && showResolveUI && diff.isUnresolvedIncomingOrConflicting()) {
-							// draw resolve state
-							int cx= (w-RESOLVE_SIZE)/2;
-							int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2;
-							
-							g.setBackground(fillColor);
-							g.fillRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
-							
-							g.setForeground(strokeColor);
-							g.drawRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
-						}*/
 					}
 				}				
 			}
@@ -246,7 +237,16 @@ public class CompareComposite extends Composite implements TabView{
 			
 		});
 		rightTxt.getVerticalBar().setVisible(false);
+		rightTxt.getVerticalBar().addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				 center.redraw();
+			}		
+		});
 		
+		//Horizontal scroll sync
+		hsynchViewport(leftTxt, rightTxt);
+		hsynchViewport(rightTxt, leftTxt);
 		
 		slider = new Slider(this,SWT.VERTICAL);
 		slider.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false, true, 1,2));
@@ -353,6 +353,25 @@ public class CompareComposite extends Composite implements TabView{
 	private int getCenterWidth() {
 		return 20;
 	}
+	
+	private void hsynchViewport(final StyledText st1, final StyledText st2) {
+		final ScrollBar sb1 = st1.getHorizontalBar();
+		sb1.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+
+				int max = sb1.getMaximum() - sb1.getThumb();
+				double v = 0.0;
+				if (max > 0)
+					v = (float) sb1.getSelection() / (float) max;
+				if (st2.isVisible()) {
+					ScrollBar sb2 = st2.getHorizontalBar();
+					st2.setHorizontalPixel((int) ((sb2.getMaximum() - sb2.getThumb()) * v));
+				}
+
+			}
+		});
+	}
+	
 	
 	private void synchronizedScrollVertical(int vpos) {
 		//scrollVertical(vpos, vpos, vpos, null);

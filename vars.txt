@@ -181,6 +181,20 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @ENVPARAMRATE9|Rate Value passed into this subroutine|RATE|
 @ENVPARAMRATE10|Rate Value passed into this subroutine|RATE|
 
+@EXCPITEMACCOUNT|Corresponds to the EXCPITEM:EXCPITEMACCOUNT field in the current exception item|CHARACTER|
+@EXCPITEMACHEXCPREASON|Corresponds to the EXCPITEM:ACHEXCPREASON field in the current exception item|CHARACTER|
+@EXCPITEMAMOUNT|Corresponds to the EXCPITEM:AMOUNT:1 field in the current exception item|MONEY|
+@EXCPITEMBATCHID|Corresponds to the EXCPITEM:BATCHID field in the current exception item|CHARACTER|
+@EXCPITEMBRANCH|Corresponds to the EXCPITEM:BRANCH field in the current exception item|NUMBER|
+@EXCPITEMCOMPANYNAME|Corresponds to the EXCPITEM:CH16 field in the current exception item|CHARACTER|
+@EXCPITEMNUMBER|Corresponds to the EXCPITEM:CH6:1 field in the current exception item|CHARACTER|
+@EXCPITEMPROCESSORACCOUNT|Corresponds to the EXCPITEM:PROCESSORACCOUNT field in the current exception item|CHARACTER|
+@EXCPITEMREASONCODE|Corresponds to the EXCPITEM:REASONCODE field in the current exception item|CODE|
+@EXCPITEMSLID|Corresponds to the EXCPITEM:ID field in the current exception item|CHARACTER|
+@EXCPITEMSLIDTYPE|Corresponds to the EXCPITEM:IDTYPE field in the current exception item|NUMBER|
+@EXCPITEMTOTALNSF|A special variable that indicates the total of the @EXCPITEMAMOUNT for each exception item processed thus far (in the current Exception Item Repeat FM session) that has the same @EXCPITEMACCOUNT, @EXCPITEMSLIDTYPE, and @EXCPITEMSLID as the current exception item and has been coded as a force pay item|MONEY|
+@EXCPITEMTYPE|This field can have the following values, based on the type of exception ; 0 - Draft Exception ; 1 - ACH Exception ; 2 - ATM™ Exception ; 3 - Credit/Debit Card Exception ; 4 - Fee Exception ; 5 - Insurance Exception ; 6 - Misc Post Exception ; 7 - Payroll Exception ; 8 - Distribution Exception ; 9 - Memo Exception|CODE|9
+
 @HBANSWERAMOUNT|Answer Amount|MONEY|
 @HBANSWERDATE|Answer Date|DATE|
 @HBANSWERNUM|Answer Number|NUMBER|

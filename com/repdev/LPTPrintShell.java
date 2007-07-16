@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
+//TODO: Highligh field values when tabbing through
 public class LPTPrintShell {
 	private Shell shell;
 	private boolean result = false;

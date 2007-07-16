@@ -68,6 +68,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import com.repdev.compare.BasicCompareComposite;
 import com.repdev.compare.LineRangeComparator;
 import com.repdev.compare.RangeDifference;
 import com.repdev.compare.RangeDifferencer;
@@ -1493,7 +1494,7 @@ public class MainShell {
 		//item.setData("file", file);
 		//item.setData("loc", loc);
 
-		item.setControl(new CompareComposite(mainfolder,item,(SymitarFile)tree.getSelection()[0].getData(),(SymitarFile)tree.getSelection()[1].getData()));
+		item.setControl(new BasicCompareComposite(mainfolder,item,(SymitarFile)tree.getSelection()[0].getData(),(SymitarFile)tree.getSelection()[1].getData()));
 		
 		mainfolder.setSelection(item);
 	}
