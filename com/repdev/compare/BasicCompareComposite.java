@@ -18,10 +18,14 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -33,7 +37,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Slider;
 
@@ -113,7 +119,7 @@ public class BasicCompareComposite extends Composite{
 		leftTxt.getVerticalBar().addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				 syncViewport(leftTxt);
+				 //syncViewport(leftTxt);
 				 center.redraw();
 			}		
 		});
@@ -142,7 +148,7 @@ public class BasicCompareComposite extends Composite{
 		rightTxt.getVerticalBar().addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				 syncViewport(rightTxt);
+				// syncViewport(rightTxt);
 				 center.redraw();
 			}		
 		});
@@ -280,6 +286,19 @@ public class BasicCompareComposite extends Composite{
 		leftTxt.redrawRange(0,leftTxt.getCharCount(),true);
 		rightTxt.redrawRange(0,rightTxt.getCharCount(),true);
 		
+		leftTxt.addListener(SWT.MouseWheel, new Listener(){
+			public void handleEvent(Event event) {
+				slider.setSelection(Math.min(slider.getMaximum(),Math.max(0,slider.getSelection()-event.count)));
+				synchronizedScrollVertical(slider.getSelection());
+			}			
+		});
+		
+		rightTxt.addListener(SWT.MouseWheel, new Listener(){
+			public void handleEvent(Event event) {
+				slider.setSelection(Math.min(slider.getMaximum(),Math.max(0,slider.getSelection()-event.count)));
+				synchronizedScrollVertical(slider.getSelection());
+			}			
+		});
 	}
 	
 	protected void refreshDiffs() {
@@ -335,48 +354,14 @@ public class BasicCompareComposite extends Composite{
 	
 	private void synchronizedScrollVertical(int vpos) {
 		scrollVertical(vpos, vpos, null);
-		/*System.out.println("Virtual height: " + getVirtualHeight());
-		System.out.println("Viewport Height: " + getViewportHeight());
-		
-		for( int i = 0; i < 25; i++){
-			System.out.println(i + "Real to Virtual " + realToVirtualPosition(leftTxt, i));
-		}
-		
-		for( int i =0; i < 300; i+= 18){
-			System.out.println(i + "Virt to Real " + virtualToRealPosition(leftTxt, i));
-		}*/
-
 	}
 	
 	
 	/*
-	 * Calculates virtual height (in lines) of views by adding the maximum of corresponding diffs.
+	 * Calculates virtual height (in lines) of views
 	 */
 	private int getVirtualHeight() {
-		/*int h= 1;
-		if (diffs != null) {
-			for( RangeDifference diff : diffs){
-				h += diff.getMaxDiffHeight();
-			}
-		}
-		return h;*/
 		return Math.max(leftTxt.getLineCount(), rightTxt.getLineCount());
-	}
-	
-	/*
-	 * Calculates height (in lines) of right view by adding the height of the right diffs.
-	 */
-	private int getRightHeight() {
-		/*int h= 1;
-		if (fAllDiffs != null) {
-			Iterator e= fAllDiffs.iterator();
-			for (int i= 0; e.hasNext(); i++) {
-				Diff diff= (Diff) e.next();
-				h+= diff.getRightHeight();
-			}
-		}
-		return h;*/
-		return rightTxt.getLineCount();
 	}
 	
 	/*
@@ -386,8 +371,7 @@ public class BasicCompareComposite extends Composite{
 		StyledText te= leftTxt;
 		
 		int vh= te.getClientArea().height;
-
-		
+	
 		return vh / te.getLineHeight();
 	}
 	
@@ -431,29 +415,35 @@ public class BasicCompareComposite extends Composite{
 		return virtualPos;
 	}
 		
-	private void scrollVertical( int lvpos, int rvpos, StyledText allBut) {
-						
+	private void scrollVertical( int lvpos, int rvpos, StyledText allBut) {					
 		int s= 0;
+		StyledText otherTxt;
 		
-		s= getVirtualHeight() - rvpos;
-		int height= getViewportHeight();
+		if( allBut == null )
+			otherTxt = rightTxt;
+		else if( allBut == leftTxt)
+			otherTxt = rightTxt;
+		else
+			otherTxt = leftTxt;
+		
+		s= otherTxt.getTopIndex() - rvpos;
+		int height= getViewportHeight()/4;
 		if (s < 0)
 			s= 0;
 		if (s > height)
 			s= height;
+		
 
 		fInScrolling= true;
 				
 		if (allBut != leftTxt) {
 			int y= realToVirtualPosition(leftTxt, lvpos+s)-s;
-			//leftTxt.getVerticalBar().setSelection(y);
-			leftTxt.setTopIndex(virtualToRealPosition(leftTxt, y));
+			leftTxt.setTopIndex(y/leftTxt.getLineHeight());
 		}
 
 		if (allBut != rightTxt) {
 			int y= realToVirtualPosition(rightTxt, rvpos+s)-s;
-			//rightTxt.getVerticalBar().setSelection(y);
-			rightTxt.setTopIndex(virtualToRealPosition(rightTxt, y));
+			rightTxt.setTopIndex(y/rightTxt.getLineHeight());
 		}
 		
 		fInScrolling= false;
@@ -463,22 +453,35 @@ public class BasicCompareComposite extends Composite{
 		
 	/*
 	 * Updates Scrollbars with viewports.
+	 * 
+	 * TODO: Not totally correct, their code was funny here. I just hooked scroll wheel events
+	 * so that it just updates the right slider, as needed correctly.
 	 */
 	private void syncViewport(StyledText txt) {
-		
 		if (fInScrolling)
 			return;
+		
+		StyledText otherTxt;
+		
+		if( txt == leftTxt )
+			otherTxt = rightTxt;
+		else
+			otherTxt = leftTxt;
+	
 
 		int ix= txt.getTopIndex();
 		//int ix2= txt.getDocumentRegionOffset();
 		//int ix2 = 0;
+	
 		int ix2 = 0;
+	
 		
-		//int viewPosition= realToVirtualPosition(txt, ix-ix2);
+		//int viewPosition= virtualToRealPosition(txt,realToVirtualPosition(txt, ix-ix2));
 		int viewPosition = ix;
 				
 		scrollVertical(viewPosition, viewPosition, txt);	// scroll all but the given views
 		
+	
 		if (slider != null) {
 			int value= Math.max(0, Math.min(viewPosition, getVirtualHeight() - getViewportHeight()));
 			slider.setSelection(value);
