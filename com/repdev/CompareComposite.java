@@ -41,7 +41,7 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 		if( leftFile.getType() == FileType.REPGEN)
 		{
 			leftParser = new RepgenParser(leftTxt, leftFile);
-			leftHighlighter = new SyntaxHighlighter(leftParser, new RGB(247,247,247),lIntLines);
+			leftHighlighter = new SyntaxHighlighter(leftParser, BasicCompareComposite.boxFill,lIntLines);
 			leftParser.reparseAll();
 		}
 		
@@ -55,7 +55,7 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 		if( rightFile.getType() == FileType.REPGEN)
 		{
 			rightParser = new RepgenParser(rightTxt, rightFile);
-			rightHighlighter = new SyntaxHighlighter(rightParser, new RGB(247,247,247),rIntLines);
+			rightHighlighter = new SyntaxHighlighter(rightParser, BasicCompareComposite.boxFill,rIntLines);
 			rightParser.reparseAll();
 		}
 		

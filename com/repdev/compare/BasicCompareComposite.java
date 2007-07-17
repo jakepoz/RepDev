@@ -10,32 +10,26 @@
 
 package com.repdev.compare;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -62,6 +56,8 @@ public class BasicCompareComposite extends Composite{
 	private boolean fInScrolling;
 	private String leftName, rightName;
 	private Image leftImage, rightImage;
+	public static Color boxFill = new Color(Display.getCurrent(),new RGB(247,247,247));
+	public static Color boxOutline = Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY); 
 	
 	public BasicCompareComposite(Composite parent, String leftName, String rightName, Image leftImage, Image rightImage){
 		super(parent,SWT.NONE);
@@ -77,6 +73,8 @@ public class BasicCompareComposite extends Composite{
 	public void buildGUI() {
 		GridLayout layout = new GridLayout();
 		layout.numColumns =6;
+		//layout.marginLeft = layout.marginRight = 0;
+		layout.horizontalSpacing = 0;
 		setLayout(layout);
 		
 		final Label imageLeft = new Label(this,SWT.NONE);
@@ -121,6 +119,8 @@ public class BasicCompareComposite extends Composite{
 			public void widgetSelected(SelectionEvent e) {
 				 //syncViewport(leftTxt);
 				 center.redraw();
+				 rightTxt.redraw();
+				 leftTxt.redraw();
 			}		
 		});
 		
@@ -150,6 +150,8 @@ public class BasicCompareComposite extends Composite{
 			public void widgetSelected(SelectionEvent e) {
 				// syncViewport(rightTxt);
 				 center.redraw();
+			     rightTxt.redraw();
+				 leftTxt.redraw();
 			}		
 		});
 		
@@ -205,8 +207,8 @@ public class BasicCompareComposite extends Composite{
 						fPts[0]= x;	fPts[1]= ly;	fPts[2]= w;	fPts[3]= ry;
 						fPts[6]= x;	fPts[7]= ly+lh;	fPts[4]= w;	fPts[5]= ry+rh;
 					
-						Color fillColor= display.getSystemColor(SWT.COLOR_CYAN);
-						Color strokeColor= display.getSystemColor(SWT.COLOR_MAGENTA);
+						Color fillColor= boxFill;
+						Color strokeColor= boxOutline;
 						
 					
 						if (fUseSingleLine) {
@@ -299,8 +301,78 @@ public class BasicCompareComposite extends Composite{
 				synchronizedScrollVertical(slider.getSelection());
 			}			
 		});
+		
+		leftTxt.addPaintListener(new PaintListener(){
+			public void paintControl(PaintEvent e) {
+				doPaint(leftTxt,e);
+			}
+		});
+		
+		rightTxt.addPaintListener(new PaintListener(){
+			public void paintControl(PaintEvent e) {
+				doPaint(rightTxt,e);
+			}
+		});
 	}
 	
+	
+	
+	@Override
+	public void redraw() {
+		super.redraw();
+		
+		leftTxt.redraw();
+		rightTxt.redraw();
+	}
+
+	protected void doPaint(StyledText txt, PaintEvent event) {
+		if (diffs == null)
+			return;
+
+		int LW = 1;
+		
+		Control canvas= (Control) event.widget;
+		GC g= event.gc;
+		
+		Display display= canvas.getDisplay();
+		
+		int lineHeight= txt.getLineHeight();			
+		int w= canvas.getSize().x;
+		int shift= txt.getVerticalBar().getSelection() + (2-LW);
+		int maxh= event.y+event.height; 	// visibleHeight
+		
+		//if (fIsMotif)
+		//	shift+= fTopInset;
+				
+		Point range= new Point(0, 0);
+				
+		for( RangeDifference diff : diffs){
+			if( diff.kind() == RangeDifference.NOCHANGE )
+				continue;
+			
+			if( txt == leftTxt){
+				range.x = leftTxt.getLineHeight() * diff.leftStart();
+				range.y = leftTxt.getLineHeight() * diff.leftLength();
+			}
+			else{
+				range.x = rightTxt.getLineHeight() * diff.rightStart();
+				range.y = rightTxt.getLineHeight() * diff.rightLength();
+			}
+			
+			int y= (range.x ) - shift;
+			int h= range.y;
+			
+			if (y+h < event.y)
+				continue;
+			if (y > maxh)
+				break;
+			
+			g.setBackground(boxOutline);
+			g.fillRectangle(0, y-1, w, LW);
+			g.fillRectangle(0, y+h-1, w, LW);
+		}
+	}
+
 	protected void refreshDiffs() {
 		//Perform the diff
 		diffs = RangeDifferencer.findRanges(new LineRangeComparator(leftTxt), new LineRangeComparator(rightTxt));
@@ -427,7 +499,7 @@ public class BasicCompareComposite extends Composite{
 			otherTxt = leftTxt;
 		
 		s= otherTxt.getTopIndex() - rvpos;
-		int height= getViewportHeight()/4;
+		int height= getViewportHeight()/3;
 		if (s < 0)
 			s= 0;
 		if (s > height)

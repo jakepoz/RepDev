@@ -78,13 +78,13 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	 * @param customLineColor
 	 * @param customLines
 	 */
-	public SyntaxHighlighter(RepgenParser parser, RGB customLineColor, int[] customLines){
+	public SyntaxHighlighter(RepgenParser parser, Color customLineColor, int[] customLines){
 		this.parser = parser;
 		this.txt = parser.getTxt();
 		this.file = parser.getFile();
 		this.sym = parser.getSym();
 		
-		this.customColor = new Color(Display.getCurrent(),customLineColor);
+		this.customColor = customLineColor;
 		this.customLines = customLines;
 	
 		txt.setForeground(FORECOLOR);
