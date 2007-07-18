@@ -3,14 +3,11 @@ package com.repdev;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
+import org.swtcompare.BasicCompareComposite;
+import org.swtcompare.RangeDifference;
 
-import com.repdev.compare.BasicCompareComposite;
-import com.repdev.compare.RangeDifference;
 import com.repdev.parser.RepgenParser;
 
 /**
