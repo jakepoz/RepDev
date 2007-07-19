@@ -50,8 +50,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private SymitarFile file;
 	private int sym;
 	private Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
-	private ToolBar bar;
-	private ToolItem save, install, print, run;
+	/*private ToolItem save, install, print, run;*/
 	private StyledText txt;
 	private CTabItem tabItem;
 
@@ -130,6 +129,21 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 
 		buildGUI();
 	}
+	
+	/*public EditorComposite(Composite parent, CTabItem tabItem, SymitarFile file, 
+			ToolItem save, ToolItem install, ToolItem print, ToolItem run) {
+		super(parent, SWT.NONE);
+		this.file = file;
+		this.tabItem = tabItem;
+		this.sym = file.getSym();
+		
+		this.save = save;
+		this.install = install;
+		this.print = print;
+		this.run = run;
+
+		buildGUI();
+	}*/
 	
 	public boolean canUndo(){
 		return undos.size() > 0;
@@ -374,27 +388,19 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 
 	private void buildGUI() {
 		setLayout(new FormLayout());
+		
+/*		if(file.getType() != FileType.REPGEN || file.isLocal()) 
+			install.setEnabled(false);
+		else 
+			install.setEnabled(true);
+		
+		if(file.getType() != FileType.REPGEN || file.isLocal()) 
+			run.setEnabled(false);
+		else 
+			run.setEnabled(true);
 
-		bar = new ToolBar(this, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
-		
-		save = new ToolItem(bar, SWT.NONE);
-		save.setImage(RepDevMain.smallActionSaveImage);
-		save.setToolTipText("Saves the current file.");
-
-		install = new ToolItem(bar, SWT.NONE);
-		install.setImage(RepDevMain.smallSymAddImage);
-		install.setToolTipText("Installs current file for onDemand use.");
-		if(file.getType() != FileType.REPGEN || file.isLocal()) install.setEnabled(false);
-		
-		run = new ToolItem(bar,SWT.NONE);
-		run.setImage(RepDevMain.smallRunImage);
-		run.setToolTipText("Opens the run report dialog.");
-		if(file.getType() != FileType.REPGEN || file.isLocal()) run.setEnabled(false);
-		
-		print = new ToolItem(bar,SWT.NONE);
-		print.setImage(RepDevMain.smallPrintImage);
-		print.setToolTipText("Prints the current file to a local printer.");
-		
+		save.setEnabled(true);
+		run.setEnabled(true);*/
 		
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -527,7 +533,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 					switch (e.keyCode) {
 					case 's':
 					case 'S':
-						save.notifyListeners(SWT.Selection, null);
+						saveFile(true);
 						break;
 					case 'z':
 					case 'Z':
@@ -726,38 +732,14 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 
 		suggest.close();
 
-		save.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				saveFile(true);
-			}
-		});
-
-		install.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				installRepgen(true);				
-			}
-		});
-		
-		print.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				RepDevMain.mainShell.print();			
-			}
-		});
-		
-		run.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				RepDevMain.mainShell.runReport(file);			
-			}
-		});
-
-		FormData frmBar = new FormData();
+/*		FormData frmBar = new FormData();
 		frmBar.top = new FormAttachment(0);
 		frmBar.left = new FormAttachment(0);
 		frmBar.right = new FormAttachment(100);
-		bar.setLayoutData(frmBar);
+		bar.setLayoutData(frmBar);*/
 
 		FormData frmTxt = new FormData();
-		frmTxt.top = new FormAttachment(bar);
+		frmTxt.top = new FormAttachment(0);
 		frmTxt.left = new FormAttachment(0);
 		frmTxt.right = new FormAttachment(100);
 		frmTxt.bottom = new FormAttachment(100);
@@ -866,4 +848,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		return file;
 	}
 	
+	public void setToolItems( ToolItem save, ToolItem install, ToolItem print, ToolItem run ) {
+		
+	}
 }

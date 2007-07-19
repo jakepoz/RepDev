@@ -21,6 +21,8 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
@@ -46,10 +48,11 @@ import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -82,6 +85,12 @@ public class MainShell {
 	private Table tblErrors, tblTasks; 
 	private FindReplaceShell findReplaceShell;
 	private final int MAX_RECENTS = 5;
+	
+	// CoolBar for our universal tool bar at the top.
+	private CoolBar coolBar;
+	private ToolBar editorBar;
+	private ToolItem save, install, print, run;
+	private ArrayList<CoolItem> coolItems; // <-- may not be needed, keep for future stuff though
 	
 	//Used for DND
 	private TreeItem[] dragSourceItems;
@@ -124,13 +133,30 @@ public class MainShell {
 				e.doit = close;
 			}		
 		});
-					
+		
+		// Create the CoolBar
+		coolBar = new CoolBar(shell, SWT.NONE);
+		FormData cBarData = new FormData();
+		cBarData.top = new FormAttachment(0);
+		cBarData.left = new FormAttachment(0);
+		cBarData.right = new FormAttachment(100);
+		coolBar.setLayoutData(cBarData);
+		
+		coolItems = new ArrayList<CoolItem>();
+		coolBar.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event event) {
+				shell.layout();
+			}
+		});
+				
 		final Composite left = new Composite(shell, SWT.NONE);
 		createExplorer(left);
 		final Sash sashVert = new Sash(shell, SWT.VERTICAL | SWT.SMOOTH);
 		final Composite right = new Composite(shell, SWT.NONE);
 		right.setLayout(new FormLayout());
 
+		createEditorBar();
+		
 		Composite main = new Composite(right, SWT.NONE);
 		createEditorPane(main);
 		final Sash sashHoriz = new Sash(right, SWT.HORIZONTAL | SWT.SMOOTH);
@@ -140,27 +166,27 @@ public class MainShell {
 		createStatusBar();
 		
 		FormData frmLeft = new FormData();
-		frmLeft.top = new FormAttachment(0);
+		frmLeft.top = new FormAttachment(coolBar);
 		frmLeft.left = new FormAttachment(0);
 		frmLeft.right = new FormAttachment(sashVert);
 		frmLeft.bottom = new FormAttachment(statusBar);
 		left.setLayoutData(frmLeft);
 
 		final FormData frmSashVert = new FormData();
-		frmSashVert.top = new FormAttachment(0);
+		frmSashVert.top = new FormAttachment(coolBar);
 		frmSashVert.left = new FormAttachment(leftPercent);
 		frmSashVert.bottom = new FormAttachment(statusBar);
 		sashVert.setLayoutData(frmSashVert);
 
 		FormData frmRight = new FormData();
-		frmRight.top = new FormAttachment(0);
+		frmRight.top = new FormAttachment(coolBar);
 		frmRight.left = new FormAttachment(sashVert);
 		frmRight.right = new FormAttachment(100);
 		frmRight.bottom = new FormAttachment(statusBar);
 		right.setLayoutData(frmRight);
 
 		FormData frmMain = new FormData();
-		frmMain.top = new FormAttachment(0);
+		frmMain.top = new FormAttachment(coolBar);
 		frmMain.left = new FormAttachment(0);
 		frmMain.right = new FormAttachment(100);
 		frmMain.bottom = new FormAttachment(sashHoriz);
@@ -256,6 +282,14 @@ public class MainShell {
 			item.setImage(drawSymOverImage(RepDevMain.smallReportsImage,sym));
 			
 			editor = new ReportComposite(mainfolder, item, seq);
+			editor.addFocusListener(new FocusListener() {
+				public void focusGained(FocusEvent e) {
+					
+				}
+				public void focusLost(FocusEvent e) {
+
+				}
+			});
 		
 			//If anything goes wrong initializing the error, it will dispose of the current item
 			//So, then we shouldn't do anything
@@ -263,9 +297,7 @@ public class MainShell {
 				return null;
 			
 			mainfolder.setSelection(item);
-			item.setControl(editor);
-
-			
+			item.setControl(editor);			
 			
 			//Attach find/replace shell here as well (in addition to folder listener)
 			findReplaceShell.attach(((ReportComposite)editor).getStyledText(),false);
@@ -276,7 +308,7 @@ public class MainShell {
 		return null;
 	}
 
-	public Object openFile(SymitarFile file) {
+	public Object openFile(final SymitarFile file) {
 		boolean found = false;
 		Composite editor;
 		Object loc;
@@ -304,9 +336,10 @@ public class MainShell {
 
 			if( file.getType() == FileType.REPORT)
 				editor = new ReportComposite(mainfolder, item, file);
-			else
-				editor = new EditorComposite(mainfolder, item, file);
-			
+			else {
+				editor = new EditorComposite(mainfolder, item, file /*,save, install, print, run*/);
+			}
+								
 			//If anything goes wrong creating the Editor, we want to fail here
 			//It will dispose of the item to indicate this fault.
 			if( item.isDisposed()){
@@ -319,8 +352,20 @@ public class MainShell {
 			}
 			
 			mainfolder.setSelection(item);
+			mainfolder.notifyListeners(SWT.Selection, new Event());
 			item.setControl(editor);
 
+			if (file.getType() != FileType.REPGEN || file.isLocal())
+				install.setEnabled(false);
+			else
+				install.setEnabled(true);
+
+			if (file.getType() != FileType.REPGEN || file.isLocal())
+				run.setEnabled(false);
+			else
+				run.setEnabled(true);
+
+			save.setEnabled(true);
 			
 			//Attach find/replace shell here as well (in addition to folder listener)
 			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(),true);
@@ -347,7 +392,6 @@ public class MainShell {
 		if ((cur.getData() instanceof SymitarFile)) {
 			SymitarFile file = (SymitarFile) cur.getData();
 			int sym = ((Project) cur.getParentItem().getData()).getSym();
-
 			openFile(file);
 		} else {
 			doTree(cur);
@@ -625,12 +669,8 @@ public class MainShell {
 	}
 
 	private void createExplorer(Composite self) {
-		self.setLayout(new FillLayout());
-		Group group = new Group(self, SWT.NONE);
-		group.setText("Project Explorer");
-		group.setLayout(new FormLayout());
-
-		ToolBar toolbar = new ToolBar(group, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
+		self.setLayout(new FormLayout());
+		ToolBar toolbar = new ToolBar(coolBar, SWT.FLAT | SWT.HORIZONTAL);
 
 		final ToolItem addSym = new ToolItem(toolbar, SWT.PUSH );
 		addSym.setImage(RepDevMain.smallSymAddImage);
@@ -675,9 +715,11 @@ public class MainShell {
 		remFile.setToolTipText("Disassociate the selected file from its project, and optionally delete the file from the server.");
 		remFile.setEnabled(false);
 
+		toolbar.setData("explorer");
+		addBar(toolbar);
 		toolbar.pack();
 
-		tree = new Tree(group, SWT.NONE | SWT.BORDER | SWT.MULTI );
+		tree = new Tree(self, SWT.NONE | SWT.BORDER | SWT.MULTI );
 		
 		//Configure drag + drop
 		Transfer[] types = new Transfer[] {TextTransfer.getInstance()};
@@ -1707,9 +1749,37 @@ public class MainShell {
 		mainfolder = new CTabFolder(self, SWT.FLAT | SWT.TOP | SWT.BORDER);
 		mainfolder.setLayout(new FillLayout());
 		mainfolder.setSimple(false);
-
+		
 		Menu tabContextMenu = new Menu(mainfolder);
 		mainfolder.setMenu(tabContextMenu);
+		
+		mainfolder.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+					if (mainfolder.getSelection() != null
+						&& (mainfolder.getSelection().getControl()) instanceof EditorComposite) {
+					SymitarFile file = ((EditorComposite) mainfolder
+							.getSelection().getControl()).getFile();
+					if (file.getType() != FileType.REPGEN || file.isLocal())
+						install.setEnabled(false);
+					else
+						install.setEnabled(true);
+
+					if (file.getType() != FileType.REPGEN || file.isLocal())
+						run.setEnabled(false);
+					else
+						run.setEnabled(true);
+
+					save.setEnabled(true);
+					print.setEnabled(true);
+				} else {
+					print.setEnabled(true);
+					save.setEnabled(false);
+					run.setEnabled(false);
+					install.setEnabled(false);
+				}
+			}
+		});
 				
 		final MenuItem closeTab = new MenuItem(tabContextMenu,SWT.NONE);
 		closeTab.setText("Close Tab");
@@ -2298,4 +2368,92 @@ public class MainShell {
 		mainfolder.getSelection().dispose();
 	}
 	
+	/**
+	 * Add a toolbar to the coolBar (sorry, but no pun intended.)
+	 */
+	public void addBar(ToolBar b) {
+		CoolItem item = new CoolItem(coolBar, SWT.NONE);
+		item.setControl(b);
+		Point size = b.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		item.setMinimumSize(size);
+		
+		coolItems.add(item);		
+	}
+	
+	public CoolBar getCoolBar() {
+		return this.coolBar;
+	}
+	
+	private void createEditorBar() {
+		editorBar = new ToolBar(coolBar, SWT.FLAT);
+		editorBar.setData("editorComposite");
+		addBar(editorBar);
+		
+		save = new ToolItem(editorBar, SWT.NONE);
+		save.setImage(RepDevMain.smallActionSaveImage);
+		save.setToolTipText("Saves the current file.");
+		save.setEnabled(false);
+
+		install = new ToolItem(editorBar, SWT.NONE);
+		install.setImage(RepDevMain.smallSymAddImage);
+		install.setToolTipText("Installs current file for onDemand use.");
+		install.setEnabled(false);
+		
+		run = new ToolItem(editorBar,SWT.NONE);
+		run.setImage(RepDevMain.smallRunImage);
+		run.setToolTipText("Opens the run report dialog.");
+		run.setEnabled(false);
+		
+		print = new ToolItem(editorBar,SWT.NONE);
+		print.setImage(RepDevMain.smallPrintImage);
+		print.setToolTipText("Prints the current file to a local printer.");
+		print.setEnabled(false);
+				
+		// EditorBar button actions
+		save.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				((EditorComposite)mainfolder.getSelection().getControl()).saveFile(true);
+			}
+		});
+
+		install.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				((EditorComposite)mainfolder.getSelection().getControl()).installRepgen(true);				
+			}
+		});
+		
+		print.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				RepDevMain.mainShell.print();			
+			}
+		});
+		
+		run.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				RepDevMain.mainShell.runReport(((EditorComposite)mainfolder.getSelection().getControl()).getFile());			
+			}
+		});
+	}
+	
+	private void setEditorBarStatus() {
+		if ( mainfolder.getSelection().getControl() instanceof EditorComposite) {
+			SymitarFile file = ((EditorComposite)mainfolder.getSelection().getControl()).getFile();
+			if (file.getType() != FileType.REPGEN || file.isLocal())
+				install.setEnabled(false);
+			else
+				install.setEnabled(true);
+
+			if (file.getType() != FileType.REPGEN || file.isLocal())
+				run.setEnabled(false);
+			else
+				run.setEnabled(true);
+
+			save.setEnabled(true);
+		} else {
+			save.setEnabled(false);
+			run.setEnabled(false);
+			install.setEnabled(false);
+			print.setEnabled(true);
+		}
+	}
 }
