@@ -35,7 +35,7 @@ public class RepDevMain {
 			smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage;
 	public static final String IMAGE_DIR = "repdev-icons/";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		display = new Display();
 		
 		try{
@@ -51,12 +51,13 @@ public class RepDevMain {
 		catch(Exception e){
 			if (display.isDisposed())
 				display = new Display();
+			
+			e.printStackTrace();
 
 			ErrorDialog errorDialog = new ErrorDialog(e);
 			errorDialog.open();
 			
 			display.dispose();
-			System.exit(0);
 		}
 
 		// Save off projects

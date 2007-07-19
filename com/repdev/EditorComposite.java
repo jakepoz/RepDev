@@ -628,8 +628,11 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 					line = txt.getText(startOffset, endOffset - 1);	
 								
 				if( line.indexOf("#INCLUDE") != -1 ) {
-					String file = line.substring(line.indexOf("\"")+1, line.lastIndexOf("\""));
-					RepDevMain.mainShell.openFile(new SymitarFile(sym, file, FileType.REPGEN));
+					String fileStr = line.substring(line.indexOf("\"")+1, line.lastIndexOf("\""));
+					if( file.isLocal() )
+						RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), fileStr));
+					else	
+						RepDevMain.mainShell.openFile(new SymitarFile(sym, fileStr, FileType.REPGEN));
 				}
 				
 				
