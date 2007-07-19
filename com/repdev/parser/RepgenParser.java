@@ -505,7 +505,10 @@ public class RepgenParser {
 						cur.setStr(cur.getStr() + " " + cur.getAfter().getStr() );
 						tokens.remove(cur.getAfter());
 						cur.setNearTokens(tokens, tokens.indexOf(cur));
-						i+=2;
+						if( cur.getAfter() != null )
+							cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
+						
+						//i+=1;
 						continue;
 					}
 					
@@ -515,7 +518,10 @@ public class RepgenParser {
 						tokens.remove(cur.getAfter());
 						tokens.remove(cur.getAfter().getAfter());
 						cur.setNearTokens(tokens, tokens.indexOf(cur));
-						i+=3;
+						if( cur.getAfter() != null )
+							cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
+						
+						//i+=2;
 						continue;
 					}
 						

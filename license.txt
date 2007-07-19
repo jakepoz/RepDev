@@ -1,5 +1,11 @@
 The license method currently used by RepDev is the GPL.
 
+SWT and the SWT Compare interface are licensed under the EPL, or Eclipse Public License,
+more information is available from those sources:
+
+http://www.elcipse.org/swt
+http://www.sf.net/projects/swtcompare
+
 -----
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
