@@ -6,7 +6,9 @@ import java.util.Arrays;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabFolderListener;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
@@ -89,7 +91,7 @@ public class MainShell {
 	// CoolBar for our universal tool bar at the top.
 	private CoolBar coolBar;
 	private ToolBar editorBar;
-	private ToolItem save, install, print, run;
+	private ToolItem savetb, install, print, run;
 	private ArrayList<CoolItem> coolItems; // <-- may not be needed, keep for future stuff though
 	
 	//Used for DND
@@ -365,7 +367,7 @@ public class MainShell {
 			else
 				run.setEnabled(true);
 
-			save.setEnabled(true);
+			savetb.setEnabled(true);
 			
 			//Attach find/replace shell here as well (in addition to folder listener)
 			findReplaceShell.attach(((EditorComposite)mainfolder.getSelection().getControl()).getStyledText(),true);
@@ -1726,7 +1728,7 @@ public class MainShell {
 		
 		Menu tabContextMenu = new Menu(mainfolder);
 		mainfolder.setMenu(tabContextMenu);
-		
+				
 		mainfolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1744,11 +1746,11 @@ public class MainShell {
 					else
 						run.setEnabled(true);
 
-					save.setEnabled(true);
+					savetb.setEnabled(true);
 					print.setEnabled(true);
 				} else {
 					print.setEnabled(true);
-					save.setEnabled(false);
+					savetb.setEnabled(false);
 					run.setEnabled(false);
 					install.setEnabled(false);
 				}
@@ -1886,6 +1888,13 @@ public class MainShell {
 			public void close(CTabFolderEvent event) {
 				event.doit = confirmClose( (CTabItem)event.item );
 				setLineColumn();
+				
+				if(mainfolder.getItemCount()==1) {
+					install.setEnabled(false);
+					savetb.setEnabled(false);
+					print.setEnabled(false);
+					run.setEnabled(false);
+				}				
 			}		
 		});
 	}
@@ -2363,10 +2372,10 @@ public class MainShell {
 		editorBar.setData("editorComposite");
 		addBar(editorBar);
 		
-		save = new ToolItem(editorBar, SWT.NONE);
-		save.setImage(RepDevMain.smallActionSaveImage);
-		save.setToolTipText("Saves the current file.");
-		save.setEnabled(false);
+		savetb = new ToolItem(editorBar, SWT.NONE);
+		savetb.setImage(RepDevMain.smallActionSaveImage);
+		savetb.setToolTipText("Saves the current file.");
+		savetb.setEnabled(false);
 
 		install = new ToolItem(editorBar, SWT.NONE);
 		install.setImage(RepDevMain.smallSymAddImage);
@@ -2384,7 +2393,7 @@ public class MainShell {
 		print.setEnabled(false);
 				
 		// EditorBar button actions
-		save.addSelectionListener(new SelectionAdapter() {
+		savetb.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				((EditorComposite)mainfolder.getSelection().getControl()).saveFile(true);
 			}
@@ -2422,9 +2431,9 @@ public class MainShell {
 			else
 				run.setEnabled(true);
 
-			save.setEnabled(true);
+			savetb.setEnabled(true);
 		} else {
-			save.setEnabled(false);
+			savetb.setEnabled(false);
 			run.setEnabled(false);
 			install.setEnabled(false);
 			print.setEnabled(true);
