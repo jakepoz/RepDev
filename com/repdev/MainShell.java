@@ -671,15 +671,11 @@ public class MainShell {
 	private void createExplorer(Composite self) {
 		self.setLayout(new FormLayout());
 		ToolBar toolbar = new ToolBar(coolBar, SWT.FLAT | SWT.HORIZONTAL);
-
+		
 		final ToolItem addSym = new ToolItem(toolbar, SWT.PUSH );
 		addSym.setImage(RepDevMain.smallSymAddImage);
 		addSym.setToolTipText("Add a new Sym to this list.");
 
-		final ToolItem remSym = new ToolItem(toolbar, SWT.PUSH);
-		remSym.setImage(RepDevMain.smallSymRemoveImage);
-		remSym.setToolTipText("Remove the selected Sym from this list.");
-		remSym.setEnabled(false);
 		
 		final ToolItem addFolder = new ToolItem(toolbar, SWT.PUSH);
 		addFolder.setImage(RepDevMain.smallFolderAddImage);
@@ -690,15 +686,15 @@ public class MainShell {
 		addProj.setToolTipText("Create a new project in the selected Sym.");
 		addProj.setEnabled(false);
 
-		final ToolItem remProj = new ToolItem(toolbar, SWT.PUSH);
-		remProj.setImage(RepDevMain.smallProjectRemoveImage);
-		remProj.setToolTipText("Delete the selected project.");
-		remProj.setEnabled(false);
-
 		final ToolItem newFile = new ToolItem(toolbar, SWT.PUSH);
 		newFile.setImage(RepDevMain.smallFileAddImage);
 		newFile.setToolTipText("Create a new file in your current project.");
 		newFile.setEnabled(false);
+		
+		final ToolItem remItem = new ToolItem(toolbar, SWT.PUSH);
+		remItem.setImage(RepDevMain.smallDeleteImage);
+		remItem.setToolTipText("Remove the selected explorer items.");
+		remItem.setEnabled(false);
 
 		final ToolItem importFile = new ToolItem(toolbar, SWT.PUSH);
 		importFile.setImage(RepDevMain.smallImportImage);
@@ -710,10 +706,6 @@ public class MainShell {
 		openFileToolbar.setToolTipText("Open a file on the symitar server that's not in a project");
 		openFileToolbar.setEnabled(false);
 
-		final ToolItem remFile = new ToolItem(toolbar, SWT.PUSH);
-		remFile.setImage(RepDevMain.smallFileRemoveImage);
-		remFile.setToolTipText("Disassociate the selected file from its project, and optionally delete the file from the server.");
-		remFile.setEnabled(false);
 
 		toolbar.setData("explorer");
 		addBar(toolbar);
@@ -1202,25 +1194,9 @@ public class MainShell {
 		deleteFile.setImage(RepDevMain.smallDeleteImage);
 		deleteFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selection = tree.getSelection();
-				
-				if (selection.length == 0)
-					return;
-
-				for( TreeItem cur : selection){
-					Object data = cur.getData();
-				
-					if (data instanceof Integer)
-						removeSym(cur);
-					else if( data instanceof String)
-						removeDir(cur);
-					else if (data instanceof Project)
-						removeProject(cur);
-					else
-						removeFile(cur);
-				}
-
+				removeItem(tree.getSelection());
 			}
+
 		});
 		
 		new MenuItem(treeMenu, SWT.SEPARATOR);
@@ -1383,48 +1359,36 @@ public class MainShell {
 			public void handleEvent(Event e) {
 				TreeItem[] selection = tree.getSelection();
 
+				remItem.setEnabled(selection.length != 0);
+				
 				if (selection.length != 1) {
-					remSym.setEnabled(false);
 					addProj.setEnabled(false);
-					remProj.setEnabled(false);
 					importFile.setEnabled(false);
 					newFile.setEnabled(false);
-					remFile.setEnabled(false);
 					openFileToolbar.setEnabled(false);
 					return;
 				}
-				else
+				else{
 					openFileToolbar.setEnabled(true);
+				}
 
 				Object data = ((TreeItem) selection[0]).getData();
 				if (data instanceof Integer) {
-					remSym.setEnabled(true);
 					addProj.setEnabled(true);
-					remProj.setEnabled(false);
 					importFile.setEnabled(false);
 					newFile.setEnabled(false);
-					remFile.setEnabled(false);
 				} else if( data instanceof String){
-					remSym.setEnabled(true);
 					addProj.setEnabled(true);
-					remProj.setEnabled(false);
 					importFile.setEnabled(false);
 					newFile.setEnabled(false);
-					remFile.setEnabled(false);
 				} else if (data instanceof Project) {
-					remSym.setEnabled(true);
 					addProj.setEnabled(true);
-					remProj.setEnabled(true);
 					importFile.setEnabled(true);
 					newFile.setEnabled(true);
-					remFile.setEnabled(false);
 				} else if (data instanceof SymitarFile) {
-					remSym.setEnabled(true);
 					addProj.setEnabled(true);
-					remProj.setEnabled(true);
 					importFile.setEnabled(true);
 					newFile.setEnabled(true);
-					remFile.setEnabled(true);
 				}
 			}
 		});
@@ -1447,19 +1411,10 @@ public class MainShell {
 			}
 		});
 		
-		remSym.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				removeSym(tree.getSelection()[0]);
-			}
-		});
+
 		addProj.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addProject();
-			}
-		});
-		remProj.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				removeProject(tree.getSelection()[0]);
 			}
 		});
 		importFile.addSelectionListener(new SelectionAdapter() {
@@ -1467,9 +1422,9 @@ public class MainShell {
 				importFiles();
 			}
 		});
-		remFile.addSelectionListener(new SelectionAdapter() {
+		remItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				removeFile(tree.getSelection()[0]);
+				removeItem(tree.getSelection());
 			}
 		});
 		newFile.addSelectionListener(new SelectionAdapter() {
@@ -1503,6 +1458,25 @@ public class MainShell {
 		frmTree.right = new FormAttachment(100);
 		frmTree.bottom = new FormAttachment(100);
 		tree.setLayoutData(frmTree);
+	}
+
+	protected void removeItem(TreeItem[] selection) {
+		
+		if (selection.length == 0)
+			return;
+
+		for( TreeItem cur : selection){
+			Object data = cur.getData();
+		
+			if (data instanceof Integer)
+				removeSym(cur);
+			else if( data instanceof String)
+				removeDir(cur);
+			else if (data instanceof Project)
+				removeProject(cur);
+			else
+				removeFile(cur);
+		}
 	}
 
 	protected void compare() {
