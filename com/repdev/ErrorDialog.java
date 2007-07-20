@@ -77,7 +77,7 @@ public class ErrorDialog {
 		shell.setLayout(layout);
 
 		descriptionLabel = new Label(shell, SWT.LEFT | SWT.WRAP | SWT.CENTER | SWT.BOLD);
-		descriptionLabel.setText("A fatal exception has occured in the user thread, which caused the program to crash. Copy/paste the error text below and send it to jakepoz@gmail.com");
+		descriptionLabel.setText("A fatal exception has occured in the user thread, which caused the program to crash. Copy/paste the error text below and send it to support@repdev.org");
 
 		exceptionLabel = new Label(shell, SWT.LEFT | SWT.WRAP);
 		exceptionLabel.setText("Error Text: \"" + exception.getMessage() + "\" - " + exception.getClass().getName());
