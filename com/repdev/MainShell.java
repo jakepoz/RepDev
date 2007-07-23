@@ -1889,6 +1889,19 @@ public class MainShell {
 				event.doit = confirmClose( (CTabItem)event.item );
 				setLineColumn();
 				
+				if( event.doit ){
+					SymitarFile file = (SymitarFile)((CTabItem)event.item).getData("file");
+					
+					if( file != null){
+						//Remove from error list
+						for (TableItem item : tblErrors.getItems()) {
+							if (((SymitarFile) item.getData("file")).equals(file))
+								item.dispose();
+	
+						}
+					}
+				}
+				
 				if(mainfolder.getItemCount()==1) {
 					install.setEnabled(false);
 					savetb.setEnabled(false);

@@ -158,7 +158,7 @@ public class SymitarFile implements Serializable {
 			return false;
 
 		SymitarFile file = (SymitarFile) o;
-		return name.equals(file.name) && type.equals(file.type);
+		return name.equals(file.name) && type.equals(file.type) && (isLocal() ? file.getDir().equals(dir) : file.getSym() == sym);
 	}
 
 	public void setInstalled(Date installed) {
