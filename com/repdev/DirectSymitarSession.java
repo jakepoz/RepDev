@@ -1088,6 +1088,9 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
+	/**
+	 * Remeber that batch queue sequence numbers are not related to print queue ones!
+	 */
 	public synchronized boolean isSeqRunning(int seq) {
 		Command cur;
 		boolean running = false;

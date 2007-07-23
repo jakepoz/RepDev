@@ -1234,8 +1234,7 @@ public class MainShell {
 		});
 		
 		final MenuItem compareFile = new MenuItem(treeMenu, SWT.NONE);
-		compareFile.setText("Compare");
-		//importFilem.setImage(RepDevMain.smallImportImage);
+		compareFile.setText("Compare Two Files");
 		compareFile.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -1285,6 +1284,10 @@ public class MainShell {
 					openFile.setEnabled(true);
 				}
 	
+				if( tree.getSelectionCount() == 2 && tree.getSelection()[0].getData() instanceof SymitarFile && tree.getSelection()[0].getData() instanceof SymitarFile )
+					compareFile.setEnabled(true);
+				else
+					compareFile.setEnabled(false);
 				
 				if ( !(tree.getSelection()[0].getData() instanceof Integer || tree.getSelection()[0].getData() instanceof String) && tree.getSelectionCount() == 1) {
 					importFilem.setEnabled(true);
@@ -1490,17 +1493,10 @@ public class MainShell {
 		
 		if( !(tree.getSelection()[1].getData() instanceof SymitarFile) )
 			return;
-		
-		/*LineRangeComparator left = new LineRangeComparator(((TabTextView)mainfolder.getItem(0).getControl()).getStyledText());
-		LineRangeComparator right = new LineRangeComparator(((TabTextView)mainfolder.getItem(1).getControl()).getStyledText());	
 				
-		for( RangeDifference diff : RangeDifferencer.findDifferences(left, right) ){
-			System.out.println(diff);
-		}*/
-		
 		CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
 
-		item.setText("Compare Text");
+		item.setText("Compare Text BETA");
 		//item.setImage(getFileImage(file));
 		//item.setData("file", file);
 		//item.setData("loc", loc);
@@ -1536,7 +1532,6 @@ public class MainShell {
 		tree.notifyListeners(SWT.Selection, null);
 	}
 
-	//TODO: Cuts off text, Doesn't work right always
 	public void createStatusBar() {
 		statusBar = new Composite( shell, SWT.BORDER | SWT.SHADOW_IN );
 		
@@ -1765,6 +1760,7 @@ public class MainShell {
 			public void widgetSelected(SelectionEvent e) {		
 				if( mainfolder.getSelectionIndex() != -1){
 					if( confirmClose(mainfolder.getSelection()) ){
+						clearErrorList(mainfolder.getSelection());
 						mainfolder.getSelection().dispose();
 						setLineColumn();
 					}
@@ -1783,8 +1779,10 @@ public class MainShell {
 	
 					for( CTabItem item : mainfolder.getItems())
 						if( !item.equals(mainfolder.getSelection()))
-							if( confirmClose(item) )
+							if( confirmClose(item) ){
+								clearErrorList(item);
 								item.dispose();
+							}
 				
 				}
 			}
@@ -1800,8 +1798,10 @@ public class MainShell {
 				if( mainfolder.getItems().length >= 1){
 	
 					for( CTabItem item : mainfolder.getItems())
-						if( confirmClose(item) )
+						if( confirmClose(item) ){
+							clearErrorList(item);
 							item.dispose();
+						}
 				
 				}
 			}
@@ -1890,16 +1890,7 @@ public class MainShell {
 				setLineColumn();
 				
 				if( event.doit ){
-					SymitarFile file = (SymitarFile)((CTabItem)event.item).getData("file");
-					
-					if( file != null){
-						//Remove from error list
-						for (TableItem item : tblErrors.getItems()) {
-							if (((SymitarFile) item.getData("file")).equals(file))
-								item.dispose();
-	
-						}
-					}
+					clearErrorList((CTabItem)event.item);
 				}
 				
 				if(mainfolder.getItemCount()==1) {
@@ -1910,6 +1901,18 @@ public class MainShell {
 				}				
 			}		
 		});
+	}
+
+	protected void clearErrorList(CTabItem item) {
+		SymitarFile file = (SymitarFile)(item).getData("file");
+		
+		if( file != null){
+			//Remove from error list
+			for (TableItem eItem : tblErrors.getItems()) {
+				if (((SymitarFile) eItem.getData("file")).equals(file))
+					eItem.dispose();
+			}
+		}
 	}
 
 	private boolean confirmClose(CTabItem item) {
