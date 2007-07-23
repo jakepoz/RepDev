@@ -213,4 +213,5 @@ public abstract class SymitarSession {
 	}
 
 	public abstract ErrorCheckResult installRepgen(String f);
+	
 }

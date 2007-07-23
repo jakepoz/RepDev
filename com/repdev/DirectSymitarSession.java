@@ -623,7 +623,71 @@ public class DirectSymitarSession extends SymitarSession {
 
 	@Override
 	public SessionError runBatchFM(String name, String title) {
-		return null;
+		Command cur;
+		try {
+			write("mm0" + (char)27);
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("1\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("24\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			// menu option for batch fm
+			write("5\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("0\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("0\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write(name + "\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("1\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("1\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write(title + "\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("1\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("0\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("0\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+			write("1\r");
+			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+				log(cur);
+			
+		} catch (IOException e) {
+			System.err.println("ERROR: " + e.getMessage());
+		}
+		
+		
+		return SessionError.NONE;
 	}
 	
 	/**
