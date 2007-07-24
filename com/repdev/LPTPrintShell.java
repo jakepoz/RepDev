@@ -1,8 +1,16 @@
 package com.repdev;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -13,7 +21,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-//TODO: Highligh field values when tabbing through
+
+
 public class LPTPrintShell {
 	private Shell shell;
 	private boolean result = false;
@@ -57,9 +66,33 @@ public class LPTPrintShell {
 		Label priorityLabel = new Label(shell,SWT.NONE);
 		priorityLabel.setText("Queue Priority");
 		
+		//Select All when tabbing through
+		FocusListener selectAllFocuser = new FocusListener(){
+
+			public void focusGained(FocusEvent e) {
+				if( e.widget instanceof Text)
+					((Text)e.widget).selectAll();
+			}
+
+			public void focusLost(FocusEvent e) {
+			}
+			
+		};
+		
+		MouseListener mouseFocuser = new MouseAdapter(){
+
+			public void mouseDown(MouseEvent e) {
+				if( e.widget instanceof Text)
+					((Text)e.widget).selectAll();
+			}
+		
+		};
+		
 		final Text queueText = new Text(shell,SWT.BORDER);
 		queueText.setText("0");
 		queueText.selectAll();
+		queueText.addFocusListener(selectAllFocuser);
+		queueText.addMouseListener(mouseFocuser);
 		
 		final Combo overrideCombo = new Combo(shell,SWT.READ_ONLY);
 		overrideCombo.add("No");
@@ -68,15 +101,23 @@ public class LPTPrintShell {
 		
 		final Text lengthText = new Text(shell,SWT.BORDER);
 		lengthText.setText("0");
+		lengthText.addFocusListener(selectAllFocuser);
+		lengthText.addMouseListener(mouseFocuser);
 		
 		final Text startText = new Text(shell,SWT.BORDER);
 		startText.setText("0");
+		startText.addFocusListener(selectAllFocuser);
+		startText.addMouseListener(mouseFocuser);
 		
 		final Text endText = new Text(shell,SWT.BORDER);
 		endText.setText("0");
+		endText.addFocusListener(selectAllFocuser);
+		endText.addMouseListener(mouseFocuser);
 		
 		final Text copiesText = new Text(shell,SWT.BORDER);
 		copiesText.setText("1");
+		copiesText.addFocusListener(selectAllFocuser);
+		copiesText.addMouseListener(mouseFocuser);
 		
 		final Combo landscapeCombo = new Combo(shell,SWT.READ_ONLY);
 		landscapeCombo.add("No");
@@ -91,7 +132,8 @@ public class LPTPrintShell {
 		
 		final Text priorityText = new Text(shell,SWT.BORDER);
 		priorityText.setText("4");
-		
+		priorityText.addFocusListener(selectAllFocuser);
+		priorityText.addMouseListener(mouseFocuser);
 		
 		Button okButton = new Button(shell,SWT.PUSH);
 		okButton.setText("Print");
