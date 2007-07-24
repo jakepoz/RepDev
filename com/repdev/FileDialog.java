@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Text;
  * Basic dialog box for both opening and saving files from symitar
  * Watch out, as OPEN and SAVE modes are slightly different
  * 
+ * TODO: Shows installed date, rename files, delete installed
+ * 
  * @author Jake Poznanski
  *
  */

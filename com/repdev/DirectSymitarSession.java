@@ -1308,4 +1308,44 @@ public class DirectSymitarSession extends SymitarSession {
 		return items;
 	}
 
+	@Override
+	public synchronized SessionError renameFile(SymitarFile file, String newName) {
+		Command retrieve = new Command();
+		retrieve.setCommand("File");
+		retrieve.getParameters().put("Action", "Rename");
+
+		if (file.getType() == FileType.REPGEN)
+			retrieve.getParameters().put("Type", "RepWriter");
+		else if (file.getType() == FileType.HELP)
+			retrieve.getParameters().put("Type", "Help");
+		else if (file.getType() == FileType.LETTER)
+			retrieve.getParameters().put("Type", "Letter");
+		else if (file.getType() == FileType.REPORT)
+			retrieve.getParameters().put("Type", "Report");
+
+		retrieve.getParameters().put("Name", file.getName());
+		retrieve.getParameters().put("NewName", newName);
+
+		write(retrieve);
+
+		Command current = null;
+
+		try {
+			current = readNextCommand();
+
+			if (current.getParameters().get("Status") != null && current.getParameters().get("Status").contains("No such file or directory"))
+				return SessionError.ARGUMENT_ERROR;
+			else if (current.getParameters().get("Status") != null)
+				return SessionError.FILENAME_TOO_LONG;
+			else if (current.getParameters().get("Done") != null)
+				return SessionError.NONE;
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return SessionError.IO_ERROR;
+	}
+
 }

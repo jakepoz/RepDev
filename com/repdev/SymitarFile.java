@@ -1,6 +1,7 @@
 package com.repdev;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -17,7 +18,7 @@ import java.util.Date;
 public class SymitarFile implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private String name, dir;
+	private String name, dir = "";
 	private FileType type;
 	private Date modified = new Date(0), installed = new Date(0);
 	private long size = -1;
@@ -113,6 +114,26 @@ public class SymitarFile implements Serializable {
 		return SessionError.NONE;
 	}
 	
+	public boolean saveName(String newName){
+		if( isLocal() )
+		{
+			if( new File(getPath()).renameTo(new File(dir + "\\" + newName))){
+				name = newName;
+				return true;
+			}
+			else
+				return false;
+		}
+		else{
+			if( RepDevMain.SYMITAR_SESSIONS.get(sym).renameFile(this, newName) == SessionError.NONE){
+				name = newName;
+				return true;
+			}
+			else
+				return false;
+		}
+	}
+	
 	public boolean isLocal(){
 		return local;
 	}
@@ -158,7 +179,7 @@ public class SymitarFile implements Serializable {
 			return false;
 
 		SymitarFile file = (SymitarFile) o;
-		return name.equals(file.name) && type.equals(file.type) && (isLocal() ? file.getDir().equals(dir) : file.getSym() == sym);
+		return name.equals(file.name) && type.equals(file.type) && (isLocal() ? (dir != null && file.getDir() != null && file.getDir().equals(dir) ) : file.getSym() == sym);
 	}
 
 	public void setInstalled(Date installed) {

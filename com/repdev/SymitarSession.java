@@ -55,15 +55,10 @@ public abstract class SymitarSession {
 	
 	public abstract SessionError removeFile(SymitarFile file);
 
-	/**
-	 * 
-	 * @param type
-	 * @param name
-	 * @param text
-	 * @return SessionError
-	 */
 	public abstract SessionError saveFile(SymitarFile file, String text);
 
+	public abstract SessionError renameFile(SymitarFile file, String newName);
+	
 	public class RunRepgenResult{
 		int seq, time;
 

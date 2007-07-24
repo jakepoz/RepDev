@@ -12,6 +12,7 @@ import org.eclipse.swt.custom.CTabFolderListener;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
+import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -65,6 +66,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
@@ -76,6 +78,8 @@ import com.repdev.parser.Error;
  * Main graphical user interface. Provides some utility methods as well. 
  * Really should move things out to other places as it gets more complex, either way it will be  large file.
  * @author Jake Poznanski
+ * 
+ * TODO: Renaming files, File Save As
  *
  */
 public class MainShell {
@@ -1201,6 +1205,29 @@ public class MainShell {
 
 		});
 		
+		final MenuItem renameFile = new MenuItem(treeMenu, SWT.NONE);
+		renameFile.setText("Rename Item");
+		renameFile.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				if( tree.getSelectionCount() == 1)
+					renameItem(tree.getSelection()[0]);
+			}
+
+		}); 
+
+		
+		final MenuItem compareFile = new MenuItem(treeMenu, SWT.NONE);
+		compareFile.setText("Compare Two Files");
+		compareFile.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				compare();
+			}
+
+		}); 
+
+		
 		new MenuItem(treeMenu, SWT.SEPARATOR);
 
 		final MenuItem openFile = new MenuItem(treeMenu, SWT.NONE);
@@ -1233,15 +1260,6 @@ public class MainShell {
 
 		});
 		
-		final MenuItem compareFile = new MenuItem(treeMenu, SWT.NONE);
-		compareFile.setText("Compare Two Files");
-		compareFile.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				compare();
-			}
-
-		}); 
 
 		treeMenu.addMenuListener(new MenuListener() {
 
@@ -1282,6 +1300,8 @@ public class MainShell {
 					newFreeFile.setEnabled(true);
 					newProject.setEnabled(true);
 					openFile.setEnabled(true);
+					
+					renameFile.setEnabled( !( tree.getSelection()[0].getData() instanceof String ||tree.getSelection()[0].getData() instanceof Integer ));
 				}
 	
 				if( tree.getSelectionCount() == 2 && tree.getSelection()[0].getData() instanceof SymitarFile && tree.getSelection()[0].getData() instanceof SymitarFile )
@@ -1463,6 +1483,94 @@ public class MainShell {
 		frmTree.right = new FormAttachment(100);
 		frmTree.bottom = new FormAttachment(100);
 		tree.setLayoutData(frmTree);
+	}
+	
+	private void handleRenameItem(TreeItem item, String newName){
+		//TODO: Will not update name in tab titles if it's open already
+		
+		if( item.getData() instanceof SymitarFile)
+			if( ((SymitarFile)item.getData()).saveName(newName) )
+				item.setText(newName);
+		if( item.getData() instanceof Project){
+			((Project)item.getData()).setName(newName);
+			item.setText(newName);
+		}
+		
+	}
+
+	protected void renameItem(final TreeItem item) {
+		boolean showBorder = true;
+		final TreeEditor editor = new TreeEditor(tree);
+		final Composite composite = new Composite(tree, SWT.NONE);
+		final Text text = new Text(composite, SWT.NONE);
+		final int inset = showBorder ? 1 : 0;
+
+		//NONO for syms and dirs
+		if( item.getData() instanceof String || item.getData() instanceof Integer)
+			return;
+		
+		if (showBorder)
+			composite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLACK));
+
+		composite.addListener(SWT.Resize, new Listener() {
+			public void handleEvent(Event e) {
+				Rectangle rect = composite.getClientArea();
+				text.setBounds(rect.x + inset, rect.y + inset, rect.width - inset * 2, rect.height - inset * 2);
+			}
+		});
+		
+		Listener textListener = new Listener() {
+			public void handleEvent(final Event e) {
+				switch (e.type) {
+				case SWT.FocusOut:
+					handleRenameItem(item, text.getText());
+					composite.dispose();
+					break;
+				case SWT.Verify:
+					String newText = text.getText();
+					String leftText = newText.substring(0, e.start);
+					String rightText = newText.substring(e.end, newText.length());
+					
+					GC gc = new GC(text);
+					Point size = gc.textExtent(leftText + e.text + rightText);
+					gc.dispose();
+					
+					size = text.computeSize(size.x, SWT.DEFAULT);
+					editor.horizontalAlignment = SWT.LEFT;
+					
+					Rectangle itemRect = item.getBounds(),
+					rect = tree.getClientArea();
+					editor.minimumWidth = Math.max(size.x, itemRect.width) + inset * 2;
+					int left = itemRect.x,
+					right = rect.x + rect.width;
+					
+					editor.minimumWidth = Math.min(editor.minimumWidth, right - left);
+					editor.minimumHeight = size.y + inset * 2;
+					editor.layout();
+					break;
+				case SWT.Traverse:
+					switch (e.detail) {
+					case SWT.TRAVERSE_RETURN:
+						handleRenameItem(item, text.getText());
+						// FALL THROUGH
+					case SWT.TRAVERSE_ESCAPE:
+						composite.dispose();
+						e.doit = false;
+					}
+					break;
+				}
+			}
+		};
+		
+		text.addListener(SWT.FocusOut, textListener);
+		text.addListener(SWT.Traverse, textListener);
+		text.addListener(SWT.Verify, textListener);
+		
+		editor.setEditor(composite, item);
+		
+		text.setText(item.getText());
+		text.selectAll();
+		text.setFocus();
 	}
 
 	protected void removeItem(TreeItem[] selection) {
