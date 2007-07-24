@@ -2,6 +2,7 @@ package com.repdev;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
@@ -86,9 +87,7 @@ public abstract class SymitarSession {
 
 		public void setTime(int time) {
 			this.time = time;
-		}
-		
-		
+		}		
 	}
 	
 	public abstract RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter);
@@ -113,7 +112,66 @@ public abstract class SymitarSession {
 	
 	public abstract void terminateRepgen(int seq);
 
-	public abstract SessionError runBatchFM(String file, String title);
+	public class RunFMResult{
+		private String resultTitle;
+		private int seq;
+		
+		public RunFMResult(){
+			setRandomTitle();
+		}
+		
+		public RunFMResult(String resultTitle, int seq) {
+			super();
+			this.resultTitle = resultTitle;
+			this.seq = seq;
+		}
+		
+		private void setRandomTitle(){
+			resultTitle = "RepDev FM - " + String.format("%06d", (int)(Math.random() * 10000000));
+		}
+		
+		public String getResultTitle() {
+			return resultTitle;
+		}
+		
+		public void setResultTitle(String resultTitle) {
+			this.resultTitle = resultTitle;
+		}
+		
+		public int getSeq() {
+			return seq;
+		}
+		
+		public void setSeq(int seq) {
+			this.seq = seq;
+		}		
+	}
+	
+	public enum FMFile{
+		ACCOUNT("Account"),
+		INVENTORY("Inventory"),
+		PAYEE("Payee"),
+		GL_ACCOUNT("GL Account"),
+		RECIEVED_ITEM("Recieved Item"),
+		PARTICIPANT("Partipant"),
+		PARTICIPATION("Participation"),
+		DEALER("Dealer"),
+		USER("User"),
+		COLLATERAL("Collateral");
+		
+		private String displayName;
+		
+		private FMFile(String displayName){
+			this.displayName = displayName;
+		}
+		
+		public String getDisplayName()
+		{
+			return displayName;
+		}
+	}
+	
+	public abstract RunFMResult runBatchFM(String searchTitle, FMFile file, int queue);
 
 	public abstract ArrayList<PrintItem> getPrintItems( String query, int limit );
 	public abstract ArrayList<PrintItem> getPrintItems( Sequence seq );

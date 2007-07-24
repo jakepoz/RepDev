@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 
+import com.repdev.SymitarSession.FMFile;
+
 public class TestingSymitarSession extends SymitarSession {
 	boolean isConnected;
 	int repGenRun = -1;
@@ -134,7 +136,7 @@ public class TestingSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public SessionError runBatchFM(String name, String title) {
+	public RunFMResult runBatchFM(String searchTitle, FMFile file, int queue) {
 		return null;
 	}
 

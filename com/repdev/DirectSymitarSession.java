@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 
+import com.repdev.SymitarSession.FMFile;
+
 import sun.security.x509.AVA;
 
 /**
@@ -622,7 +624,14 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public SessionError runBatchFM(String name, String title) {
+	public synchronized RunFMResult runBatchFM(String searchTitle, FMFile file, int queue) {
+		RunFMResult result = new RunFMResult();
+		int[] queueCounts = new int[9999];
+		boolean[] queueAvailable = new boolean[9999];
+		
+		for( int i = 0; i < queueCounts.length; i++)
+			queueCounts[i] = -1;
+		
 		Command cur;
 		try {
 			write("mm0" + (char)27);
@@ -642,7 +651,7 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write("0\r");
+			write(file.ordinal() + "\r");
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
@@ -650,7 +659,7 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write(name + "\r");
+			write(searchTitle + "\r");
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
@@ -662,7 +671,7 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write(title + "\r");
+			write(result.getResultTitle() + "\r");
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
@@ -671,23 +680,107 @@ public class DirectSymitarSession extends SymitarSession {
 				log(cur);
 			
 			write("0\r");
-			while( !(cur = readNextCommand()).getCommand().equals("Input") )
+			while( !(cur = readNextCommand()).getCommand().equals("Input") ){
 				log(cur);
+				if( cur.getParameters().get("Action").equals("DisplayLine") && cur.getParameters().get("Text").contains("Batch Queues Available:")){
+					String line = cur.getParameters().get("Text");				
+					String[] tempQueues = line.substring(line.indexOf(":") + 1).split(",");
+					
+					int i = 0;
+					
+					for( String temp : tempQueues){
+						temp = temp.trim();
+						
+						if( temp.contains("-"))
+						{
+							String[] tempList = temp.split("-");
+							
+							int start = Integer.parseInt(tempList[0].trim());
+							int end = Integer.parseInt(tempList[1].trim());
+							
+							for( int x = start; x <= end; x++){
+								queueAvailable[x]=true;
+							}
+						}
+						else
+						{
+							queueAvailable[Integer.parseInt(temp)] = true;
+						}
+						
+						i++;
+					}
+				}
+			}
+//			Batch queue selection
+			Command getQueues = new Command("Misc");
+			getQueues.getParameters().put("InfoType", "BatchQueues");
+			write(getQueues);
+	
+			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
+				log(cur);
+				
+				if( cur.getParameters().get("Action").equals("QueueEntry") && cur.getParameters().get("Stat").equals("Running"))
+					if(queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))] < 0)
+						queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))] = 1;
+					else
+						queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))]++;
+				else if( cur.getParameters().get("Action").equals("QueueEmpty"))
+					queueCounts[Integer.parseInt(cur.getParameters().get("Queue"))] = 0;
+			}
+			int lastGood = -1;
 			
-			write("0\r");
+			if( (queue != -1 && !queueAvailable[queue]) || queue == -1 )
+			{
+				for( queue = 0; queue < queueCounts.length; queue++)
+				{
+					if( queueAvailable[queue])
+						lastGood = queue;
+
+					if( queueAvailable[queue] && queueCounts[queue] == 0)
+						break;
+				}
+				
+				queue = lastGood;
+			}
+			
+			write( queue + "\r");
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
 			write("1\r");
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
+			
+			write(getQueues);
+			
+			int newestTime = 0;
+			
+			while( (cur = readNextCommand()).getParameters().get("Done") == null ){
+				log(cur);
+				
+				//Get the Sequence for the latest running one at this point, and return it so we can keep track of it
+				if( cur.getParameters().get("Action").equals("QueueEntry") ){
+					int curTime = 0;
+					String timeStr = cur.getParameters().get("Time");
+					curTime = Integer.parseInt(timeStr.substring(timeStr.lastIndexOf(":")+1));
+					curTime += 60 * Integer.parseInt(timeStr.substring(timeStr.indexOf(":")+1, timeStr.lastIndexOf(":")));
+					curTime += 3600 * Integer.parseInt(timeStr.substring(0,timeStr.indexOf(":")));
+					
+					if( curTime > newestTime )
+					{
+						newestTime = curTime;
+						result.setSeq(Integer.parseInt(cur.getParameters().get("Seq")));
+						
+					}
+				}
+			}
 			
 		} catch (IOException e) {
 			System.err.println("ERROR: " + e.getMessage());
 		}
 		
 		
-		return SessionError.NONE;
+		return result;
 	}
 	
 	/**
@@ -758,7 +851,6 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			write( name + "\r");
 			
-			//TODO: Error checking
 			isError = false;
 			while( (cur = readNextCommand()) != null ){
 							
@@ -885,7 +977,7 @@ public class DirectSymitarSession extends SymitarSession {
 				queue = lastGood;
 			}
 			
-			write( "" + queue + "\r");
+			write( queue + "\r");
 
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);

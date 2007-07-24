@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.repdev.SymitarSession.RunFMResult;
+
 public class ReportComposite extends Composite implements TabTextView{
 	private StyledText txt;
 	private Table table;
@@ -174,7 +176,7 @@ public class ReportComposite extends Composite implements TabTextView{
 				labelComposite.setLayout(layout);
 				
 				Link printLocal = new Link(labelComposite,SWT.NONE);
-				printLocal.setText("Print <a href=\"local\">Local</a> <a href=\"lpt\">LPT</a>");
+				printLocal.setText("Print: <a href=\"local\">Local</a> <a href=\"lpt\">Host LPT</a>  <a href=\"fm\">Run as FM</a>");
 				printLocal.setBackground(table.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 				printLocal.addSelectionListener(new SelectionAdapter(){
 
@@ -186,6 +188,8 @@ public class ReportComposite extends Composite implements TabTextView{
 						}
 						else if(e.text.equals("lpt"))
 							LPTPrintShell.print(getDisplay(), getShell(), new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT));
+						else if( e.text.equals("fm"))
+							runFM(item);
 					}
 					
 				});
@@ -204,6 +208,13 @@ public class ReportComposite extends Composite implements TabTextView{
 			txt.setText("Error loading file");
 	}
 	
+	protected void runFM(PrintItem item) {
+		RunFMResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).runBatchFM(item.getTitle(), SymitarSession.FMFile.ACCOUNT, -1);
+		
+		System.out.println("FM Name: " + result.getResultTitle());
+		System.out.println("Queue Seq: " + result.getSeq());
+	}
+
 	protected void openTableItem(PrintItem item) {
 		String data = new SymitarFile(sym,String.valueOf(item.getSeq()),FileType.REPORT).getData();
 	

@@ -19,7 +19,7 @@ public class Config implements Serializable {
 	private String lastUsername = "", lastPassword = "", lastUserID;
 	private boolean runOptionsAskForPrompts = true;
 	private int runOptionsQueue = -1;
-	private int maxQueues = 3;
+	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.
     private ArrayList<SymitarFile> recentFiles = new ArrayList<SymitarFile>();
     private ArrayList<String> mountedDirs = new ArrayList<String>();
     
