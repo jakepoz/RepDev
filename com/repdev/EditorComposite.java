@@ -649,7 +649,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		Menu contextMenu = new Menu(txt);
 
 		final MenuItem indentMore = new MenuItem(contextMenu, SWT.NONE);
-		indentMore.setText("Increase Indentation");
+		indentMore.setText("Increase Indentation\tTAB");
 		indentMore.setImage(RepDevMain.smallIndentMoreImage);
 		indentMore.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -661,7 +661,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		});
 
 		final MenuItem indentLess = new MenuItem(contextMenu, SWT.NONE);
-		indentLess.setText("Decrease Indentation");
+		indentLess.setText("Decrease Indentation\tSHIFT+TAB");
 		indentLess.setImage(RepDevMain.smallIndentLessImage);
 		indentLess.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

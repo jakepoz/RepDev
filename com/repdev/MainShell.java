@@ -2154,6 +2154,52 @@ public class MainShell {
 		helpItem.setMenu(helpMenu);
 		Menu editMenu = new Menu(shell, SWT.DROP_DOWN);
 		editItem.setMenu(editMenu);
+		
+		final MenuItem fileSave = new MenuItem(fileMenu, SWT.PUSH);
+		fileSave.setText("&Save\tCTRL+S");
+		fileSave.setImage(RepDevMain.smallActionSaveImage);
+		fileSave.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent arg0) {
+				if( mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite )
+					((EditorComposite)mainfolder.getSelection().getControl()).saveFile(true);
+			}
+		});
+		
+		final MenuItem fileSaveAs = new MenuItem(fileMenu, SWT.PUSH);
+		fileSaveAs.setText("S&ave As");
+		fileSaveAs.setImage(RepDevMain.smallActionSaveAsImage);
+		fileSaveAs.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent arg0) {
+				FileDialog dialog;
+				
+				if( mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite ){
+					SymitarFile file = ((EditorComposite)mainfolder.getSelection().getControl()).getFile();
+					
+					if( file.isLocal())
+						dialog = new FileDialog(shell,FileDialog.Mode.SAVE, file.getDir());
+					else
+						dialog = new FileDialog(shell,FileDialog.Mode.SAVE, file.getSym());
+					
+					ArrayList<SymitarFile> result = dialog.open();
+					
+					if( result.size() == 1){
+						if( result.get(0).equals(file) )
+							return;
+						
+						result.get(0).saveFile(file.getData());
+						
+						//Remove any already open tabs of the new file, so if we are overrwriting, it gets updated and this is clear to the user
+						for( CTabItem item : mainfolder.getItems())
+							if( item.getData("file").equals(result.get(0)))
+								item.dispose();
+						
+						openFile(result.get(0));
+					}				
+				}
+			}
+		});
+		
+		new MenuItem(fileMenu,SWT.SEPARATOR);
 	
 		final MenuItem filePrint = new MenuItem(fileMenu, SWT.PUSH);
 		filePrint.setText("&Print\tCTRL+P");
@@ -2174,6 +2220,9 @@ public class MainShell {
 
 			public void menuShown(MenuEvent e) {
 				filePrint.setEnabled(mainfolder.getSelection() != null);
+				fileSave.setEnabled(mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite);
+				fileSaveAs.setEnabled(mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite);
+				
 				int i;
 				
 				for( i = fileMenu.indexOf(recentSeperator) + 1; i < fileMenu.getItemCount(); ){
@@ -2209,7 +2258,6 @@ public class MainShell {
 //				Indicator used for creating recents list
 				MenuItem staticSeperator = new MenuItem(fileMenu,SWT.SEPARATOR);
 				
-				//TODO: Save and Save As options
 				MenuItem fileExit = new MenuItem(fileMenu, SWT.PUSH);
 				fileExit.setText("E&xit");
 				fileExit.setImage(RepDevMain.smallExitImage);
