@@ -209,10 +209,12 @@ public class ReportComposite extends Composite implements TabTextView{
 	}
 	
 	protected void runFM(PrintItem item) {
-		RunFMResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).runBatchFM(item.getTitle(), SymitarSession.FMFile.ACCOUNT, -1);
+		//RunFMResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).runBatchFM(item.getTitle(), SymitarSession.FMFile.ACCOUNT, -1);
 		
-		System.out.println("FM Name: " + result.getResultTitle());
-		System.out.println("Queue Seq: " + result.getSeq());
+		//System.out.println("FM Name: " + result.getResultTitle());
+		//System.out.println("Queue Seq: " + result.getSeq());
+		
+		FMShell.runFM(getDisplay(), getShell(), item.getTitle());
 	}
 
 	protected void openTableItem(PrintItem item) {
