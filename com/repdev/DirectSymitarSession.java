@@ -1341,7 +1341,6 @@ public class DirectSymitarSession extends SymitarSession {
 				return SessionError.NONE;
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

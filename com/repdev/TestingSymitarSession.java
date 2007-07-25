@@ -231,7 +231,7 @@ public class TestingSymitarSession extends SymitarSession {
 
 	@Override
 	public SessionError renameFile(SymitarFile file, String newName) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
