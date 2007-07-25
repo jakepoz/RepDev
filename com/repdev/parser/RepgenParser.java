@@ -636,7 +636,7 @@ public class RepgenParser {
 				if( typeToken == null )
 					continue;
 				
-				String type = typeToken.getStr();
+				String type = typeToken.getStr().toUpperCase();
 
 				//Strings
 				if (typeToken.inString()){
@@ -680,6 +680,19 @@ public class RepgenParser {
 					}
 				}
 				
+				//Character with ()'s
+				if( typeToken != null && typeToken.getStr().equals("character") && typeToken.getAfter() != null && typeToken.getAfter().getStr().equals("(")){
+					Token curTok = typeToken;
+					
+					while( curTok != null && !curTok.getStr().equals(")") ){
+						curTok = curTok.getAfter();
+						type += curTok.getStr().toUpperCase();						
+					}
+					
+					typeToken = curTok;
+					isConstant = false;
+				}
+				
 				for( VariableType cur : VariableType.values())
 					if( cur.toString().equalsIgnoreCase(type))
 						isConstant = false;
@@ -689,10 +702,10 @@ public class RepgenParser {
 
 					while( (typeToken = typeToken.getAfter()) != null )
 					{					
-						if( !isNumber(typeToken.getStr()) && !typeToken.getStr().equals(")") && !typeToken.getStr().equals("(") && !typeToken.getStr().equals("array"))
+						if( !isNumber(typeToken.getStr()) && !typeToken.getStr().equals(")") && !typeToken.getStr().equals("(") && !typeToken.getStr().equals("array") && !typeToken.getStr().equals(","))
 							break;
 									
-						type += (isNumber(typeToken.getStr()) || typeToken.getStr().equals(")") ? "" : " ") + typeToken.getStr();
+						type += (isNumber(typeToken.getStr()) || typeToken.getStr().equals(")") ? "" : " ") + typeToken.getStr().toUpperCase();
 					}
 				}
 				
