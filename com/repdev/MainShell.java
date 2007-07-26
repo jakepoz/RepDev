@@ -82,7 +82,7 @@ import com.repdev.parser.Error;
  *
  */
 public class MainShell {
-	private static final int MIN_COL_WIDTH = 75, MIN_COMP_SIZE = 125;
+	private static final int MIN_COL_WIDTH = 75, MIN_COMP_SIZE = 65;
 	private CTabFolder mainfolder;
 	private Display display;
 	private Shell shell;
@@ -118,7 +118,7 @@ public class MainShell {
 	}
 
 	private void createShell() {
-		int leftPercent = 20, bottomPercent = 15;
+		int leftPercent = 20, bottomPercent = 20;
 
 		shell = new Shell(display);
 		shell.setText(RepDevMain.NAMESTR);

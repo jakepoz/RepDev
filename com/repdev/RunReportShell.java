@@ -36,7 +36,7 @@ public class RunReportShell {
 	
 	private void create(){
 		shell = new Shell(parent,SWT.SHELL_TRIM | SWT.APPLICATION_MODAL );
-		shell.setText("Run Report - EXPERIMENTAL!!!");
+		shell.setText("Run Report");
 		shell.setImage(RepDevMain.smallRunImage);
 		shell.addDisposeListener(new DisposeListener(){
 
