@@ -136,7 +136,7 @@ public class TestingSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public RunFMResult runBatchFM(String searchTitle, FMFile file, int queue) {
+	public RunFMResult runBatchFM(String searchTitle, int searchDays, FMFile file, int queue) {
 		return null;
 	}
 

@@ -1,5 +1,7 @@
 package com.repdev;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -22,15 +24,17 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import com.repdev.SymitarSession.FMFile;
+import com.repdev.SymitarSession.RunFMResult;
 
 public class FMShell {
 	private Shell shell;
 	private boolean result = false;
-	Button defaultQueueButton, selectQueueButton;
-	Spinner queueSpinner;
-	Label queueLabel;
+	private Button defaultQueueButton, selectQueueButton;
+	private Spinner queueSpinner;
+	private Label queueLabel;
+	private boolean stillRunning = false;
 	
-	private void create(Shell parent, final String title) {
+	private void create(Shell parent, final int sym, final String title) {
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 5;
 		layout.marginBottom = 5;
@@ -136,7 +140,6 @@ public class FMShell {
 		
 		for( FMFile cur : SymitarSession.FMFile.values()){
 			fileCombo.add(cur.getDisplayName());
-			fileCombo.setData(cur);
 		}
 		
 		fileCombo.select(0);
@@ -147,7 +150,7 @@ public class FMShell {
 		searchDaysText.addMouseListener(mouseFocuser);
 		
 		
-		Button okButton = new Button(shell,SWT.PUSH);
+		final Button okButton = new Button(shell,SWT.PUSH);
 		okButton.setText("Run FM");
 		
 		Button cancelButton = new Button(shell,SWT.PUSH);
@@ -248,9 +251,48 @@ public class FMShell {
 		okButton.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				result=false;
+				result=true;
 				
-				shell.dispose();
+				okButton.setEnabled(false);
+				
+				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
+				
+				final RunFMResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).runBatchFM(title, Integer.parseInt(searchDaysText.getText()),FMFile.valueOf(fileCombo.getText().toUpperCase()), defaultQueueButton.getSelection() ? -1 : queueSpinner.getSelection());
+				
+				final int seq = result.getSeq();
+
+				if( seq != -1){
+					stillRunning = true;
+					
+					shell.getDisplay().timerExec(500, new Runnable(){
+						public void run() {
+							if( shell == null || shell.isDisposed() )
+								return;
+							
+							if( RepDevMain.SYMITAR_SESSIONS.get(sym).isSeqRunning(seq) ){
+								shell.getDisplay().timerExec(1000, this);
+							}
+							else
+							{
+								stillRunning = false;
+								
+								System.out.println("Done, loading FM Sequence result");
+								
+								ArrayList<PrintItem> items = RepDevMain.SYMITAR_SESSIONS.get(sym).getPrintItems(result.getResultTitle(), 40);
+								
+								if( items.size() == 1){
+									RepDevMain.mainShell.openFile(new Sequence(sym,items.get(0).getSeq(),items.get(0).getDate()), sym);
+								}
+								
+								
+								shell.close();
+							}
+						}
+					});
+				}
+				
+				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+				
 			}			
 		});
 		
@@ -278,9 +320,9 @@ public class FMShell {
 	 * @param file
 	 * @return
 	 */
-	public static boolean runFM(Display display, Shell parent, String title) {
+	public static boolean runFM(Display display, Shell parent, int sym, String title) {
 		FMShell dialog = new FMShell(); 
-		dialog.create(parent, title);
+		dialog.create(parent, sym, title);
 
 		while (!dialog.shell.isDisposed()) {
 			if (!display.readAndDispatch())

@@ -166,7 +166,7 @@ public abstract class SymitarSession {
 		}
 	}
 	
-	public abstract RunFMResult runBatchFM(String searchTitle, FMFile file, int queue);
+	public abstract RunFMResult runBatchFM(String searchTitle, int searchDays, FMFile file, int queue);
 
 	public abstract ArrayList<PrintItem> getPrintItems( String query, int limit );
 	public abstract ArrayList<PrintItem> getPrintItems( Sequence seq );

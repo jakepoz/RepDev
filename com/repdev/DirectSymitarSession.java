@@ -324,16 +324,22 @@ public class DirectSymitarSession extends SymitarSession {
 	@Override
 	public SessionError disconnect() {
 		try {
-			keepAlive.interrupt();
+			if( keepAlive != null)
+				keepAlive.interrupt();
 			
-			in.close();
-			out.close();
-			socket.close();
+			if( in != null)
+				in.close();
+			
+			if( out != null)
+				out.close();
+			
+			if( socket != null)
+				socket.close();
 		} catch (Exception e) {
 			return SessionError.IO_ERROR;
 		}
 
-		return null;
+		return SessionError.NONE;
 	}
 
 	private synchronized void wakeUp(){
@@ -624,7 +630,7 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	@Override
-	public synchronized RunFMResult runBatchFM(String searchTitle, FMFile file, int queue) {
+	public synchronized RunFMResult runBatchFM(String searchTitle, int searchDays, FMFile file, int queue) {
 		RunFMResult result = new RunFMResult();
 		int[] queueCounts = new int[9999];
 		boolean[] queueAvailable = new boolean[9999];
@@ -663,7 +669,7 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write("1\r");
+			write( searchDays + "\r");
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			

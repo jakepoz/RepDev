@@ -214,7 +214,7 @@ public class ReportComposite extends Composite implements TabTextView{
 		//System.out.println("FM Name: " + result.getResultTitle());
 		//System.out.println("Queue Seq: " + result.getSeq());
 		
-		FMShell.runFM(getDisplay(), getShell(), item.getTitle());
+		FMShell.runFM(getDisplay(), getShell(), sym, item.getTitle());
 	}
 
 	protected void openTableItem(PrintItem item) {
