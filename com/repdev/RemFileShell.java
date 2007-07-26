@@ -19,14 +19,15 @@ import org.eclipse.swt.widgets.Shell;
 public class RemFileShell {
 	private static RemFileShell me = new RemFileShell();
 	private Shell shell;
-	private Result result = Result.CANCEL;
-
+	private int result = CANCEL;
+	
+	//Pipe with OK to indicate the user wants some action taken
+	//Pipe with DELETE to remove files, otherwise they are kept
+	//Pipe with REPEAT to indicate the chosen action should be repeated for all, otherwise it will be prompted again during the same operation
+	public static final int CANCEL = 0, OK = 1 << 0, DELETE = 1 << 1, REPEAT = 1 << 2;
+		
 	private RemFileShell() {
 	}
-
-	public enum Result {
-		OK_DELETE, OK_KEEP, CANCEL
-	};
 
 	private void create(Shell parent, Project proj, SymitarFile file) {
 		FormLayout layout = new FormLayout();
@@ -52,16 +53,30 @@ public class RemFileShell {
 		final Button radioKeep = new Button(shell, SWT.RADIO);
 		radioKeep.setText("Do not delete file");
 		radioKeep.setSelection(true);
-
-		Button add = new Button(shell, SWT.PUSH);
-		add.setText("Remove &File from Project");
-		add.addSelectionListener(new SelectionAdapter() {
+		
+		Button removeAll = new Button(shell,SWT.PUSH);
+		removeAll.setText("Remove File, repeat for &all");
+		removeAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (radioKeep.getSelection())
-					result = Result.OK_KEEP;
-				else if (radioDelete.getSelection())
-					result = Result.OK_DELETE;
+				result |= OK;
+				result |= REPEAT;
+					
+				if (radioDelete.getSelection())
+					result |= DELETE;
 
+				shell.dispose();
+			}
+		});
+
+		Button remove = new Button(shell, SWT.PUSH);
+		remove.setText("Remove &File from Project");
+		remove.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				result |= OK;
+				
+				if (radioDelete.getSelection())
+					result |= DELETE;
+				
 				shell.dispose();
 			}
 		});
@@ -70,7 +85,7 @@ public class RemFileShell {
 		cancel.setText("&Cancel");
 		cancel.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				result = Result.CANCEL;
+				result = CANCEL;
 				shell.dispose();
 			}
 		});
@@ -97,12 +112,18 @@ public class RemFileShell {
 		frmRadioD.right = new FormAttachment(100);
 		frmRadioD.top = new FormAttachment(questionImage, 15);
 		radioDelete.setLayoutData(frmRadioD);
+		
+		FormData frmOKAll = new FormData();
+		frmOKAll.top = new FormAttachment(radioKeep);
+		frmOKAll.right = new FormAttachment(remove);
+		frmOKAll.bottom = new FormAttachment(100);
+		removeAll.setLayoutData(frmOKAll);
 
 		FormData frmOK = new FormData();
 		frmOK.top = new FormAttachment(radioKeep);
 		frmOK.right = new FormAttachment(cancel);
 		frmOK.bottom = new FormAttachment(100);
-		add.setLayoutData(frmOK);
+		remove.setLayoutData(frmOK);
 
 		FormData frmCancel = new FormData();
 		frmCancel.top = new FormAttachment(radioKeep);
@@ -110,13 +131,14 @@ public class RemFileShell {
 		frmCancel.bottom = new FormAttachment(100);
 		cancel.setLayoutData(frmCancel);
 
-		result = null;
+		result = CANCEL;
+		shell.setDefaultButton(remove);
 		shell.pack();
 		shell.open();
 	}
 
 	// returns -1 on cancel
-	public static Result confirm(Display display, Shell parent, Project proj, SymitarFile file) {
+	public static int confirm(Display display, Shell parent, Project proj, SymitarFile file) {
 		me.create(parent, proj, file);
 
 		while (!me.shell.isDisposed()) {

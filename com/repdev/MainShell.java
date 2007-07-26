@@ -26,6 +26,9 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
@@ -648,19 +651,21 @@ public class MainShell {
 		}
 	}
 
-	private void removeFile(TreeItem cur) {
+	private int removeFile(TreeItem cur, int lastResult) {
 		if (!(cur.getData() instanceof SymitarFile))
-			return;
+			return 0;
 
 		SymitarFile file = (SymitarFile) cur.getData();
 		Project proj = (Project) cur.getParentItem().getData();
+		int result = lastResult;
+		
+		if( (lastResult & RemFileShell.REPEAT) == 0 )
+			result = RemFileShell.confirm(display, shell, proj, file);
 
-		RemFileShell.Result result = RemFileShell.confirm(display, shell, proj, file);
-
-		if (result == RemFileShell.Result.OK_KEEP) {
+		if ( (result & RemFileShell.OK) > 0 && (result & RemFileShell.DELETE) == 0 ) {
 			proj.removeFile(file, false);
 			cur.dispose();
-		} else if (result == RemFileShell.Result.OK_DELETE) {
+		} else if ((result & RemFileShell.OK) > 0 && (result & RemFileShell.DELETE) > 0) {
 			proj.removeFile(file, true);
 			cur.dispose();
 		}
@@ -671,6 +676,7 @@ public class MainShell {
 			ProjectManager.saveProjects(proj.getDir());
 
 		tree.notifyListeners(SWT.Selection, null);
+		return result;
 	}
 
 	private void createExplorer(Composite self) {
@@ -717,6 +723,7 @@ public class MainShell {
 		toolbar.pack();
 
 		tree = new Tree(self, SWT.NONE | SWT.BORDER | SWT.MULTI );
+		
 		
 		//Configure drag + drop
 		Transfer[] types = new Transfer[] {TextTransfer.getInstance()};
@@ -1195,7 +1202,7 @@ public class MainShell {
 		new MenuItem(treeMenu, SWT.SEPARATOR);
 
 		final MenuItem deleteFile = new MenuItem(treeMenu, SWT.NONE);
-		deleteFile.setText("Remove");
+		deleteFile.setText("Remove");		
 		deleteFile.setImage(RepDevMain.smallDeleteImage);
 		deleteFile.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -1325,6 +1332,18 @@ public class MainShell {
 		});
 
 		tree.setMenu(treeMenu);
+		
+		tree.addKeyListener(new KeyAdapter(){
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if( e.keyCode == SWT.DEL ){
+					deleteFile.notifyListeners(SWT.Selection, null);
+				}
+				else if( e.keyCode == SWT.F2){
+					renameFile.notifyListeners(SWT.Selection, null);
+				}
+			}
+		});
 
 		tree.addListener(SWT.Expand, new Listener() {
 			public void handleEvent(Event e) {
@@ -1573,6 +1592,7 @@ public class MainShell {
 	}
 
 	protected void removeItem(TreeItem[] selection) {
+		int lastResult = RemFileShell.CANCEL;
 		
 		if (selection.length == 0)
 			return;
@@ -1587,7 +1607,7 @@ public class MainShell {
 			else if (data instanceof Project)
 				removeProject(cur);
 			else
-				removeFile(cur);
+				lastResult = removeFile(cur,lastResult);
 		}
 	}
 

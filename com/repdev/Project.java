@@ -1,5 +1,6 @@
 package com.repdev;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -68,7 +69,10 @@ public class Project {
 		files.remove(file);
 
 		if (delete)
-			RepDevMain.SYMITAR_SESSIONS.get(sym).removeFile(file);
+			if( isLocal() )
+				new File( file.getPath() ).delete();
+			else
+				RepDevMain.SYMITAR_SESSIONS.get(sym).removeFile(file);
 	}
 
 	public String toString() {

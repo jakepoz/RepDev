@@ -267,6 +267,8 @@ public class RepgenParser {
 	 * @param vars
 	 * @param txt
 	 * @return
+	 * 
+	 * TODO: Sometimes we notice a mess up in the drawing when copying/pasting or deleting blocks of text.
 	 */
 	private synchronized boolean parse(String filename, String str, int start, int end, int oldend, ArrayList<Token> tokens, ArrayList<Token> lasttokens, ArrayList<Variable> vars, StyledText txt) {
 		boolean allDefs = true, redrawAll = false;
@@ -471,7 +473,6 @@ public class RepgenParser {
 		for(int i=Math.max(0,ftoken-1);i<fixspot;i++)
 			tokens.get(i).setNearTokens(tokens,i);
 		
-		//FIXME: This doesn't always work...
 		if(tokens.size()>1) {
 			//Go through and merge multi tokens into single ones, ex. db fields and records
 			
