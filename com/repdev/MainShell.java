@@ -726,6 +726,7 @@ public class MainShell {
 		
 		
 		//Configure drag + drop
+		//TODO: Dropping a file from one project to another on same sym/dir doesn't work right.
 		Transfer[] types = new Transfer[] {TextTransfer.getInstance()};
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
 		

@@ -543,8 +543,14 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			write( "\r");
 			
-			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+			//Something wierd was added recently, it waits for a specific queue prompt now.
+			while( (cur = readNextCommand()) != null){
 				log(cur);
+				
+				if( cur.getCommand().equals("Input") && cur.getParameters().get("HelpCode").equals("10008") )
+					break;
+			}
+
 			
 			write( queue + "\r");
 			
