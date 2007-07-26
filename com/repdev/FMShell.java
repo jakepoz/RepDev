@@ -281,11 +281,10 @@ public class FMShell {
 								
 								//Work around, ugh: For some reason, requesting the whole result.getTitle() that we created before doesn't ever return any results, even though it works manually in Epysis
 								//So, we just parse out the last few unique digits of it to look for
-								ArrayList<PrintItem> items = RepDevMain.SYMITAR_SESSIONS.get(sym).getPrintItems(result.getResultTitle().substring(13), 10);
-								
-								if( items.size() == 2){
-									RepDevMain.mainShell.openFile(new Sequence(sym,items.get(0).getBatchSeq(),items.get(0).getDate()), sym);
+								for( Sequence seq : RepDevMain.SYMITAR_SESSIONS.get(sym).getFMSeqs(result.getResultTitle(), 10,1) ){	
+									RepDevMain.mainShell.openFile(seq, sym);
 								}
+								
 								
 								shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 								shell.close();

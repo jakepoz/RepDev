@@ -225,6 +225,42 @@ public abstract class SymitarSession {
 	}
 	
 	/**
+	 * Very similair to getReportSeqs, but instead, gets the batch sequence numbers for a given FM job,
+	 * since we can index things based on a specific report title, we use that as the key for finding what we want
+	 * 
+	 * @param reportName
+	 * @param search
+	 * @param limit
+	 * @return
+	 */
+	public ArrayList<Sequence> getFMSeqs( String reportName, int search, int limit){
+		ArrayList<PrintItem> items = getPrintItems("MISCFMPOST", search);
+		ArrayList<Sequence> newItems = new ArrayList<Sequence>();
+		
+		//More than likely, if we are looking for anything, it will be the newest one first
+		Collections.reverse(items);
+		
+		for( PrintItem cur : items){
+			String file = new SymitarFile(sym,"" + cur.getSeq(),FileType.REPORT).getData();
+			
+			//Advance to the right place
+			file =  file.substring(file.indexOf("Name of Posting: ") + 17);
+			
+			String name = file.substring(0,file.indexOf("\n")).trim();
+			
+			if( name.equals(reportName) ){
+				newItems.add(new Sequence(sym,cur.getBatchSeq(), cur.getDate()));
+				
+				//If we have matched it, then we are done
+				if( newItems.size() >= limit )
+					break;
+			}
+		}
+		
+		return newItems;
+	}
+	
+	/**
 	 * Supports default "+" as a wildcard
 	 * 
 	 * @param search
