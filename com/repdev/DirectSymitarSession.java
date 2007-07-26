@@ -673,9 +673,11 @@ public class DirectSymitarSession extends SymitarSession {
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write("1\r");
-			while( !(cur = readNextCommand()).getCommand().equals("Input") )
-				log(cur);
+			if( file == FMFile.ACCOUNT ){
+				write("1\r");
+				while( !(cur = readNextCommand()).getCommand().equals("Input") )
+					log(cur);
+			}
 			
 			write(result.getResultTitle() + "\r");
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )

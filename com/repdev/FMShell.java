@@ -240,6 +240,7 @@ public class FMShell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				result = false;
+				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 				shell.dispose();
 			}			
 		});
@@ -278,20 +279,20 @@ public class FMShell {
 								
 								System.out.println("Done, loading FM Sequence result");
 								
-								ArrayList<PrintItem> items = RepDevMain.SYMITAR_SESSIONS.get(sym).getPrintItems(result.getResultTitle(), 40);
+								//Work around, ugh: For some reason, requesting the whole result.getTitle() that we created before doesn't ever return any results, even though it works manually in Epysis
+								//So, we just parse out the last few unique digits of it to look for
+								ArrayList<PrintItem> items = RepDevMain.SYMITAR_SESSIONS.get(sym).getPrintItems(result.getResultTitle().substring(13), 10);
 								
-								if( items.size() == 1){
-									RepDevMain.mainShell.openFile(new Sequence(sym,items.get(0).getSeq(),items.get(0).getDate()), sym);
+								if( items.size() == 2){
+									RepDevMain.mainShell.openFile(new Sequence(sym,items.get(0).getBatchSeq(),items.get(0).getDate()), sym);
 								}
 								
-								
+								shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 								shell.close();
 							}
 						}
 					});
 				}
-				
-				shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 				
 			}			
 		});
