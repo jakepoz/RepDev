@@ -82,7 +82,7 @@ public class RepgenParser {
 			if( data == null )
 				return;
 			
-			parse(fileName, data, 0, data.length(), 0, tokens, new ArrayList<Token>(), new ArrayList<Variable>(),null);
+			parse(fileName, data, 0, data.length(), 0, null, tokens, new ArrayList<Token>(), new ArrayList<Variable>(),null);
 			
 			for( Token tok : tokens ){
 				tok.setInDefs(true);
@@ -262,6 +262,7 @@ public class RepgenParser {
 	 * @param str
 	 * @param start
 	 * @param end
+	 * @param replacedText
 	 * @param oldend
 	 * @param tokens
 	 * @param vars
@@ -270,7 +271,8 @@ public class RepgenParser {
 	 * 
 	 * TODO: Sometimes we notice a mess up in the drawing when copying/pasting or deleting blocks of text.
 	 */
-	private synchronized boolean parse(String filename, String str, int start, int end, int oldend, ArrayList<Token> tokens, ArrayList<Token> lasttokens, ArrayList<Variable> vars, StyledText txt) {
+	
+	private synchronized boolean parse(String filename, String str, int start, int end, int oldend, String replacedText, ArrayList<Token> tokens, ArrayList<Token> lasttokens, ArrayList<Variable> vars, StyledText txt) {
 		boolean allDefs = true, redrawAll = false;
 		lasttokens.clear();
 		
@@ -544,7 +546,10 @@ public class RepgenParser {
 				if( redrawAll )
 					txt.redrawRange(0, txt.getCharCount(), false);
 				else
-					txt.redrawRange(charStart,charEnd-charStart,false);
+					if( replacedText != null &&  replacedText.contains("\n") )
+						txt.redrawRange(charStart, txt.getCharCount()-charStart, false);
+					else
+						txt.redrawRange(charStart,charEnd-charStart,false); 
 		}
 		
 		return allDefs;
@@ -753,7 +758,7 @@ public class RepgenParser {
 			long time = System.currentTimeMillis();
 	
 			try {
-				parse(file.getName(), txt.getText(), st, end, oldend, ltokens, lasttokens, lvars, txt);
+				parse(file.getName(), txt.getText(), st, end, oldend, replacedText, ltokens, lasttokens, lvars, txt);
 				
 				for( Token cur : lasttokens)
 					if( cur.inDefs() )
@@ -796,7 +801,7 @@ public class RepgenParser {
 	public void reparseAll() {
 		try {
 			ltokens = new ArrayList<Token>();
-			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, ltokens, lasttokens, lvars, txt);
+			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, lvars, txt);
 			rebuildVars(file.getName(), txt.getText(), ltokens);
 
 			System.out.println("Reparsed");

@@ -282,8 +282,6 @@ public class LPTPrintShell {
 			public void widgetSelected(SelectionEvent e) {
 				result = true;
 				
-				//TODO: Error checking and rest of fields + result dialog
-			
 				SessionError result = SessionError.INPUT_ERROR;
 				
 				try {

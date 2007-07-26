@@ -161,7 +161,6 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		
 	}
 
-
 	public void lineGetStyle(LineStyleEvent event) {
 		ArrayList<Token> ltokens = parser.getLtokens();
 		
