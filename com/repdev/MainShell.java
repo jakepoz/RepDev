@@ -2589,13 +2589,15 @@ public class MainShell {
 		// EditorBar button actions
 		savetb.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				((EditorComposite)mainfolder.getSelection().getControl()).saveFile(true);
+				if( mainfolder.getSelection().getControl() instanceof EditorComposite )
+					((EditorComposite)mainfolder.getSelection().getControl()).saveFile(true);
 			}
 		});
 
 		install.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				((EditorComposite)mainfolder.getSelection().getControl()).installRepgen(true);				
+				if( mainfolder.getSelection().getControl() instanceof EditorComposite )
+					((EditorComposite)mainfolder.getSelection().getControl()).installRepgen(true);					
 			}
 		});
 		
@@ -2607,7 +2609,8 @@ public class MainShell {
 		
 		run.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				RepDevMain.mainShell.runReport(((EditorComposite)mainfolder.getSelection().getControl()).getFile());			
+				if( mainfolder.getSelection().getControl() instanceof EditorComposite )
+					RepDevMain.mainShell.runReport(((EditorComposite)mainfolder.getSelection().getControl()).getFile());			
 			}
 		});
 	}
