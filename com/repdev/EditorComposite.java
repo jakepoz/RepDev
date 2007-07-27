@@ -567,6 +567,11 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 					case 'u':
 						surroundEachLineWith("PRINT \"", "\"", true);
 						break;
+					case 'r':
+					case 'R':
+						RepDevMain.mainShell.runReport(file);
+						break;
+						
 					}
 				} else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
 					switch(e.keyCode) {
