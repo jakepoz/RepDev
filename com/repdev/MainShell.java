@@ -298,6 +298,8 @@ public class MainShell {
 
 				}
 			});
+			
+			run.setEnabled(false);
 		
 			//If anything goes wrong initializing the error, it will dispose of the current item
 			//So, then we shouldn't do anything
