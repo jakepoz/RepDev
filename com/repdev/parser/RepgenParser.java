@@ -38,6 +38,8 @@ public class RepgenParser {
 	private ArrayList<Error> errorList = new ArrayList<Error>();
 	private ArrayList<Task> taskList = new ArrayList<Task>();
 	
+	private TreeParser treeParser = new TreeParser(ltokens);
+	
 	BackgroundSymitarErrorChecker errorCheckerWorker = null;
 	BackgroundIncludeParser includeParserWorker = null;
 	
@@ -771,6 +773,9 @@ public class RepgenParser {
 					parseIncludes();
 					refreshIncludes = false;
 				}
+				
+				//FIXME: Debug only!
+				treeParser.treeParse();
 			} catch (Exception e) {
 				System.err.println("Syntax Highlighter error!");
 				e.printStackTrace();
