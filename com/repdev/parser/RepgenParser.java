@@ -816,6 +816,9 @@ public class RepgenParser {
 		}
 	}
 
+	public ArrayList<TreeItem> getTree(){
+		return treeParser.getItems();
+	}
 
 	public ArrayList<Token> getLtokens() {
 		return ltokens;

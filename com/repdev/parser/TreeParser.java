@@ -25,13 +25,17 @@ public class TreeParser {
 	private ArrayList<Token> flatTokens = new ArrayList<Token>();
 	
 	//These strings are the ones that create new head items
-	private static final String[] heads = { "target", "setup", "define", "print", "do", "total", "headers", "(", "\"", "'", "[" };
+	private static final String[] heads = { "target", "setup", "define", "print", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
 	private static final String[] ends = {"end", ")", "\"", "'", "]"};
 	
 	public TreeParser(ArrayList<Token> tokenList){
 		flatTokens = tokenList;
 	}
-	
+
+	public ArrayList<TreeItem> getItems() {
+		return items;
+	}
+
 	private boolean isHead(Token cur){
 		for( String str : heads)
 			if( str.toLowerCase().equals(cur.getStr().toLowerCase()))
@@ -59,14 +63,21 @@ public class TreeParser {
 	
 	private String toStringHandler(TreeItem item, String indent){		
 		String cur = "";
-		cur += indent + "Head: "+item.getHead()+"\n";
+		
+		if( item.getContents().size() > 0)
+			cur += indent + "Head: "+item.getHead()+"\n";
+		else
+			cur += indent + "Token: "+item.getHead()+"";
 		
 		for( TreeItem newItem : item.getContents())
-			cur += indent + toStringHandler(newItem,indent+"  ") + "\n";
+			cur += toStringHandler(newItem,indent+"  ") + "\n";
 		
-		cur += indent + "End: "+item.getEnd() + "\n";
+		if( item.getEnd() != null)
+			cur += indent + "End: "+item.getEnd() + "\n";
+		
 		
 		return cur;
+		
 	}
 	
 	/**
@@ -78,24 +89,28 @@ public class TreeParser {
 		items.clear();
 		
 		
+		
 		for( Token cur : flatTokens){
-			if( isHead(cur) && cur.getCDepth() == 0 && !cur.inDate() && !cur.inString() ){
+			if( isHead(cur) && 
+				(cur.getCDepth() == 0 || cur.getStr().equals("[")) && 
+				( (!cur.inDate() || cur.getStr().equals("'")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\'") ) && 
+				(  (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\""))
+			){
 				TreeItem head = new TreeItem( cur );
 				openItems.push(head);
 				
 				if( openItems.size() == 1)
 					items.add(head);
 				else
-					openItems.peek().getContents().add(head);
+					openItems.get(openItems.size()-2).getContents().add(head);
 			}
-			else if( isEnd( cur ) && cur.getCDepth() == 0 && !cur.inDate() && !cur.inString()){
+			else if( isEnd( cur ) && (cur.getCDepth() == 0 || cur.getStr().equals("]")) && (!cur.inDate() || cur.getStr().equals("'")) && (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() > 0){
 				TreeItem toEnd = openItems.pop();
 				toEnd.setEnd(cur);
 			}
 			else{
 				if( openItems.size() == 0){
 					TreeItem head = new TreeItem(cur);
-					openItems.push(head);
 					items.add(head);
 				}
 				else{
@@ -105,6 +120,6 @@ public class TreeParser {
 		}
 		
 		
-		System.out.println(this);
+		//System.out.println(this);
 	}
 }
