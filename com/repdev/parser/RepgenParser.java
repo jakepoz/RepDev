@@ -792,6 +792,9 @@ public class RepgenParser {
 			long time = System.currentTimeMillis();
 	
 			try {
+				if( treeWorker != null )
+					treeWorker.interrupt();
+				
 				synchronized(ltokens){
 					parse(file.getName(), txt.getText(), st, end, oldend, replacedText, ltokens, lasttokens, lvars, txt);
 				}
@@ -825,7 +828,9 @@ public class RepgenParser {
 			treeWorker.interrupt();
 		
 		treeWorker = new BackgroundTreeWorker();
+		treeWorker.setName(""+System.currentTimeMillis());
 		treeWorker.start();
+		
 	}
 	
 	public void parseIncludes(){
@@ -846,14 +851,17 @@ public class RepgenParser {
 		}
 	}
 	
-
-	//We shouldn't need to syncrhonize this, since it's only called from within parse anyways, which is already synced
 	public void reparseAll() {
 		try {
-			ltokens = new ArrayList<Token>();
-			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, lvars, txt);
-			rebuildVars(file.getName(), txt.getText(), ltokens);
-
+			synchronized(ltokens){
+				ltokens = new ArrayList<Token>();
+				parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, lvars, txt);
+				rebuildVars(file.getName(), txt.getText(), ltokens);
+			}
+			
+			if( treeParser != null){
+				treeParse();
+			}
 			System.out.println("Reparsed");
 		} catch (Exception e) {
 			System.err.println("Syntax Highlighter error!");

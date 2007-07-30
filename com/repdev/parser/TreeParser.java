@@ -24,6 +24,9 @@ public class TreeParser {
 	private ArrayList<TreeItem> items = new ArrayList<TreeItem>();
 	private ArrayList<Token> flatTokens = new ArrayList<Token>();
 	
+	//Since we can be parsing a new set of tokens while requesting old ones
+	private ArrayList<TreeItem> lastValidItems = new ArrayList<TreeItem>();
+	
 	//These strings are the ones that create new head items
 	private static final String[] heads = { "target", "setup", "select", "define", "print title", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
 	private static final String[] ends = {"end", ")", "\"", "'", "]"};
@@ -62,11 +65,14 @@ public class TreeParser {
 	}
 	
 	public TreeItem getTreeItem(int loc){
-		return getTreeItemHandler(items, loc);
+		return getTreeItemHandler(lastValidItems, loc);
 	}
 	
 	private TreeItem getTreeItemHandler(ArrayList<TreeItem> search, int loc){
 		for( TreeItem cur : search){
+			if( Thread.interrupted() )
+				return null;
+			
 			if( cur.getHead() != null && loc >= cur.getHead().getStart() && loc <= cur.getHead().getEnd())
 				return cur;
 			
@@ -105,42 +111,58 @@ public class TreeParser {
 	 * Actually regenerates the tree
 	 *
 	 */
-	public void treeParse(){
-		synchronized( flatTokens ){
-			Stack<TreeItem> openItems = new Stack<TreeItem>();
-			items.clear();
-					
-			for( Token cur : flatTokens){
-				if( isHead(cur) && 
-					(cur.getCDepth() == 0 || cur.getStr().equals("[")) && 
-					( (!cur.inDate() || cur.getStr().equals("'")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\'") ) && 
-					(  (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\""))
-				){
-					TreeItem head = new TreeItem( cur );
-					openItems.push(head);
-					
-					if( openItems.size() == 1)
-						items.add(head);
-					else
-						openItems.get(openItems.size()-2).getContents().add(head);
-				}
-				else if( isEnd( cur ) && (cur.getCDepth() == 0 || cur.getStr().equals("]")) && (!cur.inDate() || cur.getStr().equals("'")) && (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() > 0){
-					TreeItem toEnd = openItems.pop();
-					toEnd.setEnd(cur);
-				}
-				else{
-					if( openItems.size() == 0){
-						TreeItem head = new TreeItem(cur);
-						items.add(head);
-					}
-					else{
-						openItems.peek().getContents().add(new TreeItem(cur));
-					}
+	public void treeParse() {
+		//Ack, this method is so slow, we can't even sync on flat tokens, we should make a copy first
+		ArrayList<Token> tempTokens = new ArrayList<Token>();
+		Stack<TreeItem> openItems = new Stack<TreeItem>();
+		
+		lastValidItems = items;
+		items = new ArrayList<TreeItem>();
+		
+		synchronized (flatTokens) {
+			for (Token tok : flatTokens) {
+				tempTokens.add(new Token(tok));
+			}
+		}
+
+		int i = 0;
+
+		for (Token tok : tempTokens) {
+			tok.setNearTokens(tempTokens, i);
+			i++;
+		}
+
+		long start = System.currentTimeMillis();
+		//System.out.println("Starting: " + start);
+		for (Token cur : tempTokens) {
+			if (Thread.interrupted())
+				return;
+
+			if (isHead(cur) && (cur.getCDepth() == 0 || cur.getStr().equals("[")) && ((!cur.inDate() || cur.getStr().equals("'")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\'"))
+					&& ((!cur.inString() || cur.getStr().equals("\"")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\""))) {
+				TreeItem head = new TreeItem(cur);
+				openItems.push(head);
+
+				if (openItems.size() == 1)
+					items.add(head);
+				else
+					openItems.get(openItems.size() - 2).getContents().add(head);
+			} else if (isEnd(cur) && (cur.getCDepth() == 0 || cur.getStr().equals("]")) && (!cur.inDate() || cur.getStr().equals("'")) && (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() > 0) {
+				TreeItem toEnd = openItems.pop();
+				toEnd.setEnd(cur);
+			} else {
+				if (openItems.size() == 0) {
+					TreeItem head = new TreeItem(cur);
+					items.add(head);
+				} else {
+					openItems.peek().getContents().add(new TreeItem(cur));
 				}
 			}
-			
-			
-			//System.out.println(this);
 		}
+
+		
+		lastValidItems = items;
+		//System.out.println("Ending: " + start+ ": "+(System.currentTimeMillis() - start));
+
 	}
 }

@@ -746,16 +746,17 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		//Set location in status bar
 		RepDevMain.mainShell.setLineColumn();
 		
-		txt.getDisplay().asyncExec(new Runnable(){
+		
+	/*	txt.getDisplay().asyncExec(new Runnable(){
 			public void run() {
-				try{
+				try{*/
 					highlighter.blockHighlight();
-				}
+			/*	}
 				catch(Exception e){
 					e.printStackTrace();
 				}
 			}
-		});
+		});*/
 	}
 	
 	public void saveFile( boolean errorCheck ){

@@ -200,9 +200,9 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	 *
 	 */
 	public void blockHighlight(){
+		boolean needRedraw = false;
+		
 		synchronized( parser.getLtokens() ){
-			boolean needRedraw = false;
-			
 			for( Token tok : parser.getLtokens() )
 			{
 				if( tok.getSpecialBackground() != null)
@@ -213,20 +213,24 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			
 			//Highlight block
 			if( parser != null){
+				
 				TreeItem treeItem = parser.getTreeParser().getTreeItem(txt.getCaretOffset());
-						
+				
 				if( treeItem != null && treeItem.getHead() != null && treeItem.getEnd() != null){
+					//Since the parser tokens are a hard copy so we can speed things up, we need to find the right parser tokens to modify
 					treeItem.getHead().setSpecialBackground(BLOCK_HIGHLIGHT_COLOR);
 					treeItem.getEnd().setSpecialBackground(BLOCK_HIGHLIGHT_COLOR);
 					needRedraw = true;
 				}
 							
 			}
-			
-			if( needRedraw )
-				txt.redrawRange(0,txt.getCharCount(),true);		
 		}
+		
+		
+		if( needRedraw )
+			txt.redrawRange(0,txt.getCharCount(),true);		
 	}
+	
 	
 	
 	/*
