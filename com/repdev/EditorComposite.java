@@ -53,7 +53,6 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private SymitarFile file;
 	private int sym;
 	private static Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
-	private static Color blockHighlightColor = new Color(Display.getCurrent(), 200,200,200);
 	/*private ToolItem save, install, print, run;*/
 	private StyledText txt;
 	private CTabItem tabItem;
@@ -384,7 +383,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 
 		if (file.getType() == FileType.REPGEN){
 			parser = new RepgenParser(txt, file);
-			highlighter = new SyntaxHighlighter(parser);
+			highlighter = new SyntaxHighlighter(parser);	
 		}
 		else{
 			if( DEFAULT_FONT != null)
@@ -740,36 +739,23 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	}
 	
 	/**
-	 * Location update and highlight blocks
+	 * Location update, used to handle some block highlighting stuff but I moved it
 	 *
 	 */
 	private void handleCaretChange(){
 		//Set location in status bar
 		RepDevMain.mainShell.setLineColumn();
-		boolean needRedraw = false;
 		
-		for( Token tok : parser.getLtokens() )
-		{
-			if( tok.getSpecialBackground() != null)
-				needRedraw = true;
-			
-			tok.setSpecialBackground(null);
-		}
-		
-		//Highlight block
-		if( parser != null){
-			TreeItem treeItem = parser.getTreeParser().getTreeItem(txt.getCaretOffset());
-					
-			if( treeItem != null && treeItem.getHead() != null && treeItem.getEnd() != null){
-				treeItem.getHead().setSpecialBackground(blockHighlightColor);
-				treeItem.getEnd().setSpecialBackground(blockHighlightColor);
-				needRedraw = true;
+		txt.getDisplay().asyncExec(new Runnable(){
+			public void run() {
+				try{
+					highlighter.blockHighlight();
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
 			}
-						
-		}
-		
-		if( needRedraw )
-			txt.redrawRange(0,txt.getCharCount(),true);		
+		});
 	}
 	
 	public void saveFile( boolean errorCheck ){

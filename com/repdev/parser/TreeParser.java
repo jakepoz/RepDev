@@ -106,41 +106,41 @@ public class TreeParser {
 	 *
 	 */
 	public void treeParse(){
-		Stack<TreeItem> openItems = new Stack<TreeItem>();
-		items.clear();
-		
-		
-		
-		for( Token cur : flatTokens){
-			if( isHead(cur) && 
-				(cur.getCDepth() == 0 || cur.getStr().equals("[")) && 
-				( (!cur.inDate() || cur.getStr().equals("'")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\'") ) && 
-				(  (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\""))
-			){
-				TreeItem head = new TreeItem( cur );
-				openItems.push(head);
-				
-				if( openItems.size() == 1)
-					items.add(head);
-				else
-					openItems.get(openItems.size()-2).getContents().add(head);
-			}
-			else if( isEnd( cur ) && (cur.getCDepth() == 0 || cur.getStr().equals("]")) && (!cur.inDate() || cur.getStr().equals("'")) && (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() > 0){
-				TreeItem toEnd = openItems.pop();
-				toEnd.setEnd(cur);
-			}
-			else{
-				if( openItems.size() == 0){
-					TreeItem head = new TreeItem(cur);
-					items.add(head);
+		synchronized( flatTokens ){
+			Stack<TreeItem> openItems = new Stack<TreeItem>();
+			items.clear();
+					
+			for( Token cur : flatTokens){
+				if( isHead(cur) && 
+					(cur.getCDepth() == 0 || cur.getStr().equals("[")) && 
+					( (!cur.inDate() || cur.getStr().equals("'")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\'") ) && 
+					(  (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() == 0 || !openItems.peek().getHead().getStr().equals("\""))
+				){
+					TreeItem head = new TreeItem( cur );
+					openItems.push(head);
+					
+					if( openItems.size() == 1)
+						items.add(head);
+					else
+						openItems.get(openItems.size()-2).getContents().add(head);
+				}
+				else if( isEnd( cur ) && (cur.getCDepth() == 0 || cur.getStr().equals("]")) && (!cur.inDate() || cur.getStr().equals("'")) && (!cur.inString() || cur.getStr().equals("\"")) && openItems.size() > 0){
+					TreeItem toEnd = openItems.pop();
+					toEnd.setEnd(cur);
 				}
 				else{
-					openItems.peek().getContents().add(new TreeItem(cur));
+					if( openItems.size() == 0){
+						TreeItem head = new TreeItem(cur);
+						items.add(head);
+					}
+					else{
+						openItems.peek().getContents().add(new TreeItem(cur));
+					}
 				}
 			}
+			
+			
+			//System.out.println(this);
 		}
-		
-		
-		//System.out.println(this);
 	}
 }

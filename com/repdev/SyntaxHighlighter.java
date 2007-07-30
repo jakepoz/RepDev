@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import com.repdev.parser.FunctionLayout;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Token;
+import com.repdev.parser.TreeItem;
 import com.repdev.parser.Variable;
 
 
@@ -38,6 +39,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 	private static final Color FORECOLOR = new Color(Display.getCurrent(), FOREGROUND), BACKCOLOR = new Color(Display.getCurrent(), BACKGROUND);
 	private static final Font FONT;
+	private static Color BLOCK_HIGHLIGHT_COLOR = new Color(Display.getCurrent(), 200,200,200);
 
 	private RepgenParser parser;
 	private StyledText txt;
@@ -191,6 +193,39 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			result[i - ftoken] = getStyle(ltokens.get(i));
 		
 		event.styles = result;
+	}
+	
+	/**
+	 * Sets special background colors on the tokens we need, and calls an update method on the styled text
+	 *
+	 */
+	public void blockHighlight(){
+		synchronized( parser.getLtokens() ){
+			boolean needRedraw = false;
+			
+			for( Token tok : parser.getLtokens() )
+			{
+				if( tok.getSpecialBackground() != null)
+					needRedraw = true;
+				
+				tok.setSpecialBackground(null);
+			}
+			
+			//Highlight block
+			if( parser != null){
+				TreeItem treeItem = parser.getTreeParser().getTreeItem(txt.getCaretOffset());
+						
+				if( treeItem != null && treeItem.getHead() != null && treeItem.getEnd() != null){
+					treeItem.getHead().setSpecialBackground(BLOCK_HIGHLIGHT_COLOR);
+					treeItem.getEnd().setSpecialBackground(BLOCK_HIGHLIGHT_COLOR);
+					needRedraw = true;
+				}
+							
+			}
+			
+			if( needRedraw )
+				txt.redrawRange(0,txt.getCharCount(),true);		
+		}
 	}
 	
 	
