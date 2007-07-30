@@ -25,7 +25,7 @@ public class TreeParser {
 	private ArrayList<Token> flatTokens = new ArrayList<Token>();
 	
 	//These strings are the ones that create new head items
-	private static final String[] heads = { "target", "setup", "define", "print", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
+	private static final String[] heads = { "target", "setup", "define", "print title", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
 	private static final String[] ends = {"end", ")", "\"", "'", "]"};
 	
 	public TreeParser(ArrayList<Token> tokenList){
@@ -59,6 +59,27 @@ public class TreeParser {
 		 toRet += toStringHandler(cur,"");
 		
 		return toRet;
+	}
+	
+	public TreeItem getTreeItem(int loc){
+		return getTreeItemHandler(items, loc);
+	}
+	
+	private TreeItem getTreeItemHandler(ArrayList<TreeItem> search, int loc){
+		for( TreeItem cur : search){
+			if( cur.getHead() != null && loc >= cur.getHead().getStart() && loc <= cur.getHead().getEnd())
+				return cur;
+			
+			if( cur.getEnd() != null && loc >= cur.getEnd().getStart() && loc <= cur.getEnd().getEnd())
+				return cur;
+
+			TreeItem found = getTreeItemHandler(cur.getContents(),loc);
+			
+			if( found != null)
+				return found;
+		}
+		
+		return null;
 	}
 	
 	private String toStringHandler(TreeItem item, String indent){		

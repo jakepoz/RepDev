@@ -7,6 +7,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -38,6 +39,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.repdev.parser.RepgenParser;
+import com.repdev.parser.Token;
+import com.repdev.parser.TreeItem;
 
 /**
  * Main editor for repgen, help, and letter files
@@ -527,7 +530,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 				lineHighlight();
 				
 				int line = txt.getLineAtOffset(txt.getCaretOffset());						
-				RepDevMain.mainShell.setLineColumn();
+				handleCaretChange();
 				
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
@@ -615,7 +618,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 				lineHighlight();
 				
 				int line = txt.getLineAtOffset(txt.getCaretOffset());							
-				RepDevMain.mainShell.setLineColumn();
+				handleCaretChange();
 			}
 
 			// TODO: Make double clicking include files work when last line of the file
@@ -759,6 +762,36 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		undoMode = 1;
 		modified = false;
 		updateModified();
+	}
+	
+	/**
+	 * Location update and highlight blocks
+	 *
+	 */
+	private void handleCaretChange(){
+		//Set location in status bar
+		RepDevMain.mainShell.setLineColumn();
+		
+		//Highlight block
+		if( parser != null){
+			TreeItem treeItem = parser.getTreeParser().getTreeItem(txt.getCaretOffset());
+			System.out.println(treeItem);
+			
+			if( treeItem == null)
+				return;
+			
+			for( Token tok : parser.getLtokens() )
+				tok.setSpecialBackground(null);
+			
+			if( treeItem.getHead() != null)
+				treeItem.getHead().setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+			
+			if( treeItem.getEnd() != null)
+				treeItem.getEnd().setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+			
+			txt.redrawRange(0,txt.getCharCount(),true);
+		}
+		
 	}
 	
 	public void saveFile( boolean errorCheck ){

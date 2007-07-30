@@ -505,7 +505,10 @@ public class RepgenParser {
 					if( cur.getAfter() == null)
 						break;
 					
-					if( db.containsRecordName(cur.getStr() + " " + cur.getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getStart()).equals(" "))
+					//Merge Print title so we can make that a division in the parser later versus regular print commands
+					
+					if( (cur.getStr().equals("print") && cur.getAfter().getStr().equals("title")) ||
+						(db.containsRecordName(cur.getStr() + " " + cur.getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getStart()).equals(" ")))
 					{
 						cur.setStr(cur.getStr() + " " + cur.getAfter().getStr() );
 						tokens.remove(cur.getAfter());
@@ -816,8 +819,8 @@ public class RepgenParser {
 		}
 	}
 
-	public ArrayList<TreeItem> getTree(){
-		return treeParser.getItems();
+	public TreeParser getTreeParser(){
+		return treeParser;
 	}
 
 	public ArrayList<Token> getLtokens() {

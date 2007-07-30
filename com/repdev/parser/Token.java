@@ -2,11 +2,14 @@ package com.repdev.parser;
 
 import java.util.ArrayList;
 
+import org.eclipse.swt.graphics.Color;
+
 public class Token {
 	private String str;
 	private Token after = null, before = null;
 	private int pos, commentDepth, afterDepth;
 	private boolean inString, afterString, inDate, afterDate, inDefs;
+	private Color specialBackground = null;
 
 
 	public Token(String str, int pos, int commentDepth, int afterDepth, boolean inString, boolean afterString, boolean inDefs, boolean inDate, boolean afterDate) {
@@ -63,7 +66,15 @@ public class Token {
 		}
 		// }
 	}
-	
+
+
+	public Color getSpecialBackground() {
+		return specialBackground;
+	}
+
+	public void setSpecialBackground(Color specialBackground) {
+		this.specialBackground = specialBackground;
+	}
 
 	public void setStr(String str) {
 		this.str = str;
