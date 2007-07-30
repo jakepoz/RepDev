@@ -19,6 +19,16 @@ import com.repdev.RepDevMain;
 import com.repdev.SymitarFile;
 import com.repdev.SyntaxHighlighter;
 
+
+/**
+ * This class handles all the parsing and info gathering on repgens, actual coloring is done in the SyntaxHighlighter class
+ * 
+ * Some methods are synchronized on their own to prevent confusion, and to hopefully catch any sync bugs that I've missed.
+ * Also, all access to the ltokens array MUST BE SYNCHRONIZED! This is true across classes, otherwise you will get errors
+ * 
+ * @author poznanja
+ *
+ */
 public class RepgenParser {
 	private StyledText txt;
 	private SymitarFile file;
@@ -254,10 +264,8 @@ public class RepgenParser {
 		public void run(){
 			try{
 				treeParser.treeParse();				
-				System.out.println("Parsed Tree");
 			}
 			catch(Exception e){
-				e.printStackTrace();
 				System.out.println("Interrupted Tree Parsing");
 			}
 		}
@@ -837,7 +845,9 @@ public class RepgenParser {
 			errorCheckerWorker = null;
 		}
 	}
+	
 
+	//We shouldn't need to syncrhonize this, since it's only called from within parse anyways, which is already synced
 	public void reparseAll() {
 		try {
 			ltokens = new ArrayList<Token>();
