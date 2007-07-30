@@ -759,7 +759,6 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		//Highlight block
 		if( parser != null){
 			TreeItem treeItem = parser.getTreeParser().getTreeItem(txt.getCaretOffset());
-			System.out.println(treeItem);
 					
 			if( treeItem != null && treeItem.getHead() != null && treeItem.getEnd() != null){
 				treeItem.getHead().setSpecialBackground(blockHighlightColor);
