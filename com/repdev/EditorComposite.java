@@ -52,7 +52,8 @@ import com.repdev.parser.TreeItem;
 public class EditorComposite extends Composite implements TabTextEditorView{
 	private SymitarFile file;
 	private int sym;
-	private Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
+	private static Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
+	private static Color blockHighlightColor = new Color(Display.getCurrent(), 200,200,200);
 	/*private ToolItem save, install, print, run;*/
 	private StyledText txt;
 	private CTabItem tabItem;
@@ -133,20 +134,6 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		buildGUI();
 	}
 	
-	/*public EditorComposite(Composite parent, CTabItem tabItem, SymitarFile file, 
-			ToolItem save, ToolItem install, ToolItem print, ToolItem run) {
-		super(parent, SWT.NONE);
-		this.file = file;
-		this.tabItem = tabItem;
-		this.sym = file.getSym();
-		
-		this.save = save;
-		this.install = install;
-		this.print = print;
-		this.run = run;
-
-		buildGUI();
-	}*/
 	
 	public boolean canUndo(){
 		return undos.size() > 0;
@@ -392,18 +379,6 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private void buildGUI() {
 		setLayout(new FormLayout());
 		
-/*		if(file.getType() != FileType.REPGEN || file.isLocal()) 
-			install.setEnabled(false);
-		else 
-			install.setEnabled(true);
-		
-		if(file.getType() != FileType.REPGEN || file.isLocal()) 
-			run.setEnabled(false);
-		else 
-			run.setEnabled(true);
-
-		save.setEnabled(true);
-		run.setEnabled(true);*/
 		
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -771,27 +746,31 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private void handleCaretChange(){
 		//Set location in status bar
 		RepDevMain.mainShell.setLineColumn();
+		boolean needRedraw = false;
+		
+		for( Token tok : parser.getLtokens() )
+		{
+			if( tok.getSpecialBackground() != null)
+				needRedraw = true;
+			
+			tok.setSpecialBackground(null);
+		}
 		
 		//Highlight block
 		if( parser != null){
 			TreeItem treeItem = parser.getTreeParser().getTreeItem(txt.getCaretOffset());
 			System.out.println(treeItem);
-			
-			if( treeItem == null)
-				return;
-			
-			for( Token tok : parser.getLtokens() )
-				tok.setSpecialBackground(null);
-			
-			if( treeItem.getHead() != null)
-				treeItem.getHead().setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-			
-			if( treeItem.getEnd() != null)
-				treeItem.getEnd().setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-			
-			txt.redrawRange(0,txt.getCharCount(),true);
+					
+			if( treeItem != null && treeItem.getHead() != null && treeItem.getEnd() != null){
+				treeItem.getHead().setSpecialBackground(blockHighlightColor);
+				treeItem.getEnd().setSpecialBackground(blockHighlightColor);
+				needRedraw = true;
+			}
+						
 		}
 		
+		if( needRedraw )
+			txt.redrawRange(0,txt.getCharCount(),true);		
 	}
 	
 	public void saveFile( boolean errorCheck ){
