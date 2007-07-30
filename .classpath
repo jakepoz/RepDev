@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="bin/|dist/|ftptemp/|res/|testdata/|com/repdev/compare/" path="" kind="src"/>
+	<classpathentry excluding="bin/|dist/|ftptemp/|res/|testdata/" path="" kind="src"/>
 	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true" kind="con"/>
 	<classpathentry sourcepath="swt-win/src.zip" path="swt-win/swt.jar" exported="true" kind="lib">
 		<attributes>

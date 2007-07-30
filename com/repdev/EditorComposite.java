@@ -7,7 +7,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -39,8 +38,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import com.repdev.parser.RepgenParser;
-import com.repdev.parser.Token;
-import com.repdev.parser.TreeItem;
 
 /**
  * Main editor for repgen, help, and letter files
@@ -52,7 +49,7 @@ import com.repdev.parser.TreeItem;
 public class EditorComposite extends Composite implements TabTextEditorView{
 	private SymitarFile file;
 	private int sym;
-	private static Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
+	private Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
 	/*private ToolItem save, install, print, run;*/
 	private StyledText txt;
 	private CTabItem tabItem;
@@ -133,6 +130,20 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		buildGUI();
 	}
 	
+	/*public EditorComposite(Composite parent, CTabItem tabItem, SymitarFile file, 
+			ToolItem save, ToolItem install, ToolItem print, ToolItem run) {
+		super(parent, SWT.NONE);
+		this.file = file;
+		this.tabItem = tabItem;
+		this.sym = file.getSym();
+		
+		this.save = save;
+		this.install = install;
+		this.print = print;
+		this.run = run;
+
+		buildGUI();
+	}*/
 	
 	public boolean canUndo(){
 		return undos.size() > 0;
@@ -378,12 +389,24 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	private void buildGUI() {
 		setLayout(new FormLayout());
 		
+/*		if(file.getType() != FileType.REPGEN || file.isLocal()) 
+			install.setEnabled(false);
+		else 
+			install.setEnabled(true);
+		
+		if(file.getType() != FileType.REPGEN || file.isLocal()) 
+			run.setEnabled(false);
+		else 
+			run.setEnabled(true);
+
+		save.setEnabled(true);
+		run.setEnabled(true);*/
 		
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
 
 		if (file.getType() == FileType.REPGEN){
 			parser = new RepgenParser(txt, file);
-			highlighter = new SyntaxHighlighter(parser);	
+			highlighter = new SyntaxHighlighter(parser);
 		}
 		else{
 			if( DEFAULT_FONT != null)
@@ -504,7 +527,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 				lineHighlight();
 				
 				int line = txt.getLineAtOffset(txt.getCaretOffset());						
-				handleCaretChange();
+				RepDevMain.mainShell.setLineColumn();
 				
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
@@ -592,7 +615,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 				lineHighlight();
 				
 				int line = txt.getLineAtOffset(txt.getCaretOffset());							
-				handleCaretChange();
+				RepDevMain.mainShell.setLineColumn();
 			}
 
 			// TODO: Make double clicking include files work when last line of the file
@@ -736,27 +759,6 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		undoMode = 1;
 		modified = false;
 		updateModified();
-	}
-	
-	/**
-	 * Location update, used to handle some block highlighting stuff but I moved it
-	 *
-	 */
-	private void handleCaretChange(){
-		//Set location in status bar
-		RepDevMain.mainShell.setLineColumn();
-		
-		
-	/*	txt.getDisplay().asyncExec(new Runnable(){
-			public void run() {
-				try{*/
-					highlighter.blockHighlight();
-			/*	}
-				catch(Exception e){
-					e.printStackTrace();
-				}
-			}
-		});*/
 	}
 	
 	public void saveFile( boolean errorCheck ){

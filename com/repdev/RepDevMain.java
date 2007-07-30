@@ -37,7 +37,7 @@ public class RepDevMain {
 
 	public static void main(String[] args) throws Exception{
 		display = new Display();
-		//display = Sleak.display;
+		
 		try{
 			loadSettings();
 			createImages();

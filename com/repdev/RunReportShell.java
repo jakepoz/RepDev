@@ -198,8 +198,6 @@ public class RunReportShell {
 			}
 		});
 		
-		
-		//TODO: Make this do something
 		final Button prevPromptButton = new Button(ioGroup,SWT.NONE);
 		prevPromptButton.setEnabled(false);
 		prevPromptButton.setText("Prev");
@@ -220,7 +218,7 @@ public class RunReportShell {
 						
 						promptLabel.setEnabled(true);
 						promptText.setEnabled(true);
-						//prevPromptButton.setEnabled(true);
+						prevPromptButton.setEnabled(true);
 						nextPromptButton.setEnabled(true);
 						
 						promptLabel.setText(name);
@@ -245,7 +243,7 @@ public class RunReportShell {
 							
 							promptLabel.setEnabled(false);
 							promptText.setEnabled(false);
-							//prevPromptButton.setEnabled(false);
+							prevPromptButton.setEnabled(false);
 							nextPromptButton.setEnabled(false);
 							
 							return toRet;

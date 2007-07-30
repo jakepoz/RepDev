@@ -17,18 +17,7 @@ import com.repdev.ErrorCheckResult;
 import com.repdev.FileType;
 import com.repdev.RepDevMain;
 import com.repdev.SymitarFile;
-import com.repdev.SyntaxHighlighter;
 
-
-/**
- * This class handles all the parsing and info gathering on repgens, actual coloring is done in the SyntaxHighlighter class
- * 
- * Some methods are synchronized on their own to prevent confusion, and to hopefully catch any sync bugs that I've missed.
- * Also, all access to the ltokens array MUST BE SYNCHRONIZED! This is true across classes, otherwise you will get errors
- * 
- * @author poznanja
- *
- */
 public class RepgenParser {
 	private StyledText txt;
 	private SymitarFile file;
@@ -49,13 +38,9 @@ public class RepgenParser {
 	private ArrayList<Error> errorList = new ArrayList<Error>();
 	private ArrayList<Task> taskList = new ArrayList<Task>();
 	
-	private TreeParser treeParser = new TreeParser(ltokens);
-	
 	BackgroundSymitarErrorChecker errorCheckerWorker = null;
 	BackgroundIncludeParser includeParserWorker = null;
-	BackgroundTreeWorker treeWorker = null;
 	
-
 	boolean refreshIncludes = true;
 	
 	static {
@@ -63,7 +48,6 @@ public class RepgenParser {
 	}
 	
 
-	//Note: We need the syntax highlighter to call back to for the block highlighting
 	public RepgenParser(StyledText txt, SymitarFile file) {
 		this.txt = txt;
 		this.file = file;
@@ -126,10 +110,8 @@ public class RepgenParser {
 			boolean exists = false;
 			ArrayList<Token> tempTokens = new  ArrayList<Token>();
 						
-			synchronized( ltokens ){
-				for( Token tok : ltokens){
-					tempTokens.add(new Token(tok));
-				}
+			for( Token tok : ltokens){
+				tempTokens.add(new Token(tok));
 			}
 			
 			int i = 0;
@@ -256,20 +238,7 @@ public class RepgenParser {
 
 		}
 	}
-	
-	/**
-	 * Class Thread for the block highlighter and tree parser. Since this is a bit slow, especially on large files, we keep it seperate to keep the UI responsive
-	 */
-	public class BackgroundTreeWorker extends Thread{
-		public void run(){
-			try{
-				treeParser.treeParse();				
-			}
-			catch(Exception e){
-				System.out.println("Interrupted Tree Parsing");
-			}
-		}
-	}
+
 	
 	/**
 	 * Adds tokens to ltokens, but also keeps track of it in the new tokens list
@@ -534,10 +503,7 @@ public class RepgenParser {
 					if( cur.getAfter() == null)
 						break;
 					
-					//Merge Print title so we can make that a division in the parser later versus regular print commands
-					
-					if( (cur.getStr().equals("print") && cur.getAfter().getStr().equals("title")) ||
-						(db.containsRecordName(cur.getStr() + " " + cur.getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getStart()).equals(" ")))
+					if( db.containsRecordName(cur.getStr() + " " + cur.getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getStart()).equals(" "))
 					{
 						cur.setStr(cur.getStr() + " " + cur.getAfter().getStr() );
 						tokens.remove(cur.getAfter());
@@ -792,12 +758,7 @@ public class RepgenParser {
 			long time = System.currentTimeMillis();
 	
 			try {
-				if( treeWorker != null )
-					treeWorker.interrupt();
-				
-				synchronized(ltokens){
-					parse(file.getName(), txt.getText(), st, end, oldend, replacedText, ltokens, lasttokens, lvars, txt);
-				}
+				parse(file.getName(), txt.getText(), st, end, oldend, replacedText, ltokens, lasttokens, lvars, txt);
 				
 				for( Token cur : lasttokens)
 					if( cur.inDefs() )
@@ -810,10 +771,6 @@ public class RepgenParser {
 					parseIncludes();
 					refreshIncludes = false;
 				}
-				
-				if( treeParser != null){
-					treeParse();
-				}
 			} catch (Exception e) {
 				System.err.println("Syntax Highlighter error!");
 				e.printStackTrace();
@@ -821,16 +778,6 @@ public class RepgenParser {
 			// parse(file.getName(),txt.getText(),txt.,end,end,ltokens,lvars);
 			System.out.println("Parse time: " + (System.currentTimeMillis() - time));
 		}
-	}
-	
-	public void treeParse(){
-		if( treeWorker != null)
-			treeWorker.interrupt();
-		
-		treeWorker = new BackgroundTreeWorker();
-		treeWorker.setName(""+System.currentTimeMillis());
-		treeWorker.start();
-		
 	}
 	
 	public void parseIncludes(){
@@ -850,18 +797,13 @@ public class RepgenParser {
 			errorCheckerWorker = null;
 		}
 	}
-	
+
 	public void reparseAll() {
 		try {
-			synchronized(ltokens){
-				ltokens = new ArrayList<Token>();
-				parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, lvars, txt);
-				rebuildVars(file.getName(), txt.getText(), ltokens);
-			}
-			
-			if( treeParser != null){
-				treeParse();
-			}
+			ltokens = new ArrayList<Token>();
+			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, lvars, txt);
+			rebuildVars(file.getName(), txt.getText(), ltokens);
+
 			System.out.println("Reparsed");
 		} catch (Exception e) {
 			System.err.println("Syntax Highlighter error!");
@@ -869,10 +811,6 @@ public class RepgenParser {
 		}
 	}
 
-
-	public TreeParser getTreeParser(){
-		return treeParser;
-	}
 
 	public ArrayList<Token> getLtokens() {
 		return ltokens;

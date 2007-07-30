@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Display;
 import com.repdev.parser.FunctionLayout;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Token;
-import com.repdev.parser.TreeItem;
 import com.repdev.parser.Variable;
 
 
@@ -39,7 +38,6 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 	private static final Color FORECOLOR = new Color(Display.getCurrent(), FOREGROUND), BACKCOLOR = new Color(Display.getCurrent(), BACKGROUND);
 	private static final Font FONT;
-	private static Color BLOCK_HIGHLIGHT_COLOR = new Color(Display.getCurrent(), 200,200,200);
 
 	private RepgenParser parser;
 	private StyledText txt;
@@ -125,30 +123,29 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	
 	public StyleRange getStyle(Token tok) {
 		boolean isVar = false;
-		StyleRange range = null;
 
 		if (tok.getCDepth() != 0)
-			range = COMMENTS.getRange(tok.getStart(), tok.length());
+			return COMMENTS.getRange(tok.getStart(), tok.length());
 		else if (tok.inString())
-			range = TYPE_CHAR.getRange(tok.getStart(), tok.length());
+			return TYPE_CHAR.getRange(tok.getStart(), tok.length());
 		else if (tok.inDate())
-			range = TYPE_DATE.getRange(tok.getStart(), tok.length());
+			return TYPE_DATE.getRange(tok.getStart(), tok.length());
 		else if (tok.getAfter() != null && tok.getAfter().getStr().equals(":")) {
 			if (tok.dbRecordValid())
-				range = STRUCT1.getRange(tok.getStart(), tok.length());
+				return STRUCT1.getRange(tok.getStart(), tok.length());
 			else
-				range = STRUCT1_INVALID.getRange(tok.getStart(), tok.length());
+				return STRUCT1_INVALID.getRange(tok.getStart(), tok.length());
 		} else if (tok.getBefore() != null && tok.getBefore().getStr().equals(":")) {
 			if (tok.dbFieldValid(RepgenParser.getDb().getTreeRecords()))
-				range = STRUCT2.getRange(tok.getStart(), tok.length());
+				return STRUCT2.getRange(tok.getStart(), tok.length());
 			else
-				range = STRUCT2_INVALID.getRange(tok.getStart(), tok.length());
+				return STRUCT2_INVALID.getRange(tok.getStart(), tok.length());
 		} else if (FunctionLayout.getInstance().containsName(tok.getStr()) && tok.getAfter() != null && tok.getAfter().getStr().equals("("))
-			range = FUNCTIONS.getRange(tok.getStart(), tok.length());
+			return FUNCTIONS.getRange(tok.getStart(), tok.length());
 		else if (RepgenParser.getKeywords().contains(tok.getStr()))
-			range = KEYWORDS.getRange(tok.getStart(), tok.length());
+			return KEYWORDS.getRange(tok.getStart(), tok.length());
 		else if (RepgenParser.getSpecialvars().contains(tok.getStr()))
-			range = VARIABLES.getRange(tok.getStart(), tok.length());
+			return VARIABLES.getRange(tok.getStart(), tok.length());
 
 		synchronized( parser.getLvars() ){
 			for (Variable var : parser.getLvars()) {
@@ -157,15 +154,11 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			}
 		}
 
-		if (range == null && isVar)
-			range = VARIABLES.getRange(tok.getStart(), tok.length());
-		else if( range == null )
-			range = NORMAL.getRange(tok.getStart(), tok.length());
+		if (isVar)
+			return VARIABLES.getRange(tok.getStart(), tok.length());
+		else
+			return NORMAL.getRange(tok.getStart(), tok.length());
 		
-		if( tok.getSpecialBackground() != null)
-			range.background = tok.getSpecialBackground();
-		
-		return range;
 	}
 
 	public void lineGetStyle(LineStyleEvent event) {
@@ -195,47 +188,6 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		event.styles = result;
 	}
 	
-	/**
-	 * Sets special background colors on the tokens we need, and calls an update method on the styled text
-	 *
-	 */
-	public void blockHighlight(){
-		boolean needRedraw = false;
-		
-		synchronized( parser.getLtokens() ){
-			for( Token tok : parser.getLtokens() )
-			{
-				if( tok.getSpecialBackground() != null)
-					needRedraw = true;
-				
-				tok.setSpecialBackground(null);
-			}
-			
-			//Highlight block
-			if( parser != null){
-				
-				TreeItem treeItem = parser.getTreeParser().getTreeItem(txt.getCaretOffset());
-				
-				if( treeItem != null && treeItem.getHead() != null && treeItem.getEnd() != null){
-					//Since the parser tokens are a hard copy so we can speed things up, we need to find the right parser tokens to modify
-					treeItem.getHead().setSpecialBackground(BLOCK_HIGHLIGHT_COLOR);
-					treeItem.getEnd().setSpecialBackground(BLOCK_HIGHLIGHT_COLOR);
-					needRedraw = true;
-				}
-							
-			}
-		}
-		
-		
-		if( needRedraw )
-			txt.redrawRange(0,txt.getCharCount(),true);		
-	}
-	
-	
-	
-	/*
-	 * Custom line stuff is for CompareComposite to highlight large blocks of text
-	 */
 	public void setCustomLines(int[] lines)
 	{
 		customLines = lines;
