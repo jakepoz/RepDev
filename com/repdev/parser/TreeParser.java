@@ -25,7 +25,7 @@ public class TreeParser {
 	private ArrayList<Token> flatTokens = new ArrayList<Token>();
 	
 	//These strings are the ones that create new head items
-	private static final String[] heads = { "target", "setup", "define", "print title", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
+	private static final String[] heads = { "target", "setup", "select", "define", "print title", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
 	private static final String[] ends = {"end", ")", "\"", "'", "]"};
 	
 	public TreeParser(ArrayList<Token> tokenList){
