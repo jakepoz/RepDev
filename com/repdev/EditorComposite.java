@@ -828,17 +828,21 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 	public void surroundEachLineWith(String start, String end, boolean escapeQuotes){
 		if( txt.getSelectionCount() == 0)
 			return;
-		
 		int startLine = txt.getLineAtOffset(txt.getSelection().x);
 		int endLine = txt.getLineAtOffset(txt.getSelection().y);
-		
+		int finalLine = txt.getLineCount()-1;
+		String nextLine = "NEWLINE\n";
 
-		for( int i = startLine; i < endLine; i++ ){
+		for( int i = startLine; i <= endLine; i++ ){
 			String line = txt.getText(txt.getOffsetAtLine(i), txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)));
-			
 			txt.replaceTextRange(txt.getOffsetAtLine(i),
 					             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
-					             start + line.substring(0,line.length()-2).replaceAll("\"", "\"+CTRLCHR(34)+\"") + end + "\r\n" );
+					             start + line.substring(0,line.length()-2).replaceAll("\"", "\"+CTRLCHR(34)+\"") + end + "\r\n" + nextLine);
+			if(finalLine>i){
+				i++;
+				endLine++;
+				//finalLine++;
+			}
 		}
 		
 		commitUndo();
