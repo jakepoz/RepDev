@@ -123,29 +123,30 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	
 	public StyleRange getStyle(Token tok) {
 		boolean isVar = false;
+		StyleRange range = null;
 
 		if (tok.getCDepth() != 0)
-			return COMMENTS.getRange(tok.getStart(), tok.length());
+			range = COMMENTS.getRange(tok.getStart(), tok.length());
 		else if (tok.inString())
-			return TYPE_CHAR.getRange(tok.getStart(), tok.length());
+			range = TYPE_CHAR.getRange(tok.getStart(), tok.length());
 		else if (tok.inDate())
-			return TYPE_DATE.getRange(tok.getStart(), tok.length());
+			range = TYPE_DATE.getRange(tok.getStart(), tok.length());
 		else if (tok.getAfter() != null && tok.getAfter().getStr().equals(":")) {
 			if (tok.dbRecordValid())
-				return STRUCT1.getRange(tok.getStart(), tok.length());
+				range = STRUCT1.getRange(tok.getStart(), tok.length());
 			else
-				return STRUCT1_INVALID.getRange(tok.getStart(), tok.length());
+				range = STRUCT1_INVALID.getRange(tok.getStart(), tok.length());
 		} else if (tok.getBefore() != null && tok.getBefore().getStr().equals(":")) {
 			if (tok.dbFieldValid(RepgenParser.getDb().getTreeRecords()))
-				return STRUCT2.getRange(tok.getStart(), tok.length());
+				range = STRUCT2.getRange(tok.getStart(), tok.length());
 			else
-				return STRUCT2_INVALID.getRange(tok.getStart(), tok.length());
+				range = STRUCT2_INVALID.getRange(tok.getStart(), tok.length());
 		} else if (FunctionLayout.getInstance().containsName(tok.getStr()) && tok.getAfter() != null && tok.getAfter().getStr().equals("("))
-			return FUNCTIONS.getRange(tok.getStart(), tok.length());
+			range = FUNCTIONS.getRange(tok.getStart(), tok.length());
 		else if (RepgenParser.getKeywords().contains(tok.getStr()))
-			return KEYWORDS.getRange(tok.getStart(), tok.length());
+			range = KEYWORDS.getRange(tok.getStart(), tok.length());
 		else if (RepgenParser.getSpecialvars().contains(tok.getStr()))
-			return VARIABLES.getRange(tok.getStart(), tok.length());
+			range = VARIABLES.getRange(tok.getStart(), tok.length());
 
 		synchronized( parser.getLvars() ){
 			for (Variable var : parser.getLvars()) {
@@ -154,11 +155,15 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			}
 		}
 
-		if (isVar)
-			return VARIABLES.getRange(tok.getStart(), tok.length());
-		else
-			return NORMAL.getRange(tok.getStart(), tok.length());
+		if (range == null && isVar)
+			range = VARIABLES.getRange(tok.getStart(), tok.length());
+		else if( range == null )
+			range = NORMAL.getRange(tok.getStart(), tok.length());
 		
+		if( tok.getSpecialBackground() != null)
+			range.background = tok.getSpecialBackground();
+		
+		return range;
 	}
 
 	public void lineGetStyle(LineStyleEvent event) {

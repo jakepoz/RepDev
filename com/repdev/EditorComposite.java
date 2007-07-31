@@ -888,44 +888,88 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 	
 	public void handleCaretChange() {
-		RepDevMain.mainShell.setLineColumn();
-
+		boolean found = false, needRedraw = false;
+		Token cur = null;
+		int tokloc = 0;
 		ArrayList<Token> tokens = null;
+		
+		RepDevMain.mainShell.setLineColumn();
+		
 		if( parser != null ) {
 			tokens = parser.getLtokens();
 		}
 		
-		Token cur = null;
-		int tokloc = 0;
+		//Find your current token
 		for( Token tok: tokens ) {
 			tokloc++;
+
 			if( tok.getStart() <= txt.getCaretOffset() && tok.getEnd() >= txt.getCaretOffset() ) {
 				cur = tok;
 				break;
 			}
 		}
 		
+		//Clear all other special backgrounds, possibly move this up to previous loop in future to make faster
+		for( Token tok : tokens){
+			if( tok.getSpecialBackground() != null){
+				needRedraw = true;
+				tok.setSpecialBackground(null);
+			}
+		}
+		
 		if( cur != null ) {
-			if( cur.isHead() ) {
-				System.out.println("HEAD: " + cur.getStr() );
+			
+			//If it's a start token, read forward to the matching block
+			if( cur.isHead() && 
+				(cur.getCDepth() == 0 || cur.getStr().equals("[")) && 
+				((!cur.inDate() || cur.getStr().equals("'"))) &&
+				((!cur.inString() || cur.getStr().equals("\""))))
+			{
+				
 				Stack<Token> tStack = new Stack<Token>();
 				tStack.push(cur);
-				while( tokloc <= tokens.size() ) {
-					if( tokens.get(tokloc).isHead() )
+				
+				//tokloc is already set at next token since it was set before the break in the for loop above
+				//All this messy code is to differentiate between
+				while( tokloc < tokens.size() ) {
+					if( tokens.get(tokloc).isHead() && 
+						(tokens.get(tokloc).getCDepth() == 0 ||tokens.get(tokloc).getStr().equals("["))&&
+						((!tokens.get(tokloc).inDate() || tokens.get(tokloc).getStr().equals("'")) && tStack.size() == 0 || !tStack.peek().getStr().equals("\'")) && 
+						((!tokens.get(tokloc).inString() || tokens.get(tokloc).getStr().equals("\"")) && tStack.size() == 0 || !tStack.peek().getStr().equals("\"")))
+					{
 						tStack.push(tokens.get(tokloc));
-					else if( tokens.get(tokloc).isEnd() )
-						tStack.pop();
+					}
+					else if( tokens.get(tokloc).isEnd() && 
+							( tokens.get(tokloc).getCDepth() == 0 ||  tokens.get(tokloc).getStr().equals("]")) && 
+							(!tokens.get(tokloc).inDate() ||  tokens.get(tokloc).getStr().equals("'")) &&
+							(!tokens.get(tokloc).inString() ||  tokens.get(tokloc).getStr().equals("\"")) && tStack.size() > 0)
+					{
+						tStack.pop();						
+					}
 					
-					if( tStack.size() == 0 ) break;
+					if( tStack.size() == 0 ) {
+						found = true;
+						break;
+					}
+					
 					tokloc++;
 				}
 				
-				System.out.println(cur.getStr() + " ends with " + tokens.get(tokloc).getStr());
+				if( found ){
+					cur.setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					needRedraw = true;
+				}
 				
 			} else if( cur.isEnd() ) {
 				System.out.println("END:  " + cur.getStr() );	
 			}
-		}	
+		}
+		
+		//IF we need to update, only call this once
+		if( needRedraw ){
+			txt.redrawRange(0,txt.getCharCount(),false);
+		}
 	}
 	
 	
