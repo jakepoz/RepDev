@@ -10,7 +10,7 @@ public class Token {
 	private int pos, commentDepth, afterDepth;
 	private boolean inString, afterString, inDate, afterDate, inDefs;
 
-	private static final String[] heads = { "target", "setup", "print title", "select", "define", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
+	private static final String[] heads = { "setup", "print title", "select", "define", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
 	private static final String[] ends = {"end", ")", "\"", "'", "]"};
 	
 	private Color specialBackground = null;
