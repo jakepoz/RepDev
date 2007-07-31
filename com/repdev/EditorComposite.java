@@ -735,6 +735,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 		
 		txt.setText(str);
+		handleCaretChange();
 
 		suggest.close();
 
@@ -966,12 +967,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					((!cur.inDate() || ( cur.getStr().equals("'") && cur.getBefore() != null && cur.getBefore().inDate() ))) &&
 					((!cur.inString() || ( cur.getStr().equals("\"") && cur.getBefore() != null && cur.getBefore().inString() ))))
 				{
-				System.out.println("END:  " + cur.getStr() );	
-				
+
 				Stack<Token> tStack = new Stack<Token>();
 				tStack.push(cur);
 				
-				//tokloc must be moved back
+				//tokloc must be moved back, one back to current token, one more back to first one we should be reading
 				tokloc = Math.max(0,tokloc-2);
 				
 				//All this messy code is to differentiate between starts and ends that are the same
