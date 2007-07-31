@@ -8,7 +8,9 @@ public class Token {
 	private int pos, commentDepth, afterDepth;
 	private boolean inString, afterString, inDate, afterDate, inDefs;
 
-
+	private static final String[] heads = { "target", "setup", "select", "define", "do", "total", "headers", "(", "\"", "'", "[", "procedure" };
+	private static final String[] ends = {"end", ")", "\"", "'", "]"};
+	
 	public Token(String str, int pos, int commentDepth, int afterDepth, boolean inString, boolean afterString, boolean inDefs, boolean inDate, boolean afterDate) {
 		this.str = str;
 		this.pos = pos;
@@ -182,4 +184,23 @@ public class Token {
 	public Token getBefore() {
 		return before;
 	}
+	
+	public boolean isHead() {
+		for( String head: heads ) {
+			if( this.getStr().equals(head) )
+				return true;
+		}
+		
+		return false;		
+	}
+	
+	public boolean isEnd() {
+		for( String end: ends ) {
+			if( this.getStr().equals(end) )
+				return true;
+		}
+		
+		return false;		
+	}
+	
 }

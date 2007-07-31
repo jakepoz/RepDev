@@ -1,5 +1,6 @@
 package com.repdev;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -34,10 +35,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 
 import com.repdev.parser.RepgenParser;
+import com.repdev.parser.Token;
 
 /**
  * Main editor for repgen, help, and letter files
@@ -46,7 +46,7 @@ import com.repdev.parser.RepgenParser;
  * @author Jake Poznanski
  *
  */
-public class EditorComposite extends Composite implements TabTextEditorView{
+public class EditorComposite extends Composite implements TabTextEditorView {
 	private SymitarFile file;
 	private int sym;
 	private Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
@@ -525,9 +525,9 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		txt.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				lineHighlight();
+				handleCaretChange();
 				
 				int line = txt.getLineAtOffset(txt.getCaretOffset());						
-				RepDevMain.mainShell.setLineColumn();
 				
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
@@ -613,9 +613,7 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 
 			public void mouseUp(MouseEvent e) {
 				lineHighlight();
-				
-				int line = txt.getLineAtOffset(txt.getCaretOffset());							
-				RepDevMain.mainShell.setLineColumn();
+				handleCaretChange();
 			}
 
 			// TODO: Make double clicking include files work when last line of the file
@@ -860,7 +858,46 @@ public class EditorComposite extends Composite implements TabTextEditorView{
 		return file;
 	}
 	
-	public void setToolItems( ToolItem save, ToolItem install, ToolItem print, ToolItem run ) {
+	public void handleCaretChange() {
+		RepDevMain.mainShell.setLineColumn();
+
+		ArrayList<Token> tokens = null;
+		if( parser != null ) {
+			tokens = parser.getLtokens();
+		}
 		
+		Token cur = null;
+		int tokloc = 0;
+		for( Token tok: tokens ) {
+			tokloc++;
+			if( tok.getStart() <= txt.getCaretOffset() && tok.getEnd() >= txt.getCaretOffset() ) {
+				cur = tok;
+				break;
+			}
+		}
+		
+		if( cur != null ) {
+			if( cur.isHead() ) {
+				System.out.println("HEAD: " + cur.getStr() );
+				Stack<Token> tStack = new Stack<Token>();
+				tStack.push(cur);
+				while( tokloc <= tokens.size() ) {
+					if( tokens.get(tokloc).isHead() )
+						tStack.push(tokens.get(tokloc));
+					else if( tokens.get(tokloc).isEnd() )
+						tStack.pop();
+					
+					if( tStack.size() == 0 ) break;
+					tokloc++;
+				}
+				
+				System.out.println(cur.getStr() + " ends with " + tokens.get(tokloc).getStr());
+				
+			} else if( cur.isEnd() ) {
+				System.out.println("END:  " + cur.getStr() );	
+			}
+		}	
 	}
+	
+	
 }
