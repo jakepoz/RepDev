@@ -829,13 +829,42 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		int startLine = txt.getLineAtOffset(txt.getSelection().x);
 		int endLine = txt.getLineAtOffset(txt.getSelection().y);
 		int finalLine = txt.getLineCount()-1;
-		String nextLine = "NEWLINE\n";
-
+		String nextLine = "NEWLINE";
+		
 		for( int i = startLine; i <= endLine; i++ ){
 			String line = txt.getText(txt.getOffsetAtLine(i), txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)));
-			txt.replaceTextRange(txt.getOffsetAtLine(i),
-					             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
-					             start + line.substring(0,line.length()-2).replaceAll("\"", "\"+CTRLCHR(34)+\"") + end + "\r\n" + nextLine);
+			String nextReadLine = txt.getText(txt.getOffsetAtLine(i+1), txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+2)));
+			String whiteSpace;
+			nextReadLine = nextReadLine.trim().substring(0,1);
+			int offset = 0;
+			whiteSpace = line.trim();
+			for( int j = 0; j < line.length(); j++){
+				String checkChar = line.substring(j,1);
+				if(checkChar.equals(whiteSpace.substring(0,0))){
+					offset=j;
+					j=line.length();
+				}
+			}
+			if(!whiteSpace.equals(nextReadLine)){
+				/*System.out.println("-"+whiteSpace+"-");
+				System.out.println("-"+nextReadLine+"-");*/
+				nextLine = "NEWLINE\n";
+				if(line.substring(0,1).equals(whiteSpace.substring(0,1))){
+					txt.replaceTextRange(txt.getOffsetAtLine(i),
+				             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
+				             start + line.substring(0,line.length()-2).replaceAll("\"", "\"+CTRLCHR(34)+\"") + end + "\r\n" + nextLine);
+				}else{
+					txt.replaceTextRange(txt.getOffsetAtLine(i),
+						             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
+						             line.substring(0, offset) + start + line.substring(0,line.length()-2).replaceAll("\"", "\"+CTRLCHR(34)+\"") + end + "\r\n" + line.substring(0, offset) + nextLine);
+				}
+			}else{
+				txt.replaceTextRange(txt.getOffsetAtLine(i),
+						             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
+						             "\n");
+				i--;
+				endLine--;
+			}
 			if(finalLine>i){
 				i++;
 				endLine++;
