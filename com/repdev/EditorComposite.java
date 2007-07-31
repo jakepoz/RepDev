@@ -565,7 +565,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						break;
 					case 'U':
 					case 'u':
-						surroundEachLineWith("PRINT \"", "\"", true);
+						surroundEachLineWith("PRINT \"", "\"","NEWLINE", true);
 						break;
 					case 'r':
 					case 'R':
@@ -824,13 +824,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 	
 	//TODO: Finish this method, make it allow end be more than 1 line
-	public void surroundEachLineWith(String start, String end, boolean escapeQuotes){
+	public void surroundEachLineWith(String start, String end, String nextLine, boolean escapeQuotes){
 		if( txt.getSelectionCount() == 0)
 			return;
 		int startLine = txt.getLineAtOffset(txt.getSelection().x);
 		int endLine = txt.getLineAtOffset(txt.getSelection().y);
 		int finalLine = txt.getLineCount()-1;
-		String nextLine = "NEWLINE";
+		//String nextLine = "NEWLINE";
+		nextLine = nextLine + "\n";
 		
 		for( int i = startLine; i <= endLine; i++ ){
 			String line = txt.getText(txt.getOffsetAtLine(i), txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)));
@@ -847,9 +848,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 			}
 			if(!whiteSpace.equals(nextReadLine)){
-				/*System.out.println("-"+whiteSpace+"-");
-				System.out.println("-"+nextReadLine+"-");*/
-				nextLine = "NEWLINE\n";
+				//System.out.println("-"+whiteSpace+"-");
+				//System.out.println("-"+nextReadLine+"-");
 				if(line.substring(0,1).equals(whiteSpace.substring(0,1))){
 					txt.replaceTextRange(txt.getOffsetAtLine(i),
 				             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
@@ -870,6 +870,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				i++;
 				endLine++;
 				//finalLine++;
+			}
+			while(Display.getCurrent().readAndDispatch()){
+				
 			}
 		}
 		
