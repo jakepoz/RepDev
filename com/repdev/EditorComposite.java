@@ -922,15 +922,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			//If it's a start token, read forward to the matching block
 			if( cur.isHead() && 
 				(cur.getCDepth() == 0 || cur.getStr().equals("[")) && 
-				((!cur.inDate() || cur.getStr().equals("'"))) &&
-				((!cur.inString() || cur.getStr().equals("\""))))
+				((!cur.inDate() || ( cur.getStr().equals("'") && cur.getAfter() != null && cur.getAfter().inDate() ))) &&
+				((!cur.inString() || ( cur.getStr().equals("\"") && cur.getAfter() != null && cur.getAfter().inString() ))))
 			{
 				
 				Stack<Token> tStack = new Stack<Token>();
 				tStack.push(cur);
 				
 				//tokloc is already set at next token since it was set before the break in the for loop above
-				//All this messy code is to differentiate between
+				//All this messy code is to differentiate between starts and ends that are the same
 				while( tokloc < tokens.size() ) {
 					if( tokens.get(tokloc).isHead() && 
 						(tokens.get(tokloc).getCDepth() == 0 ||tokens.get(tokloc).getStr().equals("["))&&
@@ -961,8 +961,50 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					needRedraw = true;
 				}
 				
-			} else if( cur.isEnd() ) {
+			} else if( cur.isEnd() && 
+					(cur.getCDepth() == 0 || cur.getStr().equals("]")) && 
+					((!cur.inDate() || ( cur.getStr().equals("'") && cur.getBefore() != null && cur.getBefore().inDate() ))) &&
+					((!cur.inString() || ( cur.getStr().equals("\"") && cur.getBefore() != null && cur.getBefore().inString() ))))
+				{
 				System.out.println("END:  " + cur.getStr() );	
+				
+				Stack<Token> tStack = new Stack<Token>();
+				tStack.push(cur);
+				
+				//tokloc must be moved back
+				tokloc = Math.max(0,tokloc-2);
+				
+				//All this messy code is to differentiate between starts and ends that are the same
+				while( tokloc >=0 ) {
+					if( tokens.get(tokloc).isEnd() && 
+							( tokens.get(tokloc).getCDepth() == 0 ||  tokens.get(tokloc).getStr().equals("]")) && 
+							((!tokens.get(tokloc).inDate() ||  tokens.get(tokloc).getStr().equals("'")) && tStack.size() == 0 || !tStack.peek().getStr().equals("\'")) &&
+							((!tokens.get(tokloc).inString() ||  tokens.get(tokloc).getStr().equals("\"")) && tStack.size() == 0 || !tStack.peek().getStr().equals("\"")))
+					{
+						tStack.push(tokens.get(tokloc));					
+					}
+					else if( tokens.get(tokloc).isHead() && 
+							(tokens.get(tokloc).getCDepth() == 0 ||tokens.get(tokloc).getStr().equals("["))&&
+							((!tokens.get(tokloc).inDate() || tokens.get(tokloc).getStr().equals("'"))) && 
+							((!tokens.get(tokloc).inString() || tokens.get(tokloc).getStr().equals("\""))) && tStack.size() > 0)
+					{
+						tStack.pop();	
+					}
+				
+					
+					if( tStack.size() == 0 ) {
+						found = true;
+						break;
+					}
+					
+					tokloc--;
+				}
+				
+				if( found ){
+					cur.setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					needRedraw = true;
+				}
 			}
 		}
 		
