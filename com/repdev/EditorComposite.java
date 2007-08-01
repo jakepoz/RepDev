@@ -944,10 +944,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
+        	if( parser != null )
+        		parser.setReparse(false);
+        	
             txt.setText(newTxt.toString());
             
-            if( parser != null )
+            if( parser != null ){
                 parser.reparseAll();
+                parser.setReparse(true);
+            }
         }
     }
 	
