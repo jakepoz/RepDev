@@ -284,6 +284,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	
 	//TODO: Allow for unindenting single lines
 	private void groupIndent(int direction, int startLine, int endLine) {
+		//System.out.println("("+startLine+","+endLine+")");
 		String tabStr = getTabStr();
 
 		if (endLine > txt.getLineCount() - 1 )
@@ -312,7 +313,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						line = "\n";
 					else
 						line = txt.getText(startOffset, endOffset - 1);		
-
+					
+					//System.out.println("-"+line+"-"+"\n"+"-"+direction+"-");
+					
 					for (int x = 0; x < Math.min(tabStr.length(), line.length()); x++)
 						if (line.charAt(x) > 32)
 							return;
@@ -330,12 +333,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 				else
 					endOffset = txt.getOffsetAtLine(i + 1);
-
 				if( endOffset - 1 <= startOffset)
 					line = "\n";
 				else
-					line = txt.getText(startOffset, endOffset - 1);			
-				
+					line = txt.getText(startOffset, endOffset-1);			
+				//System.out.println("-"+line+"-"+"\n"+"-"+direction+"-");
 
 				if (direction > 0)
 					txt.replaceTextRange(startOffset, endOffset - startOffset, tabStr + line);
@@ -350,12 +352,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			if( parser != null)
 				parser.setReparse(true);
 
-			oldSelection.y += offset;
-			oldSelection.x += tabStr.length() * direction;
+			//oldSelection.y += offset;
+			//oldSelection.x += tabStr.length() * direction;
 
 			// TODO: This fails if you are right inbetween a /r
 			// and /n, better fix it ;)
-			txt.setSelection(oldSelection);
+			//txt.setSelection(oldSelection);
 
 
 		} catch (Exception ex) {
@@ -367,7 +369,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				parser.reparseAll();
 			}
 		}
-
+		
+		if(endLine > txt.getLineCount()-1){
+			txt.setSelection(txt.getOffsetAtLine(startLine), txt.getCharCount());
+		}else{
+			txt.setSelection(txt.getOffsetAtLine(startLine), txt.getOffsetAtLine(endLine+1)-1);
+		}
 	}
 
 	private String getTabStr() {
@@ -459,11 +466,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						int startLine = txt.getLineAtOffset(e.start);
 						int endLine = txt.getLineAtOffset(e.end);
 
-						if (startLine == endLine) {
+						/*if (startLine == endLine) {
 							e.doit = true;
 							e.text = getTabStr();
 							return;
-						}
+						}*/
 
 						groupIndent(direction, startLine, endLine);
 
