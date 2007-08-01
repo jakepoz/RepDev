@@ -126,6 +126,8 @@ public class MainShell {
 
 		shell = new Shell(display);
 		shell.setText(RepDevMain.NAMESTR);
+		shell.setImage(RepDevMain.smallProgramIcon);
+		
 		createMenuDefault();
 
 		shell.setLayout(new FormLayout());
@@ -727,9 +729,7 @@ public class MainShell {
 
 		tree = new Tree(self, SWT.NONE | SWT.BORDER | SWT.MULTI );
 		
-		
 		//Configure drag + drop
-		//TODO: Dropping a file from one project to another on same sym/dir doesn't work right.
 		Transfer[] types = new Transfer[] {TextTransfer.getInstance()};
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
 		
@@ -766,11 +766,6 @@ public class MainShell {
 				event.data = Arrays.asList(dragSourceItems).toString();
 			}
 			public void dragFinished(DragSourceEvent event) {
-				//Remove old things from table
-				//TODO: Add Move stuff later
-				//for( TreeItem item : dragSourceItems){
-				//	item.dispose();
-				//}
 			}
 
 		});
@@ -797,6 +792,7 @@ public class MainShell {
 					event.feedback = DND.FEEDBACK_NONE;
 			}
 			
+			//TODO: Add Move stuff later
 			public void drop(DropTargetEvent event) {
 				if (event.data == null) {
 					event.detail = DND.DROP_NONE;
@@ -856,7 +852,7 @@ public class MainShell {
 								}
 							}
 							
-							SessionError error = null;
+							SessionError error = SessionError.NONE;
 							
 							if((overwrite & RepeatOperationShell.YES) != 0)
 								error = destination.saveFile(source.getData());
@@ -899,7 +895,7 @@ public class MainShell {
 									}
 								}
 								
-								SessionError error = null;
+								SessionError error = SessionError.NONE;
 								
 								if((overwrite & RepeatOperationShell.YES) != 0)
 									error = newFile.saveFile(file.getData());

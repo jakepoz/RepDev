@@ -34,7 +34,7 @@ public class RepDevMain {
 			largeSymAddImage, largeSymRemoveImage, smallAddImage, smallErrorsImage, smallFileImage, smallProjectImage, smallRemoveImage, smallRepGenImage, smallSymImage, smallTasksImage, smallActionSaveImage, smallFileAddImage, smallFileRemoveImage,
 			smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
 			smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
-			smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage;
+			smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage, smallProgramIcon;
 	public static final String IMAGE_DIR = "repdev-icons/";
 
 	public static void main(String[] args) throws Exception{
@@ -134,6 +134,8 @@ public class RepDevMain {
 		smallFolderAddImage = new Image(display, IMAGE_DIR + "small-folder-add.png");
 		smallFolderRemoveImage = new Image(display, IMAGE_DIR + "small-folder-remove.png");
 		smallActionSaveAsImage = new Image(display, IMAGE_DIR + "small-action-save-as.png");
+		
+		smallProgramIcon = new Image(display, IMAGE_DIR + "icon-16x16.png");
 	}
 
 	/**
