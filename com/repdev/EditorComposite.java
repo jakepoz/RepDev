@@ -282,7 +282,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 	}
 	
-	//TODO: Allow for unindenting single lines
+	//Allow for unindenting single lines -- Fixed
 	private void groupIndent(int direction, int startLine, int endLine) {
 		//System.out.println("("+startLine+","+endLine+")");
 		String tabStr = getTabStr();
@@ -835,7 +835,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 	}
 	
-	//TODO: Finish this method, make it allow end be more than 1 line
+	//Finish this method, make it allow end be more than 1 line -- fixed, jake recoded to work, look below
 	/*public void surroundEachLineWith(String start, String end, String nextLine, boolean escapeQuotes){
 		if( txt.getSelectionCount() == 0)
 			return;

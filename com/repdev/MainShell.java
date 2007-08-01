@@ -1346,8 +1346,16 @@ public class MainShell {
 				}
 				else if( e.keyCode == SWT.F2){
 					renameFile.notifyListeners(SWT.Selection, null);
+				}else if( e.keyCode == '\r' || e.keyCode == 16777296){
+					TreeItem[] selection = tree.getSelection();
+					for(int i = 0; i < selection.length; i++){
+						TreeItem cur = selection[i];
+						SymitarFile file = (SymitarFile) cur.getData();
+						openFile(file);
+					}
 				}
-				//TODO: Maybe make it open selected files when you hit enter
+				//System.out.println("-"+e.keyCode+"-");
+				//Maybe make it open selected files when you hit enter -- fixed
 			}
 		});
 
