@@ -889,7 +889,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}*/
 
 	private void surroundEachLineWith(String start, String end, boolean escapeBadChars) {
-        //My algorithm: Go through each line of the current text, if it's a line we are working with (Defined by the selection),
+        int old = txt.getTopIndex();
+		//My algorithm: Go through each line of the current text, if it's a line we are working with (Defined by the selection),
         //we append it + start and end stuff to the new Txt, otherwise, just append the regular line to the new Txt
         //When you are done, just write out the newTxt to the box and reparse/reload the highlighting, etc.
         //I decided not to alter the tabbing of the surrounded text, the user should be able to select what they want after the operation
@@ -968,6 +969,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
                 parser.setReparse(true);
             }
         }
+        txt.setTopIndex(old);
     }
 	
 	public RepgenParser getParser() {
