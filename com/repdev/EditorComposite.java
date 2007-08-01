@@ -992,10 +992,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		
 		RepDevMain.mainShell.setLineColumn();
 		
-		if( parser != null ) {
-			tokens = parser.getLtokens();
-		}
+		if( parser == null )
+			return;
 		
+		tokens = parser.getLtokens();
+
 		//Find your current token
 		for( Token tok: tokens ) {
 			tokloc++;

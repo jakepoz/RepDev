@@ -1347,6 +1347,7 @@ public class MainShell {
 				else if( e.keyCode == SWT.F2){
 					renameFile.notifyListeners(SWT.Selection, null);
 				}
+				//TODO: Maybe make it open selected files when you hit enter
 			}
 		});
 
