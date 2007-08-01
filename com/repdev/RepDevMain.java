@@ -16,7 +16,9 @@ import org.eclipse.swt.widgets.Display;
  * 
  * Provides many application global functions/variables, as well as intializes all the stuff we need
  * 
- * @author Jake Poznanski
+ * @author Jake Poznanski, Ryan Schultz
+ *
+ * TODO: Documentation for RepDev
  *
  */
 public class RepDevMain {
