@@ -941,9 +941,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
                 {    
                 	newTxt.append(start);
                     //line = line.substring(0, line.length() - 1);
+                	//TODO: I'm still occasional noticing that it screws up the lines stuff
                 	int j;
                 	for( j = line.length()-1; j >= 0; j--){
-                		if(line.charAt(j)>32){
+                		if(line.charAt(j) != '\n' && line.charAt(j) != '\r'){
                 			break;
                 		}
                 	}

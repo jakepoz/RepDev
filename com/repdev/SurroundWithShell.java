@@ -40,7 +40,7 @@ public class SurroundWithShell {
 		
 		Label text = new Label(shell, SWT.NONE);
 		text.setText("Surround each line of the selected text with custom values\n"
-				+"(%n for newline)");
+				+"(\\n for newline)\nThe after text should usually include a \\n");
 		
 		Group surGroup = new Group(shell, SWT.NONE);
 		surGroup.setText("Surround Text Options");
@@ -55,6 +55,7 @@ public class SurroundWithShell {
 		afterLabel.setText("After");
 
 		final Text afterText = new Text(surGroup, SWT.BORDER);
+		afterText.setText("\\n");
 		
 		Button ok = new Button(shell, SWT.PUSH);
 		ok.setText("Ok");
@@ -68,8 +69,8 @@ public class SurroundWithShell {
 				String before = beforeText.getText();
 				String after = afterText.getText();
 				
-			    before = before.replaceAll("%n", "\n");
-			    after = after.replaceAll("%n", "\n");
+			    before = before.replaceAll("\\\\n", "\n");
+			    after = after.replaceAll("\\\\n", "\n");
 			    
 				System.out.println("Before: " + before);
 				System.out.println("After:  " + after);
@@ -104,6 +105,7 @@ public class SurroundWithShell {
 		data = new FormData();		
 		data.top = new FormAttachment(0);
 		data.left = new FormAttachment(0);
+		data.width=50;
 		beforeLabel.setLayoutData(data);
 		
 		data = new FormData();
@@ -115,6 +117,7 @@ public class SurroundWithShell {
 		data = new FormData();
 		data.top = new FormAttachment(beforeLabel);
 		data.left = new FormAttachment(0);
+		data.width=50;
 		afterLabel.setLayoutData(data);
 		
 		data = new FormData();
