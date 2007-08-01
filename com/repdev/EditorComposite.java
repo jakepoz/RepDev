@@ -565,7 +565,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						break;
 					case 'U':
 					case 'u':
-						jakesSurroundEachLineWithOMGLongNameHAHAHALol("PRINT \"", "\"\nNEWLINE\n", true);
+						surroundEachLineWith("PRINT \"", "\"\nNEWLINE\n", true);
 						break;
 					case 'r':
 					case 'R':
@@ -883,7 +883,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		commitUndo();
 	}*/
 
-	private void jakesSurroundEachLineWithOMGLongNameHAHAHALol(String start, String end, boolean escapeBadChars) {
+	private void surroundEachLineWith(String start, String end, boolean escapeBadChars) {
         //My algorithm: Go through each line of the current text, if it's a line we are working with (Defined by the selection),
         //we append it + start and end stuff to the new Txt, otherwise, just append the regular line to the new Txt
         //When you are done, just write out the newTxt to the box and reparse/reload the highlighting, etc.
