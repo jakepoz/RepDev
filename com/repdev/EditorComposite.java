@@ -565,7 +565,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						break;
 					case 'U':
 					case 'u':
-						surroundEachLineWith("PRINT \"", "\"","NEWLINE", true);
+						jakesSurroundEachLineWithOMGLongNameHAHAHALol("PRINT \"", "\"\nNEWLINE\n", true);
 						break;
 					case 'r':
 					case 'R':
@@ -824,20 +824,20 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 	
 	//TODO: Finish this method, make it allow end be more than 1 line
-	public void surroundEachLineWith(String start, String end, String nextLine, boolean escapeQuotes){
+	/*public void surroundEachLineWith(String start, String end, String nextLine, boolean escapeQuotes){
 		if( txt.getSelectionCount() == 0)
 			return;
 		int startLine = txt.getLineAtOffset(txt.getSelection().x);
 		int endLine = txt.getLineAtOffset(txt.getSelection().y);
 		int finalLine = txt.getLineCount()-1;
+		boolean lastSpace = false;
 		//String nextLine = "NEWLINE";
 		nextLine = nextLine + "\n";
-		
 		for( int i = startLine; i <= endLine; i++ ){
 			String line = txt.getText(txt.getOffsetAtLine(i), txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)));
 			String nextReadLine = txt.getText(txt.getOffsetAtLine(i+1), txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+2)));
 			String whiteSpace;
-			nextReadLine = nextReadLine.trim().substring(0,1);
+			nextReadLine = nextReadLine.trim().substring(0, 1);
 			int offset = 0;
 			whiteSpace = line.trim();
 			for( int j = 0; j < line.length(); j++){
@@ -847,9 +847,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					j=line.length();
 				}
 			}
+			//System.out.println("-"+whiteSpace+"-");
+			//System.out.println("-"+nextReadLine+"-");
 			if(!whiteSpace.equals(nextReadLine)){
-				//System.out.println("-"+whiteSpace+"-");
-				//System.out.println("-"+nextReadLine+"-");
+				//System.out.println("-"+txt.getLineCount()+"-");
 				if(line.substring(0,1).equals(whiteSpace.substring(0,1))){
 					txt.replaceTextRange(txt.getOffsetAtLine(i),
 				             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
@@ -859,12 +860,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
 						             line.substring(0, offset) + start + line.substring(0,line.length()-2).replaceAll("\"", "\"+CTRLCHR(34)+\"") + end + "\r\n" + line.substring(0, offset) + nextLine);
 				}
-			}else{
+				lastSpace = false;
+			}else if(!lastSpace){
 				txt.replaceTextRange(txt.getOffsetAtLine(i),
 						             txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+1)) - txt.getOffsetAtLine(i),
 						             "\n");
 				i--;
 				endLine--;
+				lastSpace = true;
 			}
 			if(finalLine>i){
 				i++;
@@ -874,11 +877,80 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			while(Display.getCurrent().readAndDispatch()){
 				
 			}
+			//txt.setSelection(txt.getLineAtOffset(txt.getSelection().x), txt.getOffsetAtLine(Math.min(txt.getLineCount()-1,i+2)));
 		}
 		
 		commitUndo();
-	}
+	}*/
 
+	private void jakesSurroundEachLineWithOMGLongNameHAHAHALol(String start, String end, boolean escapeBadChars) {
+        //My algorithm: Go through each line of the current text, if it's a line we are working with (Defined by the selection),
+        //we append it + start and end stuff to the new Txt, otherwise, just append the regular line to the new Txt
+        //When you are done, just write out the newTxt to the box and reparse/reload the highlighting, etc.
+        //I decided not to alter the tabbing of the surrounded text, the user should be able to select what they want after the operation
+        char[] badChars = { '"' }; //TODO: Add more to list later
+        
+        StringBuilder newTxt = new StringBuilder();
+        int startLine, endLine;
+        
+        //If not selecting anything, operate on current line
+        if( txt.getSelectionCount() == 0)
+        {
+            startLine = endLine = txt.getLineAtOffset(txt.getCaretOffset());
+        }
+        else{
+            startLine = txt.getLineAtOffset(txt.getSelection().x);
+            endLine = txt.getLineAtOffset (txt.getSelection().y);
+        }
+        
+        if (endLine > txt.getLineCount() - 1 )
+            endLine = Math.max(txt.getLineCount() - 1, startLine + 1);
+
+        try {
+
+            for (int i = 0; i < txt.getLineCount(); i++) {
+                int startOffset = txt.getOffsetAtLine(i);
+                int endOffset;
+                String line;
+                
+                if( i >= txt.getLineCount () - 1 ){
+                    endOffset = txt.getCharCount() ;
+                }
+                else
+                    endOffset = txt.getOffsetAtLine(i + 1);
+
+                if( endOffset - 1 <= startOffset)
+                    line = "\n";
+                else
+                    line = txt.getText(startOffset, endOffset - 1);            
+
+                if( i >= startLine && i <= endLine )
+                {    newTxt.append(start);
+                    line = line.substring(0, line.length() - 1);
+                
+                    if( escapeBadChars )
+                        for(char cur : badChars)
+                            line = line.replaceAll("\\"+cur, "\"+CTRLCHR("+((int)cur)+")+\"");
+                
+                    newTxt.append(line);
+                     newTxt.append(end);
+                }
+                else
+                    newTxt.append(line);
+            }
+
+
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            txt.setText(newTxt.toString());
+            
+            if( parser != null )
+                parser.reparseAll();
+        }
+    }
+	
 	public RepgenParser getParser() {
 		return parser;
 	}
