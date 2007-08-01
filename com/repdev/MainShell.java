@@ -340,7 +340,6 @@ public class MainShell {
 
 		if (!found) {
 			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
-
 			item.setText(file.getName());
 			item.setImage(getFileImage(file));
 			item.setData("file", file);
@@ -1518,8 +1517,13 @@ public class MainShell {
 	}
 	
 	private void handleRenameItem(TreeItem item, String newName){
-		//TODO: Will not update name in tab titles if it's open already
-		
+		for (CTabItem c : mainfolder.getItems()) {
+			System.out.println(c.getData("file")+","+item.getData());
+			if (c.getData("file").equals(item.getData())){
+				c.setText(newName);
+			}
+			System.out.println(c.getData("file")+","+item.getData());
+		}
 		if( item.getData() instanceof SymitarFile)
 			if( ((SymitarFile)item.getData()).saveName(newName) )
 				item.setText(newName);
@@ -1527,7 +1531,19 @@ public class MainShell {
 			((Project)item.getData()).setName(newName);
 			item.setText(newName);
 		}
-		
+		//item.setText(file.getName());
+		//item.setText(newName);
+		/*if( mainfolder.getSelectionIndex() != -1){
+			if( confirmClose(mainfolder.getSelection()) ){
+				clearErrorList(mainfolder.getSelection());
+				mainfolder.getSelection().dispose();
+				setLineColumn();
+			}
+		}
+		//TreeItem[] selection = tree.getSelection();
+		//TreeItem cur = selection[0];
+		SymitarFile file = (SymitarFile) item.getData();
+		openFile(file);*/
 	}
 
 	protected void renameItem(final TreeItem item) {
