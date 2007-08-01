@@ -925,14 +925,23 @@ public class EditorComposite extends Composite implements TabTextEditorView {
                     endOffset = txt.getOffsetAtLine(i + 1);
 
                 if( endOffset - 1 <= startOffset)
-                    line = "\n";
+                    line = "";
                 else
                     line = txt.getText(startOffset, endOffset - 1);            
 
                 if( i >= startLine && i <= endLine )
-                {    newTxt.append(start);
-                    line = line.substring(0, line.length() - 1);
-                
+                {    
+                	newTxt.append(start);
+                    //line = line.substring(0, line.length() - 1);
+                	int j;
+                	for( j = line.length()-1; j >= 0; j--){
+                		if(line.charAt(j)>32){
+                			break;
+                		}
+                	}
+                	if(j!=-1){
+                		line = line.substring(0,j+1);
+                	}
                     if( escapeBadChars )
                         for(char cur : badChars)
                             line = line.replaceAll("\\"+cur, "\"+CTRLCHR("+((int)cur)+")+\"");
