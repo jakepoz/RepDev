@@ -996,6 +996,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		Token cur = null;
 		int tokloc = 0;
 		ArrayList<Token> tokens = null;
+		ArrayList<Token> redrawTokens = new ArrayList<Token>();
 		
 		RepDevMain.mainShell.setLineColumn();
 		
@@ -1019,9 +1020,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			if( tok.getSpecialBackground() != null){
 				needRedraw = true;
 				tok.setSpecialBackground(null);
+				redrawTokens.add(tok);
 			}
 		}
-		
+
 		if( cur != null ) {
 			
 			//If it's a start token, read forward to the matching block
@@ -1107,15 +1109,19 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				if( found ){
 					cur.setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					redrawTokens.add(cur);
+					redrawTokens.add(tokens.get(tokloc));
 					needRedraw = true;
 				}
 			}
 		}
-		
+	
 		//IF we need to update, only call this once
 		if( needRedraw ){
-			txt.redrawRange(0,txt.getCharCount(),false);
+			for( Token tok : redrawTokens )
+				txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
 		}
+
 	}
 	
 	
