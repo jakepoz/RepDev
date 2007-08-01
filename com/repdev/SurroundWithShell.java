@@ -1,6 +1,7 @@
 package com.repdev;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -14,20 +15,25 @@ import org.eclipse.swt.widgets.Text;
 
 public class SurroundWithShell {
 	private Shell shell;
+	private EditorComposite ec;
 	
-	public static void create() {
-		SurroundWithShell me = new SurroundWithShell();
-		me.createShell();
+	public SurroundWithShell(EditorComposite ec) {
+		this.ec = ec;
 	}
 	
-	private void createShell() {
+	public static void create(EditorComposite ec) {
+		SurroundWithShell self = new SurroundWithShell(ec);
+		self.open();
+	}
+		
+	public void open() {
 		shell = new Shell(SWT.APPLICATION_MODAL | SWT.CLOSE);
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 10;
 		layout.marginBottom = 10;
 		layout.marginLeft = 10;
 		layout.marginRight = 10;
-		layout.spacing = 10;
+		layout.spacing = 8;
 		shell.setLayout(layout);
 		
 		shell.setText("Surround Selection With");
@@ -69,7 +75,7 @@ public class SurroundWithShell {
 				System.out.println("After:  " + after);
 				
 				// TODO: Make this work...
-				// RepDevMain.mainShell
+				ec.surroundEachLineWith(before, after, true);
 				
 			}			
 		});

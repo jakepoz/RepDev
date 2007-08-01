@@ -92,6 +92,7 @@ public class MainShell {
 	private Tree tree;
 	private Table tblErrors, tblTasks; 
 	private FindReplaceShell findReplaceShell;
+	private SurroundWithShell surroundWithShell;
 	private final int MAX_RECENTS = 5;
 	
 	// CoolBar for our universal tool bar at the top.
@@ -263,7 +264,6 @@ public class MainShell {
 		});
 		
 		findReplaceShell = new FindReplaceShell(shell);
-
 		shell.setMinimumSize(3 * MIN_COMP_SIZE, 3 * MIN_COMP_SIZE);
 	}
 	

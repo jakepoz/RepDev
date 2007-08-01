@@ -594,7 +594,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					
 					case 'r':
 					case 'R':
-						SurroundWithShell.create();
+						surroundWithShell();
 						break;
 					}
 				}
@@ -895,7 +895,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		commitUndo();
 	}*/
 
-	private void surroundEachLineWith(String start, String end, boolean escapeBadChars) {
+	public void surroundEachLineWith(String start, String end, boolean escapeBadChars) {
         int old = txt.getTopIndex();
 		//My algorithm: Go through each line of the current text, if it's a line we are working with (Defined by the selection),
         //we append it + start and end stuff to the new Txt, otherwise, just append the regular line to the new Txt
@@ -1124,5 +1124,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 	}
 	
+	public void surroundWithShell() {
+		SurroundWithShell.create(this);
+	}
 	
 }
