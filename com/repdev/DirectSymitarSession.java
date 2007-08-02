@@ -632,7 +632,40 @@ public class DirectSymitarSession extends SymitarSession {
 
 	@Override
 	public SessionError removeFile(SymitarFile file) {
-		return null;
+		Command delete = new Command();
+		delete.setCommand("File");
+		delete.getParameters().put("Action", "Delete");
+
+		if (file.getType() == FileType.REPGEN)
+			delete.getParameters().put("Type", "RepWriter");
+		else if (file.getType() == FileType.HELP)
+			delete.getParameters().put("Type", "Help");
+		else if (file.getType() == FileType.LETTER)
+			delete.getParameters().put("Type", "Letter");
+		else if (file.getType() == FileType.REPORT)
+			delete.getParameters().put("Type", "Report");
+
+		delete.getParameters().put("Name", file.getName());
+
+		write(delete);
+
+		Command current = null;
+
+		try {
+			current = readNextCommand();
+
+			if (current.getParameters().get("Status") != null && current.getParameters().get("Status").contains("No such file or directory"))
+				return SessionError.ARGUMENT_ERROR;
+			else if (current.getParameters().get("Status") != null)
+				return SessionError.FILENAME_TOO_LONG;
+			else if (current.getParameters().get("Done") != null)
+				return SessionError.NONE;
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return SessionError.IO_ERROR;
 	}
 
 	@Override
