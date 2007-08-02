@@ -1,5 +1,6 @@
 package com.repdev;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -46,7 +47,10 @@ public class ProjectManager {
 
 		if (delete)
 			for (SymitarFile file : project.getFiles())
-				RepDevMain.SYMITAR_SESSIONS.get(sym).removeFile(file);
+					if( file.isLocal() )
+						new File( file.getPath() ).delete();
+					else
+						RepDevMain.SYMITAR_SESSIONS.get(sym).removeFile(file);
 
 	}
 

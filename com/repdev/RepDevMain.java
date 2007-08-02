@@ -5,7 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Image;
@@ -39,7 +41,7 @@ public class RepDevMain {
 
 	public static void main(String[] args) throws Exception{
 		display = new Display();
-		
+	
 		try{
 			loadSettings();
 			createImages();

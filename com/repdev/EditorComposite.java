@@ -373,7 +373,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if(endLine > txt.getLineCount()-1){
 			txt.setSelection(txt.getOffsetAtLine(startLine), txt.getCharCount());
 		}else{
-			txt.setSelection(txt.getOffsetAtLine(startLine), txt.getOffsetAtLine(endLine+1)-1);
+			txt.setSelection(txt.getOffsetAtLine(startLine), Math.min(txt.getCharCount(),txt.getOffsetAtLine(endLine+1)-1));
 		}
 	}
 
