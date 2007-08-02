@@ -1,3 +1,22 @@
+/**
+ *  RepDev - RepGen IDE for Symitar
+ *  Copyright (C) 2007  Jake Poznanski, Ryan Schultz, Sean Delaney
+ *  http://repdev.org/ <support@repdev.org>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 package com.repdev;
 
 import java.io.FileInputStream;
@@ -15,13 +34,11 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Main run class, runs as first startup
- * 
  * Provides many application global functions/variables, as well as intializes all the stuff we need
  * 
- * @author Jake Poznanski, Ryan Schultz
+ * @author Jake Poznanski, Ryan Schultz, Sean Delaney
  *
  * TODO: Documentation for RepDev
- *
  */
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
@@ -41,6 +58,11 @@ public class RepDevMain {
 
 	public static void main(String[] args) throws Exception{
 		display = new Display();
+		
+		System.out.println("RepDev  Copyright (C) 2007  RepDev.org Team\n"
+				+"This program comes with ABSOLUTELY NO WARRANTY.\n"
+				+"This is free software, and you are welcome to redistribute it\n"
+				+"under certain conditions.\n");
 	
 		try{
 			loadSettings();
