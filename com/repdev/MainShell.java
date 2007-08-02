@@ -681,6 +681,11 @@ public class MainShell {
 			ProjectManager.saveProjects(proj.getDir());
 
 		tree.notifyListeners(SWT.Selection, null);
+		for (CTabItem c : mainfolder.getItems()) {
+			if (c.getData("file")!=null && c.getData("file").equals(file)){
+				c.dispose();
+			}
+		}
 		return result;
 	}
 
