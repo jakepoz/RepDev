@@ -32,6 +32,8 @@ Trailers
 Width
 Wrap 
 
+EXCPITEM
+
 Every
 
 Define
@@ -118,6 +120,7 @@ OutputOpen
 OutputSwitch
 PrintControl
 Print
+Print Title
 PullCreidtReport
 Remove
 From
