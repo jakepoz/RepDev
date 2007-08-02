@@ -1345,8 +1345,10 @@ public class MainShell {
 					TreeItem[] selection = tree.getSelection();
 					for(int i = 0; i < selection.length; i++){
 						TreeItem cur = selection[i];
-						SymitarFile file = (SymitarFile) cur.getData();
-						openFile(file);
+						if( cur.getData() instanceof SymitarFile ){
+							SymitarFile file = (SymitarFile) cur.getData();
+							openFile(file);
+						}
 					}
 				}
 				//System.out.println("-"+e.keyCode+"-");
