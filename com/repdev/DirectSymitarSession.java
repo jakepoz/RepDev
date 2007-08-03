@@ -435,7 +435,9 @@ public class DirectSymitarSession extends SymitarSession {
 	@Override
 	public synchronized String getFile(SymitarFile file) {
 		StringBuilder data = new StringBuilder();
-
+		final long maxSize = 2097152; //Don't download more than 2MB, otherwise things get ugly
+		boolean wroteSizeWarning = false;
+		
 		if( !connected )
 			return null;
 		
@@ -466,19 +468,25 @@ public class DirectSymitarSession extends SymitarSession {
 				else if( current.getParameters().get("Status") != null )
 					return null;
 
-				if (current.getParameters().get("Done") != null)
+				if (current.getParameters().get("Done") != null){
 					return data.toString();
+				}
 
-				data.append(current.getFileData());
-				
-				if( file.getType() == FileType.REPORT )
-					data.append( "\n");
-				
+				if( data.length() < maxSize){
+					data.append(current.getFileData());
+					
+					if( file.getType() == FileType.REPORT )
+						data.append( "\n");
+				}
+				else if( !wroteSizeWarning ){
+					data.insert(0,"WARNING - This file exceeds the 2MB limit that RepDev has for loading files. This text should only be used as a preview!\n\n");
+					data.append("\n\nWARNING - This file exceeds the 2MB limit that RepDev has for loading files. This text should only be used as a preview!");
+					wroteSizeWarning = true;
+				}
 			}
 		} catch (IOException e) {
 			return null;
 		}
-
 	}
 
 	@Override

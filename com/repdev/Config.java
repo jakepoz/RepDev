@@ -118,13 +118,6 @@ public class Config implements Serializable {
 		me.runOptionsQueue = runOptionsQueue;
 	}
 
-	public static int getMaxQueues() {
-		return me.maxQueues;
-	}
-
-	public static void setMaxQueues(int maxQueues) {
-		me.maxQueues = maxQueues;
-	}
 
 	public static String getLastUserID() {
 		return me.lastUserID;

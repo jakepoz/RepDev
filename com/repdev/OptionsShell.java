@@ -57,7 +57,7 @@ public class OptionsShell {
 
 		FormData data = new FormData();
 
-		shell = new Shell(parent, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.TITLE | SWT.RESIZE);
+		shell = new Shell(parent, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.TITLE);
 		shell.setText("Global Options");
 		shell.setLayout(layout);
 
@@ -97,14 +97,7 @@ public class OptionsShell {
 
 		serverText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
 		serverText.setText(Config.getServer());
-		
-		final Label maxQueuesLabel = new Label(serverGroup, SWT.NONE);
-		maxQueuesLabel.setText("Number of Queues:");
-		
-		maxQueuesSpinner = new Spinner(serverGroup, SWT.BORDER);
-		maxQueuesSpinner.setMaximum(9999);
-		maxQueuesSpinner.setMinimum(0);
-		maxQueuesSpinner.setSelection(Config.getMaxQueues());		
+			
 		
 		Button cancel = new Button(shell, SWT.PUSH);
 		cancel.setText("Cancel");
@@ -125,7 +118,6 @@ public class OptionsShell {
 				else
 					Config.setServer(serverText.getText());
 
-				Config.setMaxQueues(maxQueuesSpinner.getSelection());
 				RepDevMain.FORGET_PASS_ON_EXIT = devForgetBox.getSelection();
 				
 				shell.close();
@@ -213,16 +205,7 @@ public class OptionsShell {
 		data.right = new FormAttachment(100);
 		serverText.setLayoutData(data);
 		
-		data = new FormData();
-		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(serverText);
-		maxQueuesLabel.setLayoutData(data);
-		
-		data = new FormData();
-		data.right = new FormAttachment(100);
-		data.left  = new FormAttachment(maxQueuesLabel);
-		data.top   = new FormAttachment(serverText);
-		maxQueuesSpinner.setLayoutData(data);
+
 
 		// Editor options
 		data = new FormData();

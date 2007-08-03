@@ -116,7 +116,7 @@ public class FMShell {
 		queueLabel.setText("Queue:");
 		
 		queueSpinner = new Spinner(queueGroup,SWT.BORDER);
-		queueSpinner.setMaximum(Config.getMaxQueues());
+		queueSpinner.setMaximum(9999);
 		queueSpinner.setMinimum(0);
 		
 		
