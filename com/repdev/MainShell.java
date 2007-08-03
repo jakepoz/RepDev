@@ -1540,12 +1540,18 @@ public class MainShell {
 	
 	private void handleRenameItem(TreeItem item, String newName){
 		for (CTabItem c : mainfolder.getItems()) {
-			System.out.println(c.getData("file")+","+item.getData());
+			//System.out.println(c.getData("file")+","+item.getData());
 			if (c.getData("file").equals(item.getData())){
 				c.setText(newName);
+				if(c.getControl() instanceof EditorComposite){
+					System.out.println("Update the */");
+					((EditorComposite)c.getControl()).updateModified();
+					System.out.println("/Update the *");
+				}
 			}
-			System.out.println(c.getData("file")+","+item.getData());
+			//System.out.println(c.getData("file")+","+item.getData());
 		}
+		//TODO:Fix the change star if file is renamed
 		if( item.getData() instanceof SymitarFile)
 			if( ((SymitarFile)item.getData()).saveName(newName) )
 				item.setText(newName);

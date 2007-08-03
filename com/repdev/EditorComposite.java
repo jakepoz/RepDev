@@ -802,6 +802,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 	
 	public void updateModified(){
+		System.out.println("MODIFY FTW!");
 		CTabFolder folder = (CTabFolder)getParent();
 		Object loc;
 		
