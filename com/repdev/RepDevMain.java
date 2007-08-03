@@ -46,7 +46,7 @@ public class RepDevMain {
 	public static final boolean DEVELOPER = true; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
 	public static final String VERSION = "0.9.2" + (DEVELOPER ? "-dev" : "");
 	public static final String NAMESTR = "RepDev  v" + VERSION;
-	public static boolean FORGET_PASS_ON_EXIT = true; // set in options only please.
+	public static boolean FORGET_PASS_ON_EXIT = false; // set in options only please.
 	public static MainShell mainShell;
 	private static Display display;
 	public static Image largeActionSaveImage, largeAddImage, largeFileAddImage, largeFileRemoveImage, largePrintLocalImage, largePrintLPTImage, largePrintTPTImage, largeProjectAddImage, largeProjectRemoveImage, largeRemoveImage, largeRunImage,
