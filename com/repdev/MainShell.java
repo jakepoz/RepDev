@@ -1539,39 +1539,27 @@ public class MainShell {
 	}
 	
 	private void handleRenameItem(TreeItem item, String newName){
-		for (CTabItem c : mainfolder.getItems()) {
-			//System.out.println(c.getData("file")+","+item.getData());
-			if (c.getData("file").equals(item.getData())){
-				c.setText(newName);
-				if(c.getControl() instanceof EditorComposite){
-					System.out.println("Update the */");
-					((EditorComposite)c.getControl()).updateModified();
-					System.out.println("/Update the *");
-				}
-			}
-			//System.out.println(c.getData("file")+","+item.getData());
-		}
-		//TODO:Fix the change star if file is renamed
-		if( item.getData() instanceof SymitarFile)
+		if( item.getData() instanceof SymitarFile){
+			//Set SymitarFile name
 			if( ((SymitarFile)item.getData()).saveName(newName) )
-				item.setText(newName);
+				item.setText(newName); //Set name in tree
+			
+			//Now, set name in any open tabs
+			for( CTabItem c : mainfolder.getItems())
+				if( c.getData("file") == item.getData() ) //Be sure it's the exact same instance, like it should be
+				{	
+					c.setText( newName );
+					if( c.getControl() instanceof EditorComposite ){
+						c.setData("modified", false); 
+						((EditorComposite)c.getControl()).updateModified();
+					}
+				}
+		}
+		
 		if( item.getData() instanceof Project){
 			((Project)item.getData()).setName(newName);
 			item.setText(newName);
 		}
-		//item.setText(file.getName());
-		//item.setText(newName);
-		/*if( mainfolder.getSelectionIndex() != -1){
-			if( confirmClose(mainfolder.getSelection()) ){
-				clearErrorList(mainfolder.getSelection());
-				mainfolder.getSelection().dispose();
-				setLineColumn();
-			}
-		}
-		//TreeItem[] selection = tree.getSelection();
-		//TreeItem cur = selection[0];
-		SymitarFile file = (SymitarFile) item.getData();
-		openFile(file);*/
 	}
 
 	protected void renameItem(final TreeItem item) {

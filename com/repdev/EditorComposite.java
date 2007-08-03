@@ -1139,7 +1139,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		//IF we need to update, only call this once
 		if( needRedraw ){
 			for( Token tok : redrawTokens )
-				txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
+				txt.redrawRange(tok.getStart(),tok.getStr().length(),true);
 		}
 
 	}
@@ -1147,5 +1147,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void surroundWithShell() {
 		SurroundWithShell.create(this);
 	}
+
+	public boolean isModified() {
+		return modified;
+	}
+	
+	
 	
 }
