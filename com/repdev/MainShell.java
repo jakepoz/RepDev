@@ -2555,7 +2555,7 @@ public class MainShell {
 	}
 
 	private void showAboutBox() {
-		AboutBoxShell.show();
+		AboutBoxShell2.show();
 	}
 	
 	public Table getErrorTable(){

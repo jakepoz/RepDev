@@ -46,7 +46,7 @@ public class SurroundWithShell {
 	}
 		
 	public void open() {
-		shell = new Shell(SWT.APPLICATION_MODAL | SWT.CLOSE);
+		shell = new Shell(SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM );
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 10;
 		layout.marginBottom = 10;
