@@ -59,7 +59,7 @@ public class SurroundWithShell {
 		
 		Label text = new Label(shell, SWT.NONE);
 		text.setText("Surround each line of the selected text with custom values\n"
-				+"(\\n for newline)\nThe after text should usually include a \\n");
+				+"(\\n for newline)\nThe after text should usually include a \\n at the end");
 		
 		Group surGroup = new Group(shell, SWT.NONE);
 		surGroup.setText("Surround Text Options");
@@ -76,13 +76,17 @@ public class SurroundWithShell {
 		final Text afterText = new Text(surGroup, SWT.BORDER);
 		afterText.setText("\\n");
 		
+		final Button replaceQuotes = new Button(surGroup, SWT.CHECK);
+		replaceQuotes.setText("Replace Quotes");
+		replaceQuotes.setSelection(true);
+		
 		Button ok = new Button(shell, SWT.PUSH);
 		ok.setText("Ok");
 		
 		Button cancel = new Button(shell, SWT.PUSH);
 		cancel.setText("Cancel");
 		
-		// Button events
+		// --- Button events ---
 		ok.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String before = beforeText.getText();
@@ -94,8 +98,10 @@ public class SurroundWithShell {
 				System.out.println("Before: " + before);
 				System.out.println("After:  " + after);
 				
-				// TODO: Make this work...
-				ec.surroundEachLineWith(before, after, true);
+				ec.surroundEachLineWith(before, after, replaceQuotes.getSelection());
+				
+				// Close the shell now.
+				shell.dispose();
 				
 			}			
 		});
@@ -146,6 +152,11 @@ public class SurroundWithShell {
 		afterText.setLayoutData(data);
 		
 		data = new FormData();
+		data.top = new FormAttachment(afterLabel);
+		data.left = new FormAttachment(0);
+		replaceQuotes.setLayoutData(data);
+		
+		data = new FormData();
 		data.top = new FormAttachment(surGroup);
 		data.bottom = new FormAttachment(100);
 		data.right = new FormAttachment(100);
@@ -158,6 +169,8 @@ public class SurroundWithShell {
 		ok.setLayoutData(data);
 		
 		surGroup.pack();
+		
+		shell.setDefaultButton(ok);
 		
 		shell.pack();
 		shell.open();
