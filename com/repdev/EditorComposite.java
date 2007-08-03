@@ -1012,7 +1012,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 	
 	public void handleCaretChange() {
-		boolean found = false, needRedraw = false;
+		boolean found = false;
 		Token cur = null;
 		int tokloc = 0;
 		ArrayList<Token> tokens = null;
@@ -1038,7 +1038,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		//Clear all other special backgrounds, possibly move this up to previous loop in future to make faster
 		for( Token tok : tokens){
 			if( tok.getSpecialBackground() != null){
-				needRedraw = true;
+				
 				tok.setSpecialBackground(null);
 				redrawTokens.add(tok);
 			}
@@ -1085,7 +1085,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				if( found ){
 					cur.setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-					needRedraw = true;
+				
 				}
 				
 			} else if( cur.isEnd() && 
@@ -1131,17 +1131,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					redrawTokens.add(cur);
 					redrawTokens.add(tokens.get(tokloc));
-					needRedraw = true;
+				
 				}
 			}
 		}
 	
 		//IF we need to update, only call this once
-		if( needRedraw ){
-			for( Token tok : redrawTokens )
-				txt.redrawRange(tok.getStart(),tok.getStr().length(),true);
-		}
-
+		for( Token tok : redrawTokens )
+			txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
 	}
 	
 	public void surroundWithShell() {
