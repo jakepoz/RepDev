@@ -2685,4 +2685,8 @@ public class MainShell {
 			print.setEnabled(true);
 		}
 	}
+	
+	public Shell getShell(){
+		return shell;
+	}
 }

@@ -1,10 +1,12 @@
 package com.repdev.tests;
 
 import org.eclipse.swt.widgets.Display;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
 
-import com.repdev.RepDevMain;
+import com.repdev.*;
 
 /**
  * Tests some basic UI functions
@@ -12,23 +14,24 @@ import com.repdev.RepDevMain;
  *
  */
 public class MainUITest {
-	RepDevMain repDevMain;
+	Display display;
+	MainShell mainShell;
 	
-	@Test
-	public void testUI() throws InterruptedException{
-		Thread main = new Thread(new Runnable(){
+	Thread main = new Thread(new Runnable(){
 
-			public void run() {
-				try {
-					RepDevMain.main(new String[1]);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		public void run() {
+			try {
+				RepDevMain.main(new String[1]);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			
-		});
+		}
 		
+	});
+	
+	@Before
+	public void createUIThread() throws InterruptedException{
 		main.start();
 		
 		//Wait for everything to init in the UI thread
@@ -36,6 +39,33 @@ public class MainUITest {
 			Thread.sleep(100);
 		}
 		
+		display = RepDevMain.mainShell.getShell().getDisplay();
+		mainShell = RepDevMain.mainShell;
+	}
+	
+	@After
+	public void disposeUIThread(){
+		display.syncExec(new Runnable(){
+
+			public void run() {
+				display.dispose();
+			}
+			
+		});
+	}
+	
+	@Test
+	public void developerMode() throws InterruptedException{
+		Assert.assertTrue(RepDevMain.DEVELOPER);
+		Assert.assertNotNull(Config.getLastUsername());
+		Assert.assertNotSame("",Config.getLastUsername());
 		
+		Assert.assertNotNull(Config.getLastPassword());
+		Assert.assertNotSame("",Config.getLastPassword());
+	}
+	
+	@Test
+	public void mountDirectory(){
+		mainShell.showOptions();
 	}
 }
