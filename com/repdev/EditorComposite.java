@@ -798,7 +798,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 	
 	public void updateModified(){
-		System.out.println("MODIFY FTW!");
 		CTabFolder folder = (CTabFolder)getParent();
 		Object loc;
 		
@@ -1034,7 +1033,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		//Clear all other special backgrounds, possibly move this up to previous loop in future to make faster
 		for( Token tok : tokens){
 			if( tok.getSpecialBackground() != null){
-				
 				tok.setSpecialBackground(null);
 				redrawTokens.add(tok);
 			}
@@ -1081,7 +1079,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				if( found ){
 					cur.setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
-				
+					redrawTokens.add(cur);
+					redrawTokens.add(tokens.get(tokloc));
 				}
 				
 			} else if( cur.isEnd() && 
@@ -1127,7 +1126,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					redrawTokens.add(cur);
 					redrawTokens.add(tokens.get(tokloc));
-				
 				}
 			}
 		}
