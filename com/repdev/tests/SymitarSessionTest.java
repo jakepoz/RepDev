@@ -4,7 +4,6 @@ package com.repdev.tests;
 import org.junit.After;
 import org.junit.Before;
 
-import com.repdev.DirectSymitarSession;
 import com.repdev.SymitarSession;
 
 /**

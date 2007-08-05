@@ -45,7 +45,6 @@ public class OptionsShell {
 	private Text serverText;
 	private Spinner tabSpinner;
 	private Label serverLabel;
-	private Spinner maxQueuesSpinner;
 
 	private void create(Shell parent) {
 		FormLayout layout = new FormLayout();

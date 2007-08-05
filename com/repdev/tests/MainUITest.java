@@ -2,11 +2,13 @@ package com.repdev.tests;
 
 import org.eclipse.swt.widgets.Display;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
 
-import com.repdev.*;
+import com.repdev.Config;
+import com.repdev.MainShell;
+import com.repdev.RepDevMain;
 
 /**
  * Tests some basic UI functions

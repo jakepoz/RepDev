@@ -43,8 +43,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import com.repdev.SymitarSession.RunFMResult;
-
 public class ReportComposite extends Composite implements TabTextView{
 	private StyledText txt;
 	private Table table;

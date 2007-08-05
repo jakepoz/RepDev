@@ -44,7 +44,6 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -310,7 +309,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			endLine = Math.max(txt.getLineCount() - 1, startLine + 1);
 
 		try {
-			Point oldSelection = txt.getSelection();
 			int offset = 0;
 
 			if( parser != null)
@@ -552,8 +550,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			public void keyPressed(KeyEvent e) {
 				lineHighlight();
 				handleCaretChange();
-				
-				int line = txt.getLineAtOffset(txt.getCaretOffset());						
 				
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {

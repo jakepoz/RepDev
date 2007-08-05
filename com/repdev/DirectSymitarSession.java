@@ -29,7 +29,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -38,10 +37,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
-
-import com.repdev.SymitarSession.FMFile;
-
-import sun.security.x509.AVA;
 
 /**
  * This is the main connection object to the Symitar host, it provides all the routines you would need to connect

@@ -33,8 +33,6 @@ import java.util.regex.Pattern;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
 
-import com.repdev.SymitarSession.FMFile;
-
 public class TestingSymitarSession extends SymitarSession {
 	boolean isConnected;
 	int repGenRun = -1;

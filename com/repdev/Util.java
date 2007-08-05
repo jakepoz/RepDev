@@ -20,14 +20,11 @@
 package com.repdev;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Small symitar related utility methods, all static

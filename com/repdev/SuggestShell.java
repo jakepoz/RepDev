@@ -46,8 +46,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-
-import com.repdev.parser.*;
+import com.repdev.parser.Argument;
+import com.repdev.parser.DatabaseLayout;
+import com.repdev.parser.Field;
+import com.repdev.parser.Function;
+import com.repdev.parser.FunctionLayout;
+import com.repdev.parser.Record;
+import com.repdev.parser.RepgenParser;
+import com.repdev.parser.SpecialVariable;
+import com.repdev.parser.Token;
+import com.repdev.parser.Variable;
 
 /**
  * Suggestion box for help as you type in Repgens

@@ -21,7 +21,6 @@ package com.repdev;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;

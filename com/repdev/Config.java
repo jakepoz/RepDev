@@ -38,6 +38,8 @@ public class Config implements Serializable {
 	private String lastUsername = "", lastPassword = "", lastUserID;
 	private boolean runOptionsAskForPrompts = true;
 	private int runOptionsQueue = -1;
+	
+	@SuppressWarnings("unused")
 	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.
 							//UPDATE: Ok, this has been removed, however, you can't remove items from Serialized classes.
     private ArrayList<SymitarFile> recentFiles = new ArrayList<SymitarFile>();
