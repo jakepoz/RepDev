@@ -288,7 +288,7 @@ public class RepgenParser {
 	 * @param txt
 	 * @return
 	 * 
-	 * TODO: Sometimes we notice a mess up in the drawing when copying/pasting or deleting blocks of text.
+	 * TODO: Type asdf" then going back and putting a " in the start of the string doesn't redraw the file after the second "
 	 */
 	
 	private synchronized boolean parse(String filename, String str, int start, int end, int oldend, String replacedText, ArrayList<Token> tokens, ArrayList<Token> lasttokens, ArrayList<Variable> vars, StyledText txt) {
@@ -533,7 +533,6 @@ public class RepgenParser {
 						if( cur.getAfter() != null )
 							cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
 						
-						//i+=1;
 						continue;
 					}
 					if( cur.getAfter().getAfter() != null && db.containsFieldName(cur.getStr() + ":" + cur.getAfter().getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getAfter().getStart()).equals(":"))	
@@ -545,7 +544,6 @@ public class RepgenParser {
 						if( cur.getAfter() != null )
 							cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
 						
-						//i+=2;
 						continue;
 					}
 						
