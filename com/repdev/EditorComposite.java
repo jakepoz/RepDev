@@ -787,6 +787,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		updateModified();
 	}
 	
+	/**
+	 * Saves the currently open report
+	 * @param errorCheck Flag to check errors with symitar
+	 */
 	public void saveFile( boolean errorCheck ){
 		file.saveFile(txt.getText());
 		commitUndo();
@@ -818,6 +822,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 	}
 	
+	/**
+	 * @param confirm Pops up an SWT Message box if true, confirms wether the repgen should be installed or not
+	 */
 	public void installRepgen(boolean confirm) {
 		if( file.getType() != FileType.REPGEN || file.isLocal() ) {
 			return;
