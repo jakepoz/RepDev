@@ -1763,6 +1763,10 @@ public class MainShell {
 	}
 	
 	public void runReport(SymitarFile file){
+		if( file.getType() != FileType.REPGEN || file.isLocal() ) {
+			return;
+		}
+		
 		RunReportShell dialog = new RunReportShell(shell,file);
 		dialog.open();
 	}
