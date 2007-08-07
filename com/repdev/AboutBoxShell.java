@@ -174,7 +174,7 @@ public class AboutBoxShell {
 		data.right = new FormAttachment(100);
 		bar.setLayoutData(data);
 				
-		shell.setMinimumSize(shell.computeSize(SWT.DEFAULT, 300));
+		shell.setMinimumSize(shell.computeSize(SWT.DEFAULT, 400));
 		
 		shell.pack();
 		shell.open();
