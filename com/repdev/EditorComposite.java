@@ -44,6 +44,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -302,13 +303,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	
 	//Allow for unindenting single lines -- Fixed
 	private void groupIndent(int direction, int startLine, int endLine) {
-		//System.out.println("("+startLine+","+endLine+")");
 		String tabStr = getTabStr();
 
 		if (endLine > txt.getLineCount() - 1 )
 			endLine = Math.max(txt.getLineCount() - 1, startLine + 1);
 
 		try {
+			Point oldSelection = txt.getSelection();
 			int offset = 0;
 
 			if( parser != null)
@@ -330,9 +331,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						line = "\n";
 					else
 						line = txt.getText(startOffset, endOffset - 1);		
-					
-					//System.out.println("-"+line+"-"+"\n"+"-"+direction+"-");
-					
+
 					for (int x = 0; x < Math.min(tabStr.length(), line.length()); x++)
 						if (line.charAt(x) > 32)
 							return;
@@ -350,11 +349,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 				else
 					endOffset = txt.getOffsetAtLine(i + 1);
+
 				if( endOffset - 1 <= startOffset)
 					line = "\n";
 				else
-					line = txt.getText(startOffset, endOffset-1);			
-				//System.out.println("-"+line+"-"+"\n"+"-"+direction+"-");
+					line = txt.getText(startOffset, endOffset - 1);			
+				
 
 				if (direction > 0)
 					txt.replaceTextRange(startOffset, endOffset - startOffset, tabStr + line);
@@ -369,12 +369,18 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			if( parser != null)
 				parser.setReparse(true);
 
-			//oldSelection.y += offset;
-			//oldSelection.x += tabStr.length() * direction;
+			oldSelection.y += offset;
+			oldSelection.x += tabStr.length() * direction;
 
+			if( txt.getText().charAt(oldSelection.x) == '\n' && txt.getText().charAt(Math.max(0,oldSelection.x-1)) == '\r')
+				oldSelection.x++;
+			
+			if( txt.getText().charAt(oldSelection.y) == '\r' && txt.getText().charAt(Math.min(txt.getCharCount(),oldSelection.y+1)) == '\n')
+				System.out.println("ASDffA");
+			
 			// TODO: This fails if you are right inbetween a /r
 			// and /n, better fix it ;)
-			//txt.setSelection(oldSelection);
+			txt.setSelection(oldSelection);
 
 
 		} catch (Exception ex) {
@@ -386,12 +392,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				parser.reparseAll();
 			}
 		}
-		
-		if(endLine > txt.getLineCount()-1){
-			txt.setSelection(txt.getOffsetAtLine(startLine), txt.getCharCount());
-		}else{
-			txt.setSelection(txt.getOffsetAtLine(startLine), Math.min(txt.getCharCount(),txt.getOffsetAtLine(endLine+1)-1));
-		}
+
 	}
 
 	private String getTabStr() {
