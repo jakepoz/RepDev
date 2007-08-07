@@ -2552,7 +2552,7 @@ public class MainShell {
 	}
 
 	private void showAboutBox() {
-		AboutBoxShell2.show();
+		AboutBoxShell.show();
 	}
 	
 	public Table getErrorTable(){

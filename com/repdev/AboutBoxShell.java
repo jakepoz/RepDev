@@ -19,97 +19,170 @@
 
 package com.repdev;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
+/**
+ * AboutBox - Second version.  Uses the beloved formlayout rather
+ * than using the gridlayout and VE.  Includes more options and whatnot.
+ * @author Ryan Schultz
+ *
+ */
 public class AboutBoxShell {
-
-	private Shell sShell = null;  //  @jve:decl-index=0:visual-constraint="24,10"
-	private Label logo = null;
-	private Label aboutVersion = null;
-	private static AboutBoxShell me = new AboutBoxShell();
-	private Text aboutTextBox = null;
-
-	private AboutBoxShell() {}
+	private Shell shell;
 	
-	public static void show() {
-		me.createSShell();
-	}
-	
-	/**
-	 * This method initializes sShell
-	 */
-	private void createSShell() {
-				
-		GridData gridData11 = new GridData();
-		gridData11.grabExcessHorizontalSpace = true;
-		gridData11.grabExcessVerticalSpace = false;
-		GridData gridData1 = new GridData();
-		gridData1.horizontalAlignment = GridData.FILL;
-		gridData1.verticalSpan = 2;
-		gridData1.grabExcessVerticalSpace = true;
-		gridData1.grabExcessHorizontalSpace = true;
-		gridData1.verticalAlignment = GridData.FILL;
-		GridData gridData = new GridData();
-		gridData.horizontalAlignment = GridData.FILL;
-		gridData.verticalAlignment = GridData.BEGINNING;
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
-		gridLayout.makeColumnsEqualWidth = false;
-		sShell = new Shell(Display.getCurrent(),SWT.DIALOG_TRIM);
-		sShell.setText("About RepDev");
-		sShell.setLayout(gridLayout);
-		sShell.setSize(new Point(400, 400));
-		
-		logo = new Label(sShell, SWT.NONE);
-		logo.setText("");
-		logo.setLayoutData(gridData11);
-		logo.setImage(new Image(null, RepDevMain.IMAGE_DIR + "repdev_logo.png" ));
-		aboutVersion = new Label(sShell, SWT.NONE);
-		aboutVersion.setBackground(null);
-		aboutVersion.setLayoutData(gridData);
-		aboutVersion.setText("RepDev " + RepDevMain.VERSION);
-		
-		aboutTextBox = new Text(sShell, SWT.BORDER | SWT.V_SCROLL);
-		aboutTextBox.setEditable(false);
-		aboutTextBox.setBackground( new Color(null, 255, 255, 255) );
-		aboutTextBox.setLayoutData(gridData1);
-		
-		String aboutText = 
-		   "RepDev (" + RepDevMain.VERSION + ")\n"
-		  +"(c) 2007\n"
-		  +"  http://repdev.org/\n"
-		  +"  support@repdev.org\n"
+	public static final String aboutText = "\n" 
+		  +"RepDev (" + RepDevMain.VERSION + ")\n"
+		  +"(c) 2007 http://repdev.org/\n"
+		  +"support@repdev.org\n"
 		  +"\n"
 		  +"RepDev is a community based free IDE for use writing\n"
 		  +"RepGens for Symitar systems.  It is ment to be an\n"
-		  + "alternative to using Episys's built in RepGen tools.\n"
-		  +"\n\n"
-		  +"This program is distributed in the hope that it will be useful,\n"
-		  +"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-          +"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
-          +"\n\n"
+		  +"alternative to using Episys's built in RepGen tools.\n"
+		  +"\n";
+	public static final String creditsText = "\n"
 		  +"Credits:\n"
-		  +"  Jake Poznanski - Programmer/Project Head\n"
-		  +"  Ryan Schultz   - Programmer\n"
-		  +"  Sean Delaney   - Programmer\n"
-		  +"  Michael Webb   - Documentation\n" 
-		  +"  Bruce Chang    - Documentation\n";
+		  +"Jake Poznanski - Programmer/Project Head\n"
+		  +"Ryan Schultz   - Programmer\n"
+		  +"Sean Delaney   - Programmer\n"
+		  +"Michael Webb   - Documentation\n" 
+		  +"Bruce Chang    - Documentation\n\n";
+	
+	public static void show() {
+		AboutBoxShell me = new AboutBoxShell();
+		me.createShell();
 		
-		aboutText += "\n";		
-		aboutTextBox.setText(aboutText);
-		
-		//sShell.pack();
-		sShell.setVisible(true);
-		sShell.setActive();
 	}
+	
+	private void createShell() {
+		shell = new Shell(SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
+		shell.setText("About RepDev");
+		
+		FormLayout layout = new FormLayout();
+		layout.marginTop = 0;
+		layout.marginBottom = 0;
+		layout.marginLeft = 0;
+		layout.marginRight = 0;
+		layout.spacing = 0;
+		shell.setLayout(layout);
+		
+		//shell.setBackground(new Color(shell.getDisplay(), 255, 255, 255) );
+		
+		final Image logo = new Image(shell.getDisplay(), RepDevMain.IMAGE_DIR + "repdev_logo.png");
+		final Label logoLabel = new Label(shell,SWT.NONE);
+		logoLabel.setImage(logo);
+		
+		final ScrolledComposite sc = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.H_SCROLL);
+		sc.setLayout(new FillLayout());
+		sc.setBackground( new Color(sc.getDisplay(), 255, 255, 255) );
+		
+		final Composite inner = new Composite(sc,SWT.NONE);
+		inner.setLayout(new FillLayout());
+		
+		final Label mainText = new Label(inner, SWT.NONE);
+		mainText.setBackground( new Color(sc.getDisplay(), 255, 255, 255) );		
+		mainText.setAlignment(SWT.CENTER);
+		mainText.setText(aboutText);
 
+		inner.pack();
+		sc.setContent(inner);
+		sc.setExpandVertical(false);
+		sc.setExpandHorizontal(true);
+	    
+		ToolBar bar = new ToolBar(shell, SWT.FLAT | SWT.HORIZONTAL);
+		
+		ToolItem repdev = new ToolItem(bar,SWT.PUSH);
+		repdev.setText("RepDev");
+		
+		ToolItem license = new ToolItem(bar, SWT.PUSH);
+		license.setText("License");
+		
+		ToolItem credits = new ToolItem(bar, SWT.PUSH);
+		credits.setText("Credits");
+		
+		// ----- Button Actions ----- //
+		
+		repdev.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				mainText.setText(aboutText);
+				inner.pack();
+			}
+		});
+		
+		license.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String gplTxt = "",line;
+				try {
+					BufferedReader gpl = new BufferedReader(new FileReader("GPL.txt"));
+					while( (line = gpl.readLine()) != null ) {
+						gplTxt += line.trim() + "\n";
+					}
+				} catch (FileNotFoundException e1) {
+					gplTxt = "File not found: GPL.txt";
+				} catch (IOException e2) {
+					System.err.println("IOException in AboutBoxShell2");
+				}
+				mainText.setText(gplTxt);
+				inner.pack();
+			}
+		});
+		
+		credits.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				mainText.setText(creditsText);
+				inner.pack();
+			}
+		});
+				
+		// ----- Layout Stuff ----- //
+		FormData data;
+		
+		data = new FormData();
+		data.top = new FormAttachment(0);
+		data.left = new FormAttachment(0);
+		logoLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.top = new FormAttachment(logoLabel);
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		data.bottom = new FormAttachment(bar);
+		sc.setLayoutData(data);
+				
+		data = new FormData();
+		data.bottom = new FormAttachment(100);
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		bar.setLayoutData(data);
+				
+		shell.setMinimumSize(shell.computeSize(SWT.DEFAULT, 300));
+		
+		shell.pack();
+		shell.open();
+		
+		while (!shell.isDisposed()) {
+			if (!shell.getDisplay().readAndDispatch())
+				shell.getDisplay().sleep();
+		}
+		
+	}		
 }
