@@ -439,11 +439,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				txt.setFont(DEFAULT_FONT);
 		}
 		
+		
 		txt.addFocusListener(new FocusListener(){
 
 			public void focusGained(FocusEvent e) {
 				suggest.attach(txt, parser);
-				
 			}
 
 			public void focusLost(FocusEvent e){
