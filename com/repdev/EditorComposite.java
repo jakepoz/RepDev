@@ -304,7 +304,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	//Allow for unindenting single lines -- Fixed
 	private void groupIndent(int direction, int startLine, int endLine) {
 		String tabStr = getTabStr();
-
+		
 		if (endLine > txt.getLineCount() - 1 )
 			endLine = Math.max(txt.getLineCount() - 1, startLine + 1);
 
@@ -331,6 +331,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						line = "\n";
 					else
 						line = txt.getText(startOffset, endOffset - 1);		
+					
 
 					for (int x = 0; x < Math.min(tabStr.length(), line.length()); x++)
 						if (line.charAt(x) > 32)
@@ -355,7 +356,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				else
 					line = txt.getText(startOffset, endOffset - 1);			
 				
-
+				
 				if (direction > 0)
 					txt.replaceTextRange(startOffset, endOffset - startOffset, tabStr + line);
 				else {
@@ -370,13 +371,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				parser.setReparse(true);
 
 			oldSelection.y += offset;
-			oldSelection.x += tabStr.length() * direction;
-
-			if( txt.getText().charAt(oldSelection.x) == '\n' && txt.getText().charAt(Math.max(0,oldSelection.x-1)) == '\r')
-				oldSelection.x++;
 			
-			if( txt.getText().charAt(oldSelection.y) == '\r' && txt.getText().charAt(Math.min(txt.getCharCount(),oldSelection.y+1)) == '\n')
-				System.out.println("ASDffA");
+			oldSelection.x = Math.max(oldSelection.x + tabStr.length() * direction, txt.getOffsetAtLine(startLine));
+
+			//if( txt.getText().charAt(oldSelection.x) == '\n' && txt.getText().charAt(Math.max(0,oldSelection.x-1)) == '\r')
+			//	oldSelection.x++;
+			
+
 			
 			// TODO: This fails if you are right inbetween a /r
 			// and /n, better fix it ;)
