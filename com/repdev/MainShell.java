@@ -2256,7 +2256,7 @@ public class MainShell {
 						
 						//Remove any already open tabs of the new file, so if we are overrwriting, it gets updated and this is clear to the user
 						for( CTabItem item : mainfolder.getItems())
-							if( item.getData("file").equals(result.get(0)))
+							if( item.getData("file") != null && item.getData("file").equals(result.get(0)))
 								item.dispose();
 						
 						openFile(result.get(0));
