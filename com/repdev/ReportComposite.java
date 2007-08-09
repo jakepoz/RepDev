@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+
 public class ReportComposite extends Composite implements TabTextView{
 	private StyledText txt;
 	private Table table;
@@ -89,6 +90,8 @@ public class ReportComposite extends Composite implements TabTextView{
 		
 		txt.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
+				//TODO: Mark locatioin in status bar
+				
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
 					case 'a':

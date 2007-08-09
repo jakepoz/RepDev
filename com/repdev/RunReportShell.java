@@ -36,6 +36,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+
+//TODO: Prev and Cancel buttons don't do anything and are disabled now
 public class RunReportShell {
 	private Shell shell, parent;
 	private Display display;
@@ -237,7 +239,7 @@ public class RunReportShell {
 						
 						promptLabel.setEnabled(true);
 						promptText.setEnabled(true);
-						prevPromptButton.setEnabled(true);
+						prevPromptButton.setEnabled(false);
 						nextPromptButton.setEnabled(true);
 						
 						promptLabel.setText(name);
@@ -273,7 +275,7 @@ public class RunReportShell {
 					
 				};
 				
-				cancelButton.setEnabled(true);
+				cancelButton.setEnabled(false);
 				runButton.setEnabled(false);
 				
 				SymitarSession.RunRepgenResult result =  RepDevMain.SYMITAR_SESSIONS.get(sym).runRepGen(file.getName(), defaultQueueButton.getSelection() ? -1 : queueSpinner.getSelection(), progressBar, ioText, prompter);
