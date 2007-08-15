@@ -54,7 +54,7 @@ public class AboutBoxShell {
 		  +"RepDev (" + RepDevMain.VERSION + ")\n"
 		  +"(c) 2007 http://repdev.org/\n"
 		  +"support@repdev.org\n"
-		  +"\n"
+		  +"\nSWT Version: " + SWT.getVersion() + "\n\n"
 		  +"RepDev is a community based free IDE for use writing\n"
 		  +"RepGens for Symitar systems.  It is ment to be an\n"
 		  +"alternative to using Episys's built in RepGen tools.\n"
