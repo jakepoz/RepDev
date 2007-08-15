@@ -2232,13 +2232,19 @@ public class MainShell {
 		});
 		
 		final MenuItem fileSaveAs = new MenuItem(fileMenu, SWT.PUSH);
+		//TODO:Fix save as bug
 		fileSaveAs.setText("S&ave As");
 		fileSaveAs.setImage(RepDevMain.smallActionSaveAsImage);
 		fileSaveAs.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				FileDialog dialog;
+				//FileDialog dialog;
 				
-				if( mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite ){
+				if( mainfolder.getSelection() != null 
+					&& mainfolder.getSelection().getControl() instanceof EditorComposite 
+					&& mainfolder.getSelection().getData("modified") != null 
+					&& !(Boolean) mainfolder.getSelection().getData("modified")){
+					
+					FileDialog dialog;
 					SymitarFile file = ((EditorComposite)mainfolder.getSelection().getControl()).getFile();
 					
 					if( file.isLocal())
@@ -2252,15 +2258,42 @@ public class MainShell {
 						if( result.get(0).equals(file) )
 							return;
 						
-						result.get(0).saveFile(file.getData());
+					result.get(0).saveFile(file.getData());
 						
-						//Remove any already open tabs of the new file, so if we are overrwriting, it gets updated and this is clear to the user
-						for( CTabItem item : mainfolder.getItems())
-							if( item.getData("file") != null && item.getData("file").equals(result.get(0)))
-								item.dispose();
+					//Remove any already open tabs of the new file, so if we are overrwriting, it gets updated and this is clear to the user
+					for( CTabItem item : mainfolder.getItems())
+						if( item.getData("file") != null && item.getData("file").equals(result.get(0)))
+							item.dispose();
 						
-						openFile(result.get(0));
-					}				
+					
+					openFile(result.get(0));
+					}
+				}else if(mainfolder.getSelection() != null 
+						&& mainfolder.getSelection().getControl() instanceof EditorComposite 
+						&& mainfolder.getSelection().getData("modified") != null 
+						&& (Boolean) mainfolder.getSelection().getData("modified")){
+					
+					FileDialog dialog;
+					
+					SymitarFile file = ((EditorComposite)mainfolder.getSelection().getControl()).getFile();
+					dialog = new FileDialog(shell,FileDialog.Mode.SAVE, file.getDir());
+
+					String tmp = ((EditorComposite)mainfolder.getSelection().getControl()).getStyledText().getText();
+					/*SymitarFile tmp1 = new SymitarFile(System.getProperty("user.home"),"tmp_1_2_3");
+					tmp1.saveFile(tmp);*/
+					ArrayList<SymitarFile> result = dialog.open();
+					result.get(0).saveFile(tmp);
+					
+					for( CTabItem item : mainfolder.getItems())
+						if( item.getData("file") != null && item.getData("file").equals(result.get(0)))
+							item.dispose();
+					
+					openFile(result.get(0));
+				}else{
+					MessageBox tmp = new MessageBox(shell, SWT.ERROR_UNSPECIFIED);
+					tmp.setText("Error");
+					tmp.setMessage("The file has been modified.");
+					tmp.open();
 				}
 			}
 		});
