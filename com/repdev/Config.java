@@ -31,9 +31,9 @@ public class Config implements Serializable {
 	private static Config me = new Config();
 	private static final long serialVersionUID = 1L;
 	
-	
 	private ArrayList<Integer> syms = new ArrayList<Integer>();
 	private String server = "127.0.0.1";
+	private int port = 23;
 	private int tabSize = 0; // 0 = Regular tab
 	private String lastUsername = "", lastPassword = "", lastUserID;
 	private boolean runOptionsAskForPrompts = true;
@@ -87,6 +87,9 @@ public class Config implements Serializable {
 		
 		if( me.mountedDirs == null) 
 			me.mountedDirs = new ArrayList<String>();
+		
+		if( me.port == 0 )
+			me.port = 23; // default to 23 if 0 or unset.
 	}
 
 	public static void setServer(String server) {
@@ -144,6 +147,14 @@ public class Config implements Serializable {
 
 	public static void setMountedDirs(ArrayList<String> mountedFolders) {
 		me.mountedDirs = mountedFolders;
+	}
+	
+	public static int getPort() {
+		return me.port;
+	}
+	
+	public static void setPort(int p) {
+		me.port = p;
 	}
 
 }

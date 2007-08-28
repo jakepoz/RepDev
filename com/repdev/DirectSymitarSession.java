@@ -79,7 +79,7 @@ public class DirectSymitarSession extends SymitarSession {
 		this.userID = userID;
 
 		try {
-			socket = new Socket(server, 23);
+			socket = new Socket(server, Config.getPort());
 			socket.setKeepAlive(true);
 		
 			// Constant commands, these are the basic telnet establishment

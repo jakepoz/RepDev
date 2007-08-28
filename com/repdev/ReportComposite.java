@@ -89,9 +89,7 @@ public class ReportComposite extends Composite implements TabTextView{
 		txt.setBackground(new Color(Display.getCurrent(),new RGB(255,255,225)));
 		
 		txt.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				//TODO: Mark locatioin in status bar
-				
+			public void keyPressed(KeyEvent e) {				
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
 					case 'a':

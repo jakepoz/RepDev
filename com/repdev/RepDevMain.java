@@ -36,13 +36,13 @@ import org.eclipse.swt.widgets.Display;
  * 
  * TODO: Documentation for RepDev
  * 
- * @see Awsomeness
+ * @see Awesomeness
  * @author Jake Poznanski, Ryan Schultz, Sean Delaney
  */
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
-	public static final boolean DEVELOPER = false; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
-	public static final String VERSION = "1.0.1" + (DEVELOPER ? "-dev" : "");
+	public static final boolean DEVELOPER = true; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
+	public static final String VERSION = "1.0.2" + (DEVELOPER ? "-dev" : "");
 	public static final String NAMESTR = "RepDev  v" + VERSION;
 	public static boolean FORGET_PASS_ON_EXIT = false; // set in options only please.
 	public static MainShell mainShell;
@@ -185,11 +185,7 @@ public class RepDevMain {
 
 		// Start up data
 		for (int sym : Config.getSyms()) {
-			if (Config.getServer().equals("test"))
-				session = new TestingSymitarSession();
-			else
-				session = new DirectSymitarSession();
-
+			session = new DirectSymitarSession();
 			SYMITAR_SESSIONS.put(sym, session);
 		}
 	}

@@ -41,10 +41,10 @@ import org.eclipse.swt.widgets.Text;
 public class OptionsShell {
 	private Shell shell;
 	private static OptionsShell me = new OptionsShell();
-	private Button telnetRadio, testRadio, devForgetBox;
-	private Text serverText;
+	private Button /*telnetRadio, testRadio,*/ devForgetBox;
+	private Text serverText,portText;
 	private Spinner tabSpinner;
-	private Label serverLabel;
+	private Label serverLabel,portLabel;
 
 	private void create(Shell parent) {
 		FormLayout layout = new FormLayout();
@@ -70,7 +70,7 @@ public class OptionsShell {
 		layout.spacing = 5;
 		serverGroup.setLayout(layout);
 		
-		telnetRadio = new Button(serverGroup, SWT.RADIO);
+		/*telnetRadio = new Button(serverGroup, SWT.RADIO);
 		telnetRadio.setText("Direct Symitar Session");
 		telnetRadio.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -90,12 +90,19 @@ public class OptionsShell {
 			testRadio.setSelection(true);
 		} else
 			telnetRadio.setSelection(true);
-
+		*/
+		
 		serverLabel = new Label(serverGroup, SWT.NONE);
 		serverLabel.setText("Symitar Server IP Address:");
 
 		serverText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
 		serverText.setText(Config.getServer());
+		
+		portLabel = new Label(serverGroup, SWT.NONE);
+		portLabel.setText("Port (usually 23)");
+		
+		portText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
+		portText.setText(""+Config.getPort());
 			
 		
 		Button cancel = new Button(shell, SWT.PUSH);
@@ -112,10 +119,12 @@ public class OptionsShell {
 			public void widgetSelected(SelectionEvent e) {
 				Config.setTabSize(tabSpinner.getSelection());
 
-				if (testRadio.getSelection())
+				/*if (testRadio.getSelection())
 					Config.setServer("test");
-				else
+				else {*/
 					Config.setServer(serverText.getText());
+					Config.setPort(Integer.parseInt(portText.getText()));
+				//}
 
 				RepDevMain.FORGET_PASS_ON_EXIT = devForgetBox.getSelection();
 				
@@ -183,7 +192,7 @@ public class OptionsShell {
 		if( !RepDevMain.DEVELOPER ) devGroup.setVisible(false);
 		
 		// Connection options
-		data = new FormData();
+		/*data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
 		telnetRadio.setLayoutData(data);
@@ -191,19 +200,33 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(telnetRadio);
 		data.top = new FormAttachment(0);
-		testRadio.setLayoutData(data);
+		testRadio.setLayoutData(data);*/
 
 		data = new FormData();
 		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(telnetRadio);
+		data.top = new FormAttachment(0);
+		data.width = 130;
 		serverLabel.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(serverLabel);
-		data.top = new FormAttachment(telnetRadio);
+		data.top = new FormAttachment(0);
 		data.right = new FormAttachment(100);
+		data.width = 120;
 		serverText.setLayoutData(data);
 		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(serverText);
+		data.width = 130;
+		portLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(portLabel);
+		data.top = new FormAttachment(serverText);
+		data.right = new FormAttachment(100);
+		data.width = 120;
+		portText.setLayoutData(data);
 
 
 		// Editor options
@@ -240,14 +263,14 @@ public class OptionsShell {
 		data.right = new FormAttachment(cancel);
 		ok.setLayoutData(data);
 
-		redraw();
+		//redraw();
 
 		shell.setDefaultButton(ok);
 		shell.pack();
 		shell.open();
 	}
 
-	private void redraw() {
+	/*private void redraw() {
 		if (telnetRadio.getSelection()) {
 			serverText.setEnabled(true);
 			serverLabel.setEnabled(true);
@@ -257,7 +280,7 @@ public class OptionsShell {
 			serverText.setText("");
 		}
 
-	}
+	}*/
 
 	public static void showOptions(Display display, Shell parent) {
 		me.create(parent);
