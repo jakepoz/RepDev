@@ -19,6 +19,7 @@
 
 package com.repdev;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -2265,7 +2266,6 @@ public class MainShell {
 						if( item.getData("file") != null && item.getData("file").equals(result.get(0)))
 							item.dispose();
 						
-					
 					openFile(result.get(0));
 					}
 				}else if(mainfolder.getSelection() != null 
@@ -2276,23 +2276,42 @@ public class MainShell {
 					FileDialog dialog;
 					
 					SymitarFile file = ((EditorComposite)mainfolder.getSelection().getControl()).getFile();
+					int fileSym = ((EditorComposite)mainfolder.getSelection().getControl()).getFile().getSym();
+					boolean local = ((EditorComposite)mainfolder.getSelection().getControl()).getFile().isLocal();
 					dialog = new FileDialog(shell,FileDialog.Mode.SAVE, file.getDir());
 
 					String tmp = ((EditorComposite)mainfolder.getSelection().getControl()).getStyledText().getText();
 					/*SymitarFile tmp1 = new SymitarFile(System.getProperty("user.home"),"tmp_1_2_3");
 					tmp1.saveFile(tmp);*/
 					ArrayList<SymitarFile> result = dialog.open();
-					result.get(0).saveFile(tmp);
-					
-					for( CTabItem item : mainfolder.getItems())
-						if( item.getData("file") != null && item.getData("file").equals(result.get(0)))
-							item.dispose();
-					
-					openFile(result.get(0));
+					if(local){
+						String path = result.get(0).getPath().substring(0,result.get(0).getPath().indexOf(result.get(0).getName()));
+						SymitarFile tbs = new SymitarFile(path,result.get(0).getName());
+						System.out.println(path+","+result.get(0).getName());
+						tbs.saveFile(tmp);
+						for( CTabItem item : mainfolder.getItems())
+							if( item.getData("file") != null && item.getData("file").equals(result.get(0)))
+								item.dispose();
+						openFile(tbs);
+					}else{
+						SymitarFile tbs = new SymitarFile(fileSym,result.get(0).getName(),result.get(0).getType());
+						if(RepDevMain.SYMITAR_SESSIONS.get(fileSym).fileExists(tbs)){
+							MessageBox tmp1 = new MessageBox(shell, SWT.ERROR_UNSPECIFIED);
+							tmp1.setText("Error");
+							tmp1.setMessage("The file already exists");
+							tmp1.open();
+						}else{
+							tbs.saveFile(tmp);
+							for( CTabItem item : mainfolder.getItems())
+								if( item.getData("file") != null && item.getData("file").equals(result.get(0)))
+									item.dispose();
+							openFile(tbs);
+						}
+					}
 				}else{
 					MessageBox tmp = new MessageBox(shell, SWT.ERROR_UNSPECIFIED);
 					tmp.setText("Error");
-					tmp.setMessage("The file has been modified.");
+					tmp.setMessage("The file has been modified");
 					tmp.open();
 				}
 			}
