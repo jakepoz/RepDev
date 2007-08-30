@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry excluding="bin/|dist/|ftptemp/|res/|testdata/" kind="src" path=""/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="swt-win/swt.jar" sourcepath="swt-win/src.zip">
+	<classpathentry kind="lib" path="swt-win/swt.jar" sourcepath="swt-win/src.zip">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="RepDev/swt-win"/>
 		</attributes>
