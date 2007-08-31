@@ -139,8 +139,27 @@ public class DirectSymitarSession extends SymitarSession {
 			log("USER RESPONSE: " + current.getCommand());
 
 			if (current.getCommand().equals("SymLogonInvalidUser")){
-				disconnect();
-				return SessionError.USERID_INVALID;
+				//disconnect();
+				//return SessionError.USERID_INVALID;
+				System.out.println("Bad password");
+				
+				 
+				
+					//write("sym " + sym + "\r");
+					Command current1;
+					while (!(current1 = readNextCommand()).getCommand().equals("Input")){
+						log(current1);
+						if( current1.getCommand().equals("SymLogonError") && current1.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
+							disconnect();
+							return SessionError.CONSOLE_BLOCKED;
+						}
+					}
+					log(current1.toString());
+					write(userID + "\r");
+			
+				if (current1.getCommand().equals("SymLogonInvalidUser")){
+					System.out.println("big problems");
+				}
 			}
 			
 			write("\r");

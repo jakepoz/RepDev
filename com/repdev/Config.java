@@ -38,6 +38,7 @@ public class Config implements Serializable {
 	private String lastUsername = "", lastPassword = "", lastUserID;
 	private boolean runOptionsAskForPrompts = true;
 	private int runOptionsQueue = -1;
+	private int rotkeyp=0, rotkeyu=0;
 	
 	@SuppressWarnings("unused")
 	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.
@@ -61,11 +62,26 @@ public class Config implements Serializable {
 	}
 
 	public static String getLastPassword() {
-		return me.lastPassword;
+		String Pass="";
+		String last = me.lastPassword;
+		for(int i = 0; i < last.length(); i++){
+			char tmp = last.charAt(i);
+			tmp-=me.rotkeyp;
+			Pass+=tmp;
+		}
+		return Pass;
 	}
-
+	
 	public static void setLastPassword(String lastPassword) {
-		me.lastPassword = lastPassword;
+		me.rotkeyp=(int)Math.random()*150+20;
+		String Pass="";
+		for(int i = 0; i < lastPassword.length(); i++){
+			char tmp = lastPassword.charAt(i);
+			tmp+=me.rotkeyp;
+			Pass+=tmp;
+		}
+		me.lastPassword = Pass;
+		System.out.println(Pass);
 	}
 
 	public static String getLastUsername(){
@@ -126,11 +142,32 @@ public class Config implements Serializable {
 
 
 	public static String getLastUserID() {
-		return me.lastUserID;
+		String User="";
+		String last = me.lastUserID;
+		for(int i = 0; i < last.length(); i++){
+			char tmp = last.charAt(i);
+			for(int j = 0; j < me.lastUsername.length(); j++){
+				tmp-=me.lastUsername.charAt(j);
+			}
+			tmp-=me.rotkeyu;
+			User+=tmp;
+		}
+		return User;
 	}
 
 	public static void setLastUserID(String lastUserID) {
-		me.lastUserID = lastUserID;
+		me.rotkeyu=(int)Math.random()*150+15;
+		String User="";
+		for(int i = 0; i < lastUserID.length(); i++){
+			char tmp = lastUserID.charAt(i);
+			for(int j = 0; j < me.lastUsername.length(); j++){
+				tmp+=me.lastUsername.charAt(j);
+			}
+			tmp+=me.rotkeyu;
+			User+=tmp;
+		}
+		me.lastUserID = User;
+		System.out.println(User);
 	}
 	
 	public static ArrayList<SymitarFile> getRecentFiles() {
