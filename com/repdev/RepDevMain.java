@@ -176,8 +176,12 @@ public class RepDevMain {
 		} catch (IOException e) {
 			//Any odd defaults
 			Config.setRunOptionsQueue(-1);
+			Config.setLastPassword(""); // only saved if RepDevMain.DEVELOPER
+			Config.setLastUserID("");
+			Config.setLastUsername("");
 			
 			System.out.println("Creating data file for the first time.");
+			saveSettings();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
