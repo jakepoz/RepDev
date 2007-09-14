@@ -56,7 +56,7 @@ public class RunReportShell {
 	}
 	
 	private void create(){
-		shell = new Shell(parent,SWT.SHELL_TRIM | SWT.APPLICATION_MODAL );
+		shell = new Shell(parent, SWT.TITLE | SWT.MIN | SWT.CLOSE );
 		shell.setText("Run Report");
 		shell.setImage(RepDevMain.smallRunImage);
 		shell.addDisposeListener(new DisposeListener(){
@@ -300,6 +300,8 @@ public class RunReportShell {
 								stillRunning = false;
 								ioText.setText("Repgen Run Finished, Looking up output files\n");
 								progressBar.setSelection(85);
+								
+								shell.setActive();
 								
 								for( Sequence seq : RepDevMain.SYMITAR_SESSIONS.get(sym).getReportSeqs(file.getName(), time, 10,1) ){
 									ioText.setText(ioText.getText()+"\nOutput Sequence: " + seq);
