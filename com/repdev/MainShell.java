@@ -2361,7 +2361,7 @@ public class MainShell {
 
 						@Override
 						public void widgetSelected(SelectionEvent e) {
-							if( !RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).isConnected())
+							if( !file.isLocal() && !RepDevMain.SYMITAR_SESSIONS.get(file.getSym()).isConnected())
 								if (SymLoginShell.symLogin(display, shell, file.getSym()) == -1) 
 									return;
 								
