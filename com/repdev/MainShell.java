@@ -1288,7 +1288,58 @@ public class MainShell {
 
 		});
 		
+		final MenuItem symLogoff = new MenuItem(treeMenu, SWT.NONE);
+		symLogoff.setText("Log off sym");
+		symLogoff.setImage(RepDevMain.smallRemoveImage);
+		symLogoff.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int sym;
+				TreeItem currentItem = tree.getSelection()[0];
+				while (!(currentItem.getData() instanceof Integer)) {
+					currentItem = currentItem.getParentItem();
 
+					if (currentItem == null)
+						return;
+				}
+
+				sym = (Integer) currentItem.getData();
+
+				MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
+				dialog.setText("Confirm Sym Logoff");
+				dialog.setMessage("Are you sure you want to logoff of this Sym (sym " + sym + ") ?"
+						+ "\nNote: All open files will be closed.");
+
+				if (dialog.open() == SWT.OK) {
+					/*if( mainfolder.getSelectionIndex() != -1){
+						if( confirmClose(mainfolder.getSelection()) ){
+							clearErrorList(mainfolder.getSelection());
+							mainfolder.getSelection().dispose();
+							setLineColumn();
+						}
+					}*/
+					
+					for( CTabItem item: mainfolder.getItems() ) {
+						if( confirmClose(item) ) {
+							clearErrorList(item);
+							item.dispose();
+							setLineColumn();
+						}
+					}
+					
+					ProjectManager.saveProjects(sym);		
+					RepDevMain.SYMITAR_SESSIONS.get(sym).disconnect();
+					RepDevMain.SYMITAR_SESSIONS.put(sym, null);
+					
+					currentItem.setExpanded(false);					
+					currentItem.removeAll();
+					new TreeItem(currentItem, SWT.NONE).setText("Loading...");
+					
+				}
+
+				tree.notifyListeners(SWT.Selection, null);
+			}
+		});
+		
 		treeMenu.addMenuListener(new MenuListener() {
 
 			public void menuHidden(MenuEvent e) {
@@ -1306,6 +1357,8 @@ public class MainShell {
 				openFile.setEnabled(false);
 				
 				deleteFile.setEnabled(false);
+				
+				symLogoff.setEnabled(false);
 				
 				if( tree.getSelectionCount() == 0)
 					return;
@@ -1330,6 +1383,8 @@ public class MainShell {
 					openFile.setEnabled(true);
 					
 					renameFile.setEnabled( !( tree.getSelection()[0].getData() instanceof String ||tree.getSelection()[0].getData() instanceof Integer ));
+					symLogoff.setEnabled( tree.getSelection()[0].getData() instanceof Integer );
+				
 				}
 	
 				if( tree.getSelectionCount() == 2 && tree.getSelection()[0].getData() instanceof SymitarFile && tree.getSelection()[0].getData() instanceof SymitarFile )

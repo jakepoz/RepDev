@@ -109,7 +109,7 @@ public class ProjectManager {
 		ArrayList<Project> myProjects = getProjects(sym);
 		SymitarFile file = getProjectFile(sym);
 		
-		if( file != null)
+		if( file != null )
 			file.saveFile(processSaveProjects(myProjects));
 	}
 
@@ -167,7 +167,7 @@ public class ProjectManager {
 		SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
 		String prefix = "tester";
 
-		if( session == null)
+		if( session == null || !session.isConnected() )
 			return null;
 		
 		if (session.getUserID() != null && session.getUserID().length() >= 3)
