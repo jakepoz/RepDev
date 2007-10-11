@@ -42,9 +42,15 @@ import org.eclipse.swt.widgets.Display;
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
 	public static final boolean DEVELOPER = true; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
-	public static final String VERSION = "1.0.3" + (DEVELOPER ? "-dev" : "");
+	
+	// Version stuff
+	public static final int VMAJOR   = 1;
+	public static final int VMINOR   = 1;
+	public static final int VBUGFIX  = 0;
+	public static final String VERSION = VMAJOR + "." + VMINOR + (VBUGFIX > 0 ? "." + VBUGFIX : "") + (DEVELOPER ? "-dev" : "");
 	public static final String NAMESTR = "RepDev  v" + VERSION;
 	public static boolean FORGET_PASS_ON_EXIT = false; // set in options only please.
+	
 	public static MainShell mainShell;
 	private static Display display;
 	public static Image largeActionSaveImage, largeAddImage, largeFileAddImage, largeFileRemoveImage, largePrintLocalImage, largePrintLPTImage, largePrintTPTImage, largeProjectAddImage, largeProjectRemoveImage, largeRemoveImage, largeRunImage,
