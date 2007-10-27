@@ -1303,6 +1303,14 @@ public class MainShell {
 				}
 
 				sym = (Integer) currentItem.getData();
+				
+				if( !RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() ){
+					MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK );
+					dialog.setText("Sym Logoff");
+					dialog.setMessage("This sym is not connected, cannot logoff!");
+					dialog.open();
+					return;
+				}
 
 				MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
 				dialog.setText("Confirm Sym Logoff");
@@ -1326,14 +1334,15 @@ public class MainShell {
 						}
 					}
 					
-					ProjectManager.saveProjects(sym);		
-					RepDevMain.SYMITAR_SESSIONS.get(sym).disconnect();
-					RepDevMain.SYMITAR_SESSIONS.put(sym, null);
-					
-					currentItem.setExpanded(false);					
-					currentItem.removeAll();
-					new TreeItem(currentItem, SWT.NONE).setText("Loading...");
-					
+					if( RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() ){
+						ProjectManager.saveProjects(sym);		
+						RepDevMain.SYMITAR_SESSIONS.get(sym).disconnect();
+						RepDevMain.SYMITAR_SESSIONS.put(sym, null);
+						
+						currentItem.setExpanded(false);					
+						currentItem.removeAll();
+						new TreeItem(currentItem, SWT.NONE).setText("Loading...");
+					}
 				}
 
 				tree.notifyListeners(SWT.Selection, null);
@@ -1350,6 +1359,7 @@ public class MainShell {
 				newFile.setEnabled(false);
 				newProjectFile.setEnabled(false);
 				importFilem.setEnabled(false);
+				
 				openAllItem.setEnabled(false);
 				runMenuItem.setEnabled(false);
 				newFreeFile.setEnabled(false);
@@ -1378,12 +1388,13 @@ public class MainShell {
 				
 				
 				if( tree.getSelectionCount() == 1){
-					newFreeFile.setEnabled(true);
-					newProject.setEnabled(true);
-					openFile.setEnabled(true);
+					boolean loggedIn = tree.getSelection()[0].getData() instanceof String || (tree.getSelection()[0].getData() instanceof Integer && RepDevMain.SYMITAR_SESSIONS.get(tree.getSelection()[0].getData()).isConnected());
+					newFreeFile.setEnabled(loggedIn);
+					newProject.setEnabled(loggedIn);
+					openFile.setEnabled(loggedIn);
 					
 					renameFile.setEnabled( !( tree.getSelection()[0].getData() instanceof String ||tree.getSelection()[0].getData() instanceof Integer ));
-					symLogoff.setEnabled( tree.getSelection()[0].getData() instanceof Integer );
+					symLogoff.setEnabled( loggedIn && tree.getSelection()[0].getData() instanceof Integer);
 				
 				}
 	

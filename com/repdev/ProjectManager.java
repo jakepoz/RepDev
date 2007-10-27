@@ -107,6 +107,10 @@ public class ProjectManager {
 	
 	public static void saveProjects(int sym) {
 		ArrayList<Project> myProjects = getProjects(sym);
+		
+		if( RepDevMain.SYMITAR_SESSIONS.get(sym) == null || !RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() )
+			return;
+		
 		SymitarFile file = getProjectFile(sym);
 		
 		if( file != null )
@@ -164,6 +168,9 @@ public class ProjectManager {
 	}
 	
 	private static SymitarFile getProjectFile(int sym) {
+		if( RepDevMain.SYMITAR_SESSIONS.get(sym) == null || !RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() )
+			return null;
+		
 		SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
 		String prefix = "tester";
 
@@ -227,6 +234,10 @@ public class ProjectManager {
 
 	private static void loadProjects(int sym) {
 		ArrayList<Project> myProjs = new ArrayList<Project>();
+		
+		if( RepDevMain.SYMITAR_SESSIONS.get(sym) == null || !RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() )
+			return;
+		
 		String dataTemp = getProjectFile(sym).getData();
 
 		
