@@ -234,7 +234,7 @@ public class ProjectManager {
 
 	private static void loadProjects(int sym) {
 		ArrayList<Project> myProjs = new ArrayList<Project>();
-		
+
 		if( RepDevMain.SYMITAR_SESSIONS.get(sym) == null || !RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() )
 			return;
 		

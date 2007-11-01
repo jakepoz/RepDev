@@ -87,7 +87,7 @@ public class RepDevMain {
 			ErrorDialog errorDialog = new ErrorDialog(e);
 			errorDialog.open();
 			
-			display.dispose();
+			//display.dispose();
 		}
 		
 		// Save off projects
@@ -96,7 +96,7 @@ public class RepDevMain {
 		
 		//Close all symitar connections
 		for( SymitarSession session : SYMITAR_SESSIONS.values() ){
-			session.disconnect();
+			if( session != null ) session.disconnect();
 		}
 		
 		display.dispose();
