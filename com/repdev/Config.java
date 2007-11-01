@@ -81,7 +81,7 @@ public class Config implements Serializable {
 			Pass+=tmp;
 		}
 		me.lastPassword = Pass;
-		System.out.println(Pass);
+		//System.out.println(Pass);
 	}
 
 	public static String getLastUsername(){
@@ -167,7 +167,7 @@ public class Config implements Serializable {
 			User+=tmp;
 		}
 		me.lastUserID = User;
-		System.out.println(User);
+		//System.out.println(User);
 	}
 	
 	public static ArrayList<SymitarFile> getRecentFiles() {

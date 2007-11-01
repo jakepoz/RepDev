@@ -35,7 +35,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -137,28 +139,44 @@ public class DirectSymitarSession extends SymitarSession {
 
 			current = readNextCommand();
 			log("USER RESPONSE: " + current.getCommand());
-
 			if (current.getCommand().equals("SymLogonInvalidUser")){
-				//disconnect();
-				//return SessionError.USERID_INVALID;
-				System.out.println("Bad password");
-				
-				 
-				
-					//write("sym " + sym + "\r");
-					Command current1;
-					while (!(current1 = readNextCommand()).getCommand().equals("Input")){
-						log(current1);
-						if( current1.getCommand().equals("SymLogonError") && current1.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
-							disconnect();
-							return SessionError.CONSOLE_BLOCKED;
+				if(RepDevMain.DEVELOPER){
+					System.out.println("Bad password");
+					//TODO:fix
+					String newpass = FailedLogonShell.checkPass();
+					//String newpass;
+					
+						//temp = readUntil( "$ ", "SymStart~Global");
+						//System.out.println(temp);
+						//if( temp.contains("$ ") )
+						//write("sym " + sym + "\r");
+						write("\r");
+						Command current1;
+						while (!(current1 = readNextCommand()).getCommand().equals("Input")){
+							log(current1);
+							if( current1.getCommand().equals("SymLogonError") && current1.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
+								disconnect();
+								return SessionError.CONSOLE_BLOCKED;
+							}
 						}
+						log(current1.toString());
+						write(newpass + "\r");
+					if (current1.getCommand().equals("SymLogonInvalidUser")){
+						System.out.println("big problems");
+					}else{
+						userID=newpass;
+						Config.setLastUserID(newpass);
+						
+						//SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
+	
+						if (/*session != null &&*/ newpass != null && newpass.length() >= 3)
+							ProjectManager.prefix = newpass.substring(0, 3);
+						else /*if( newpass != null)*/
+							ProjectManager.prefix = newpass;
 					}
-					log(current1.toString());
-					write(userID + "\r");
-			
-				if (current1.getCommand().equals("SymLogonInvalidUser")){
-					System.out.println("big problems");
+				}else{
+					disconnect();
+					return SessionError.USERID_INVALID;
 				}
 			}
 			

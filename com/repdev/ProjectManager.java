@@ -29,6 +29,7 @@ import java.util.HashMap;
  *
  */
 public class ProjectManager {
+	public static String prefix = "tester";
 	private static HashMap<Object, ArrayList<Project>> projects = new HashMap<Object, ArrayList<Project>>();
 
 	public static void saveAllProjects() {
@@ -172,7 +173,6 @@ public class ProjectManager {
 			return null;
 		
 		SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
-		String prefix = "tester";
 
 		if( session == null || !session.isConnected() )
 			return null;
