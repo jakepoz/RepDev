@@ -177,11 +177,11 @@ public class ProjectManager {
 		if( session == null || !session.isConnected() )
 			return null;
 		
+		
 		if (session.getUserID() != null && session.getUserID().length() >= 3)
 			prefix = session.userID.substring(0, 3);
 		else if( session.getUserID() != null)
 			prefix = session.getUserID();
-
 
 		return new SymitarFile(sym,"repdev." + prefix + "projects", FileType.REPGEN);
 	}

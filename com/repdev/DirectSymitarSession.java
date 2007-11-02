@@ -142,14 +142,9 @@ public class DirectSymitarSession extends SymitarSession {
 			if (current.getCommand().equals("SymLogonInvalidUser")){
 				if(RepDevMain.DEVELOPER){
 					System.out.println("Bad password");
-					//TODO:fix
+					//TODO:fix (almost done)
 					String newpass = FailedLogonShell.checkPass();
-					//String newpass;
 					
-						//temp = readUntil( "$ ", "SymStart~Global");
-						//System.out.println(temp);
-						//if( temp.contains("$ ") )
-						//write("sym " + sym + "\r");
 						write("\r");
 						Command current1;
 						while (!(current1 = readNextCommand()).getCommand().equals("Input")){
@@ -162,18 +157,33 @@ public class DirectSymitarSession extends SymitarSession {
 						log(current1.toString());
 						write(newpass + "\r");
 					if (current1.getCommand().equals("SymLogonInvalidUser")){
-						System.out.println("big problems");
+						System.out.println("Console Blocked");
+						disconnect();
+						return SessionError.CONSOLE_BLOCKED;
 					}else{
 						userID=newpass;
 						Config.setLastUserID(newpass);
 						
-						//SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
-	
-						if (/*session != null &&*/ newpass != null && newpass.length() >= 3)
+						SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
+						
+						if (session != null && newpass != null && newpass.length() >= 3){
 							ProjectManager.prefix = newpass.substring(0, 3);
-						else /*if( newpass != null)*/
+							session.userID = newpass;
+						}else if(session != null && newpass != null){
 							ProjectManager.prefix = newpass;
+							session.userID = newpass;
+						}
 					}
+						System.out.println(ProjectManager.prefix);
+						
+						Command current2 = readNextCommand(); 
+						write("\r");
+						if (current2.getCommand().equals("SymLogonInvalidUser")){
+							System.out.println("Console Blocked");
+							disconnect();
+							return SessionError.CONSOLE_BLOCKED;
+						}
+						
 				}else{
 					disconnect();
 					return SessionError.USERID_INVALID;
