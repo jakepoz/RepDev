@@ -189,8 +189,8 @@ public class RepDevMain {
 
 		// Start up data
 		for (int sym : Config.getSyms()) {
-			session = new DirectSymitarSession();
-			//session = new TestingSymitarSession();
+			//session = new DirectSymitarSession();
+			session = new TestingSymitarSession();
 			SYMITAR_SESSIONS.put(sym, session);
 		}
 	}
