@@ -122,7 +122,7 @@ public class ProjectManager {
 		Project project = new Project(name, sym);
 		boolean exists = false;
 		
-		for( Project p : getProjects(sym))
+		for( Project p : getProjects(sym) )
 			if( p.getName().equals(name))
 			{
 				exists = true;
@@ -206,7 +206,8 @@ public class ProjectManager {
 
 		for (String line : data) {
 			String[] parts = line.split("\t");
-
+			parts[parts.length-1] = parts[parts.length-1].trim(); //Trim off any whitespace from the last part split, depending on the loading method and file storage mechanism, this can cause issues.
+			
 			if (parts[0].equals("PROJECT")) {
 				if (curProject != null)
 					myProjs.add(curProject);
