@@ -1358,8 +1358,7 @@ public class MainShell {
 					
 					if( RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() ){
 						ProjectManager.saveProjects(sym);		
-						RepDevMain.SYMITAR_SESSIONS.get(sym).disconnect();
-												
+						RepDevMain.SYMITAR_SESSIONS.get(sym).disconnect();				
 						currentItem.setExpanded(false);					
 						currentItem.removeAll();
 						new TreeItem(currentItem, SWT.NONE).setText("Loading...");

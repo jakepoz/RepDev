@@ -109,10 +109,17 @@ public class SymitarFile implements Serializable {
 		
 		if( !local )
 		{
-			SessionError error = RepDevMain.SYMITAR_SESSIONS.get(sym).saveFile(this, data);
-			
-			if( error != SessionError.NONE)
-				error.showError();
+			SessionError error;
+		
+			try{
+				error = RepDevMain.SYMITAR_SESSIONS.get(sym).saveFile(this, data);
+				
+				if( error != SessionError.NONE)
+					error.showError();
+			}
+			catch(Exception e){
+				error = SessionError.NULL_POINTER;
+			}
 			
 			return error;
 		}
