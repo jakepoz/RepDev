@@ -242,8 +242,7 @@ public class TestingSymitarSession extends SymitarSession {
 
 	@Override
 	public boolean fileExists(SymitarFile file) {
-		
-		return false;
+		return new File("testdata" + System.getProperty("file.separator") + getSym() + "." + file.getType().toString() + "." + file.getName() + ".txt").exists();
 	}
 
 	@Override

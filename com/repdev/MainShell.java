@@ -852,11 +852,21 @@ public class MainShell {
 							SymitarFile source = (SymitarFile)item.getData();
 							SymitarFile destination;
 							
-							if( isItemLocal(root) ){
+							if( isItemLocal(root))
 								destination = new SymitarFile(getTreeDir(root),source.getName());
-							}
 							else
-								destination = new SymitarFile(getTreeSym(root),source.getName(),source.getType());
+							{
+								if( RepDevMain.SYMITAR_SESSIONS.get(getTreeSym(root)) != null && RepDevMain.SYMITAR_SESSIONS.get(getTreeSym(root)).isConnected() )
+									destination = new SymitarFile(getTreeSym(root),source.getName(),source.getType());
+								else{
+									MessageBox dialog = new MessageBox(shell,SWT.OK | SWT.ICON_ERROR);
+									dialog.setMessage("You are copying to a sym that is not logged in, log in and try again.");
+									dialog.setText("Copy Error");
+									dialog.open();
+									shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+									return;
+								}
+							}
 							
 							if( (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0)
 								exists = Util.fileExists(destination);
@@ -891,7 +901,19 @@ public class MainShell {
 							if( isItemLocal(root))
 								destination = ProjectManager.createProject(source.getName(),getTreeDir(root));
 							else
-								destination = ProjectManager.createProject(source.getName(), getTreeSym(root));
+							{
+								if( RepDevMain.SYMITAR_SESSIONS.get(getTreeSym(root)) != null && RepDevMain.SYMITAR_SESSIONS.get(getTreeSym(root)).isConnected() )
+									destination = ProjectManager.createProject(source.getName(), getTreeSym(root));
+								else{
+									MessageBox dialog = new MessageBox(shell,SWT.OK | SWT.ICON_ERROR);
+									dialog.setMessage("You are copying to a sym that is not logged in, log in and try again.");
+									dialog.setText("Copy Error");
+									dialog.open();
+									shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
+									return;
+								}
+							}
+							
 							
 							for( SymitarFile file : source.getFiles()){
 								boolean exists = false;

@@ -1,5 +1,4 @@
-/**
- *  RepDev - RepGen IDE for Symitar
+/** *  RepDev - RepGen IDE for Symitar
  *  Copyright (C) 2007  Jake Poznanski, Ryan Schultz, Sean Delaney
  *  http://repdev.org/ <support@repdev.org>
  *
@@ -90,7 +89,8 @@ public class RepDevMain {
 		
 		//Close all symitar connections
 		for( SymitarSession session : SYMITAR_SESSIONS.values() ){
-			session.disconnect();
+			if( session != null )
+				session.disconnect();
 		}
 		
 		display.dispose();
