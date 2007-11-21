@@ -64,8 +64,8 @@ public class AboutBoxShell {
 		  +"Jake Poznanski - Programmer/Project Head\n"
 		  +"Ryan Schultz   - Programmer\n"
 		  +"Sean Delaney   - Programmer\n"
-		  +"Michael Webb   - Documentation\n" 
-		  +"Bruce Chang    - Documentation\n\n";
+		  +"Bruce Chang    - Programmer/Documentation\n"
+		  +"Michael Webb   - Documentation\n\n";
 	
 	public static void show() {
 		AboutBoxShell me = new AboutBoxShell();
