@@ -634,6 +634,18 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			write( "\r");
 			
+			// START
+			// A New Prompt was added in release 2007.00 The New prompt is Banner Page.
+			// I've defaulted it to "0" for now until RepDev Team can modify the Dialog
+			// box for the LPT Print Options.
+			// Bruce Chang 11/21/07
+			while( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+			//Banner Page?~HelpCode=10026
+			write("0\r");
+			
+			// END
+			
 			while( !(cur = readNextCommand()).getCommand().equals("Input"))
 				log(cur);
 			
