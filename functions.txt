@@ -157,7 +157,7 @@ PASSWORDHASH|Used with the MD5HASH function to encrypt and decrypt audio and hom
 PWR|Returns the float value of raising on numeric value to the power of another|FLOAT
 	ArithmeticExpression1|Numerical value to be raised to a power|NUMBER
 	ArithmeticExpression2|Numerical value used as the exponent|NUMBER
-QUEUECREDITREPORT|Function queues up the retrieval of a credit report
+QUEUECREDITREPORT|Function queues up the retrieval of a credit report|NUMBER
 	CreditBureau|Credit Bureau to retrieve a credit reoprt from|NUMBER
 	AppFlag|Specifies if there is an associated loan application|NUMBER
 	AppID|Specifies the loan application ID if the AppFlag is set to 1|NUMBER
