@@ -1,0 +1,40 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Batch FM - Loan or Share</Title>
+      <Author>Scott Bachmeier</Author>
+      <Shortcut>
+      </Shortcut>
+      <Description>This is the output portion of a batch FM to modify a field on a Loan or a Share</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <SnippetType>SurroundsWith</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>field</ID>
+          <Default>CreditReportIngCode</Default>
+          <ToolTip>The specific field that is being modified in the batch FM</ToolTip>
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>record</ID>
+          <Default>Loan</Default>
+          <ToolTip>The type of record being handled - Typically Loan or Share</ToolTip>
+        </Literal>
+      </Declarations>
+      <Code Language="PowerOn"><![CDATA[PRINT "ACCOUNT " + ACCOUNT:NUMBER + " MODIFY $record$ "
+PRINT $record$:ID
+
+[if the field being modified is numeric, "col=49" and "col=89"
+ should be replaced with "Print"]
+NEWLINE
+PRINT " CHANGE $field$ FROM "
+COL=49 $record$:$field$
+COL=89 " TO "
+PRINT "$selected$$end$"
+NEWLINE  ]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

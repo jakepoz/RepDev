@@ -23,6 +23,8 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.Color;
 
+import com.repdev.SnippetVariable;
+
 public class Token {
 	private String str;
 	private Token after = null, before = null;
@@ -33,6 +35,14 @@ public class Token {
 	private static final String[] ends = {"end", ")", "\"", "'", "]"};
 	
 	private Color specialBackground = null;
+	private SpecialBackgroundReason backgroundReason;
+	private SnippetVariable currentVar; //Used for background highlighting logic
+	
+	public enum SpecialBackgroundReason{
+		NONE,
+		BLOCK_MATCHER,
+		CODE_SNIPPET,
+	}
 	
 	public Token(String str, int pos, int commentDepth, int afterDepth, boolean inString, boolean afterString, boolean inDefs, boolean inDate, boolean afterDate) {
 		this.str = str;
@@ -233,4 +243,34 @@ public class Token {
 		return false;		
 	}
 	
+	//The "real" methods also know about tokens that can be either the start or end of a block, like quotes
+	public boolean isRealHead(){
+		return isHead() && 
+		((getCDepth() == 0 || ( getStr().equals("[") && getAfter() != null && getAfter().getCDepth() > 0))) && 
+		((!inDate() || ( getStr().equals("'") && getAfter() != null && getAfter().inDate() ))) &&
+		((!inString() || ( getStr().equals("\"") && getAfter() != null && getAfter().inString() )));
+	}
+
+	public boolean isRealEnd(){
+		return  isEnd() && 
+		((getCDepth() == 0 || ( getStr().equals("]") && getBefore() != null && getBefore().getCDepth() > 0))) && 
+		((!inDate() || ( getStr().equals("'") && getBefore() != null && getBefore().inDate() ))) &&
+		((!inString() || ( getStr().equals("\"") && getBefore() != null && getBefore().inString() )));
+	}
+
+	public void setBackgroundReason(SpecialBackgroundReason backgroundReason) {
+		this.backgroundReason = backgroundReason;
+	}
+
+	public SpecialBackgroundReason getBackgroundReason() {
+		return backgroundReason;
+	}
+
+	public void setCurrentVar(SnippetVariable currentVar) {
+		this.currentVar = currentVar;
+	}
+
+	public SnippetVariable getSnippetVar() {
+		return currentVar;
+	}
 }

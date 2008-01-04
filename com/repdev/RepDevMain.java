@@ -15,10 +15,11 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package com.repdev;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,78 +42,78 @@ import org.eclipse.swt.widgets.Display;
  */
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
-	public static final boolean DEVELOPER = false; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
-	public static final String VERSION = "1.0.4" + (DEVELOPER ? "-dev" : "");
+
+	public static final boolean DEVELOPER = true; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
+	public static final int VMAJOR = 1;
+	public static final int VMINOR = 5;
+	public static final int VFIX   = 0;
+	public static final String VSPECIAL = "[BETA]"; // "special" string for release names, beta, etc
+
+	public static final String VERSION = VMAJOR + "." + VMINOR + (VFIX>0?"."+VFIX:"") + (DEVELOPER ? "-dev" : "") + " " + VSPECIAL;
 	public static final String NAMESTR = "RepDev  v" + VERSION;
 	public static boolean FORGET_PASS_ON_EXIT = false; // set in options only please.
+
 	public static MainShell mainShell;
 	private static Display display;
-	public static Image largeActionSaveImage, largeAddImage, largeFileAddImage, largeFileRemoveImage, largePrintLocalImage, largePrintLPTImage, largePrintTPTImage, largeProjectAddImage, largeProjectRemoveImage, largeRemoveImage, largeRunImage,
-			largeSymAddImage, largeSymRemoveImage, smallAddImage, smallErrorsImage, smallFileImage, smallProjectImage, smallRemoveImage, smallRepGenImage, smallSymImage, smallTasksImage, smallActionSaveImage, smallFileAddImage, smallFileRemoveImage,
-			smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
-			smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
-			smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage, smallProgramIcon;
+	public static Image smallAddImage, smallErrorsImage, smallFileImage, smallProjectImage, smallRemoveImage, smallRepGenImage, smallSymImage, smallTasksImage, smallActionSaveImage, smallFileAddImage, smallFileRemoveImage,
+	smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
+	smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
+	smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage, smallProgramIcon, smallInstallImage, smallCompareImage, smallSurroundImage, smallSurroundPrint,
+	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage;
 	public static final String IMAGE_DIR = "repdev-icons/";
-
+	
+	public static SnippetManager snippetManager;
+	
 	public static void main(String[] args) throws Exception {
 		display = new Display();
-		
-		System.out.println("RepDev Copyright (C) 2007  RepDev.org Team\n"
+
+		System.out.println("RepDev " + VERSION + " Copyright (C) 2008  RepDev.org Team\n"
 				+"This program comes with ABSOLUTELY NO WARRANTY.\n"
 				+"This is free software, and you are welcome to redistribute it\n"
 				+"under certain conditions.\n");
-	
+
 		try{
 			loadSettings();
 			createImages();
 			createGUI();
-			
+
 			while (!mainShell.isDisposed()) {
 				if (!display.readAndDispatch())
 					display.sleep();
 			}
-		}
-		catch(Exception e){
-			if (display.isDisposed())
-				display = new Display();
-			
-			e.printStackTrace();
+		} catch(Exception e){
+			if( e != null && e.getMessage() != null && e.getMessage().indexOf("[GDI+ is required]") != -1) {
+				System.out.println("RepDev Requires GDI+ to be installed in order to run");
+				System.out.println("GDI+ can be obtained from: http://www.microsoft.com/downloads/details.aspx?FamilyID=6a63ab9c-df12-4d41-933c-be590feaa05a&DisplayLang=en");
+			} else {
 
-			ErrorDialog errorDialog = new ErrorDialog(e);
-			errorDialog.open();
-			
-			display.dispose();
+				if (display.isDisposed())
+					display = new Display();
+
+				e.printStackTrace();
+
+				ErrorDialog errorDialog = new ErrorDialog(e);
+				errorDialog.open();
+
+				display.dispose(); 
+			}
 		}
-		
+
 		// Save off projects
 		ProjectManager.saveAllProjects();
 		saveSettings();
-		
+
 		//Close all symitar connections
 		for( SymitarSession session : SYMITAR_SESSIONS.values() ){
 			if( session != null )
 				session.disconnect();
 		}
-		
+
 		display.dispose();
 		System.exit(0);
 	}
 
 	private static void createImages() {
-		largeActionSaveImage = new Image(display, IMAGE_DIR + "large-action-save.png");
-		largeAddImage = new Image(display, IMAGE_DIR + "large-add.png");
-		largeFileAddImage = new Image(display, IMAGE_DIR + "large-file-add.png");
-		largeFileRemoveImage = new Image(display, IMAGE_DIR + "large-file-remove.png");
-		largePrintLocalImage = new Image(display, IMAGE_DIR + "large-print-local.png");
-		largePrintLPTImage = new Image(display, IMAGE_DIR + "large-print-lpt.png");
-		largePrintTPTImage = new Image(display, IMAGE_DIR + "large-print-tpt.png");
-		largeProjectAddImage = new Image(display, IMAGE_DIR + "large-project-add.png");
-		largeProjectRemoveImage = new Image(display, IMAGE_DIR + "large-project-remove.png");
-		largeRemoveImage = new Image(display, IMAGE_DIR + "large-remove.png");
-		largeRunImage = new Image(display, IMAGE_DIR + "large-run.png");
-		largeSymAddImage = new Image(display, IMAGE_DIR + "large-sym-add.png");
-		largeSymRemoveImage = new Image(display, IMAGE_DIR + "large-sym-remove.png");
-
 		smallActionSaveImage = new Image(display, IMAGE_DIR + "small-action-save.png");
 		smallAddImage = new Image(display, IMAGE_DIR + "small-add.png");
 		smallErrorsImage = new Image(display, IMAGE_DIR + "small-errors.png");
@@ -157,18 +158,44 @@ public class RepDevMain {
 		smallFolderAddImage = new Image(display, IMAGE_DIR + "small-folder-add.png");
 		smallFolderRemoveImage = new Image(display, IMAGE_DIR + "small-folder-remove.png");
 		smallActionSaveAsImage = new Image(display, IMAGE_DIR + "small-action-save-as.png");
-		
+
 		smallProgramIcon = new Image(display, IMAGE_DIR + "icon-16x16.png");
+		smallInstallImage = new Image(display, IMAGE_DIR + "small-install-repgen.png");
+		smallCompareImage = new Image(display, IMAGE_DIR + "small-compare.png");
+		smallSurroundImage = new Image(display, IMAGE_DIR + "small-surround.png");
+		smallSurroundPrint = new Image(display, IMAGE_DIR + "small-surround-print.png");
+		
+		smallHighlight = new Image(display, IMAGE_DIR + "small-highlight.png");
+		smallHighlightGrey = new Image(display, IMAGE_DIR + "small-highlight-grey.png");
+		
+		smallTaskTodo = new Image(display, IMAGE_DIR + "small-task-todo.png");
+		smallTaskFixme = new Image(display, IMAGE_DIR + "small-task-fixme.png");
+		smallTaskBug = new Image(display, IMAGE_DIR + "small-task-bug.png");
+		smallTaskWtf = new Image(display, IMAGE_DIR + "small-task-wtf.png");
+		
+		smallFormatCodeImage = new Image(display, IMAGE_DIR + "small-format-code.png");
+		smallInsertSnippetImage = new Image(display, IMAGE_DIR + "small-insert-snippet.png");
 	}
 
 	/**
 	 * Loads Config object and settings from a serialized file Also connects to
 	 * all syms in the config file
 	 * 
+	 * Also, starts the snippet manager
 	 */
 	public static void loadSettings() {
+		String localFile = "repdev.conf";
+		String userFile = System.getProperty("user.home") + System.getProperty("file.separator") + "repdev.conf";
+		String loadFile = localFile;
+		
+		if( new File(userFile).exists() && !new File(localFile).exists() ){
+			System.out.println("The config file is being copied from it's old location in your user folder, to the local Repdev install folder.\nOld Location: " +
+								userFile);
+			loadFile = userFile;
+		}
+		
 		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(System.getProperty("user.home") + System.getProperty("file.separator") + "repdev.conf"));
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(loadFile));
 			Config configObject = (Config) in.readObject();
 			Config.setConfig(configObject);
 
@@ -180,7 +207,7 @@ public class RepDevMain {
 			Config.setLastPassword(""); // only saved if RepDevMain.DEVELOPER
 			Config.setLastUserID("");
 			Config.setLastUsername("");
-			
+
 			System.out.println("Creating data file for the first time.");
 			saveSettings();
 		} catch (ClassNotFoundException e) {
@@ -190,12 +217,16 @@ public class RepDevMain {
 
 		// Start up data
 		for (int sym : Config.getSyms()) {
-			session = new DirectSymitarSession();
-			//session = new TestingSymitarSession();
+			
+			if( Config.getServer().equalsIgnoreCase("testsession")) //Allows for a testing mode when no symitar server's are available
+				session = new TestingSymitarSession();
+			else
+				session = new DirectSymitarSession();
+
 			SYMITAR_SESSIONS.put(sym, session);
 		}
 	}
-	
+
 	/**
 	 * Saves the config object to a file
 	 *
@@ -211,15 +242,15 @@ public class RepDevMain {
 			}
 
 			Config.setSyms(newSyms);
-			
-			
+
+
 			//Only save passwords if DEVELOPER FLAG is on
 			if( !DEVELOPER || FORGET_PASS_ON_EXIT ){
 				Config.setLastPassword("");
 				Config.setLastUserID("");
 			}
 
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(System.getProperty("user.home") + System.getProperty("file.separator") + "repdev.conf"));
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("repdev.conf"));
 			out.writeObject(Config.getConfig());
 		} catch (Exception e) {
 			System.err.println("Error saving Config data");

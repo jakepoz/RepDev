@@ -399,7 +399,7 @@ public class DirectSymitarSession extends SymitarSession {
 		} catch (Exception e) {
 			return SessionError.IO_ERROR;
 		}
-
+		connected = false;
 		return SessionError.NONE;
 	}
 
@@ -504,7 +504,7 @@ public class DirectSymitarSession extends SymitarSession {
 		try {
 			while (true) {
 				current = readNextCommand();
-				
+
 				if (current.getParameters().get("Status") != null && current.getParameters().get("Status").contains("No such file or directory"))
 					return "";
 				else if( current.getParameters().get("Status") != null )

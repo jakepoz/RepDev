@@ -15,7 +15,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package com.repdev;
 
@@ -39,6 +39,7 @@ import com.repdev.parser.FunctionLayout;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Token;
 import com.repdev.parser.Variable;
+import com.repdev.parser.Token.SpecialBackgroundReason;
 
 
 /**
@@ -51,9 +52,18 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	private static final int FONT_SIZE = 11;
 
 	private static final RGB BACKGROUND = new RGB(255, 255, 255), FOREGROUND = new RGB(0, 0, 0);
-	private static final EStyle NORMAL = new EStyle(null, null), COMMENTS = new EStyle(new RGB(127, 127, 127), null), VARIABLES = new EStyle(new RGB(0, 0, 0), null, SWT.BOLD), FUNCTIONS = new EStyle(new RGB(0, 0, 255), null, SWT.BOLD),
-			KEYWORDS = new EStyle(new RGB(0, 0, 255), null), TYPE_CHAR = new EStyle(new RGB(255, 0, 0), null), TYPE_DATE = new EStyle(new RGB(255, 0, 0), null, SWT.BOLD), STRUCT1 = new EStyle(new RGB(255, 0, 255), null), STRUCT2 = new EStyle(
-					new RGB(255, 128, 255), null), STRUCT1_INVALID = new EStyle(new RGB(255, 0, 255), new RGB(128, 0, 0), SWT.NONE), STRUCT2_INVALID = new EStyle(new RGB(255, 128, 255), new RGB(128, 0, 0), SWT.NONE);
+	private static final EStyle NORMAL = new EStyle(null, null), 
+	COMMENTS = new EStyle(new RGB(127, 127, 127), null), 
+	VARIABLES = new EStyle(new RGB(0, 0, 0), null, SWT.BOLD), 
+	FUNCTIONS = new EStyle(new RGB(0, 0, 255), null, SWT.BOLD),
+	KEYWORDS = new EStyle(new RGB(0, 0, 255), null), 
+	TYPE_CHAR = new EStyle(new RGB(255, 0, 0), null), 
+	TYPE_DATE = new EStyle(new RGB(255, 0, 0), null, SWT.BOLD), 
+	STRUCT1 = new EStyle(new RGB(255, 0, 255), null), 
+	STRUCT2 = new EStyle(new RGB(255, 128, 255), null), 
+	STRUCT1_INVALID = new EStyle(new RGB(255, 0, 255), new RGB(128, 0, 0), SWT.NONE), 
+	STRUCT2_INVALID = new EStyle(new RGB(255, 128, 255), new RGB(128, 0, 0), SWT.NONE),
+	TASK = new EStyle(new RGB(64,64,64), null, SWT.BOLD);
 
 	private static final Color FORECOLOR = new Color(Display.getCurrent(), FOREGROUND), BACKCOLOR = new Color(Display.getCurrent(), BACKGROUND);
 	private static final Font FONT;
@@ -62,7 +72,8 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	private StyledText txt;
 	private SymitarFile file;
 	private int sym;
-	
+
+	//Custom line background, used by the compare composite interface
 	private int[] customLines = null;
 	private Color customColor;
 
@@ -82,7 +93,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		this.txt = parser.getTxt();
 		this.file = parser.getFile();
 		this.sym = parser.getSym();
-		
+
 		txt.setForeground(FORECOLOR);
 		txt.setBackground(BACKCOLOR);
 		txt.addExtendedModifyListener(this);
@@ -90,7 +101,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		if (FONT != null)
 			txt.setFont(FONT);
 	}
-	
+
 	/**
 	 * This is used by compare composite to set custom background for sections with diffs
 	 * @param parser
@@ -102,10 +113,10 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		this.txt = parser.getTxt();
 		this.file = parser.getFile();
 		this.sym = parser.getSym();
-		
+
 		this.customColor = customLineColor;
 		this.customLines = customLines;
-	
+
 		txt.setForeground(FORECOLOR);
 		txt.setBackground(BACKCOLOR);
 		txt.addExtendedModifyListener(this);
@@ -113,6 +124,12 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		txt.addLineStyleListener(this);
 		if (FONT != null)
 			txt.setFont(FONT);
+	}
+
+	public void highlight(){
+		txt.removeExtendedModifyListener(this);
+		txt.removeLineBackgroundListener(this);
+		txt.removeLineStyleListener(this);
 	}
 
 	private static class EStyle {
@@ -139,14 +156,17 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	public void modifyText(ExtendedModifyEvent e) {
 		parser.textModified(e.start, e.length, e.replacedText);
 	}
-	
+
 	public StyleRange getStyle(Token tok) {
 		boolean isVar = false;
 		StyleRange range = null;
 
-		if (tok.getCDepth() != 0)
+		if (tok.getCDepth() != 0) {
 			range = COMMENTS.getRange(tok.getStart(), tok.length());
-		else if (tok.inString())
+			for( String taskType: RepgenParser.taskTokens )
+				if( tok.getStr().equals(taskType) && (tok.getAfter() != null && tok.getAfter().getStr().equals(":")) ) range = TASK.getRange(tok.getStart(), tok.length());
+
+		} else if (tok.inString())
 			range = TYPE_CHAR.getRange(tok.getStart(), tok.length());
 		else if (tok.inDate())
 			range = TYPE_DATE.getRange(tok.getStart(), tok.length());
@@ -166,28 +186,28 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			range = KEYWORDS.getRange(tok.getStart(), tok.length());
 		else if (RepgenParser.getSpecialvars().contains(tok.getStr()))
 			range = VARIABLES.getRange(tok.getStart(), tok.length());
+		for (int i = 0; i < parser.getLvars().size(); i++){
+			Variable var = parser.getLvars().get(i);
 
-		synchronized( parser.getLvars() ){
-			for (Variable var : parser.getLvars()) {
-				if (var.getName().equals(tok.getStr()))
-					isVar = true;
-			}
+			if (var.getName().equals(tok.getStr()))
+				isVar = true;
 		}
 
 		if (range == null && isVar)
 			range = VARIABLES.getRange(tok.getStart(), tok.length());
 		else if( range == null )
 			range = NORMAL.getRange(tok.getStart(), tok.length());
-		
+
 		if( tok.getSpecialBackground() != null)
 			range.background = tok.getSpecialBackground();
-		
+
 		return range;
 	}
 
 	public void lineGetStyle(LineStyleEvent event) {
 		ArrayList<Token> ltokens = parser.getLtokens();
-		
+		ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
+
 		int line = txt.getLineAtOffset(event.lineOffset);
 
 		int ftoken;
@@ -204,14 +224,21 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 					break;
 		}
 
-		StyleRange[] result = new StyleRange[ltoken - ftoken];
-		
-		for (int i = ftoken; i < ltoken; i++)
-			result[i - ftoken] = getStyle(ltokens.get(i));
-		
-		event.styles = result;
+		for (int i = ftoken; i < ltoken; i++){
+			StyleRange range = getStyle(ltokens.get(i));			
+			ranges.add(range);
+
+			//If we are a backgroudn highlighted token, and a CODE SNIPPET one, then connect the highlighting over whitespace between tokens
+			if( ltokens.get(i).getBackgroundReason() == SpecialBackgroundReason.CODE_SNIPPET )
+				if( i + 1 < ltoken && ltokens.get(i+1).getBackgroundReason() == SpecialBackgroundReason.CODE_SNIPPET && ltokens.get(i+1).getSnippetVar() == ltokens.get(i).getSnippetVar())
+					ranges.add(new StyleRange(ltokens.get(i).getEnd(),ltokens.get(i+1).getStart()-ltokens.get(i).getEnd(),null,ltokens.get(i).getSpecialBackground()));
+		}
+
+		StyleRange[] rangesArray = new StyleRange[ranges.size()];
+
+		event.styles = ranges.toArray(rangesArray);
 	}
-	
+
 	public void setCustomLines(int[] lines)
 	{
 		customLines = lines;
@@ -219,14 +246,14 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 	public void lineGetBackground(LineBackgroundEvent event) {
 		boolean go = false;
-		
+
 		for( int i : customLines)
 			if( i == txt.getLineAtOffset(event.lineOffset) )
 			{
 				go = true;
 				break;
 			}
-		
+
 		if( go ){
 			event.lineBackground = customColor;
 		}

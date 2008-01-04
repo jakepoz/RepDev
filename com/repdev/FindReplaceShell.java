@@ -94,6 +94,7 @@ public class FindReplaceShell {
 
 		shell = new Shell(parent, SWT.DIALOG_TRIM );
 		shell.setText("Find/Replace");
+		shell.setImage(RepDevMain.smallFindReplaceImage);
 		shell.setLayout(layout);
 		shell.addShellListener(new ShellAdapter(){
 			public void shellClosed(ShellEvent e) {

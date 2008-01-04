@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+   <CodeSnippet Format="1.0.0">
+      <Header>
+         <Title>TranPerform</Title>
+         <Author>Adelle Williams</Author>
+         <Shortcut>tran</Shortcut>
+         <Description>Code Snippet for TRANPERFORM statement.</Description>
+         <SnippetTypes>
+            <SnippetType>Expansion</SnippetType>
+         </SnippetTypes>
+      </Header>
+      <Snippet>
+         <Declarations>
+            <Literal>
+               <ID>tranCode</ID>
+               <ToolTip>The transaction code.</ToolTip>
+               <Default>DC</Default>
+            </Literal>
+            <Literal>
+               <ID>checkPrivFlag</ID>
+               <ToolTip>Whether or not to check privileges.</ToolTip>
+               <Default>1</Default>
+            </Literal>
+            <Literal>
+               <ID>seq1</ID>
+               <ToolTip>The first sequence variable.</ToolTip>
+               <Default>Sequence1</Default>
+            </Literal>
+            <Literal>
+               <ID>seq2</ID>
+               <ToolTip>The second sequence variable.</ToolTip>
+               <Default>Sequence2</Default>
+            </Literal>
+            <Literal>
+               <ID>chkAcctCode</ID>
+               <ToolTip>The checking account code.</ToolTip>
+               <Default>ChkAcctCode</Default>
+            </Literal>
+            <Literal>
+               <ID>chkNum</ID>
+               <ToolTip>The checking account number.</ToolTip>
+               <Default>ChkNumber</Default>
+            </Literal>
+            <Literal>
+               <ID>error</ID>
+               <ToolTip>The error variable.</ToolTip>
+               <Default>ErrorText</Default>
+            </Literal>
+            <Literal>
+               <ID>token</ID>
+               <ToolTip>The TRANPERFORM token.</ToolTip>
+               <Default>Amount</Default>
+            </Literal>
+            <Literal>
+               <ID>value</ID>
+               <ToolTip>The token's value.</ToolTip>
+               <Default>$100.00</Default>
+            </Literal>
+         </Declarations>
+         <Code Language="(I meant Repgen)">
+            <![CDATA[TranPerform $tranCode$ ($checkPrivFlag$, $seq1$, $seq2$, $chkAcctCode$, $chkNum$, $error$)
+Do
+  Set $token$ To $value$
+End [TranPerform]
+
+If $error$ <> "" Then
+Do
+  $end$
+End]]>
+         </Code>
+      </Snippet>
+   </CodeSnippet>
+</CodeSnippets>

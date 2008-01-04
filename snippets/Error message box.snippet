@@ -1,0 +1,22 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Error Message Box</Title>
+      <Author>Scott Bachmeier</Author>
+      <Shortcut>
+      </Shortcut>
+      <Description>A simple DIALOGSTART/CLOSE Error Message</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <SnippetType>SurroundsWith</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations />
+      <Code Language="PowerOn"><![CDATA[DIALOGSTART("Error",200%,0)
+DialogIntroText("$selected$$end$")
+DIALOGDISPLAY
+DIALOGCLOSE]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

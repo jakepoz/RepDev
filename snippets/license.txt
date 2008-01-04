@@ -1,0 +1,1 @@
+These snippets are licensed under the GPL as is the rest of RepDev. The authors of these snippets have given the RepDev team permission to do this and distribute their work.

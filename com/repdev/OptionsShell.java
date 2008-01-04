@@ -58,6 +58,7 @@ public class OptionsShell {
 
 		shell = new Shell(parent, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.TITLE);
 		shell.setText("Global Options");
+		shell.setImage(RepDevMain.smallOptionsImage);
 		shell.setLayout(layout);
 
 		Group serverGroup = new Group(shell, SWT.NONE);

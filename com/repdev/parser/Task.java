@@ -15,10 +15,68 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package com.repdev.parser;
 
+
+/**
+ * Todo items handling...
+ * @author ryan
+ *
+ */
+
 public class Task{
-	
+    private String fileName = "", description = "";
+    private int line = 0, col = 0;
+    private Type type;
+
+    public enum Type{
+	TODO,
+	FIXME,
+	BUG,
+	WTF,
+    }
+    
+    public Task( String fileName, String description, int line, int col, Type type) {
+	this.fileName = fileName;
+	this.type = type;
+	this.description = description;
+	this.line = line;
+	this.col = col;
+    }
+
+    public Type getType(){
+	return type;
+    }
+
+
+    public void setType(Type type) {
+	this.type = type;
+    }
+
+    public int getCol() {
+	return col;
+    }
+    public void setCol(int col) {
+	this.col = col;
+    }
+    public String getDescription() {
+	return description;
+    }
+    public void setDescription(String description) {
+	this.description = description;
+    }
+    public String getFile() {
+	return fileName;
+    }
+    public void setFile(String file) {
+	this.fileName = file;
+    }
+    public int getLine() {
+	return line;
+    }
+    public void setLine(int line) {
+	this.line = line;
+    }
 }

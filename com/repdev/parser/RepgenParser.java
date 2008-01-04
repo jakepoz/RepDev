@@ -15,7 +15,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 //TODO:FIX PARSER BUG WITH "#" HIGHLIGHTING
 package com.repdev.parser;
 
@@ -24,9 +24,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
@@ -42,38 +45,53 @@ public class RepgenParser {
 	private SymitarFile file;
 	private int sym;
 	private boolean reparse = true;
-	
+
 	private static HashSet<String> keywords;
-	
+
 	private static DatabaseLayout db = DatabaseLayout.getInstance();
 	private static SpecialVariables specialvars = SpecialVariables.getInstance();
 	private static FunctionLayout functions = FunctionLayout.getInstance();
-	
+
 	private ArrayList<Token> ltokens = new ArrayList<Token>();
 	private ArrayList<Variable> lvars = new ArrayList<Variable>();
-	private ArrayList<Token> lasttokens = new ArrayList<Token>();
+
+	private ArrayList<Token> lasttokens = new ArrayList<Token>(); //Tokens added in last parse method call
+	private ArrayList<Token> removedtokens = new ArrayList<Token>(); //Tokens removed
 	private ArrayList<Include> includes = new ArrayList<Include>();
-	
+
 	private ArrayList<Error> errorList = new ArrayList<Error>();
 	private ArrayList<Task> taskList = new ArrayList<Task>();
-	
+
+	private HashMap<String,ArrayList<Token>> includeTokenChache = new HashMap<String, ArrayList<Token>>();
+
 	BackgroundSymitarErrorChecker errorCheckerWorker = null;
 	BackgroundIncludeParser includeParserWorker = null;
-	
-	boolean refreshIncludes = true;
-	
+
+	boolean initialIncludeParseNeeded = true; //This will make sure that we parse the includes at least once when the file is first opened
+	boolean refreshIncludes = false; //The parser will keep track of changes as the file is edited, and if an include reparse is needed, this flag will be set. 
+	//Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
+	private boolean noParse = false;
+	public static final String[] taskTokens = { "todo", "fixme", "bug", "bugbug", "wtf" };
+
 	static {
 		keywords = build(new File("keywords.txt"));
 	}
-	
+
 
 	public RepgenParser(StyledText txt, SymitarFile file) {
 		this.txt = txt;
 		this.file = file;
 		this.sym = file.getSym();
 	}
-	
-	
+
+	public RepgenParser(StyledText txt, SymitarFile file, boolean parseFlag) {
+		this.txt = txt;
+		this.file = file;
+		this.sym = file.getSym();
+		noParse=!parseFlag;
+	}
+
+
 	/**
 	 * Worker class for loading any included files and parsing out their contents
 	 * Currently runs once at opening of the report
@@ -82,86 +100,99 @@ public class RepgenParser {
 	 */
 	public class BackgroundIncludeParser extends Thread{
 		String text;
-		
+
 		public BackgroundIncludeParser(String text){
 			super("Background Include Parser");
 			this.text = text;
 		}
-		
-		private void parseCurrentFileAsDefine(String fileName){
+
+		private void parseCurrentFileAsInclude(String fileName, boolean inDefs){
 			boolean exists = false;
 			ArrayList<Token> tokens = new ArrayList<Token>();
 			String data = "";
-			
+
+			includes.add(new Include(fileName, inDefs ? Division.DEFINE : Division.NONE));
+
 			if( file.isLocal() )
 				data = new SymitarFile(file.getDir(),fileName).getData();
 			else
 				data = new SymitarFile(sym,fileName,FileType.REPGEN).getData();
-			
+
 			if( data == null )
 				return;
-			
-			parse(fileName, data, 0, data.length(), 0, null, tokens, new ArrayList<Token>(), new ArrayList<Variable>(),null);
-			
+
+			parse(fileName, data, 0, data.length(), 0, null, tokens, new ArrayList<Token>(), new ArrayList<Token>(), new ArrayList<Variable>(),null);
+
+			includeTokenChache.put(fileName,tokens);
+
 			for( Token tok : tokens ){
-				tok.setInDefs(true);
-				
+				tok.setInDefs(inDefs);
+
 				if( tok.getStr().equals("#include") && tok.getAfter() != null && tok.getCDepth() == 0){
 					String newFileName = getFullString(tok.getAfter(),data);
-					
+
 					exists = false;
-					
+
 					for( Include cur : includes ){
-						if( cur.getDivision().equals( Division.DEFINE) && cur.getFileName().equals(newFileName))
+						if(cur.getFileName().equals(newFileName))
 							exists=true;
 					}
-					
-					if( !exists ){
-						parseCurrentFileAsDefine(newFileName);
+
+					if( !exists && !newFileName.equals(file.getName()) ){
+						parseCurrentFileAsInclude(newFileName, inDefs);
 					}
 				}
 			}
-			
-			rebuildVars(fileName,data,tokens);
+
+			if( inDefs )
+				rebuildVars(fileName,data,tokens);
 		}
-		
-		public void run(){	
+
+		public void run(){
 			boolean exists = false;
 			ArrayList<Token> tempTokens = new  ArrayList<Token>();
-						
-			for( Token tok : ltokens){
-				tempTokens.add(new Token(tok));
-			}
-			
-			int i = 0;
-			
-			for( Token tok : tempTokens){
-				tok.setNearTokens(tempTokens, i);
-				i++;
-			}
-			
-			//Only run next level of parsing on the include files not including the current file
-			//Variables in the current file are handled seperately
-			for( Token tok : tempTokens ){
-				if( tok.getStr().equals("#include") && tok.getAfter() != null && tok.inDefs() && tok.getCDepth() == 0){
-					String fileName = getFullString(tok.getAfter(),text);
-					
-					exists = false;
-					
-					for( Include cur : includes ){
-						if( cur.getDivision().equals( Division.DEFINE) && cur.getFileName().equals(fileName))
-							exists=true;
-					}
-					
-					if( !exists ){
-						parseCurrentFileAsDefine(fileName);
+
+			synchronized(includeTokenChache){//Sync it on the token cache, so other threads can access it safely
+				includeTokenChache.clear();
+				includes.clear();
+
+				for( Token tok : ltokens){
+					tempTokens.add(new Token(tok));
+				}
+
+				int i = 0;
+
+				for( Token tok : tempTokens){
+					tok.setNearTokens(tempTokens, i);
+					i++;
+				}
+
+
+				//Only run next level of parsing on the include files not including the current file
+				//Variables in the current file are handled seperately
+
+				for( Token tok : tempTokens ){
+					if( tok.getStr().equals("#include") && tok.getAfter() != null && tok.getCDepth() == 0){
+						String fileName = getFullString(tok.getAfter(),text);
+
+						exists = false;
+
+						for( Include cur : includes ){
+							if(cur.getFileName().equals(fileName))
+								exists=true;
+						}
+
+						if( !exists && !fileName.equals(file.getName()) ){
+							parseCurrentFileAsInclude(fileName, tok.inDefs());
+						}
 					}
 				}
 			}
-			
+
+			includeParserWorker = null;
 		}
 	}
-	
+
 	/**
 	 * Warning: Doesn't save symitar file
 	 * 
@@ -180,6 +211,8 @@ public class RepgenParser {
 
 		public void run() {
 			final Table tblErrors = RepDevMain.mainShell.getErrorTable();
+			final Table tblTasks  = RepDevMain.mainShell.getTaskTable();
+			ArrayList<Variable> varCache = new ArrayList<Variable>();
 
 			if (tblErrors.isDisposed())
 				return;
@@ -189,6 +222,7 @@ public class RepgenParser {
 
 				// Remove old errors
 				errorList.clear();
+				taskList.clear();
 
 				// Error check with symitar
 				ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
@@ -196,25 +230,76 @@ public class RepgenParser {
 
 				// Variable checking
 				synchronized(lvars){
-					 for (final Variable var : lvars) {
+					//Duplicate variables
+					for (final Variable var : lvars) {
+						varCache.add(new Variable(var));
+
 						if (var.getFilename().equals(file.getName())) {
 							int count = 0;
-	
+
 							for (Variable var2 : lvars)
 								if (var2.equals(var))
 									count++;
-	
+
 							if (count > 1 && !tblErrors.isDisposed())
 								display.syncExec(new Runnable() {
 									public void run() {
 										if (!txt.isDisposed())
-											errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
+											errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName().toUpperCase(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
 									}
 								});
 						}
 					}
 				}
-				 
+
+				synchronized(includeTokenChache){
+					//unused var checking
+					for (final Variable var : lvars) {	
+						if( !var.getFilename().equals(file.getName()) )
+							continue;
+
+						boolean unused = true;
+
+						for( int i = 0; i < ltokens.size(); i++){
+							Token tok = ltokens.get(i);
+
+							if( tok.inDefs() || tok.inDate() || tok.inString() || tok.getCDepth() > 0)
+								continue;
+
+							if( RepgenParser.getKeywords().contains(tok.getStr()) || RepgenParser.getSpecialvars().contains(tok.getStr()))
+								continue;
+
+							if( var.getName().equals(tok.getStr()) ){
+								unused = false;
+								break;
+							}
+						}
+
+						for( ArrayList<Token> tokens : includeTokenChache.values()){
+							for( Token tok : tokens){
+								if( tok.inDefs() || tok.inDate() || tok.inString() || tok.getCDepth() > 0)
+									continue;
+
+								if( RepgenParser.getKeywords().contains(tok.getStr()) || RepgenParser.getSpecialvars().contains(tok.getStr()))
+									continue;
+
+								if( var.getName().equals(tok.getStr()) )
+									unused = false;
+							}
+						}
+
+						if( unused && !tblErrors.isDisposed()){
+							display.syncExec(new Runnable() {
+								public void run() {
+									if (!txt.isDisposed()){
+										errorList.add(new Error(var.getFilename(), "Variable Unused: " + var.getName().toUpperCase(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
+									}
+								}
+							});
+						}
+					}
+				}
+
 
 				// Add to list
 				display.asyncExec(new Runnable() {
@@ -240,14 +325,111 @@ public class RepgenParser {
 									row.setData("file", file);
 									row.setData("sym", sym);
 									row.setData("error", error);
-									
+
 									if( error.getType() == Error.Type.SYMITAR_ERROR )
 										row.setImage(RepDevMain.smallErrorsImage);
 									else
-										row.setImage(RepDevMain.smallWarningImage);
+										row.setImage(RepDevMain.smallWarningImage);				    
 								}
 							}
 
+							for( CTabItem tab: ((CTabFolder)tblErrors.getParent()).getItems() ) {
+								if( tab.getText().indexOf("Errors") != -1 ) {
+									tab.setText("&Errors (" + tblErrors.getItemCount() + ")");
+								}
+							}
+
+						}
+					}
+				});
+
+				display.syncExec(new Runnable() {
+					public void run() {
+						for (final Token tok : ltokens) {
+							boolean isTask = false;
+							for( String task: taskTokens )
+								if( tok.getStr().equals(task)) isTask = true;
+
+
+							if ( tok.getCDepth() > 0 && isTask && tok.getAfter().getStr().equals(":")) {
+								//System.out.println("[DEBUG] " + tok.getStr());
+
+								int line = txt.getLineAtOffset(tok.getStart());
+								int col = tok.getStart() - txt.getOffsetAtLine(line);
+								
+								/* Don't die if the item does not have a line following it...
+								 * Taken from my #include "" double click code.
+								 */
+								int startOffset = tok.getStart();
+								int endOffset = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, line + 1));
+								String desc;
+								
+								if( endOffset - 1 <= startOffset)
+									desc = "";
+								else
+									desc = txt.getText(startOffset, endOffset - 1);
+								
+
+								desc = desc.trim();
+								desc = desc.replaceAll("\\]$", "");
+
+								Task.Type type;
+								type = Task.Type.TODO;
+								if( tok.getStr().equals("fixme") ) {
+									type = Task.Type.FIXME;
+								} else if( tok.getStr().equals("bug") || tok.getStr().equals("bugbug") ) {
+									type = Task.Type.BUG;
+								} else if( tok.getStr().equals("wtf") ) {
+									type = Task.Type.WTF;
+								}
+
+								Task task = new Task(file.getName(), desc, line, col, type);
+								taskList.add( task );
+							}
+						}
+					}
+				});
+
+				// Update the tasks table
+				display.asyncExec(new Runnable() {
+					public void run() {
+						if (!tblTasks.isDisposed()) {
+							for (TableItem item : tblTasks.getItems()) {
+								if (((SymitarFile) item.getData("file")).equals(file) && ((Integer) item.getData("sym")) == sym)
+									item.dispose();
+
+							}
+
+							for( Task task : taskList ) {
+								if( !task.getDescription().trim().equals("")) {
+
+									TableItem row = new TableItem(tblTasks, SWT.NONE );
+									row.setText(0, task.getDescription() );
+									row.setText(1, task.getFile() );
+									row.setText(2, task.getLine() + " : " + task.getCol() );
+
+									row.setData("file", file);
+									row.setData("sym", sym);
+									row.setData("task", task);
+
+									if( task.getType() == Task.Type.TODO ) {
+										row.setImage(RepDevMain.smallTaskTodo);
+									} else if( task.getType() == Task.Type.FIXME ) {
+										row.setImage(RepDevMain.smallTaskFixme);
+									} else if( task.getType() == Task.Type.BUG ) {
+										row.setImage(RepDevMain.smallTaskBug);
+									} else if( task.getType() == Task.Type.WTF ) {
+										row.setImage(RepDevMain.smallTaskWtf);
+									}
+
+								}
+							}
+
+							for( CTabItem tab: ((CTabFolder)tblTasks.getParent()).getItems() ) {
+								if( tab.getText().indexOf("Tasks") != -1 ) {
+									tab.setText("&Tasks (" + tblTasks.getItemCount() + ")");
+								}
+							}
 						}
 					}
 				});
@@ -255,10 +437,11 @@ public class RepgenParser {
 				//Just ignore if anything happens to our UI while we are error checking.
 			}
 
+			errorCheckerWorker = null;
 		}
 	}
 
-	
+
 	/**
 	 * Adds tokens to ltokens, but also keeps track of it in the new tokens list
 	 * for determining what to process later
@@ -290,11 +473,12 @@ public class RepgenParser {
 	 * 
 	 * TODO: Type asdf" then going back and putting a " in the start of the string doesn't redraw the file after the second "
 	 */
-	
-	private synchronized boolean parse(String filename, String str, int start, int end, int oldend, String replacedText, ArrayList<Token> tokens, ArrayList<Token> lasttokens, ArrayList<Variable> vars, StyledText txt) {
+
+	private synchronized boolean parse(String filename, String str, int start, int end, int oldend, String replacedText, ArrayList<Token> tokens, ArrayList<Token> lasttokens, ArrayList<Token> removedtokens, ArrayList<Variable> vars, StyledText txt) {
 		boolean allDefs = true, redrawAll = false;
 		lasttokens.clear();
-		
+		removedtokens.clear();
+
 		int ftoken;
 		for(ftoken = 0; ftoken < tokens.size(); ftoken++)
 			if(tokens.get(ftoken).getEnd()>=start)
@@ -306,19 +490,19 @@ public class RepgenParser {
 				break;
 
 		int charStart, charEnd;
-		
+
 		if(ftoken<tokens.size())
 			charStart = Math.min(start, tokens.get(ftoken).getStart());
 		else
 			charStart = start;
-		
+
 		if(ltoken<tokens.size())
 			charEnd = Math.max(end, tokens.get(ltoken).getStart()+end-oldend);
 		else
 			charEnd = str.length();
 
 		char[] chars = str.substring(charStart, charEnd).toLowerCase().toCharArray();
-		
+
 		boolean inString=false, inDate=false, inDefine = false;
 		int commentDepth=0;
 		if(ftoken>0){
@@ -327,7 +511,7 @@ public class RepgenParser {
 			commentDepth = tokens.get(ftoken-1).getEndCDepth();
 			inDefine = tokens.get(ftoken-1).inDefs();
 		}
-		
+
 		boolean oldInString=false, oldInDefine = false, oldInDate=false;
 		int oldCommentDepth=0;
 		if(ltoken<tokens.size()) {
@@ -336,24 +520,25 @@ public class RepgenParser {
 			oldCommentDepth=tokens.get(ltoken).getCDepth();
 			oldInDefine=tokens.get(ltoken).inDefs();
 		}
-		
+
 		if( inDefine || oldInDefine )
 			redrawAll = true;
 
 		if(tokens.size()>0)
-			for(int i=0;i<ltoken-ftoken;i++)
-				tokens.remove(ftoken);
-		
+			for(int i=0;i<ltoken-ftoken;i++){
+				removedtokens.add(tokens.remove(ftoken));
+			}
+
 		int curspot = ftoken, cstart = charStart;
 		StringBuilder sb = new StringBuilder();
 		for(int i=0; i<chars.length; i++) {
 			char cur = chars[i];
-			
+
 			if((cur>='a'&&cur<='z')||(cur>='0'&&cur<='9')||cur=='#'||cur=='@') {
 				sb.append(cur);
 			} else {
 				String scur=sb.toString().trim();
-				
+
 				if(scur.length()>0){			
 					if(commentDepth==0 && !inString) {
 						if(scur.equals("define")) {
@@ -363,20 +548,20 @@ public class RepgenParser {
 							allDefs = false;
 						}
 					}
-					
+
 					addToken(tokens,curspot,new Token(scur,cstart,commentDepth,commentDepth,inString,inString,inDefine,inDate,inDate));
 					curspot++;
 				}
 				sb = new StringBuilder();
 				cstart = i + charStart;
-				
+
 				scur = "" + cur;
 				if(commentDepth==0 && cur=='"') {
 					if(inString)
 						addToken(tokens,curspot,new Token(scur,cstart,0,0,true,false,inDefine,inDate,inDate));
 					else
 						addToken(tokens,curspot,new Token(scur,cstart,0,0,true,true,inDefine,inDate,inDate));
-					
+
 					curspot++;
 					inString = !inString;
 				} else if(!inString && cur=='[') {
@@ -388,7 +573,7 @@ public class RepgenParser {
 					commentDepth--;
 					if(commentDepth<0)
 						commentDepth=0;
-					
+
 					addToken(tokens,curspot,new Token(scur,cstart,commentDepth+1,commentDepth,false,false,inDefine,
 							inDate,inDate));
 					curspot++;
@@ -397,7 +582,7 @@ public class RepgenParser {
 						addToken(tokens,curspot,new Token(scur,cstart,0,0,inString,inString,inDefine,true,false));
 					else
 						addToken(tokens,curspot,new Token(scur,cstart,0,0,inString,inString,inDefine,true,true));
-						
+
 					curspot++;
 					inDate = !inDate;
 				} else if(scur.trim().length()!=0){
@@ -405,11 +590,11 @@ public class RepgenParser {
 							inDate,inDate));
 					curspot++;
 				}
-				
+
 				cstart++;
 			}
 		}
-		
+
 		String scur=sb.toString().trim();
 		if(scur.length()>0){
 			if(commentDepth==0 && !inString) {
@@ -420,50 +605,50 @@ public class RepgenParser {
 					allDefs = false;
 				}
 			}
-			
+
 			addToken(tokens,curspot,new Token(scur,cstart,commentDepth,commentDepth,inString,inString,inDefine,
 					inDate,inDate));
 			curspot++;
 		}
-			
+
 		if(end!=oldend)
 			for(int i=curspot;i<tokens.size();i++)
 				tokens.get(i).incStart(end-oldend);
-		
+
 		int fixspot = curspot;
-		
+
 		if(inString!=oldInString || commentDepth!=oldCommentDepth || inDefine!=oldInDefine || inDate!=oldInDate) {
 			for(fixspot=curspot;fixspot<tokens.size();fixspot++) {
 				Token tcur = tokens.get(fixspot);
 				String cur = tcur.getStr();
-				
+
 
 				oldInString = tcur.inString();
 				oldInDate = tcur.inDate();
 				oldCommentDepth = tcur.getCDepth();
 				oldInDefine = tcur.inDefs();
-				
+
 				tcur.setInString(inString,inString);
 				tcur.setInDate(inDate,inDate);
 				tcur.setCDepth(commentDepth,commentDepth);
 				tcur.setInDefs(inDefine);			
-						
+
 				if(commentDepth==0 && cur.equals("\"")) {
 					if(inString)
 						tcur.setInString(true,false);
 					else
 						tcur.setInString(true,true);
-					
+
 					inString = !inString;
 				} else if(!inString && cur.equals("[")) {
 					commentDepth++;
-					
+
 					tcur.setCDepth(commentDepth,commentDepth);
 				} else if(!inString && cur.equals("]")) {
 					commentDepth--;
 					if(commentDepth<0)
 						commentDepth=0;
-					
+
 					tcur.setCDepth(commentDepth+1,commentDepth);
 				} else if(!inString && commentDepth==0 && cur.equals("define")) {
 					inDefine = true;
@@ -476,7 +661,7 @@ public class RepgenParser {
 						tcur.setInDate(true,false);
 					else
 						tcur.setInDate(true,true);
-					
+
 					inDate=!inDate;
 				} else if(inDefine==oldInDefine && commentDepth==oldCommentDepth && inString==oldInString &&
 						inDate==oldInDate) {
@@ -484,19 +669,20 @@ public class RepgenParser {
 				}
 			}
 		}
-		     
+
 		for(int i=curspot-1;i>=0;i--)
 			if(!tokens.get(i).inString() && tokens.get(i).getCDepth()!=0) {
 				tokens.get(i).setNearTokens(tokens,i);
 				break;
 			}
-				
-		for(int i=Math.max(0,ftoken-1);i<fixspot;i++)
-			tokens.get(i).setNearTokens(tokens,i);
-		
+
+		for(int i=Math.max(0,ftoken-1);i<fixspot;i++){
+			tokens.get(i).setNearTokens(tokens,i); //Set near tokens on the ones we edited
+		}
+
 		if(tokens.size()>1) {
 			//Go through and merge multi tokens into single ones, ex. db fields and records
-			
+
 			//First go through and add buffer distances to the tokens we have already
 			if(lasttokens.size() > 0 ){
 				Token first = lasttokens.get(0);
@@ -513,26 +699,26 @@ public class RepgenParser {
 					if( last.getAfter().getAfter() != null)
 						lasttokens.add(first.getAfter().getAfter());
 				}
-				
+
 				int i = 0;
-				
+
 				while(i < lasttokens.size() - 1){
 					Token cur = lasttokens.get(i);
-					
+
 					if( cur.getAfter() == null)
 						break;
-					
+
 					//Merge Print title so we can make that a division in the parser later versus regular print commands
-					
+
 					if( (cur.getStr().equals("print") && cur.getAfter().getStr().equals("title")) ||
-						(db.containsRecordName(cur.getStr() + " " + cur.getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getStart()).equals(" ")))
+							(db.containsRecordName(cur.getStr() + " " + cur.getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getStart()).equals(" ")))
 					{
 						cur.setStr(cur.getStr() + " " + cur.getAfter().getStr() );
 						tokens.remove(cur.getAfter());
 						cur.setNearTokens(tokens, tokens.indexOf(cur));
 						if( cur.getAfter() != null )
 							cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
-						
+
 						continue;
 					}
 					if( cur.getAfter().getAfter() != null && db.containsFieldName(cur.getStr() + ":" + cur.getAfter().getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getAfter().getStart()).equals(":"))	
@@ -543,24 +729,24 @@ public class RepgenParser {
 						cur.setNearTokens(tokens, tokens.indexOf(cur));
 						if( cur.getAfter() != null )
 							cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
-						
+
 						continue;
 					}
-						
+
 					i++;
 				}
 			}
-			
+
 			if(ftoken<tokens.size())
 				charStart = tokens.get(ftoken).getStart();
 			else
 				charStart = tokens.get(tokens.size()-1).getEnd();
-			
+
 			if(fixspot<tokens.size())
 				charEnd = tokens.get(fixspot).getStart();
 			else
 				charEnd = str.length();
-			
+
 			if( txt != null)
 				if( redrawAll )
 					txt.redrawRange(0, txt.getCharCount(), false);
@@ -570,10 +756,10 @@ public class RepgenParser {
 					else
 						txt.redrawRange(charStart,charEnd-charStart,false); 
 		}
-		
+
 		return allDefs;
 	}
-	
+
 	private static HashSet<String> build(File in) {
 		HashSet<String> result = new HashSet<String>();
 
@@ -594,33 +780,33 @@ public class RepgenParser {
 
 		return result;
 	}
-	
+
 	private static String getFullString(Token cur, String fileData){
 		if( !cur.inString() )
 			return "";
-		
+
 		String type = "";
 		Token fToken, lToken = null;
-		
+
 		if( cur.getAfter() == null)
 			return "";
-		
+
 		fToken = cur.getAfter();
-		
-		
+
+
 		while( (cur=cur.getAfter()) != null )
 		{
 			if(!cur.inString() || cur.getStr().equals("\""))
 				break;
-			
+
 			lToken =cur;
 		}
-		
+
 		type += fileData.substring(fToken.getStart(),Math.min(lToken == null ? fileData.length() -1 : lToken.getEnd(),fileData.length()-1));		
-	
+
 		return type;
 	}
-	
+
 	private static boolean isNumber(String str){
 		try{
 			Integer.parseInt(str);
@@ -630,25 +816,24 @@ public class RepgenParser {
 			return false;
 		}
 	}
-	
+
 	private synchronized void rebuildVars(String fileName, String data, ArrayList<Token> tokens) {
 		ArrayList<Variable> newvars = new ArrayList<Variable>();
 		ArrayList<Variable> oldvars = new ArrayList<Variable>();
-			
+
 		boolean changed = false, exists = false;
-		
+
 		int c = 0;
-		
-		//Still needs synchronizing, as the method level synchronized doesn't effect calls from the background parsers
-		synchronized(lvars){
-			while( c < lvars.size() ){
-				if( lvars.get(c).getFilename().equals(fileName))
-					oldvars.add(lvars.remove(c));
-				else
-					c++;
-			}
+
+		//Note: I don't think this block still needs syncing, I changed a number of things
+		while( c < lvars.size() ){
+			if( lvars.get(c).getFilename().equals(fileName))
+				oldvars.add(lvars.remove(c));
+			else
+				c++;
 		}
-		
+
+
 		System.out.println("Parsing vars for " + fileName);
 
 		for (Token tcur : tokens) {
@@ -657,71 +842,71 @@ public class RepgenParser {
 			if (tcur.getAfter() != null && tcur.inDefs() && tcur.getCDepth() == 0 && !tcur.inString() && !tcur.inDate() && tcur.getAfter().getStr().equals("=") && tcur.getAfter().getAfter() != null) {
 				Token typeToken = tcur.getAfter().getAfter();
 				boolean isConstant = true;
-				
+
 				if( typeToken == null )
 					continue;
-				
+
 				String type = typeToken.getStr().toUpperCase();
 
 				//Strings
 				if (typeToken.inString()){
 					type = "\"" + getFullString(typeToken,data) + "\"";
 				}
-				
+
 				//Date
 				if( typeToken != null && typeToken.inDate() ){
 					for(int i = 0; i<=5;i++)
 					{		
 						typeToken = typeToken.getAfter();
-						
+
 						if( typeToken == null)
 							break;
-						
+
 						type += typeToken.getStr();
 					}					
 				}
-				
+
 				//Rate
 				if( typeToken != null && isNumber(typeToken.getStr()) && typeToken.getAfter() != null && typeToken.getAfter().getStr().equals(".") && typeToken.getAfter().getAfter() != null && isNumber(typeToken.getAfter().getAfter().getStr())){
 					for(int i = 0; i<=2;i++)
 					{		
 						typeToken = typeToken.getAfter();
-						
+
 						if( typeToken == null)
 							break;
-						
+
 						type += typeToken.getStr();
 					}	
 				}
-				
+
 				//Money
 				if( typeToken != null && typeToken.getStr().equals("$")){
 					while( (typeToken = typeToken.getAfter()) != null )
 					{
 						if( !isNumber(typeToken.getStr()) && !typeToken.getStr().equals(",") && !typeToken.getStr().equals(".") )
 							break;
-									
+
 						type += typeToken.getStr();
 					}
 				}
-				
+
 				//Character with ()'s
 				if( typeToken != null && typeToken.getStr().equals("character") && typeToken.getAfter() != null && typeToken.getAfter().getStr().equals("(")){
 					Token curTok = typeToken;
-					
+
 					while( curTok != null && !curTok.getStr().equals(")") ){
 						curTok = curTok.getAfter();
 						type += curTok.getStr().toUpperCase();						
 					}
-					
+
 					typeToken = curTok;
 					isConstant = false;
 				}
-				
+
 				for( VariableType cur : VariableType.values())
 					if( cur.toString().equalsIgnoreCase(type))
 						isConstant = false;
-				
+
 				//Array support
 				if( typeToken != null && typeToken.getAfter() != null && typeToken.getAfter().getStr().equals("array")){
 
@@ -729,11 +914,11 @@ public class RepgenParser {
 					{					
 						if( !isNumber(typeToken.getStr()) && !typeToken.getStr().equals(")") && !typeToken.getStr().equals("(") && !typeToken.getStr().equals("array") && !typeToken.getStr().equals(","))
 							break;
-									
+
 						type += (isNumber(typeToken.getStr()) || typeToken.getStr().equals(")") ? "" : " ") + typeToken.getStr().toUpperCase();
 					}
 				}
-				
+
 				newVar = new Variable(tcur.getStr(), fileName, tcur.getStart(), type);
 				newVar.setConstant(isConstant);
 				newvars.add(newVar);
@@ -741,15 +926,15 @@ public class RepgenParser {
 		}
 
 		changed = !(oldvars.size() == newvars.size());
-		
+
 		if( !changed ){
 			for (Variable var : newvars) {
 				exists = false;
-	
+
 				for (Variable lvar : oldvars)
 					if (lvar.equals(var))
 						exists = true;
-	
+
 				if (!exists) {
 					changed = true;
 					break;
@@ -766,29 +951,76 @@ public class RepgenParser {
 			txt.redrawRange(0, txt.getText().length(), false);
 
 	}
-	
+
 	public void textModified(int start, int length, String replacedText){
 		if (reparse) {
 			int st = start;
 			int end = st + length;
 			int oldend = st + replacedText.length();
 			boolean rebuildVars = false;
-	
+
 			long time = System.currentTimeMillis();
-	
+
 			try {
-				parse(file.getName(), txt.getText(), st, end, oldend, replacedText, ltokens, lasttokens, lvars, txt);
-				
-				for( Token cur : lasttokens)
+				parse(file.getName(), txt.getText(), st, end, oldend, replacedText, ltokens, lasttokens, removedtokens, lvars, txt);
+
+				for( Token cur : lasttokens){
 					if( cur.inDefs() )
 						rebuildVars = true;
-					
+
+					if( cur.getStr().equals("#include") && !cur.inDate() && !cur.inString() && cur.getCDepth() == 0)
+					{
+						refreshIncludes = true;
+					}
+
+					if( cur.inString() ){
+						Token t = cur;
+
+						while(t != null){
+							t = t.getBefore();
+
+							if( t != null && !t.inString() ){
+								if( t.getStr().equals("#include"))
+									refreshIncludes = true;
+
+								break;								
+							}
+						}
+					}
+				}
+
+				for( Token cur : removedtokens){
+					if( cur.inDefs() )
+						rebuildVars = true;
+
+					if( cur.getStr().equals("#include") && !cur.inDate() && !cur.inString() && cur.getCDepth() == 0)
+					{
+						refreshIncludes = true;
+					}
+
+					if( cur.inString() ){
+						Token t = cur;
+
+						while(t != null){
+							t = t.getBefore();
+
+							if( t != null && !t.inString() ){
+								if( t.getStr().equals("#include"))
+									refreshIncludes = true;
+
+								break;								
+							}
+						}
+					}
+				}
+
+
 				if( rebuildVars )
 					rebuildVars(file.getName(), txt.getText(), ltokens);
-				
-				if( refreshIncludes ){
+
+				if( initialIncludeParseNeeded ){
 					parseIncludes();
-					refreshIncludes = false;
+					initialIncludeParseNeeded = false;
 				}
 			} catch (Exception e) {
 				System.err.println("Syntax Highlighter error!");
@@ -798,29 +1030,26 @@ public class RepgenParser {
 			System.out.println("Parse time: " + (System.currentTimeMillis() - time));
 		}
 	}
-	
+
 	public void parseIncludes(){
-		if( includeParserWorker == null){
-			includes.clear();
-			
+		if( includeParserWorker == null ){
 			includeParserWorker = new BackgroundIncludeParser(txt.getText());
+			refreshIncludes = false;
 			includeParserWorker.start();
-			includeParserWorker = null;
 		}
 	}
-	
+
 	public void errorCheck(){
-		if( errorCheckerWorker == null){
+		if( errorCheckerWorker == null && !noParse){
 			errorCheckerWorker = new BackgroundSymitarErrorChecker(this);
 			errorCheckerWorker.start();
-			errorCheckerWorker = null;
 		}
 	}
 
 	public void reparseAll() {
 		try {
 			ltokens = new ArrayList<Token>();
-			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, lvars, txt);
+			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, removedtokens, lvars, txt);
 			rebuildVars(file.getName(), txt.getText(), ltokens);
 
 			System.out.println("Reparsed");
@@ -915,4 +1144,22 @@ public class RepgenParser {
 	public ArrayList<Task> getTaskList() {
 		return taskList;
 	}
+
+	public boolean needRefreshIncludes(){
+		return refreshIncludes;
+	}
+
+	public void setRefreshIncludes(boolean val){
+		refreshIncludes = val;
+	}
+
+	//Returns the last tokens to be added in the previous call to the parser, useful for the snippet manager and stuff
+	public ArrayList<Token> getLastTokens(){
+		return lasttokens;
+	}
+
+	public ArrayList<Include> getIncludes(){
+		return includes;
+	}
 }
+

@@ -26,7 +26,6 @@ import java.io.IOException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -58,14 +57,18 @@ public class AboutBoxShell {
 		  +"RepDev is a community based free IDE for use writing\n"
 		  +"RepGens for Symitar systems.  It is ment to be an\n"
 		  +"alternative to using Episys's built in RepGen tools.\n"
-		  +"\n";
+		  +"\n\n"
+		  +"Most icons are from the Silk icon set\n"
+		  +"http://www.famfamfam.com/lab/icons/silk/"		  
+		  ;
 	public static final String creditsText = "\n"
 		  +"Credits:\n"
 		  +"Jake Poznanski - Programmer/Project Head\n"
 		  +"Ryan Schultz   - Programmer\n"
 		  +"Sean Delaney   - Programmer\n"
 		  +"Bruce Chang    - Programmer/Documentation\n"
-		  +"Michael Webb   - Documentation\n\n";
+		  +"Michael Webb   - Documentation\n"
+		  +"Ken Kondo      - Documentation\n\n";
 	
 	public static void show() {
 		AboutBoxShell me = new AboutBoxShell();

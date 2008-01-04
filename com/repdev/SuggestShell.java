@@ -36,12 +36,17 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -70,17 +75,24 @@ public class SuggestShell {
 	private Table table;
 	private StyledText txt;
 	private RepgenParser parser;
-	private boolean open = false;
+	private boolean open = false, snippetMode = false;
 	private Token current;
+	private EditorComposite editor;
+	
+	public void open(){
+		open(false);
+	}
 
-	public void open() {
+	public void open(boolean inSnippet) {
 		open = true;
+		snippetMode = inSnippet;
 			
 		if( update() ){
+			txt.setFocus();
 			shell.setVisible(true);
 			tooltip.setVisible(true);
 			shell.moveAbove(txt);
-			txt.setFocus();
+			
 		}
 	}
 
@@ -136,179 +148,223 @@ public class SuggestShell {
 
 		table.setRedraw(false);
 
-		// add DB subfields, if we are on that
-		if (current != null && (tokenStr.equals(":") || (current.getBefore() != null && current.getBefore().getStr().equals(":")))) {
-			Token record = current.getBefore();
+		if(snippetMode){
+			if( SnippetManager.getInstance().snippets != null && SnippetManager.getInstance().snippets.size() > 0){
+				//Add snippets
+				for( Snippet cur : SnippetManager.getInstance().snippets){
 
-			if ((current.getBefore() != null && current.getBefore().getStr().equals(":")))
-				record = record.getBefore();
+					TableItem item = new TableItem(table, SWT.NONE);
+					ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
 
-			if (record == null)
-				return false;
+					item.setText(cur.getTitle());
+					item.setImage(RepDevMain.smallVariableImage);
+					item.setData("snippet", cur);
+					item.setData("value","");
 
-			Record dRecord = null;
+					String tooltip = cur.getTitle()+"\n";
+					ranges.add(new StyleRange(0,tooltip.length(),null,null,SWT.BOLD));
 
-			if (DatabaseLayout.getInstance().containsRecordName(record.getStr())) {
-				for (Record cur : DatabaseLayout.getInstance().getFlatRecords()) {
-					if (cur.getName().toLowerCase().equals(record.getStr())) {
-						dRecord = cur;
-						break;
+					tooltip += cur.getDescription() + "\n\n";
+					ranges.add(new StyleRange(tooltip.length() - cur.getDescription().length(), cur.getDescription().length(),null,null));
+
+
+					ranges.add(new StyleRange(tooltip.length(),11,null,null,SWT.BOLD));
+					tooltip += "Variables:\n";
+
+					for(SnippetVariable var : cur.getVars()){
+						ranges.add(new StyleRange(tooltip.length(), 1 + var.getId().length(),null,null,SWT.BOLD));
+						tooltip += "\t" + var.getId();
+
+						ranges.add(new StyleRange(tooltip.length(), 3 + var.getTooltip().length(),null,null));
+						tooltip += ": " + var.getTooltip() + "\n";
+
 					}
+
+					item.setData("tooltip", tooltip);
+
+
+					item.setData("tooltipstyles", ranges.toArray(new StyleRange[0]));
 				}
 
-				ArrayList<Field> sortedFields = dRecord.getFields();
+			}
+			else
+				snippetMode = false;
+		}
+		else{
+			// add DB subfields, if we are on that
+			if (current != null && (tokenStr.equals(":") || (current.getBefore() != null && current.getBefore().getStr().equals(":")))) {
+				Token record = current.getBefore();
 
-				Collections.sort(sortedFields);
+				if ((current.getBefore() != null && current.getBefore().getStr().equals(":")))
+					record = record.getBefore();
 
-				for (Field field : dRecord.getFields()) {
-					if (tokenStr.equals(":") || field.getName().toLowerCase().startsWith(tokenStr)) {
+				if (record == null)
+					return false;
+
+				Record dRecord = null;
+
+				if (DatabaseLayout.getInstance().containsRecordName(record.getStr())) {
+					for (Record cur : DatabaseLayout.getInstance().getFlatRecords()) {
+						if (cur.getName().toLowerCase().equals(record.getStr())) {
+							dRecord = cur;
+							break;
+						}
+					}
+
+					ArrayList<Field> sortedFields = dRecord.getFields();
+
+					Collections.sort(sortedFields);
+
+					for (Field field : dRecord.getFields()) {
+						if (tokenStr.equals(":") || field.getName().toLowerCase().startsWith(tokenStr)) {
+							TableItem item = new TableItem(table, SWT.NONE);
+							item.setText(field.getName().toUpperCase() + "   " + field.getVariableType());
+							item.setImage(RepDevMain.smallDBFieldImage);
+							item.setData("value", field.getName().toUpperCase());
+							String tooltip = field.getName().toUpperCase() + "\nType: " + field.getVariableType() + (field.getLen() != -1 ? "(" + field.getLen() + ")" : "" ) + "\nField Number: " + field.getFieldNumber() + "\n\n" + field.getDescription();
+
+							item.setData("tooltip", tooltip) ;
+							StyleRange[] styles = {
+									new StyleRange(0,field.getName().length(),null,null,SWT.BOLD),
+									new StyleRange(field.getName().length()+1,tooltip.indexOf("\n\n") - field.getName().length(),null,null,SWT.ITALIC),
+							};
+							item.setData("tooltipstyles", styles);
+						}
+					}
+				}
+			} else {
+				// Otherwise, let's populate with variable names, db records, etc.
+				if (tokenStr.equals("=") || tokenStr.equals(":"))
+					tokenStr = "";
+
+				ArrayList<Variable> vars = new ArrayList<Variable>(parser.getLvars());
+
+				Collections.sort(vars);
+
+				for (Variable var : vars) {
+					if (var.getName().toLowerCase().startsWith(tokenStr)) {
 						TableItem item = new TableItem(table, SWT.NONE);
-						item.setText(field.getName().toUpperCase() + "   " + field.getVariableType());
-						item.setImage(RepDevMain.smallDBFieldImage);
-						item.setData("value", field.getName().toUpperCase());
-						String tooltip = field.getName().toUpperCase() + "\nType: " + field.getVariableType() + (field.getLen() != -1 ? "(" + field.getLen() + ")" : "" ) + "\nField Number: " + field.getFieldNumber() + "\n\n" + field.getDescription();
-						
-						item.setData("tooltip", tooltip) ;
+						item.setText(var.getName().toUpperCase() + "   " + (var.isConstant() ? var.getType() : var.getType().toUpperCase()));
+						item.setImage(RepDevMain.smallVariableImage);
+						item.setData("value", var.getName().toUpperCase());
+
+						String tooltip = var.getName().toUpperCase();
+
+						if( var.isConstant())
+							tooltip += "\nConstant Value: " + var.getType();
+						else
+							tooltip += "\nType: " + var.getType().toUpperCase();
+
+						tooltip += "\nFile: " + var.getFilename();
+
+						item.setData("tooltip", tooltip);
+
 						StyleRange[] styles = {
-								new StyleRange(0,field.getName().length(),null,null,SWT.BOLD),
-								new StyleRange(field.getName().length()+1,tooltip.indexOf("\n\n") - field.getName().length(),null,null,SWT.ITALIC),
+								new StyleRange(0,var.getName().length(),null,null,SWT.BOLD),
+
 						};
 						item.setData("tooltipstyles", styles);
 					}
 				}
-			}
-		} else {
-			// Otherwise, let's populate with variable names, db records, etc.
-			if (tokenStr.equals("=") || tokenStr.equals(":"))
-				tokenStr = "";
-			
-			ArrayList<Variable> vars = new ArrayList<Variable>(parser.getLvars());
-						
-			Collections.sort(vars);
-			
-			for (Variable var : vars) {
-				if (var.getName().toLowerCase().startsWith(tokenStr)) {
-					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(var.getName().toUpperCase() + "   " + (var.isConstant() ? var.getType() : var.getType().toUpperCase()));
-					item.setImage(RepDevMain.smallVariableImage);
-					item.setData("value", var.getName().toUpperCase());
-					
-					String tooltip = var.getName().toUpperCase();
-					
-					if( var.isConstant())
-						tooltip += "\nConstant Value: " + var.getType();
-					else
+
+				//Special system vars next
+				//Sort of a bit application specific, but only show the many "@" variables if you've already typed an @, so not to over crowd the list
+				//Other special vars will always show up
+
+				for( SpecialVariable var :RepgenParser.getSpecialvars().getVars())
+					if( (!tokenStr.equals("") && var.getName().toLowerCase().startsWith(tokenStr)) || 
+							(tokenStr.equals("") && !var.getName().startsWith("@") ) )
+					{
+						TableItem item = new TableItem(table, SWT.NONE);
+						item.setText(var.getName().toUpperCase() + "   " + var.getType());
+						item.setImage(RepDevMain.smallVariableImage);
+						item.setData("value", var.getName().toUpperCase());
+
+						String tooltip = var.getName().toUpperCase();
+
 						tooltip += "\nType: " + var.getType().toUpperCase();
-					
-					tooltip += "\nFile: " + var.getFilename();
-					
-					item.setData("tooltip", tooltip);
-					
-					StyleRange[] styles = {
-							new StyleRange(0,var.getName().length(),null,null,SWT.BOLD),
-							
-					};
-					item.setData("tooltipstyles", styles);
-				}
-			}
-			
-			//Special system vars next
-			//Sort of a bit application specific, but only show the many "@" variables if you've already typed an @, so not to over crowd the list
-			//Other special vars will always show up
-			
-			for( SpecialVariable var :RepgenParser.getSpecialvars().getVars())
-				if( (!tokenStr.equals("") && var.getName().toLowerCase().startsWith(tokenStr)) || 
-					(tokenStr.equals("") && !var.getName().startsWith("@") ) )
-				{
-					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(var.getName().toUpperCase() + "   " + var.getType());
-					item.setImage(RepDevMain.smallVariableImage);
-					item.setData("value", var.getName().toUpperCase());
-					
-					String tooltip = var.getName().toUpperCase();
-					
-					tooltip += "\nType: " + var.getType().toUpperCase();
-					tooltip += "\nSystem Variable\n\n";
-					tooltip += var.getDescription();
-					
-					item.setData("tooltip", tooltip);
-					
-					StyleRange[] styles = {
-							new StyleRange(0,var.getName().length(),null,null,SWT.BOLD),
-							new StyleRange(tooltip.indexOf("System Variable"),15, null,null,SWT.ITALIC ),
-							
-					};
-					item.setData("tooltipstyles", styles);
-				}
-			
-			//Add functions
-			//TODO: SHow tip once you start typing arguments
-			String funcName = tokenStr;
-			if( tokenStr.equals("(") && current.getBefore() != null )
-				funcName = current.getBefore().getStr();
-			
-			for( Function func : FunctionLayout.getInstance().getList()){
-				if( func.getName().toLowerCase().startsWith(funcName)){
-					TableItem item = new TableItem(table,SWT.NONE);
-					String nameText = func.getName().toUpperCase() + "(";
-					ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
-					
-					for( Argument arg : func.getArguments())
-						nameText += arg.getShortName() + ", ";
-					
-					nameText = nameText.substring(0,nameText.length()-2) + ")";
-					
-					item.setText(nameText);
-					item.setImage(RepDevMain.smallFileImage);
-					item.setData("value", func.getName().toUpperCase() + "(");
-					
-					String tooltip = func.getName().toUpperCase() + "\n";
-					ranges.add(new StyleRange(0,tooltip.length(),null,null,SWT.BOLD));
-					
-					tooltip += func.getDescription() + "\n\n";
-					ranges.add(new StyleRange(ranges.get(ranges.size()-1).start + ranges.get(ranges.size()-1).length, (func.getDescription()).length(),null,null,SWT.ITALIC));
-					
-					tooltip += "Arguments:\n";
-					ranges.add(new StyleRange(ranges.get(ranges.size()-1).start + ranges.get(ranges.size()-1).length, 12,null,null,SWT.BOLD));
-					
-					
-					for( Argument arg : func.getArguments()){
-						ranges.add(new StyleRange(tooltip.length(), arg.getShortName().length() + 1,null,null,SWT.BOLD));
-						tooltip += "\t" + arg.getShortName() + " - " + arg.getDescription() + " " + arg.getTypes() + "\n";						
+						tooltip += "\nSystem Variable\n\n";
+						tooltip += var.getDescription();
+
+						item.setData("tooltip", tooltip);
+
+						StyleRange[] styles = {
+								new StyleRange(0,var.getName().length(),null,null,SWT.BOLD),
+								new StyleRange(tooltip.indexOf("System Variable"),15, null,null,SWT.ITALIC ),
+
+						};
+						item.setData("tooltipstyles", styles);
 					}
-					
-					tooltip += "\nReturns: ";
-					ranges.add(new StyleRange(tooltip.length()-11, 11,null,null,SWT.BOLD));
-					
-					tooltip += func.getReturnTypes();
-				
-					item.setData("tooltip",tooltip);
-					
-					item.setData("tooltipstyles", ranges.toArray(new StyleRange[0]));
-					
-				}
-			}
 
-			ArrayList<Record> records = DatabaseLayout.getInstance().getFlatRecords();
-			for (Record record : records) {
-				if (record.getName().toLowerCase().startsWith(tokenStr)) {
-					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(record.getName().toUpperCase());
-					item.setImage(RepDevMain.smallDBRecordImage);
-					item.setData("value", record.getName().toUpperCase());
-					
-					String tooltip = record.getName().toUpperCase() + "\nParent: " + ( record.getRoot() == null ? "None" : record.getRoot().getName() ) + "\n\n" + record.getDescription();
-					
-					item.setData("tooltip", tooltip) ;
-					
-					StyleRange[] styles = {
-							new StyleRange(0,record.getName().length(),null,null,SWT.BOLD),
-							new StyleRange(record.getName().length()+1,tooltip.indexOf("\n\n") - record.getName().length(),null,null,SWT.ITALIC),
-					};
-					item.setData("tooltipstyles", styles);
-				}
-			}
+				//Add functions
+				//TODO: SHow tip once you start typing arguments
+				String funcName = tokenStr;
+				if( tokenStr.equals("(") && current.getBefore() != null )
+					funcName = current.getBefore().getStr();
 
+				for( Function func : FunctionLayout.getInstance().getList()){
+					if( func.getName().toLowerCase().startsWith(funcName)){
+						TableItem item = new TableItem(table,SWT.NONE);
+						String nameText = func.getName().toUpperCase() + "(";
+						ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
+
+						for( Argument arg : func.getArguments())
+							nameText += arg.getShortName() + ", ";
+
+						nameText = nameText.substring(0,nameText.length()-2) + ")";
+
+						item.setText(nameText);
+						item.setImage(RepDevMain.smallFileImage);
+						item.setData("value", func.getName().toUpperCase() + "(");
+
+						String tooltip = func.getName().toUpperCase() + "\n";
+						ranges.add(new StyleRange(0,tooltip.length(),null,null,SWT.BOLD));
+
+						tooltip += func.getDescription() + "\n\n";
+						ranges.add(new StyleRange(ranges.get(ranges.size()-1).start + ranges.get(ranges.size()-1).length, (func.getDescription()).length(),null,null,SWT.ITALIC));
+
+						tooltip += "Arguments:\n";
+						ranges.add(new StyleRange(ranges.get(ranges.size()-1).start + ranges.get(ranges.size()-1).length, 12,null,null,SWT.BOLD));
+
+
+						for( Argument arg : func.getArguments()){
+							ranges.add(new StyleRange(tooltip.length(), arg.getShortName().length() + 1,null,null,SWT.BOLD));
+							tooltip += "\t" + arg.getShortName() + " - " + arg.getDescription() + " " + arg.getTypes() + "\n";						
+						}
+
+						tooltip += "\nReturns: ";
+						ranges.add(new StyleRange(tooltip.length()-11, 11,null,null,SWT.BOLD));
+
+						tooltip += func.getReturnTypes();
+
+						item.setData("tooltip",tooltip);
+
+						item.setData("tooltipstyles", ranges.toArray(new StyleRange[0]));
+
+					}
+				}
+
+				ArrayList<Record> records = DatabaseLayout.getInstance().getFlatRecords();
+				for (Record record : records) {
+					if (record.getName().toLowerCase().startsWith(tokenStr)) {
+						TableItem item = new TableItem(table, SWT.NONE);
+						item.setText(record.getName().toUpperCase());
+						item.setImage(RepDevMain.smallDBRecordImage);
+						item.setData("value", record.getName().toUpperCase());
+
+						String tooltip = record.getName().toUpperCase() + "\nParent: " + ( record.getRoot() == null ? "None" : record.getRoot().getName() ) + "\n\n" + record.getDescription();
+
+						item.setData("tooltip", tooltip) ;
+
+						StyleRange[] styles = {
+								new StyleRange(0,record.getName().length(),null,null,SWT.BOLD),
+								new StyleRange(record.getName().length()+1,tooltip.indexOf("\n\n") - record.getName().length(),null,null,SWT.ITALIC),
+						};
+						item.setData("tooltipstyles", styles);
+					}
+				}
+
+			}
 		}
 
 
@@ -325,7 +381,11 @@ public class SuggestShell {
 		return true;
 	}
 
-	public void attach(StyledText txt, RepgenParser parser) {
+	public void attach(EditorComposite editor, RepgenParser parser) {
+		StyledText txt = editor.getStyledText();
+
+		this.editor = editor;
+		
 		if (txt == null || parser== null || shell == null || this.txt != txt || this.parser != parser|| shell.isDisposed()) {
 			this.txt = txt;
 			this.parser = parser;
@@ -353,7 +413,7 @@ public class SuggestShell {
 		tooltip.setVisible(false);
 		tooltip.setLayout(new FillLayout());
 		
-		toolText = new StyledText(tooltip,SWT.READ_ONLY | SWT.WRAP);
+		toolText = new StyledText(tooltip,SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL);
 		toolText.setText("Testing Tooltip");
 		toolText.setBackground(new Color(shell.getDisplay(),new RGB(255,255,225)));
 
@@ -371,7 +431,12 @@ public class SuggestShell {
 					
 	
 					if ((e.character == ' ' && e.stateMask == SWT.CTRL) || e.character == ':' || e.character == '@') {
-						open();
+						if( open && (e.character == ' ' && e.stateMask == SWT.CTRL)){
+							snippetMode = !snippetMode;
+							update();
+						}
+						else
+							open();
 					}
 	
 
@@ -388,6 +453,7 @@ public class SuggestShell {
 						close();
 				}
 			});
+			
 	
 			txt.addFocusListener(new FocusAdapter() {
 				public void focusGained(FocusEvent e){
@@ -395,10 +461,21 @@ public class SuggestShell {
 				}
 	
 				public void focusLost(FocusEvent e) {
-	
-					if (open && !(shell.isFocusControl() || table.isFocusControl())) {
-						close();
-						txt.setFocus();
+					if (open) {
+						//This is a weird workaround, we must filter the next focus in message to see where the focus went and if we need to close the window. Since the methods for getting current focus no longer update until this listener finishes 
+						
+						Display.getCurrent().addFilter(SWT.FocusIn, new Listener(){
+
+							public void handleEvent(Event event) {
+								System.out.println(event);
+								if( event.widget != table && event.widget != shell && event.widget != tooltip && event.widget != toolText){
+									close();			
+								}
+								
+								Display.getCurrent().removeFilter(SWT.FocusIn, this);
+							}
+							
+						});
 					}
 				}
 	
@@ -425,9 +502,10 @@ public class SuggestShell {
 							table.setSelection(Math.max(table.getSelectionIndex() - 8, 0));
 							refreshTooltip();
 							e.doit = false;
-						} else if ((e.keyCode == '\r' || e.character == ':') && table.getSelectionIndex() != -1 && table.getItemCount() > 0) {
+						} else if ((e.keyCode == '\r' || e.character == ':') && table.getSelectionIndex() != -1 && table.getItemCount() > 0) {						
 							String value = (String) table.getSelection()[0].getData("value");
-	
+							
+							
 							//Actual replacement code
 							if (e.character == ':')
 								value += ":";
@@ -445,6 +523,13 @@ public class SuggestShell {
 								if (len == 0)
 									txt.setCaretOffset(txt.getCaretOffset() + value.length());
 							}
+							
+							if( snippetMode ){							
+								e.doit = false;
+								editor.activateSnippet((Snippet) table.getSelection()[0].getData("snippet"));
+								close();					
+								return;
+							}
 	
 							e.doit = false;
 	
@@ -458,7 +543,7 @@ public class SuggestShell {
 			});
 		}
 		
-		if( !txt.getShell().isListening(SWT.Resize) || !txt.getShell().isListening(SWT.Move)){
+		if( !txt.getShell().isListening(SWT.Resize) || !txt.getShell().isListening(SWT.Move) || !txt.getShell().isListening(SWT.Iconify)){
 			txt.getShell().addControlListener(new ControlListener(){
 	
 				public void controlMoved(ControlEvent e) {
@@ -468,6 +553,26 @@ public class SuggestShell {
 				public void controlResized(ControlEvent e) {
 					close();
 				}
+				
+			});
+			
+			txt.getShell().addShellListener(new ShellAdapter(){
+
+				public void shellIconified(ShellEvent e) {
+					close();
+				}
+
+				@Override
+				public void shellDeactivated(ShellEvent e) {
+					//TODO: Add some code here to close the suggest shell if the main program loses focus, sort of hard to do
+				}
+
+				@Override
+				public void shellDeiconified(ShellEvent e) {
+					//close();
+				}
+				
+				
 				
 			});
 		}
@@ -488,9 +593,24 @@ public class SuggestShell {
 				}
 			}
 		});
+		
+		table.addKeyListener(new KeyListener(){
+
+			public void keyPressed(KeyEvent e) {
+				if( open && (e.character == ' ' && e.stateMask == SWT.CTRL)){
+					snippetMode = !snippetMode;
+					update();
+					e.doit = false;
+				}
+			}
+
+			public void keyReleased(KeyEvent e) {
+			}
+			
+		});
 
 		shell.setSize(280, 180);
-		tooltip.setSize(220,180);
+		tooltip.setSize(250,180);
 
 		// shell.open();
 		txt.setFocus();

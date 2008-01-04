@@ -214,7 +214,10 @@ public class SymLoginShell {
 		SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
 
 		if (session == null) {
-			session = new DirectSymitarSession();
+			if( Config.getServer().equalsIgnoreCase("testsession")) //Allows for a testing mode when no symitar server's are available
+				session = new TestingSymitarSession();
+			else
+				session = new DirectSymitarSession();
 
 			RepDevMain.SYMITAR_SESSIONS.put(sym, session);
 		}
