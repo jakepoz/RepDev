@@ -45,6 +45,10 @@
 		<delete dir="${build}" />
 		<delete dir="${dist}/bin" />
 		<delete dir="${dist}/dist" />
+		
+		<!-- Now that the config is in the main folder, dont dist it -->
+		<delete file="${dist}/repdev.conf"/>
+		
 				
 	</target>
 
