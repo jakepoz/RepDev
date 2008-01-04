@@ -1,0 +1,40 @@
+﻿<?xml version="1.0"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>For Each</Title>
+			<Description>Inserts a simple FOR EACH loop with an UNTIL condition</Description>
+			<Author>Jake Poznanski</Author>
+			<Shortcut>foreach</Shortcut>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+				<SnippetType>SurroundsWith</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal>
+					<ID>record</ID>
+					<ToolTip>Record to iterate over</ToolTip>
+					<Default>Share</Default>
+				</Literal>
+				<Literal>
+					<ID>cond</ID>
+					<ToolTip>Loop condition</ToolTip>
+					<Default>Share:CloseDate = '--/--/--'</Default>
+				</Literal>
+				<Literal>
+					<ID>until</ID>
+					<ToolTip>Optional UNTIL specification</ToolTip>
+					<Default>Until Share:Closedate&lt;&gt;'--/--/--'</Default>
+				</Literal>
+			</Declarations>
+			<Code Language="RepGen!">
+				<![CDATA[For Each $record$ With $cond$
+Do
+  $selected$
+End $until$]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

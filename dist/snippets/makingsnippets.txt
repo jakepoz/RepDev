@@ -1,0 +1,7 @@
+Just copy/paste one of the .snippet files and edit it in notepad/wordpad or your favorite XML editor!
+
+You can use $variables$ in your snippets, that let you replace the same text in multiple place simultaniously.
+Just be sure that you define these in the appropriate "Literal" section in the XML file.
+
+If you want your snippets to ship with RepDev, email them to support@repdev.org
+Just be sure that you are OK with them being licensed under the GPL in your name.

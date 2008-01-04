@@ -1,0 +1,30 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>HTML Boilerplate</Title>
+      <Author>Scott Bachmeier</Author>
+      <Shortcut>
+      </Shortcut>
+      <Description>Simple framework for an HTML screen</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>filename</ID>
+          <Default>Filename()</Default>
+          <ToolTip>the current filename</ToolTip>
+        </Literal>
+      </Declarations>
+      <Code Language="PowerOn"><![CDATA[HTMLVIEWOPEN
+HTMLVIEWLINE("<head><title>$filename$</title>")
+HTMLVIEWLINE("</head><body>")
+HTMLVIEWLINE("$selected$$end$")
+
+HTMLVIEWLINE("<FONT COLOR=RED>Please press green arrow to complete account file maintenance!")
+HTMLVIEWDISPLAY]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

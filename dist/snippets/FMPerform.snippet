@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+   <CodeSnippet Format="1.0.0">
+      <Header>
+         <Title>FMPerform</Title>
+         <Author>Adele Williams</Author>
+         <Shortcut>fm</Shortcut>
+         <Description>Code Snippet for FMPERFORM statement.</Description>
+         <SnippetTypes>
+            <SnippetType>Expansion</SnippetType>
+         </SnippetTypes>
+      </Header>
+      <Snippet>
+         <Declarations>
+            <Literal>
+               <ID>type</ID>
+               <ToolTip>The FM type.</ToolTip>
+               <Default>Revise</Default>
+            </Literal>
+            <Literal>
+               <ID>recordPath</ID>
+               <ToolTip>The record path.</ToolTip>
+               <Default>Share "50" Name Loc 200</Default>
+            </Literal>
+            <Literal>
+               <ID>checkPrivFlag</ID>
+               <ToolTip>Whether or not to check privileges.</ToolTip>
+               <Default>1</Default>
+            </Literal>
+            <Literal>
+               <ID>defaultType</ID>
+               <ToolTip>The default record type.</ToolTip>
+               <Default>0</Default>
+            </Literal>
+            <Literal>
+               <ID>error</ID>
+               <ToolTip>The error variable.</ToolTip>
+               <Default>ErrorText</Default>
+            </Literal>
+            <Literal>
+               <ID>field</ID>
+               <ToolTip>The field.</ToolTip>
+               <Default>First</Default>
+            </Literal>
+            <Literal>
+               <ID>value</ID>
+               <ToolTip>The field's value.</ToolTip>
+               <Default>"JOE"</Default>
+            </Literal>
+         </Declarations>
+ 	 <Code Language="(I meant Repgen)">
+            <![CDATA[FMPerform $type$ $recordPath$ ($checkPrivFlag$, $defaultType$, $error$)
+Do
+  Set $field$ To $value$
+End [FMPerform]
+
+If $error$ <> "" Then
+Do
+  $end$
+End]]>
+         </Code> 
+      </Snippet>
+   </CodeSnippet>
+</CodeSnippets>
