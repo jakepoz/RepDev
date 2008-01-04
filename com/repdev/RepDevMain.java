@@ -47,7 +47,7 @@ public class RepDevMain {
 	public static final int VMAJOR = 1;
 	public static final int VMINOR = 5;
 	public static final int VFIX   = 0;
-	public static final String VSPECIAL = ""; // "special" string for release names, beta, etc
+	public static final String VSPECIAL = "Tomato Chair"; // "special" string for release names, beta, etc
 
 	public static final String VERSION = VMAJOR + "." + VMINOR + (VFIX>0?"."+VFIX:"") + (DEVELOPER ? "-dev" : "") + " " + VSPECIAL;
 	public static final String NAMESTR = "RepDev  v" + VERSION;
