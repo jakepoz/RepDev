@@ -182,10 +182,11 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 				range = STRUCT2_INVALID.getRange(tok.getStart(), tok.length());
 		} else if (FunctionLayout.getInstance().containsName(tok.getStr()) && tok.getAfter() != null && tok.getAfter().getStr().equals("("))
 			range = FUNCTIONS.getRange(tok.getStart(), tok.length());
-		else if (RepgenParser.getKeywords().contains(tok.getStr()))
-			range = KEYWORDS.getRange(tok.getStart(), tok.length());
 		else if (RepgenParser.getSpecialvars().contains(tok.getStr()))
 			range = VARIABLES.getRange(tok.getStart(), tok.length());
+		else if (RepgenParser.getKeywords().contains(tok.getStr()))
+			range = KEYWORDS.getRange(tok.getStart(), tok.length());
+		
 		for (int i = 0; i < parser.getLvars().size(); i++){
 			Variable var = parser.getLvars().get(i);
 

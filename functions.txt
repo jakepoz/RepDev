@@ -3,6 +3,9 @@ ABS|Returns the absolute value of an arithmetic expression|NUMBER,FLOAT,MONEY
 ANYWARNING|Boolean function that returns true if a warning exists|NUMBER
 	RECORD_TYPE|Account, Share, Loan, or Card Record to be searched|NULL
 	WARNING_CODE|Warning code that is to be searched for|NUMBER
+ANYSERVICE|Boolean function that returns true if a servicecode exists|NUMBER
+	RECORD_TYPE|Account, Share, Loan, or Card Record to be searched|NULL
+	SERVICE_CODE|Service code that is to be searched for|NUMBER
 CAPITILIZE|Capitilizes the first letter and sets all subsequent letters to lowercase|CHARACTER
 	Expression|A character expression|CHARACTER
 CHARACTERREAD|Prompts a user for input in a batch program|CHARACTER

@@ -46,12 +46,12 @@ public class RepgenParser {
 	private int sym;
 	private boolean reparse = true;
 
-	private static HashSet<String> keywords;
 
 	private static DatabaseLayout db = DatabaseLayout.getInstance();
 	private static SpecialVariables specialvars = SpecialVariables.getInstance();
 	private static FunctionLayout functions = FunctionLayout.getInstance();
-
+	private static KeywordLayout keywords = KeywordLayout.getInstance();
+	
 	private ArrayList<Token> ltokens = new ArrayList<Token>();
 	private ArrayList<Variable> lvars = new ArrayList<Variable>();
 
@@ -72,10 +72,6 @@ public class RepgenParser {
 	//Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
 	private boolean noParse = false;
 	public static final String[] taskTokens = { "todo", "fixme", "bug", "bugbug", "wtf" };
-
-	static {
-		keywords = build(new File("keywords.txt"));
-	}
 
 
 	public RepgenParser(StyledText txt, SymitarFile file) {
@@ -1105,11 +1101,11 @@ public class RepgenParser {
 	}
 
 
-	public static HashSet<String> getKeywords() {
+	public static KeywordLayout getKeywords() {
 		return keywords;
 	}
 
-	public static void setKeywords(HashSet<String> keywords) {
+	public static void setKeywords(KeywordLayout keywords) {
 		RepgenParser.keywords = keywords;
 	}
 
