@@ -69,7 +69,9 @@ public class AboutBoxShell {
 		  +"Bruce Chang    - Programmer/Documentation\n"
 		  +"Michael Webb   - Documentation\n"
 		  +"Yoni Kristt    - Documentation\n"
-		  +"Ken Kondo      - Documentation\n\n";
+		  +"Ken Kondo      - Documentation\n"
+		  +"Plus, all of our snippet authors!\n"
+		  +"\n";
 	
 	public static void show() {
 		AboutBoxShell me = new AboutBoxShell();

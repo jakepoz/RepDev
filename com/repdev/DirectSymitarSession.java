@@ -139,10 +139,12 @@ public class DirectSymitarSession extends SymitarSession {
 
 			current = readNextCommand();
 			log("USER RESPONSE: " + current.getCommand());
+			
+			//TODO: Let you try up to 4 extra times
 			if (current.getCommand().equals("SymLogonInvalidUser")){
 
 				System.out.println("Bad password");
-				//TODO:fix (saves wrong passwords)
+				
 				String newpass = FailedLogonShell.checkPass();
 
 				write("\r");

@@ -14,17 +14,17 @@
       <Declarations>
         <Literal>
           <ID>frmEmail</ID>
-          <Default>fromName@location.com</Default>
+          <Default>"fromName@location.com"</Default>
           <ToolTip>From Email Address</ToolTip>
         </Literal>
         <Literal>
           <ID>toEmail</ID>
-          <Default>toName@location.com</Default>
+          <Default>"toName@location.com"</Default>
           <ToolTip>To Email Address</ToolTip>
         </Literal>
         <Literal>
           <ID>subject</ID>
-          <Default>-no subject-</Default>
+          <Default>"-no subject-"</Default>
           <ToolTip>Subject</ToolTip>
         </Literal>
         <Literal>
@@ -34,26 +34,25 @@
         </Literal>
       </Declarations>
       <Code Language="XML">
-        <![CDATA[
-        EMAILSTART($frmEmail$,$toEmail$,$subject$,$emailError$)
-        If $emailError$="" THEN
-         Do
-            [Email Body]
-            EMAILLINE("",$emailError$)
-            EMAILLINE("",$emailError$)
-            EMAILLINE("",$emailError$)
-            [/Email Body]
-           
-            EMAILSEND($emailError$)
-            If $emailErrors$<>"" Then
-             Do
-                [Handle Errors]
-             End
-         End
-        Else
-         Do
-            [Handle Errors]
-         End]]>
+        <![CDATA[EMAILSTART($frmEmail$,$toEmail$,$subject$,$emailError$)
+If $emailError$="" THEN
+ Do
+    [Email Body]
+    EMAILLINE("",$emailError$)
+    EMAILLINE("",$emailError$)
+    EMAILLINE("",$emailError$)
+    [/Email Body]
+    
+    EMAILSEND($emailError$)
+    If $emailError$<>"" Then
+     Do
+        [Handle Errors]
+     End
+ End
+Else
+ Do
+    [Handle Errors]
+ End]]>
       </Code>
     </Snippet>
   </CodeSnippet>
