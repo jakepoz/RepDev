@@ -23,6 +23,19 @@ public class Keyword {
 		else
 			this.example = example.trim();
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getExample() {
+		return example;
+	}
+	
 	
 	
 }

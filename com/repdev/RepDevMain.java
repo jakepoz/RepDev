@@ -59,14 +59,14 @@ public class RepDevMain {
 	smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
 	smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
 	smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage, smallProgramIcon, smallInstallImage, smallCompareImage, smallSurroundImage, smallSurroundPrint,
-	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage;
+	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage, smallFunctionImage, smallSnippetImage, smallKeywordImage;
 	public static final String IMAGE_DIR = "repdev-icons/";
 	
 	public static SnippetManager snippetManager;
 	
 	public static void main(String[] args) throws Exception {
 		display = new Display();
-
+	
 		System.out.println("RepDev " + VERSION + " Copyright (C) 2008  RepDev.org Team\n"
 				+"This program comes with ABSOLUTELY NO WARRANTY.\n"
 				+"This is free software, and you are welcome to redistribute it\n"
@@ -76,7 +76,7 @@ public class RepDevMain {
 			loadSettings();
 			createImages();
 			createGUI();
-
+		
 			while (!mainShell.isDisposed()) {
 				if (!display.readAndDispatch())
 					display.sleep();
@@ -175,6 +175,11 @@ public class RepDevMain {
 		
 		smallFormatCodeImage = new Image(display, IMAGE_DIR + "small-format-code.png");
 		smallInsertSnippetImage = new Image(display, IMAGE_DIR + "small-insert-snippet.png");
+		
+		smallFunctionImage = new Image(display, IMAGE_DIR + "small-function.png");
+		smallKeywordImage = new Image(display, IMAGE_DIR + "small-keyword.png");
+		smallSnippetImage = new Image(display, IMAGE_DIR + "small-snippet.png");
+	
 	}
 
 	/**

@@ -38,7 +38,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -56,6 +55,8 @@ import com.repdev.parser.DatabaseLayout;
 import com.repdev.parser.Field;
 import com.repdev.parser.Function;
 import com.repdev.parser.FunctionLayout;
+import com.repdev.parser.Keyword;
+import com.repdev.parser.KeywordLayout;
 import com.repdev.parser.Record;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.SpecialVariable;
@@ -99,7 +100,8 @@ public class SuggestShell {
 	private boolean update() {
 		String tokenStr = "";
 		Token before = null;
-			
+		long timer = System.currentTimeMillis();
+	
 		Point loc = shell.getDisplay().map(txt, null, txt.getLocationAtOffset(txt.getCaretOffset()));
 		loc.x += 5;
 		loc.y += 20;
@@ -157,7 +159,7 @@ public class SuggestShell {
 					ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
 
 					item.setText(cur.getTitle());
-					item.setImage(RepDevMain.smallVariableImage);
+					item.setImage(RepDevMain.smallSnippetImage);
 					item.setData("snippet", cur);
 					item.setData("value","");
 
@@ -317,7 +319,7 @@ public class SuggestShell {
 							nameText += ")";
 						
 						item.setText(nameText);
-						item.setImage(RepDevMain.smallFileImage);
+						item.setImage(RepDevMain.smallFunctionImage);
 						item.setData("value", func.getName().toUpperCase() + "(");
 
 						String tooltip = func.getName().toUpperCase() + "\n";
@@ -339,6 +341,37 @@ public class SuggestShell {
 						ranges.add(new StyleRange(tooltip.length()-11, 11,null,null,SWT.BOLD));
 
 						tooltip += func.getReturnTypes();
+
+						item.setData("tooltip",tooltip);
+
+						item.setData("tooltipstyles", ranges.toArray(new StyleRange[0]));
+
+					}
+				}
+				
+				//Keywords
+				for( Keyword word : KeywordLayout.getInstance().getList()){
+					if( word.getName().toLowerCase().startsWith(funcName)){
+						TableItem item = new TableItem(table,SWT.NONE);
+						String nameText = word.getName().toUpperCase();
+						ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
+
+								
+						item.setText(nameText);
+						item.setImage(RepDevMain.smallKeywordImage);
+						item.setData("value", word.getName().toUpperCase());
+
+						String tooltip = word.getName().toUpperCase() + "\n";
+						ranges.add(new StyleRange(0,tooltip.length(),null,null,SWT.BOLD));
+
+						tooltip += word.getDescription() + "\n\n";
+						ranges.add(new StyleRange(ranges.get(ranges.size()-1).start + ranges.get(ranges.size()-1).length, (word.getDescription()).length(),null,null,SWT.ITALIC));
+
+				
+						tooltip += "\nExample: \n";
+						ranges.add(new StyleRange(tooltip.length()-11, 11,null,null,SWT.BOLD));
+
+						tooltip += word.getExample();
 
 						item.setData("tooltip",tooltip);
 
@@ -375,6 +408,8 @@ public class SuggestShell {
 		table.setSelection(0);
 				
 		refreshTooltip();
+		
+		System.out.println(System.currentTimeMillis()-timer);
 		
 		if( table.getItemCount() == 0){
 			close();
