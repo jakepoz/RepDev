@@ -140,9 +140,9 @@ public class DirectSymitarSession extends SymitarSession {
 			current = readNextCommand();
 			log("USER RESPONSE: " + current.getCommand());
 			if (current.getCommand().equals("SymLogonInvalidUser")){
-				if(RepDevMain.DEVELOPER){
+				if(true){
 					System.out.println("Bad password");
-					//TODO:fix (almost done)
+					//TODO:fix (saves wrong passwords)
 					String newpass = FailedLogonShell.checkPass();
 					
 						write("\r");
@@ -163,6 +163,7 @@ public class DirectSymitarSession extends SymitarSession {
 					}else{
 						userID=newpass;
 						Config.setLastUserID(newpass);
+						SymLoginShell.lastUserID = newpass;
 						
 						SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
 						
@@ -174,7 +175,7 @@ public class DirectSymitarSession extends SymitarSession {
 							session.userID = newpass;
 						}
 					}
-						System.out.println(ProjectManager.prefix);
+						//System.out.println(ProjectManager.prefix);
 						
 						Command current2 = readNextCommand(); 
 						write("\r");
@@ -185,6 +186,7 @@ public class DirectSymitarSession extends SymitarSession {
 						}
 						
 				}else{
+					//old way of doing it
 					disconnect();
 					return SessionError.USERID_INVALID;
 				}
