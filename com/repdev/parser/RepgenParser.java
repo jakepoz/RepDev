@@ -789,18 +789,23 @@ public class RepgenParser {
 
 		fToken = cur.getAfter();
 
+		if( !fToken.getStr().equals("\"") ){
+			while( (cur=cur.getAfter()) != null )
+			{
+				if(!cur.inString() || cur.getStr().equals("\""))
+					break;
 
-		while( (cur=cur.getAfter()) != null )
-		{
-			if(!cur.inString() || cur.getStr().equals("\""))
-				break;
+				lToken =cur;
+			}
+			
+			type += fileData.substring(fToken.getStart(),Math.min(lToken == null ? fileData.length() -1 : lToken.getEnd(),fileData.length()-1));		
 
-			lToken =cur;
+			return type;
 		}
+		else
+			return "";
 
-		type += fileData.substring(fToken.getStart(),Math.min(lToken == null ? fileData.length() -1 : lToken.getEnd(),fileData.length()-1));		
 
-		return type;
 	}
 
 	private static boolean isNumber(String str){
@@ -813,6 +818,7 @@ public class RepgenParser {
 		}
 	}
 
+	//FIXME: When a variable has a constant value of "" then it fails parsing
 	private synchronized void rebuildVars(String fileName, String data, ArrayList<Token> tokens) {
 		ArrayList<Variable> newvars = new ArrayList<Variable>();
 		ArrayList<Variable> oldvars = new ArrayList<Variable>();

@@ -65,6 +65,7 @@ public class SymLoginShell {
 		shell = new Shell(parent, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
 		shell.setText("Sym Login");
 		shell.setLayout(layout);
+		shell.setImage(RepDevMain.smallSymAddImage);
 
 		Label symLabel = new Label(shell, SWT.NONE);
 		symLabel.setText("Sym:");

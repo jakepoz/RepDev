@@ -73,7 +73,7 @@ ENTERRATE|Displays a prompt in a Demand Specfile that expects a rate value in re
 ENTERYESNO|Displays a prompt in a Demand Specfile that expects a Y / N answer in response|CHARACTER,NUMBER
 	Prompt|Text the user sees telling that what to enter|CHARACTER
 	Default|The default value given to the user|CHARACTER
-EXECUTE|Performs the statements in a called subroutine specfile
+EXECUTE|Performs the statements in a called subroutine specfile|NULL
 	SUBROUTINEFILENAME|Name of a subroutine specfile that has been installed for demand use|CHARACTER
 	ERRORTEXT|Error message returned if error occurred; blank otherwise|CHARACTER
 EXP|Returns the value of the mathematical constant e (~2.7183) raised to a specified power|FLOAT
