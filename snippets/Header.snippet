@@ -1,0 +1,70 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Header</Title>
+      <Author>Jake Poznanski</Author>
+      <Shortcut>
+      </Shortcut>
+      <Description>A standard template for a repgen.</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>date</ID>
+          <Default>Date('MM/dd/yyyy')</Default>
+          <ToolTip>The date.</ToolTip>
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>filename</ID>
+          <Default>Filename()</Default>
+          <ToolTip>The filename</ToolTip>
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>notes</ID>
+          <Default>Any notes can go here</Default>
+          <ToolTip />
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>purpose</ID>
+          <Default>Short description of the purpose</Default>
+          <ToolTip />
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>username</ID>
+          <Default>Username()</Default>
+          <ToolTip>The username.</ToolTip>
+        </Literal>
+      </Declarations>
+      <Code Language="PowerOn"><![CDATA[[Created by $username$
+  on $date$
+
+  $purpose$
+
+  $notes$
+]
+TARGET=ACCOUNT
+
+DEFINE
+ TRUE=1
+ FALSE=0
+END
+
+SETUP
+END
+
+SELECT
+ ALL
+END
+
+PRINT TITLE=""
+ HEADERS
+ END
+END
+
+]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet" >
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>EmailSend</Title>
+      <Author>Vincent Sasso</Author>
+      <Shortcut></Shortcut>
+      <Description>Inserts a simple setup of the EmailSend function</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>frmEmail</ID>
+          <Default>fromName@location.com</Default>
+          <ToolTip>From Email Address</ToolTip>
+        </Literal>
+        <Literal>
+          <ID>toEmail</ID>
+          <Default>toName@location.com</Default>
+          <ToolTip>To Email Address</ToolTip>
+        </Literal>
+        <Literal>
+          <ID>subject</ID>
+          <Default>-no subject-</Default>
+          <ToolTip>Subject</ToolTip>
+        </Literal>
+        <Literal>
+          <ID>emailError</ID>
+          <Default></Default>
+          <ToolTip>Error Message</ToolTip>
+        </Literal>
+      </Declarations>
+      <Code Language="XML">
+        <![CDATA[
+        EMAILSTART($frmEmail$,$toEmail$,$subject$,$emailError$)
+        If $emailError$="" THEN
+         Do
+            [Email Body]
+            EMAILLINE("",$emailError$)
+            EMAILLINE("",$emailError$)
+            EMAILLINE("",$emailError$)
+            [/Email Body]
+           
+            EMAILSEND($emailError$)
+            If $emailErrors$<>"" Then
+             Do
+                [Handle Errors]
+             End
+         End
+        Else
+         Do
+            [Handle Errors]
+         End]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

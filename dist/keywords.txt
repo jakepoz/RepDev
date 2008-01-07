@@ -1,220 +1,181 @@
-Array
-Character
-Date
-Float
-Money
-Number
-Rate
+#INCLUDE|Includes a repGen file|#INCLUDE PROCEDURENAME
+ACCESS|ACCESS in conjunction with PREFERENCE designates the Preference Access record in the Account file|PREFERENCE ACCESS:MNEMONIC
+ACCOUNT|Designates account as record in the account file|ACCOUNT:MNEMONIC
+ACROSS|Designates how many labels across|ACROSS=3
+ACTIVITY|The purpose of the User Activity record is to store records of the user activity you select for tracking. ACTIVITY designates the User Activity record|ACTIVITY:CONSOLE
+AFTERLAST|Locator keyword|LOC AFTERLAST
+ALL|Instructs repGen to select all accounts|SELECT ALL END
+AND|Boolean Operator|SHARE:CLOSEDATE='--/--/--' AND SHARE:TYPE=1
+ANY|Boolean Function used in select|ANY SHARE WITH (SHARE:TYPE=1)
+APPEND|When you use the FILEOPEN statement, you can open the file you want to access in a number of ways. Using the value APPEND allows you to add a file to the end of an existing file|"APPEND"
+ARRAY|Instructs the repGen to create an array of type and size indicated|BEARSKIN=CHARACTER(69) ARRAY(99)
+ASCII|Used with DATAFILE keyword to instruct data type for output of data|DATAFILE ASCII
+ATMDIALOG|Defines ATM Diaolog the target file|TARGET=ATMDIALOG
+AUDIO|Indicates that the repGen can be run by the Audio Response System
+BEFOREFIRST|Locator Keyword|LOC BEFOREFIRST
+BELL|Print control statement that makes the CRT beep once|PRINT "There's a BEAR!" BELL
+BILL|Designates an EFT Bill Payment Record as the target|TARGET=BILL
+BLINK|Print Control statement that makes the lettering flash on and off|BLINK PRINT "Captain Caveman!"
+BLOCKSIZE|Used to specify the block size in a data file|BLOCKSIZE=314
+BRIGHT|Print control statement that makes the lettering bright|BRIGHT COL=001 "Bob"
+CALL|Instructs the repGen to go to a procedure|CALL SKINBEAR
+CARD|Designates the Card Record to be the target|TARGET=CARD
+CDMDIALOG|Designates the CDM Dialog to be the target file|TARGET=CDMDIALOG
+CERTIFICATE|Used to print custom certificate agreements|CERTIFICATE TARGET=ACCOUNT
+CHANGE|In FM output, used to designate a field to be changed|CHANGE NUMBER FROM 
+CHECK|Designates the Check file as the target|TARGET=CHECK
+CHECKORDER|Used with the SHARE or LOAN to designate record|TARGET = SHARE:CHECKORDER
+CLEARSERVICE|Function used with FM to clear a service code|CHANGE CLEARSERVICE 6
+CLEARWARNING|Function used with FM to clear a warning code|CHANGE CLEARWARNING 9
+COL|Instructs the repGen to print beginning from the column specified|COL=69
+COMMENT|Designates Comment record in the account file|COMMENT:MNEMONIC
+CPQUEUE|Designates the Collection Package Queue record|CPQUEUE:MNEMONIC
+CREATE|Used with FMPERFORMto create a record|CREATE TRACKING
+CREDREP|Designates Credit Report record in the account file|TARGET=CREDREP
+CREDREP ITEM|Designates the Credit Item in the account file|CREDREP ITEM:MNEMONIC
+CUSTOMFORMS|Identifies a repGen used to print custom checks and receipts|CUSTOMFORMS TARGET=ACCOUNT
+CUSTOMFORMSWINDOWS|Identifies a repGen used to print custom checks and receipts in a windows environment|CUSTOMFORMS WINDOWS TARGET=ACCOUNT
+DATAFILE|Used to instruct repGen to create a data file|PRINT TITLE="CAVEMAN REPORT" DATAFILE
+DATASIZE|Places data in data file|DATASIZE=10 STONEKNIVE
+DATE|A date is a type of data that consists of two-digit numeric equivalents for the month and day, and two-digit or four-digit numeric equivalents for the year, separated by slashes or asterisks|DATEVAR=DATE
+DEFINE|The DEFINE division of a specfile declares constants, variables, and arrays|DEFINE STONEKNIVE=CHARACTER
+DELETE|To delete existing records, the record specification line uses the DELETE statement to determine which record to delete|DELETE SHARE
+DEMAND|The optional subroutine modifier keyword DEMAND identifies a subroutine specfile as one that can be called from demand specfiles only|SUBROUTINE DEMAND
+DIM|DIM is a print control statement that changes the screen display from bright back to dim, after you have used BRIGHT to display certain characters|DIM COL=20 SHARE:ID
+DIVPROJECTCALC|The DIVPROJECTCALC statement instructs the Report Generator™ to perform an annual percentage yield (APY) and/or a dividend projection calculation|DIVPROJECTCALC
+DO|DO...END is a statement that includes a list of multiple executable statements|DO CALL PROCEDURENAME END
+EACH|INSTRUCTS REPGEN TO LOOK AT EVERY RECORD WITH ATTRIBUTE DEFINED|FOR EACH SHARE
+EBCDIC|EBCDIC is an optional print specification used in conjunction with the DATAFILE print specification when you want the output of this specfile to be a data file sent in EBCDIC code|DATAFILE EBCDIC
+EFT|EFT designates the EFT record in the Account file|TARGET=EFT
+ELSE|If an IF condition is not met, use ELSE to perform another set of commands|ELSE IF SHARE:TYPE<>10 THEN
+END|DO...END is a statement that includes a list of multiple executable statements|DO CALL PROCEDURENAME END
+EVERY|EVERY # is a selection criterion that instructs the Report Generator™ to select every nth item from all the TARGET records that pass the other selection criteria|EVERY 15 STARTING WITH 5
+FINANCE|LOANAPP FINANCE designates the Application Finance record in the Account file|TARGET= LOANAPP FINANCE
+FLOAT|Float is a type of data that represents numbers expressed in scientific notation|BEARSKINS=FLOAT
+FMHISTORY|FMHISTORY designates the FM History record in the Account file|FMHISTORY:MNEMONIC
+FOR|FOR...DO...END is a statement that executes a loop a specified number of times|FOR COUNTER=1 TO MAX
+FORMLENGTH|FORMLENGTH is a print option that indicates the length of the paper to use for the report|FORMLENGTH=69
+GLACCOUNT|GLACCOUNT designates the GL Account record in the General Ledger file|TARGET=GLACCOUNT
+GLHISTORY|GLHISTORY designates the GL History record in the General Ledger file|TARGET=GLHISTORY
+GLPOSTEND|The GL Posting batch program allows General Ledger posting from Report Generator™ output, similar to the ability to post fees or insurance from Report Generator output|GLPOSTEND
+GLPOSTSTART|The GL Posting batch program allows General Ledger posting from Report Generator™ output, similar to the ability to post fees or insurance from Report Generator output|GLPOSTSTART
+GLSUBACCOUNT|GLSUBACCOUNT designates the GL Subaccount record in the General Ledger file|TARGET=GLSUBACCOUNT
+HEADER|The HEADER print statement defines a single line of column headings and their horizontal placement for the Report Generator|HEADER=""
+HEADERS|The HEADERS keyword marks the beginning of a subsection of output. It precedes print statements that create column headings for that subsection|HEADERS COL=001 "NAME" NEWLINE END
+HOLD|HOLD in conjunction with the SHARE record type, LOAN record type, or PORTFOLIO record type designates the Share Hold, Loan Hold, or Portfolio Hold record in the Account file|TARGET=SHARE HOLD
+HOMEBANKING|The HOMEBANKING keyword identifies specfiles written and installed for home banking that can now be run interactively using prompts for members to answer as they use the Report Generator|HOMEBANKING TARGET=RECORDTYPE
+HOUSEHOLD|HOUSEHOLD designates the Household record in the Account file|TARGET=HOUSEHOLD
+HTMLVIEWDISPLAY
+HTMLVIEWOPEN
+IF|IF...THEN and its variations are conditional statements that instructs the Report Generator™ to make an evaluation and follow a specific course of action depending on the result|IF KEN>69 THEN
+INITCREDITREPORT|If your credit union has the optional Credit Retrieval System, you can use the two built-in Report Generator™ procedures, INITCREDITREPORT and PULLCREDITREPORT to queue custom requests to pull credit reports from a credit bureau|INITCREDITREPORT
+INSERT|In specfiles that use FMPERFORM, you can insert an application that is being created or modified into a loan officer's Application Processing queue|INSERT INTO QUEUE
+INTO|In specfiles that use FMPERFORM, you can insert an application that is being created or modified into a loan officer's Application Processing queue|INSERT INTO QUEUE
+INVENTORY|INVENTORY designates the Inventory record in the Inventory file|TARGET=INVENTORY
+INVOICE|INVOICE designates the Invoice record in the Accounts Payable file|TARGET=INVOICE
+LABELS|The LABELS print option instructs the Report Generator™ to create four-up labels, sometimes referred to as Cheshire labels|PRINT TITLE="" LABELS
+LANDSCAPE|LANDSCAPE is one of the available printer orientation options when using the HP Laser Control HPSETUP command|LANDSCAPE
+LASTCREATE|LASTCREATE is a special keyword you can use in batch specfile file maintenance to specify the Locator assigned to the last record created of the specified record type, or in the case of creating a new Account record, the last Account number created|ACCOUNT LASTCREATE
+LEFT|The LEFT print statement option instructs the Report Generator™ to align a value in the left-most position starting at the specified column number|COL=10 LEFT NUMBERVALUE
+LETTER|The LETTER division of a specfile contains the print instructions for a form letter or standard form|LETTER TITLE="Ken's Report"
+LOAN|LOAN designates the Loan record in the Account file|LOAN:TYPE
+LOANAPP|LOANAPP designates the Application record in the Account file|TARGET=LOANAPP
+LOANPROJECTCALC|The LOANPROJECTCALC statement allows you to use the Report Generator™ to perform loan projection calculations equivalent to those produced using the Loan Projections function of the Projections work area and also produce the Loan Payoff inquiry equivalent to that produced from the Inquiries Into Member Accounts function of the Account Manager work area|LOANPROJECTCALC
+LOCATOR|The Locator field value is a positive number greater than zero and up to about two billion|TRACKING:LOCATOR
+LOOKUP|LOOKUP designates the Lookup record in the Account file|TARGET=LOOKUP
+MCW|The MCW keyword identifies the specfile as a MemberConnect™ WEB interactive specfile|MCW TARGET=ACCOUNT
+MCWINTERACTIVE|The MCWINTERACTIVE keyword identifies the specfile as a NetTeller® MemberConnect™ interactive SymConnect™ specfile|MCWINTERACTIVE TARGET=ACCOUNT
+MODIFY|There is an option in Miscellaneous Processing to perform file maintenance on a number of files in the Episys database using Report Generator specfile output as input|"ACCOUNT "+ACCOUNT:NUMBER+" MODIFY "
+MONEY|MONEY is a type of data that represents dollar amounts|BENJAMINS=MONEY
+NAME|NAME designates the Account Name record in the Account file. NAME in conjunction with SHARE, LOAN, LOAN PLEDGE, EFT, or CARD designates the Share Name, Loan Name, Loan Pledge Name, EFT Name, or Card Name record in the Account file|SHARE NAME:SHORTNAME
+NEWLINE|The NEWLINE print control statement instructs the Report Generator™ to move back to the left side of the print area and then move down one line|PRINT "CODE MONKEY " NEWLINE
+NEWPAGE|The NEWPAGE print control statement causes a page break. On a PC monitor's screen, NEWPAGE clears the screen and positions the cursor at the top left-most position on the screen|PRINT "CAVEMANE" NEWPAGE
+NEXTACCOUNT|NEXTACCOUNT is a special keyword you can use in batch specfile file maintenance when you are using the CREATE command to create a new Account record|ACCOUNT NEXTACCOUNT
+NONANSISTANDARD|The NONANSISTANDARD control statement notifies the Report Generator™ that your output device (printer or terminal) is not an ANSI-standard device|NONANSISTANDARD CALL PRINTBOX
+NONE|NONE is a select expression that prevents the Report Generator™ from reading any TARGET records|SELECT NONE END
+NOT|NOT is a Boolean operator used to express the opposite of a Boolean expression|NOT ANY LOAN
+NOTE|NOTE designates a Note record for a number of record types in the Account file|NOTE:VOIDFLAG
+NUMBER|A number is a type of data that is numeric (a whole number), but is not a dollar amount or a rate|BEARSKINS=NUMBER
+OR|OR is a Boolean operator that connects two expressions|SHARE:TYPE=5 OR SHARE:TYPE=9
+PAYEE|PAYEE designates the Payee record in the Payee file|TARGET=PAYEE
+PAYROLL|PAYROLL designates an EFT payroll record in the Account file|TARGET=PAYROLL
+PLEDGE|PLEDGE in conjunction with a LOAN record type designates the Loan Pledge record in the Account file|TARGET=PLEDGE
+PORTFOLIO|PORTFOLIO designates the Portfolio record in the Account file|TARGET=PORTFOLIO
+PORTRAIT|PORTRAIT is one of the available printer orientation options when using the HPSETUP HP Laser Control command|PORTRAIT
+PREFERENCE|PREFERENCE designates the Preference record in the Account file|PREFERENCE:LANGUAGE=1
+PREFIX|PREFIX is a special keyword you can use in batch specfile file maintenance when you are using the CREATE command to create a new Account record|ACCOUNT NEXTACCOUNT PREFIX 31
+PREVSYSTEMDATE|PREVSYSTEMDATE is a special date literal that evaluates to the previous system date, which is the last system date before the current system posting date|YESTERDAY=PREVSYSTEMDATE
+PRINT|A print statement controls the horizontal placement of data in a report|PRINT "CODE MONKEY"
+PRINTCONTROL|The PRINTCONTROL statement prints a character expression to the laser printer without updating the column counter|PRINTCONTROL CTRLCHR(27)
+PROCEDURE|The PROCEDURE keyword defines a separate prepared set of instructions that the Report Generator™ can process more than once in the specfile|PROCEDURE BANGROCKS
+PULLCREDITREPORT|If your credit union has the optional Credit Retrieval System, you can use the two built-in Report Generator™ procedures, INITCREDITREPORT and PULLCREDITREPORT to queue custom requests to pull credit reports from a credit bureau|PULLCREDITREPORT
+QUEUE|Used with INSERT INTO to place into a loanapp queue|INSERT INTO QUEUE
+RATE|A rate is a type of data that represents percentages|INTVAR=RATE
+READ|When using the FILEOPEN statement, the file you want to access can be opened in a number of ways|"READ"
+READWRITE|When using the FILEOPEN statement, the file you want to access can be opened in a number of ways|"READWRITE"
+RECEIVEDITEM|RECEIVEDITEM designates the Received Item record in the Received Item file|TARGET=RECEIVEDITEM
+RECORDSIZE|RECORDSIZE is an optional print specification used in the PRINT division to specify the default record size of the data file this specfile produces|RECORDSIZE=500 BLOCKSIZE=200
+REMOVE|In specfiles that use FMPERFORM, you can remove selected applications from an Application Processing queue|REMOVE FROM QUEUE
+RETURNITEM|EXCPITEM designates the Exception Item record in the Exception Item file|TARGET=RETURNITEM
+REVISE|There is an option in Miscellaneous Processing to perform file maintenance on a number of files in the Episys database using Report Generator specfile output as input|REVISE
+REVLANDSCAPE|REVLANDSCSAPE is one of the available printer orientation options when using the HPSETUP HP Laser Control command|REVLANDSCAPE
+RIGHT|The RIGHT print statement option instructs the Report Generator™ to align a value in the right-most position starting at the specified column number|COL=10 RIGHT MONKEYDESCRIPT
+SAVEMODE|SAVEMODE is a special number literal that determines how Episys should store a SymForm™ when you are using an image storage system|SAVEMODE=1
+SAVINGS|SAVINGS record type is a synonym for SHARE Record Type. You can use SAVINGS to designate the Share record in the Account file|TARGET=SAVINGS
+SELECT|The SELECT division of a specfile contains selection criteria|SELECT ALL END
+SET|There is an option in the Miscellaneous Processing batch program to perform file maintenance on a number of files in the Episys database using Report Generator specfile output as input|SET TYPE TO 1
+SETSERVICE|SETSERVICE is a special function used in the CHANGE command in Report Generator Batch File Maintenance to set the value of an available Service Code slot in an ACCOUNT Record Type, a LOAN Record Type, a SHARE Record Type, or a CARD Record Type|CHANGE SETSERVICE 2
+SETUP|The Report Generator™ performs the SETUP division once at the beginning of each specfile run|SETUP CALL INITVARS END
+SETWARNING|SETWARNING is a special function used in the CHANGE command in Report Generator Batch File Maintenance to set the value and/or expiration date of an available Warning Code slot in an ACCOUNT Record Type, LOAN Record Type, SHARE Record Type or CARD Type|CHANGE SETWARNING 9
+SHARE|SHARE designates the Share record in the Account file|SHARE:TYPE
+SORT|The SORT division of a specfile contains the sort instructions, referred to as sort keys|SORT NAME:LAST END
+STOPBLINK|The STOPBLINK keyword is a print control statement that cancels the BLINK statement|BLINK PRINT "BOB" STOPBLINK
+SUBROUTINE|The SUBROUTINE keyword identifies a specfile that can be called from another specfile using the INITSUBROUTINE keyword|SUBROUTINE DEMAND WINDOWS
+SUBTOTAL|SUBTOTAL is a sort key option used to identify where you want the report to create subtotals|SHARE:TYPE SUBTOTAL "SHARE TYPE"
+SUPPRESS|SUPPRESS is a print statement option that stops printing of the expression that follows it|SUPPRESS 1
+SUPPRESSNEWLINE|The SUPPRESSNEWLINE print control statement resets the column counter to 1 without moving the print location to the next line|SUPPRESSNEWLINE
+SYMCONNECT|The SYMCONNECT keyword can be placed at the top of Report Generator specfiles to activate several predefined variables that are used to write these same specfiles|SYMCONNECT
+TARGET|TARGET is the starting point for all Report Generator™ specfiles|TARGET=ACCOUNT
+TERMINATE|The TERMINATE statement stops the Report Generator™ from processing the specfile|IF FOUND=FALSE THEN TERMINATE
+THEN|Used after a condition to start commands|IF FOUND= TRUE THEN CALL BANGROCKS
+PRINT TITLE|The TITLE print specification instructs Episys to use the value of the character expression that follows TITLE= as the title of the report|PRINT TITLE = "KEN'S REPORT"
+TO|Used to indicate a stepping range|FOR I = 1 TO 15 BY 3
+TOTAL|The TOTAL division of a specfile contains a custom format for additional grand totals|
+TRACKING|TRACKING designates the Tracking record in the Account file|TARGET=TRACKING
+TRAILERS|The TRAILERS keyword precedes print statements that create a trailer the Report Generator™ prints at the end of each subsection of output|TRAILERS PRINT REPEATCHR("-",130) END
+TRANSACTION|TRANSACTION in conjunction with SHARE or LOAN designates the Share Transaction or Loan Transaction records in the Account file|FOR EACH SHARE TRANSACTION
+TRANSFER|TRANSFER in conjunction with SHARE, LOAN, or EFT designates the Share Transfer, Loan Transfer, or EFT Transfer records in the Account file|FOR EACH SHARE TRANSFER
+USER|You can now use repGen (Report Generator™) specfiles to access user fields. Previously, the only way to access these fields was with the repGen® (Report Generator) GETDATA function|TARGET = USER
+VALIDATION|The VALIDATION keyword identifies the specfile as a record-validation specfile|VALIDATE TARGET=ACCOUNT
+VENDOR|VENDOR designates the Vendor record in the Accounts Payable file|TARGET=VENDOR
+WHILE|The WHILE...DO...END statement instructs the Report Generator™ to execute one or more statements as long as a specified condition is true|WHILE SHARECOUNTER<10 DO
+WHILELIMIT|You can use the WHILELIMIT statement to set a limit to the number of WHILE loops executed for any WHILE statements or FOR...DO...END statements that come after it|WHILELIMIT=10000
+WIDTH|WIDTH is an optional label specification used with the LABELS print option to designate how many characters to print across each label|WIDTH=30
+WINDOWS|The WINDOWS keyword identifies specfiles intended to be used only in a Windows environment where Symitar host printing is not required|WINDOWS TARGET=ACCOUNT
+WINDOWSPRINT|WINDOWSPRINT keyword identifies specfiles designed for a Windows environment if you need to print information through your Symitar host environment (as opposed to printing with the Windows controls through Windows)|WINDOWSPRINT TARGET=ACCOUNT
+WINMODETEXT|WINMODETEXT is a stand-alone Windows Report Generator command that brings up a terminal window and allows you to interact with it|WINMODETEXT
+WINMODEWINDOWS|WINMODEWINDOWS is a stand-alone Windows Report Generator command that resets you to full windows support after a WINMODETEXT command|WINMODEWINDOWS
+WITH|Used with ANY to list attributes|ANY ACCOUNT WITH (ACCOUNT:CLOSEDATE=SYSTEMDATE)
+WRAP|You can use the WRAP keyword when printing any value right-justified in a specific column|COL=30 WRAP SHARE:BALANCE 
+WRITE|When you use the FILEOPEN statement, you can open the file you want to access in a number of ways|"WRITE"
 
-Across
-ASCII
-BlockSize
-DataFile
-EBCDIC
-FormLength
-Header
-Headers
-HPBoxDraw
-HPEsc
-HPFont
-HPLineDraw
-HPLinesPerInch
-HPReset
-HPSetup
-HPUnderline
-HPXPos
-HPYPos
-Labels
-RecordSize
-ScreenXYPos
-Title
-Trailers
-Width
-Wrap 
+DIALOGCLOSE
+DIALOGDISPLAY
+DIALOGENDGROUPBOX
+DIALOGENDGROUPING
 
-EXCPITEM
+FMPERFORM
+TRANPERFORM
 
-Every
+EDIT
+HELP
+FROM
 
-Define
-Letter
-Select
-Setup
-Sort
-Target
-SubTotal
+ARRAY
+CHARACTER
+DATE
+FLOAT
+MONEY
+NUMBER
+RATE
 
-#Include 
-Procedure
-
-Audio
-Certificate
-CustomForms 
-Demand
-HomeBanking
-MCW
-MCWInteractive
-ReturnItem 
-SubRoutine 
-SymConnect 
-Validation
-
-All
-And
-Else
-None
-Not
-Or
-
-Bell
-Blink
-Bright
-Call
-Change
-Col
-Create
-DataSize
-Delete
-Dim
-DivProjectCalc
-DivProjectInit
-EmailLine
-EmailSend
-EmailStart
-Execute
-FileClose
-FileCreate
-FileDelete
-FileGetPos
-FileListClose
-FileListOpen
-FileListRead
-FileOpen
-FileRead
-FileReadLine
-FileSetPos
-FileWrite
-FileWriteLine
-FlaotValue
-FMPerform
-With
-For
-Each
-GLPostEnd
-GLPostStart
-If
-Then
-InitCreditReport
-InitSubRoutine
-Insert
-Into
-Left
-LoanProjectCalc
-LoanProjectInit
-Modify
-NewLine
-NewPage
-NonANSIStandard
-OuputClose
-OutputOpen
-OutputSwitch
-PrintControl
-Print
-Print Title
-PullCreidtReport
-Remove
-From
-Queue
-Revise
-Right
-Set
-StopBlink
-Suppress
-SuppressNewLine
-Terminate
-Total
-TranPerform
-ValidateFieldSet
-While
-Do
-End
-WhileLimit
-Wrap
-To
-
-WinCodeBigMenuInit
-WinCodeBigMenuOption
-WinCodeBigMenuSelect
-WinCodeErrorMessage
-WinCodeGetData
-WinCodeGetDataInit
-WinCodeGetDataTextLine
-WinCodeGetRecordInit
-WinCodeGetRecordHeader
-WinCodeGetRecordLine
-WinCodeGetRecordRelease
-WinCodeGetRecordDisplay
-WinCodeInfoMessage
-WinCodeInputCodeAddCode
-WinCodeInputCodeInit
-WinCodeInputCodeProcess
-WinCodeLNAppSetDebtRatio
-WinCodeLNAppSetTrafficLTState
-WinCodeMenuDisplay
-WinCodeMenuEntry
-WinCodeMenuInit
-WinCodeMessageDisplay
-WinCodeMessageInit
-WinCodeMessageLine
-WinCodeSalesTrackingDisplay
-WinCodeSalesTrackingInfoLine
-WinCodeSalesTrackingInit
-WinCodeSalesTrackingOption
-WinCodeViewCancel
-WinCodeViewDisplay
-WinCodeViewInit
-WinCodeViewLine
-WinCodeWarningMessage
-WinCodeWinExec
-WinCodeYesNoQuestion
-WinDDEConnect
-WinDDEDisconnect
-WinDDEExecute
-WinDDEPokeData
-Windows
-WindowsPrint
-WindowsSend
-WinModeText
-WinModeWindows
-
-DialogClose
-DialogDisplay
-DialogEndGroupBox
-DialogEndGrouping
-DialogIntroText
-DialogNewColumn
-DialogPromptChar
-DialogPromptCode
-DialogPromptComboEnd
-DialogPromptComboOption
-DialogPromptComboStart
-DialogPromptDate
-DialogPromptListEnd
-DialogPromptListOption
-DialogPromptListStart
-DialogPromptMoney
-DialogPromptNumber
-DialogPromptPassword
-DialogPromptRate
-DialogPromptYesNo
-DialogStart
-DialogStartGroupBox
-DialogStartGrouping
-DialogTextListEnd
-DialogTextListOption
-DialogTextListStart
-HTMLViewDisplay
-HTMLViewLine
-HTMLViewOpen
-PopUpMessage
-YesNoPrompt  
