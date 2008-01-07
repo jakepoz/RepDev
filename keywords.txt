@@ -135,14 +135,6 @@ SUBTOTAL|SUBTOTAL is a sort key option used to identify where you want the repor
 SUPPRESS|SUPPRESS is a print statement option that stops printing of the expression that follows it|SUPPRESS 1
 SUPPRESSNEWLINE|The SUPPRESSNEWLINE print control statement resets the column counter to 1 without moving the print location to the next line|SUPPRESSNEWLINE
 SYMCONNECT|The SYMCONNECT keyword can be placed at the top of Report Generator specfiles to activate several predefined variables that are used to write these same specfiles|SYMCONNECT
-SYSACTUALDATE|SYSACTUALDATE is a special date literal that always has a value equal to the actual calendar date|TODAY=SYSACTUALDATE
-SYSACTUALTIME|SYSACTUALTIME is a special number literal that always has a value equal to the current system time|NOW=SYSACTUALTIME
-SYSCONSOLENUM|SYSCONSOLENUM is a named constant which contains the ID number of the current console, used for on-demand specfiles|GETDATANUMBER(GETCONSOLEBRANCH,SYSCONSOLENUM)
-SYSMEMOMODE|SYSMEMOMODE is a special number literal that indicates whether or not Episys is in memo post mode|IF SYSMEMOMODE=0 THEN
-SYSSYMDIRECTORY|Gives the number of the Sym directory that the specfile is being run in|IF SYSSYMDIRECTORY<>0 THEN TESTMODE=TRUE
-SYSTEMDATE|SYSTEMDATE is a named constant, a system or internal variable, or a function, depending on how you are using it|TODAY=SYSTEMDATE
-SYSUSERNUMBER|SYSUSERNUMBER is a special number literal that always has a value equal to the ID number of the user currently running one of the On-Demand Report Generator Specfiles|TELLERNUM=SYSUSERNUMBER
-SYSWINDOWSLEVEL|SYSWINDOWSLEVEL is a variable Episys fills in with an indicator of your current Windows environment and the amount of support available for Windows commands|IF SYSWINDOWSLEVEL>1 THEN
 TARGET|TARGET is the starting point for all Report Generator™ specfiles|TARGET=ACCOUNT
 TERMINATE|The TERMINATE statement stops the Report Generator™ from processing the specfile|IF FOUND=FALSE THEN TERMINATE
 THEN|Used after a condition to start commands|IF FOUND= TRUE THEN CALL BANGROCKS
@@ -171,6 +163,9 @@ DIALOGCLOSE
 DIALOGDISPLAY
 DIALOGENDGROUPBOX
 DIALOGENDGROUPING
+
+FMPERFORM
+TRANPERFORM
 
 EDIT
 HELP
