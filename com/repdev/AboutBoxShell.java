@@ -68,6 +68,7 @@ public class AboutBoxShell {
 		  +"Sean Delaney   - Programmer\n"
 		  +"Bruce Chang    - Programmer/Documentation\n"
 		  +"Michael Webb   - Documentation\n"
+		  +"Yoni Kristt    - Documentation\n"
 		  +"Ken Kondo      - Documentation\n\n";
 	
 	public static void show() {
