@@ -167,6 +167,11 @@ WITH|Used with ANY to list attributes|ANY ACCOUNT WITH (ACCOUNT:CLOSEDATE=SYSTEM
 WRAP|You can use the WRAP keyword when printing any value right-justified in a specific column|COL=30 WRAP SHARE:BALANCE 
 WRITE|When you use the FILEOPEN statement, you can open the file you want to access in a number of ways|"WRITE"
 
+DIALOGCLOSE
+DIALOGDISPLAY
+DIALOGENDGROUPBOX
+DIALOGENDGROUPING
+
 EDIT
 HELP
 FROM

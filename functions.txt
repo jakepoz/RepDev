@@ -6,7 +6,7 @@ ANYWARNING|Boolean function that returns true if a warning exists|NUMBER
 ANYSERVICE|Boolean function that returns true if a servicecode exists|NUMBER
 	RECORD_TYPE|Account, Share, Loan, or Card Record to be searched|NULL
 	SERVICE_CODE|Service code that is to be searched for|NUMBER
-CAPITILIZE|Capitilizes the first letter and sets all subsequent letters to lowercase|CHARACTER
+CAPITALIZE|Capitalizes the first letter and sets all subsequent letters to lowercase|CHARACTER
 	Expression|A character expression|CHARACTER
 CHARACTERREAD|Prompts a user for input in a batch program|CHARACTER
 	Prompt|Prompt that the user sees when running the program|CHARACTER
@@ -42,25 +42,25 @@ ENTERCHARACTER|Displays a prompt in a Demand Specfile that expects a character v
 	Prompt|Text the user sees telling them what to enter|CHARACTER
 	MaxLength|Maximum length of the user's response|NUMBER
 	Default|The default value given to the user|CHARACTER
-ENTERCODE|Displays a promt in a Demand Specfile that expects a code value in response|CODE
+ENTERCODE|Displays a prompt in a Demand Specfile that expects a code value in response|CODE
 	Prompt|Text the user sees telling them what to enter|CHARACTER
 	MaxValue|The Maximum value of the response|CODE
 	Default|The default value given to the user|CODE
-ENTERDATE|Displays a promt in a Demand Specfile that expects a date value in repsonse|DATE
+ENTERDATE|Displays a prompt in a Demand Specfile that expects a date value in repsonse|DATE
 	Prompt|Text the user sees telling them what to enter|CHARACTER
 	Default|The default value given to the user|DATE
 ENTERLINE|Allows a specfile to get user input without a prompt|CHARACTER
 	Echo_Mode|Number specifying how to echo user input|NUMBER
-ENTERMONEY|Displays a promt in a Demand Specfile that expects a money response|MONEY
+ENTERMONEY|Displays a prompt in a Demand Specfile that expects a money response|MONEY
 	Prompt|Text the user sees telling them what to enter|CHARACTER
 	Default|The default value given to the user|MONEY
-ENTERNUMBER|Displays a promt in a Demand Specfile that expects a number value in response|NUMBER
+ENTERNUMBER|Displays a prompt in a Demand Specfile that expects a number value in response|NUMBER
 	Prompt|Text the user sees telling them what to enter|CHARACTER
 	Default|The default value given to the user|NUMBER
-ENTERRATE|Displays a promt in a Demand Specfile that expects a rate value in response|RATE
+ENTERRATE|Displays a prompt in a Demand Specfile that expects a rate value in response|RATE
 	Prompt|Text the user sees telling them what to enter|CHARACTER
 	Default|The default value given to the user|NUMBER
-ENTERYESNO|Displays a promt in a Demand Specfile that expects a Y / N answer in response|CHARACTER,NUMBER
+ENTERYESNO|Displays a prompt in a Demand Specfile that expects a Y / N answer in response|CHARACTER,NUMBER
 	Prompt|Text the user sees telling that what to enter|CHARACTER
 	Default|The default value given to the user|CHARACTER
 EXP|Returns the value of the mathematical constant e (~2.7183) raised to a specified power|FLOAT
@@ -75,59 +75,35 @@ FORMAT|Converts a numeric value to a specified pattern of characters|CHARACTER,N
 FULLYEAR|Returns a numerical value that is equivalent to the four-digit year in a date expression|NUMBER
 	Date|Date expression where the four-digit year is desired|DATE
 GETDATACHAR|Retrieves the current value of a character field in Parameter or Console files|CHARACTER
-	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	InfoCode|A Number that identifies what field you want to access|NUMBER
 	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
 	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 GETDATADATE|Retrieves the current value of a date field in Parameter or Console files|DATE
-	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	InfoCode|A Number that identifies what field you want to access|NUMBER
 	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
 	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 GETDATAMONEY|Retrieves the current value of a money field in Parameter of Console files|MONEY
-	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	InfoCode|A Number that identifies what field you want to access|NUMBER
 	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
 	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 GETDATANUMBER|Retrieves the current value of a number field in Parameter of Console files|NUMBER
-	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	InfoCode|A Number that identifies what field you want to access|NUMBER
 	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
 	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 GETDATARATE|Retrieves the current value of a rate field in Parameter of Console files|RATE
-	InfoCode|A Number that identifies what field you want ot access|NUMBER
+	InfoCode|A Number that identifies what field you want to access|NUMBER
 	Type1|Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type2|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
 	Type3|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
-GetFieldDataMax
-	RecordNum
-	FieldNum
-	SubFieldNum
-GetFieldDataType
-	RecordNum
-	FieldNum
-	SubFieldNum
-GetFieldHelpFile
-	RecordNum
-	FieldNum
-	SubFieldNum
-GetFieldMnemonic
-	RecordNum
-	FieldNum
-	SubFieldNum
-GetFieldName
-	RecordNum
-	FieldNum
-	SubFieldNum
-GetFieldNumber
-	RecordNum
-	FieldNum
-	SubFieldNum
 HOUR|Returns the hour value of a time stored in HHMM format|NUMBER
 	Expression|Time expression in HHMM format to return the hour value|NUMBER
 INT|Returns the integer part of a given expression|NUMBER
@@ -178,8 +154,124 @@ SEGMENT|Returns a specified part of a character expression|CHARACTER
 	EndPOS|Ending position to stop searching through the Character Expression|NUMBER
 UPPERCASE|Converts a character expression to all uppercase characters|CHARACTER
 	CharacterExpression|Character Expression that is desired to be in all uppercase letters|CHARACTER
-VALUE
 YEAR|Returns a value equivalent to the two-digit year in a date expression|NUMBER
 	DateExpression|Date expression where the two-digit year is desired|DATE
 YESNOREAD|Displays a prompt, waits for a Y/N response, then returns true or false|Boolean
 	Prompt|A Y/N question where the answer is used in a Boolean expression|CHARACTER
+	
+CHARACTER
+GetFieldDataMax
+GetFieldDataType
+GetFieldHelpFile
+GetFieldMnemonic
+GetFieldName
+GetFieldNumber
+COPYAPP
+CREATEFINANCEFROMCREDREP
+DATE
+DIALOGINTROTEXT
+DIALOGNEWCOLUMN
+DIALOGPROMPTCHAR
+DIALOGPROMPTCODE
+DIALOGPROMPTCOMBOEND
+DIALOGPROMPTCOMBOOPTION
+DIALOGPROMPTCOMBOSTART
+DIALOGPROMPTDATE
+DIALOGPROMPTLISTEND
+DIALOGPROMPTLISTOPTION
+DIALOGPROMPTLISTSTART
+DIALOGPROMPTMONEY
+DIALOGPROMPTNUMBER
+DIALOGPROMPTPASSWORD
+DIALOGPROMPTRATE
+DIALOGPROMPTYESNO
+DIALOGSTART
+DIALOGSTARTGROUPBOX
+DIALOGSTARTGROUPING
+DIALOGTEXTLISTEND
+DIALOGTEXTLISTOPTION
+DIALOGTEXTLISTSTART
+DIVPROJECTINIT
+EMAILLINE
+EMAILSEND
+EMAILSTART
+EXECUTE
+EXP
+FILECLOSE
+FILECREATE
+FILEDELETE
+FILEGETPOS
+FILELISTCLOSE
+FILELISTOPEN
+FILELISTREAD
+FILEOPEN
+FILEREAD
+FILEREADLINE
+FILESETPOS
+FILEWRITE
+FILEWRITELINE
+FLOATVALUE
+FMPERFORM
+HPBOXDRAW
+HPESC
+HPFONT
+HPLINEDRAW
+HPLINESPERINCH
+HPRESET
+HPSETUP
+HPUNDERLINE
+HPXPOS
+HPYPOS
+HTMLVIEWLINE
+INITSUBROUTINE
+LOANPROJECTINIT
+OUPUTCLOSE
+OUTPUTOPEN
+OUTPUTSWITCH
+POPUPMESSAGE
+SCREENXYPOS
+SYSUSERNAME
+TRANPERFORM
+VALIDATEFIELDSET
+VALUE
+WINCODEBIGMENUINIT
+WINCODEBIGMENUOPTION
+WINCODEBIGMENUSELECT
+WINCODEERRORMESSAGE
+WINCODEGETDATA
+WINCODEGETDATAINIT
+WINCODEGETDATATEXTLINE
+WINCODEGETRECORDDISPLAY
+WINCODEGETRECORDHEADER
+WINCODEGETRECORDINIT
+WINCODEGETRECORDLINE
+WINCODEGETRECORDRELEASE
+WINCODEINFOMESSAGE
+WINCODEINPUTCODEADDCODE
+WINCODEINPUTCODEINIT
+WINCODEINPUTCODEPROCESS
+WINCODELNAPPSETDEBTRATIO
+WINCODELNAPPSETTRAFFICLTSTATE
+WINCODEMENUDISPLAY
+WINCODEMENUENTRY
+WINCODEMENUINIT
+WINCODEMESSAGEDISPLAY
+WINCODEMESSAGEINIT
+WINCODEMESSAGELINE
+WINCODESALESTRACKINGDISPLAY
+WINCODESALESTRACKINGINFOLINE
+WINCODESALESTRACKINGINIT
+WINCODESALESTRACKINGOPTION
+WINCODEVIEWCANCEL
+WINCODEVIEWDISPLAY
+WINCODEVIEWINIT
+WINCODEVIEWLINE
+WINCODEWARNINGMESSAGE
+WINCODEWINEXEC
+WINCODEYESNOQUESTION
+WINDDECONNECT
+WINDDEDISCONNECT
+WINDDEEXECUTE
+WINDDEPOKEDATA
+WINDOWSSEND
+YESNOPROMPT 

@@ -311,8 +311,11 @@ public class SuggestShell {
 						for( Argument arg : func.getArguments())
 							nameText += arg.getShortName() + ", ";
 
-						nameText = nameText.substring(0,nameText.length()-2) + ")";
-
+						if( func.getArguments().size() > 0)
+							nameText = nameText.substring(0,nameText.length()-2) + ")";
+						else
+							nameText += ")";
+						
 						item.setText(nameText);
 						item.setImage(RepDevMain.smallFileImage);
 						item.setData("value", func.getName().toUpperCase() + "(");
