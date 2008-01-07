@@ -22,6 +22,7 @@ public class FailedLogonShell {
 	private void create() {
 		failShell = new Shell(SWT.APPLICATION_MODAL | SWT.TITLE | SWT.CLOSE);
 		failShell.setText("Invalid Password");
+		failShell.setImage(RepDevMain.smallSymAddImage);
 		
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 5;
