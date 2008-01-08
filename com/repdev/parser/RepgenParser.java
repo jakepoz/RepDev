@@ -216,6 +216,7 @@ public class RepgenParser {
 			try {
 				Display display = tblErrors.getDisplay();
 
+			
 				// Remove old errors
 				errorList.clear();
 				taskList.clear();

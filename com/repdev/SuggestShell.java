@@ -409,7 +409,8 @@ public class SuggestShell {
 				
 		refreshTooltip();
 		
-		System.out.println(System.currentTimeMillis()-timer);
+		if( RepDevMain.DEVELOPER)
+			System.out.println(System.currentTimeMillis()-timer);
 		
 		if( table.getItemCount() == 0){
 			close();
@@ -505,7 +506,6 @@ public class SuggestShell {
 						Display.getCurrent().addFilter(SWT.FocusIn, new Listener(){
 
 							public void handleEvent(Event event) {
-								System.out.println(event);
 								if( event.widget != table && event.widget != shell && event.widget != tooltip && event.widget != toolText){
 									close();			
 								}
