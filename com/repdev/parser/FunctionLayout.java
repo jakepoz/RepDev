@@ -59,16 +59,14 @@ public class FunctionLayout {
 					argMatcher = argPattern.matcher(line);
 					funcMatcher = funcPattern.matcher(line);
 
-					if( argMatcher.matches() ){
-						if (argMatcher.matches() && cur != null) {
-							ArrayList<VariableType> types = new ArrayList<VariableType>();
-							String[] typeNames = argMatcher.group(3).split(",");
+					if( argMatcher.matches() && cur != null){		
+						ArrayList<VariableType> types = new ArrayList<VariableType>();
+						String[] typeNames = argMatcher.group(3).split(",");
 
-							for( String name : typeNames)
-								types.add(VariableType.valueOf(name.trim().toUpperCase()));
+						for( String name : typeNames)
+							types.add(VariableType.valueOf(name.trim().toUpperCase()));
 
-							cur.getArguments().add(new Argument(argMatcher.group(1), argMatcher.group(2),types));							
-						}
+						cur.getArguments().add(new Argument(argMatcher.group(1), argMatcher.group(2),types));							
 					}
 					else if( funcMatcher.matches() ){
 						ArrayList<VariableType> types = new ArrayList<VariableType>();
@@ -84,6 +82,7 @@ public class FunctionLayout {
 						//Just add whatever is on the line as the fucniton name, leaving the rest blank
 						
 						cur = new Function( line.trim(),"",new ArrayList<VariableType>());
+						
 						functionMap.put(cur.getName().toLowerCase(), cur);
 					}
 				}

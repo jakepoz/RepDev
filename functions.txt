@@ -151,7 +151,7 @@ FILEWRITE|Write to an open file beginning at the current byte position|NULL
 	CharacterData|Text to be written to the file|CHARACTER
 	FieldLength|Optional variable (between 1 and 132); data will be truncated/trailing spaces added to fit size|NUMBER
 	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
-FILEWRITELINE:Write to an open file beginning at the current byte position and appends a newline statement|NULL
+FILEWRITELINE|Write to an open file beginning at the current byte position and appends a newline statement|NULL
 	FileNumber|File number returned by FILEOPEN|NUMBER
 	CharacterData|Text to be written to the file|CHARACTER
 	FieldLength|Optional variable (between 1 and 132); data will be truncated/trailing spaces added to fit size|NUMBER
@@ -258,7 +258,6 @@ GetFieldMnemonic
 GetFieldName
 GetFieldNumber
 COPYAPP
-CREATEFINANCEFROMCREDREP
 DATE
 DIALOGINTROTEXT
 DIALOGNEWCOLUMN
@@ -284,23 +283,7 @@ DIALOGTEXTLISTOPTION
 DIALOGTEXTLISTSTART
 DIVPROJECTINIT
 EMAILLINE
-EMAILSEND
-EMAILSTART
-EXECUTE
-EXP
-FILECLOSE
-FILECREATE
-FILEDELETE
-FILEGETPOS
-FILELISTCLOSE
-FILELISTOPEN
-FILELISTREAD
-FILEOPEN
-FILEREAD
-FILEREADLINE
-FILESETPOS
-FILEWRITE
-FILEWRITELINE
+
 FLOATVALUE
 HPBOXDRAW
 HPESC
