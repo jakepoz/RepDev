@@ -48,8 +48,8 @@ public class Formatter {
 	}
 	
 	private boolean processBeforeAndAfter(StringBuilder str, Token cur, String indent){
-		String noSpaceBefore = "():.,%=+-/*";
-		String noSpaceAfter = "(:.=+-/*";
+		String noSpaceBefore = "():.,%=+-/*<>";
+		String noSpaceAfter = "(:.=+-/*$<>";
 		String[] newLineAfter = { "do", "end" };
 		int[] nNewLineAfter = { 1, 2 };
 		
