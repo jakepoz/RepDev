@@ -152,6 +152,7 @@ public class RepgenParser {
 				includeTokenChache.clear();
 				includes.clear();
 
+		
 				for( Token tok : ltokens){
 					tempTokens.add(new Token(tok));
 				}
@@ -226,6 +227,7 @@ public class RepgenParser {
 				ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
 				errorList.add(new Error(result));
 				
+
 				// Variable checking
 				synchronized(lvars){
 					//Duplicate variables
