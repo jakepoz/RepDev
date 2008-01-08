@@ -210,6 +210,7 @@ public class RepgenParser {
 			final Table tblTasks  = RepDevMain.mainShell.getTaskTable();
 			ArrayList<Variable> varCache = new ArrayList<Variable>();
 
+	
 			if (tblErrors.isDisposed())
 				return;
 
@@ -224,7 +225,7 @@ public class RepgenParser {
 				// Error check with symitar
 				ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
 				errorList.add(new Error(result));
-
+				
 				// Variable checking
 				synchronized(lvars){
 					//Duplicate variables
@@ -248,7 +249,8 @@ public class RepgenParser {
 						}
 					}
 				}
-
+			
+				
 				synchronized(includeTokenChache){
 					//unused var checking
 					for (final Variable var : lvars) {	
@@ -380,7 +382,7 @@ public class RepgenParser {
 									type = Task.Type.WTF;
 								}
 
-								Task task = new Task(file.getName(), desc, line, col, type);
+								Task task = new Task(file.getName(), desc, line + 1, col+1, type);
 								taskList.add( task );
 							}
 						}
@@ -432,6 +434,8 @@ public class RepgenParser {
 				});
 			} catch (Exception e) {
 				//Just ignore if anything happens to our UI while we are error checking.
+				System.out.println("Background Error Checker has failed, but recovered:\n");
+				e.printStackTrace();
 			}
 
 			errorCheckerWorker = null;
