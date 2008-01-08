@@ -83,7 +83,10 @@ public class FunctionLayout {
 						
 						cur = new Function( line.trim(),"",new ArrayList<VariableType>());
 						
-						functionMap.put(cur.getName().toLowerCase(), cur);
+						if( functionMap.get(cur.getName().toLowerCase()) != null)
+							System.out.println("Duplicate Function Entry: " + cur.getName());
+						else
+							functionMap.put(cur.getName().toLowerCase(), cur);
 					}
 				}
 			}
