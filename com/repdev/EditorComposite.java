@@ -71,7 +71,7 @@ import com.repdev.parser.Token;
 public class EditorComposite extends Composite implements TabTextEditorView {
 	private SymitarFile file;
 	private int sym;
-	private Color lineBackgroundColor = new Color(Display.getCurrent(), 232, 242, 254);
+	private Color lineBackgroundColor, blockMatchColor;
 	private StyledText txt;
 	private CTabItem tabItem;
 
@@ -260,6 +260,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			undos.add(new TextChange(true));
 	}
 
+	public void setLineColor(SyntaxHighlighter hiColor){
+	    	lineBackgroundColor=hiColor.getLineColor();
+	    	blockMatchColor=hiColor.getBlockMatchColor();
+	}
+	
 	private void lineHighlight() {
 		try {
 			int start, end, currentLine;
@@ -423,6 +428,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			//Preventing bad errors, aka recreating the highlighter if it is not null
 		}else if(parse){
 			highlighter = new SyntaxHighlighter(parser);
+			setLineColor(highlighter);
 		}else{
 			highlighter.highlight();
 			highlighter = null;
@@ -452,6 +458,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				txt.setFont(DEFAULT_FONT);
 		}
 		highlighter = new SyntaxHighlighter(parser);
+		setLineColor(highlighter);
 		
 		final EditorComposite tempEditor = this;
 		
@@ -1206,9 +1213,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 				
 				if( found ){
-					cur.setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					//TODO:Special background
+					setLineColor(highlighter);
+					cur.setSpecialBackground(blockMatchColor);
 					cur.setBackgroundReason(Token.SpecialBackgroundReason.BLOCK_MATCHER);
-					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					tokens.get(tokloc).setSpecialBackground(blockMatchColor);
 					tokens.get(tokloc).setBackgroundReason(Token.SpecialBackgroundReason.BLOCK_MATCHER);
 					redrawTokens.add(cur);
 					redrawTokens.add(tokens.get(tokloc));
@@ -1250,9 +1259,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 				
 				if( found ){
-					cur.setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					setLineColor(highlighter);
+					cur.setSpecialBackground(blockMatchColor);
 					cur.setBackgroundReason(Token.SpecialBackgroundReason.BLOCK_MATCHER);
-					tokens.get(tokloc).setSpecialBackground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+					tokens.get(tokloc).setSpecialBackground(blockMatchColor);
 					tokens.get(tokloc).setBackgroundReason(Token.SpecialBackgroundReason.BLOCK_MATCHER);
 					redrawTokens.add(cur);
 					redrawTokens.add(tokens.get(tokloc));

@@ -46,12 +46,12 @@ public class RepgenParser {
 	private int sym;
 	private boolean reparse = true;
 
+	private static HashSet<String> keywords;
 
 	private static DatabaseLayout db = DatabaseLayout.getInstance();
 	private static SpecialVariables specialvars = SpecialVariables.getInstance();
 	private static FunctionLayout functions = FunctionLayout.getInstance();
-	private static KeywordLayout keywords = KeywordLayout.getInstance();
-	
+
 	private ArrayList<Token> ltokens = new ArrayList<Token>();
 	private ArrayList<Variable> lvars = new ArrayList<Variable>();
 
@@ -67,12 +67,15 @@ public class RepgenParser {
 	BackgroundSymitarErrorChecker errorCheckerWorker = null;
 	BackgroundIncludeParser includeParserWorker = null;
 
-	boolean initialIncludeParseNeeded = true; //This will make sure that we parse the includes at least once when the file is first opened
-	boolean refreshIncludes = false; //The parser will keep track of changes as the file is edited, and if an include reparse is needed, this flag will be set. 
-	//Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
-	private boolean noParse = false;
-	public static final String[] taskTokens = { "todo", "fixme", "bug", "bugbug", "wtf" };
+    boolean initialIncludeParseNeeded = true; //This will make sure that we parse the includes at least once when the file is first opened
+    boolean refreshIncludes = false; //The parser will keep track of changes as the file is edited, and if an include reparse is needed, this flag will be set. 
+    //Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
+    private boolean noParse = false;
+    public static final String[] taskTokens = { "todo", "fixme", "bug", "bugbug", "wtf" };
 
+    static {
+	keywords = build(new File("keywords.txt"));
+    }
 
 	public RepgenParser(StyledText txt, SymitarFile file) {
 		this.txt = txt;
@@ -384,7 +387,7 @@ public class RepgenParser {
 									type = Task.Type.WTF;
 								}
 
-								Task task = new Task(file.getName(), desc, line + 1, col+1, type);
+								Task task = new Task(file.getName(), desc, line, col, type);
 								taskList.add( task );
 							}
 						}
@@ -1114,11 +1117,11 @@ public class RepgenParser {
 	}
 
 
-	public static KeywordLayout getKeywords() {
+	public static HashSet<String> getKeywords() {
 		return keywords;
 	}
 
-	public static void setKeywords(KeywordLayout keywords) {
+	public static void setKeywords(HashSet<String> keywords) {
 		RepgenParser.keywords = keywords;
 	}
 
