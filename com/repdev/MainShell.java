@@ -42,6 +42,8 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -398,6 +400,14 @@ public class MainShell {
 			mainfolder.setSelection(item);
 			mainfolder.notifyListeners(SWT.Selection, new Event());
 			item.setControl(editor);
+			
+			
+			//When we are closing, we must dispose the control in the CTabItem, otherwise we leak swt objects
+			item.addDisposeListener(new DisposeListener(){
+				public void widgetDisposed(DisposeEvent e) {
+					((CTabItem)e.widget).getControl().dispose();
+				}
+			});
 
 			if (file.getType() != FileType.REPGEN || file.isLocal())
 				install.setEnabled(false);
@@ -1762,6 +1772,14 @@ public class MainShell {
 
 		item.setControl(new CompareComposite(mainfolder, item, (SymitarFile) tree.getSelection()[0].getData(), (SymitarFile) tree.getSelection()[1].getData()));
 
+		item.addDisposeListener(new DisposeListener(){
+
+			public void widgetDisposed(DisposeEvent e) {
+				((CTabItem)e.widget).getControl().dispose();
+			}
+			
+		});
+		
 		mainfolder.setSelection(item);
 	}
 

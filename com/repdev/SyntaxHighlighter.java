@@ -91,6 +91,8 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		}
 
 		FONT = cur;
+		
+		loadStyle(styleName);
 	}
 
 	public SyntaxHighlighter(RepgenParser parser) {
@@ -99,17 +101,13 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		this.file = parser.getFile();
 		this.sym = parser.getSym();
 
-		loadStyle(styleName);
-
 		txt.setForeground(FORECOLOR);
 		txt.setBackground(BACKCOLOR);
 		txt.addExtendedModifyListener(this);
 		txt.addLineStyleListener(this);
+		
 		if (FONT != null)
 			txt.setFont(FONT);
-
-
-
 	}
 
 	/**
@@ -127,8 +125,6 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		this.customColor = customLineColor;
 		this.customLines = customLines;
 
-		//TODO: Style set here
-		loadStyle(styleName);
 
 		txt.setForeground(FORECOLOR);
 		txt.setBackground(BACKCOLOR);

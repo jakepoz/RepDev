@@ -35,6 +35,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -99,13 +100,13 @@ public class AboutBoxShell {
 		
 		final ScrolledComposite sc = new ScrolledComposite(shell, SWT.V_SCROLL | SWT.H_SCROLL);
 		sc.setLayout(new FillLayout());
-		sc.setBackground( new Color(sc.getDisplay(), 255, 255, 255) );
+		sc.setBackground( Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		
 		final Composite inner = new Composite(sc,SWT.NONE);
 		inner.setLayout(new FillLayout());
 		
 		final Label mainText = new Label(inner, SWT.NONE);
-		mainText.setBackground( new Color(sc.getDisplay(), 255, 255, 255) );		
+		mainText.setBackground( Display.getCurrent().getSystemColor(SWT.COLOR_WHITE) );		
 		mainText.setAlignment(SWT.CENTER);
 		mainText.setText(aboutText);
 

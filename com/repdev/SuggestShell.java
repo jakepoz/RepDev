@@ -454,7 +454,7 @@ public class SuggestShell {
 		
 		toolText = new StyledText(tooltip,SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL);
 		toolText.setText("Testing Tooltip");
-		toolText.setBackground(new Color(shell.getDisplay(),new RGB(255,255,225)));
+		toolText.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
 		if( txt.getData("suggestlistenersloaded") == null){
 			txt.setData("suggestlistenersloaded", true);

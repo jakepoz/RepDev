@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -67,7 +68,7 @@ public class RepDevMain {
 	
 	public static void main(String[] args) throws Exception {
 		display = new Display();
-	
+
 		System.out.println("RepDev " + VERSION + " Copyright (C) 2008  RepDev.org Team\n"
 				+"This program comes with ABSOLUTELY NO WARRANTY.\n"
 				+"This is free software, and you are welcome to redistribute it\n"

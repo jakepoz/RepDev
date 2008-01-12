@@ -28,6 +28,8 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -445,8 +447,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		setLayout(new FormLayout());
 		
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
-		
-		
 		
 		if (file.getType() == FileType.REPGEN){
 			doParse=true;
