@@ -46,11 +46,12 @@ public class RepgenParser {
 	private int sym;
 	private boolean reparse = true;
 
-	private static HashSet<String> keywords;
+
 
 	private static DatabaseLayout db = DatabaseLayout.getInstance();
 	private static SpecialVariables specialvars = SpecialVariables.getInstance();
 	private static FunctionLayout functions = FunctionLayout.getInstance();
+	private static KeywordLayout keywords = KeywordLayout.getInstance();
 
 	private ArrayList<Token> ltokens = new ArrayList<Token>();
 	private ArrayList<Variable> lvars = new ArrayList<Variable>();
@@ -67,15 +68,12 @@ public class RepgenParser {
 	BackgroundSymitarErrorChecker errorCheckerWorker = null;
 	BackgroundIncludeParser includeParserWorker = null;
 
-    boolean initialIncludeParseNeeded = true; //This will make sure that we parse the includes at least once when the file is first opened
-    boolean refreshIncludes = false; //The parser will keep track of changes as the file is edited, and if an include reparse is needed, this flag will be set. 
-    //Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
-    private boolean noParse = false;
-    public static final String[] taskTokens = { "todo", "fixme", "bug", "bugbug", "wtf" };
+	boolean initialIncludeParseNeeded = true; //This will make sure that we parse the includes at least once when the file is first opened
+	boolean refreshIncludes = false; //The parser will keep track of changes as the file is edited, and if an include reparse is needed, this flag will be set. 
+	//Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
+	private boolean noParse = false;
+	public static final String[] taskTokens = { "todo", "fixme", "bug", "bugbug", "wtf" };
 
-    static {
-	keywords = build(new File("keywords.txt"));
-    }
 
 	public RepgenParser(StyledText txt, SymitarFile file) {
 		this.txt = txt;
@@ -151,11 +149,11 @@ public class RepgenParser {
 			boolean exists = false;
 			ArrayList<Token> tempTokens = new  ArrayList<Token>();
 
+
 			synchronized(includeTokenChache){//Sync it on the token cache, so other threads can access it safely
 				includeTokenChache.clear();
 				includes.clear();
 
-		
 				for( Token tok : ltokens){
 					tempTokens.add(new Token(tok));
 				}
@@ -214,14 +212,14 @@ public class RepgenParser {
 			final Table tblTasks  = RepDevMain.mainShell.getTaskTable();
 			ArrayList<Variable> varCache = new ArrayList<Variable>();
 
-	
+
+
 			if (tblErrors.isDisposed())
 				return;
 
 			try {
 				Display display = tblErrors.getDisplay();
 
-			
 				// Remove old errors
 				errorList.clear();
 				taskList.clear();
@@ -229,7 +227,7 @@ public class RepgenParser {
 				// Error check with symitar
 				ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
 				errorList.add(new Error(result));
-				
+
 
 				// Variable checking
 				synchronized(lvars){
@@ -254,8 +252,8 @@ public class RepgenParser {
 						}
 					}
 				}
-			
-				
+
+
 				synchronized(includeTokenChache){
 					//unused var checking
 					for (final Variable var : lvars) {	
@@ -354,25 +352,12 @@ public class RepgenParser {
 							for( String task: taskTokens )
 								if( tok.getStr().equals(task)) isTask = true;
 
-
-							if ( tok.getCDepth() > 0 && isTask && tok.getAfter().getStr().equals(":")) {
-								//System.out.println("[DEBUG] " + tok.getStr());
+							if ( tok.getCDepth() > 0 && isTask && ( tok.getAfter()!=null ) && tok.getAfter().getStr().equals(":")) {
 
 								int line = txt.getLineAtOffset(tok.getStart());
 								int col = tok.getStart() - txt.getOffsetAtLine(line);
-								
-								/* Don't die if the item does not have a line following it...
-								 * Taken from my #include "" double click code.
-								 */
-								int startOffset = tok.getStart();
-								int endOffset = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, line + 1));
-								String desc;
-								
-								if( endOffset - 1 <= startOffset)
-									desc = "";
-								else
-									desc = txt.getText(startOffset, endOffset - 1);
-								
+								String desc = txt.getText(tok.getStart(), txt.getOffsetAtLine(line+1)-1);
+
 
 								desc = desc.trim();
 								desc = desc.replaceAll("\\]$", "");
@@ -386,6 +371,20 @@ public class RepgenParser {
 								} else if( tok.getStr().equals("wtf") ) {
 									type = Task.Type.WTF;
 								}
+
+
+								/* Don't die if the item does not have a line following it...
+								 * Taken from my #include "" double click code.
+								 */
+								int startOffset = tok.getStart();
+								int endOffset = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, line + 1));
+
+
+								if( endOffset - 1 <= startOffset)
+									desc = "";
+								else
+									desc = txt.getText(startOffset, endOffset - 1);
+
 
 								Task task = new Task(file.getName(), desc, line, col, type);
 								taskList.add( task );
@@ -404,9 +403,9 @@ public class RepgenParser {
 
 							}
 
+
 							for( Task task : taskList ) {
 								if( !task.getDescription().trim().equals("")) {
-
 									TableItem row = new TableItem(tblTasks, SWT.NONE );
 									row.setText(0, task.getDescription() );
 									row.setText(1, task.getFile() );
@@ -434,13 +433,13 @@ public class RepgenParser {
 									tab.setText("&Tasks (" + tblTasks.getItemCount() + ")");
 								}
 							}
+							System.out.println("Background Error Checker has failed, but recovered:\n");
+
 						}
 					}
 				});
 			} catch (Exception e) {
 				//Just ignore if anything happens to our UI while we are error checking.
-				System.out.println("Background Error Checker has failed, but recovered:\n");
-				e.printStackTrace();
 			}
 
 			errorCheckerWorker = null;
@@ -786,7 +785,6 @@ public class RepgenParser {
 
 		return result;
 	}
-
 	private static String getFullString(Token cur, String fileData){
 		if( !cur.inString() )
 			return "";
@@ -799,23 +797,18 @@ public class RepgenParser {
 
 		fToken = cur.getAfter();
 
-		if( !fToken.getStr().equals("\"") ){
-			while( (cur=cur.getAfter()) != null )
-			{
-				if(!cur.inString() || cur.getStr().equals("\""))
-					break;
 
-				lToken =cur;
-			}
-			
-			type += fileData.substring(fToken.getStart(),Math.min(lToken == null ? fileData.length() -1 : lToken.getEnd(),fileData.length()-1));		
+		while( (cur=cur.getAfter()) != null )
+		{
+			if(!cur.inString() || cur.getStr().equals("\""))
+				break;
 
-			return type;
+			lToken =cur;
 		}
-		else
-			return "";
 
+		type += fileData.substring(fToken.getStart(),Math.min(lToken == null ? fileData.length() -1 : lToken.getEnd(),fileData.length()-1));		
 
+		return type;
 	}
 
 	private static boolean isNumber(String str){
@@ -828,7 +821,6 @@ public class RepgenParser {
 		}
 	}
 
-	//FIXME: When a variable has a constant value of "" then it fails parsing
 	private synchronized void rebuildVars(String fileName, String data, ArrayList<Token> tokens) {
 		ArrayList<Variable> newvars = new ArrayList<Variable>();
 		ArrayList<Variable> oldvars = new ArrayList<Variable>();
@@ -1117,11 +1109,11 @@ public class RepgenParser {
 	}
 
 
-	public static HashSet<String> getKeywords() {
+	public static KeywordLayout getKeywords() {
 		return keywords;
 	}
 
-	public static void setKeywords(HashSet<String> keywords) {
+	public static void setKeywords(KeywordLayout keywords) {
 		RepgenParser.keywords = keywords;
 	}
 
