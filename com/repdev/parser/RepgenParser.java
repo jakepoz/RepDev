@@ -46,8 +46,6 @@ public class RepgenParser {
 	private int sym;
 	private boolean reparse = true;
 
-
-
 	private static DatabaseLayout db = DatabaseLayout.getInstance();
 	private static SpecialVariables specialvars = SpecialVariables.getInstance();
 	private static FunctionLayout functions = FunctionLayout.getInstance();
@@ -151,11 +149,12 @@ public class RepgenParser {
 
 
 			synchronized(includeTokenChache){//Sync it on the token cache, so other threads can access it safely
-				includeTokenChache.clear();
-				includes.clear();
 
+				cleanupTokenCache();
+				
 				for( Token tok : ltokens){
 					tempTokens.add(new Token(tok));
+					//tempTokens.add(tok);
 				}
 
 				int i = 0;
@@ -211,8 +210,6 @@ public class RepgenParser {
 			final Table tblErrors = RepDevMain.mainShell.getErrorTable();
 			final Table tblTasks  = RepDevMain.mainShell.getTaskTable();
 			ArrayList<Variable> varCache = new ArrayList<Variable>();
-
-
 
 			if (tblErrors.isDisposed())
 				return;
@@ -1063,6 +1060,18 @@ public class RepgenParser {
 		}
 	}
 
+	public void cleanupTokenCache(){
+		//WTF: There is a weird bug I need to account for with the garbage collector.
+		//When we remove references to the token arraylists, that doens't make any difference, since each token is in a linked list too, which doesn't get properly collected
+		//So, I need to essentially clear the linked list
+		
+		for( ArrayList<Token> tokens : includeTokenChache.values())
+			for( Token tok : tokens)
+				tok.setNearTokens(null,0);
+		
+		includeTokenChache.clear();
+		includes.clear();
+	}
 
 	public ArrayList<Token> getLtokens() {
 		return ltokens;

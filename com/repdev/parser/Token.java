@@ -79,24 +79,10 @@ public class Token {
 		after = null;
 		before = null;
 
-		// if(inString || commentDepth!=0)
-		// return;
-
-		for (int i = mypos - 1; i >= 0; i--) {
-			// if(!tokens.get(i).getInString() &&
-			// tokens.get(i).getCDepth()==0) {
-			before = tokens.get(i);
-			break;
-			// }
+		if( tokens != null){
+			before = tokens.get(Math.max(0,mypos-1));
+			after = tokens.get(Math.min(mypos+1, tokens.size() - 1));
 		}
-
-		for (int i = mypos + 1; i < tokens.size(); i++) {
-			// if(!tokens.get(i).getInString() &&
-			// tokens.get(i).getCDepth()==0) {
-			after = tokens.get(i);
-			break;
-		}
-		// }
 	}
 	
 	public Color getSpecialBackground() {

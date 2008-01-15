@@ -457,10 +457,20 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			if( DEFAULT_FONT != null)
 				txt.setFont(DEFAULT_FONT);
 		}
+		
 		highlighter = new SyntaxHighlighter(parser);
 		setLineColor(highlighter);
 		
 		final EditorComposite tempEditor = this;
+		
+		txt.addDisposeListener(new DisposeListener(){
+
+			public void widgetDisposed(DisposeEvent e) {
+				if( parser != null)
+					parser.cleanupTokenCache();
+			}
+			
+		});
 		
 		txt.addFocusListener(new FocusListener(){
 
