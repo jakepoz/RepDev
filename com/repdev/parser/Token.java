@@ -81,7 +81,8 @@ public class Token {
 
 		if( tokens != null){
 			before = tokens.get(Math.max(0,mypos-1));
-			after = tokens.get(Math.min(mypos+1, tokens.size() - 1));
+			if( mypos + 1 < tokens.size())
+				after = tokens.get(mypos+1);
 		}
 	}
 	

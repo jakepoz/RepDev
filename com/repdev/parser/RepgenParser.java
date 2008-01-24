@@ -430,13 +430,14 @@ public class RepgenParser {
 									tab.setText("&Tasks (" + tblTasks.getItemCount() + ")");
 								}
 							}
-							System.out.println("Background Error Checker has failed, but recovered:\n");
-
+							
 						}
 					}
 				});
 			} catch (Exception e) {
 				//Just ignore if anything happens to our UI while we are error checking.
+				System.out.println("Background Error Checker has failed, but recovered:\n");
+				e.printStackTrace();
 			}
 
 			errorCheckerWorker = null;
@@ -762,26 +763,6 @@ public class RepgenParser {
 		return allDefs;
 	}
 
-	private static HashSet<String> build(File in) {
-		HashSet<String> result = new HashSet<String>();
-
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(in));
-			String line;
-
-			while ((line = br.readLine()) != null) {
-				line = line.trim().toLowerCase();
-
-				if (line.length() != 0)
-					result.add(line);
-			}
-
-			br.close();
-		} catch (IOException e) {
-		}
-
-		return result;
-	}
 	private static String getFullString(Token cur, String fileData){
 		if( !cur.inString() )
 			return "";
