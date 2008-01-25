@@ -95,6 +95,11 @@ public class FileDialog {
 		shell.setText((mode == Mode.OPEN ? "Open" : "Save") + " Symitar File" + (mode == Mode.OPEN ? "(s)" : ""));
 		shell.setLayout(layout);
 		shell.setMinimumSize(600, 350);
+		
+		if( mode == Mode.SAVE )
+			shell.setImage(RepDevMain.smallActionSaveImage);
+		else
+			shell.setImage(RepDevMain.smallFileOpenImage);
 
 		Label nameLabel = new Label(shell, SWT.NONE);
 		nameLabel.setText("Filename:");
