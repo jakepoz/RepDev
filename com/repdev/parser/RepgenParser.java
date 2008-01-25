@@ -227,7 +227,7 @@ public class RepgenParser {
 
 
 				// Variable checking
-				synchronized(lvars){
+				synchronized(lvars){				
 					//Duplicate variables
 					for (final Variable var : lvars) {
 						varCache.add(new Variable(var));

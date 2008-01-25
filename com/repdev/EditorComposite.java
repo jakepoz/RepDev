@@ -701,10 +701,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'O':
 						RepDevMain.mainShell.showFileOpenMenu();
 						break;
-					case 't':
-					case 'T':
-						sendToFormatter();
-						break;
 					}
 				}
 				else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
@@ -718,10 +714,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'O':
 						RepDevMain.mainShell.showOptions();
 						break;
-					
 					case 'r':
 					case 'R':
 						surroundWithShell();
+						break;
+					case 't':
+					case 'T':
+						sendToFormatter();
 						break;
 					}
 				}
@@ -836,7 +835,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		});
 		
 		final MenuItem formatCode = new MenuItem(contextMenu, SWT.NONE);
-		formatCode.setText("Format Code (BETA)\tCtrl+T");
+		formatCode.setText("Format Code (BETA)\tCTRL+SHIFT+T");
 		formatCode.setImage(RepDevMain.smallFormatCodeImage);
 		formatCode.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent e) {
@@ -847,7 +846,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		new MenuItem(contextMenu,SWT.SEPARATOR);
 		
 		final MenuItem insertSnippet = new MenuItem(contextMenu, SWT.NONE);
-		insertSnippet.setText("Insert Snippet\t(Ctrl+SPACE) X 2");
+		insertSnippet.setText("Insert Snippet\t(CTRL+SPACE) X 2");
 		insertSnippet.setImage(RepDevMain.smallInsertSnippetImage);
 		insertSnippet.addSelectionListener(new SelectionAdapter() {
 		    public void widgetSelected(SelectionEvent e) {

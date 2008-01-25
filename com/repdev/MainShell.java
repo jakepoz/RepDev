@@ -2657,7 +2657,7 @@ public class MainShell {
 		});
 		
 		final MenuItem editFormat = new MenuItem(editMenu, SWT.PUSH);
-		editFormat.setText("&Format Code (BETA)\tCtrl+T");
+		editFormat.setText("&Format Code (BETA)\tCTRL+SHIFT+T");
 		editFormat.setImage(RepDevMain.smallFormatCodeImage);
 		editFormat.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
