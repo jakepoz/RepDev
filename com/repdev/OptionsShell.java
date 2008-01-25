@@ -19,6 +19,9 @@
 
 package com.repdev;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,6 +29,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -45,6 +49,7 @@ public class OptionsShell {
 	private Text serverText,portText;
 	private Spinner tabSpinner;
 	private Label serverLabel,portLabel;
+	private Combo styleCombo;
 
 	private void create(Shell parent) {
 		FormLayout layout = new FormLayout();
@@ -129,6 +134,10 @@ public class OptionsShell {
 
 				RepDevMain.FORGET_PASS_ON_EXIT = devForgetBox.getSelection();
 				
+				if(styleCombo.getSelectionIndex() > -1)
+				    Config.setStyle(styleCombo.getItem(styleCombo.getSelectionIndex()));
+				
+				
 				shell.close();
 			}
 		});
@@ -150,6 +159,20 @@ public class OptionsShell {
 		tabSpinner.setMaximum(99);
 		tabSpinner.setMinimum(0);
 		tabSpinner.setSelection(Config.getTabSize());
+		
+		Label styleLabel = new Label(editorGroup, SWT.NONE);
+		styleLabel.setText("Style");
+		
+		styleCombo = new Combo(editorGroup, SWT.DROP_DOWN);
+		File dir = new File("styles\\");
+		if( dir.isDirectory() ) {
+		    for( String file: dir.list() ) {
+			if( file.endsWith(".xml") ) styleCombo.add(file.substring(0, file.length()-4));
+		    }
+		}
+		
+		if( Config.getStyle() != null ) 
+		    styleCombo.setText(Config.getStyle());
 		
 		/// Developer Options (dev's only :D)
 		Group devGroup = new Group(shell, SWT.NONE);
@@ -234,6 +257,7 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
+		data.width = 120;
 		tabLabel.setLayoutData(data);
 
 		data = new FormData();
@@ -241,6 +265,18 @@ public class OptionsShell {
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(0);
 		tabSpinner.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(tabSpinner);
+		data.width = 120;
+		styleLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(styleLabel);
+		data.top = new FormAttachment(tabSpinner);
+		data.right = new FormAttachment(100);
+		styleCombo.setLayoutData(data);
 		
 		// Developer Options
 		data = new FormData();

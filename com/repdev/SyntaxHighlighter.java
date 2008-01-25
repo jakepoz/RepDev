@@ -92,7 +92,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 		FONT = cur;
 		
-		loadStyle(styleName);
+		loadStyle(Config.getStyle());
 	}
 
 	public SyntaxHighlighter(RepgenParser parser) {

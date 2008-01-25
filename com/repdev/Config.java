@@ -40,6 +40,8 @@ public class Config implements Serializable {
 	private int runOptionsQueue = -1;
 	private int rotkeyp=0, rotkeyu=0;
 	
+	private String style = "default.xml";
+	
 	@SuppressWarnings("unused")
 	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.
 							//UPDATE: Ok, this has been removed, however, you can't remove items from Serialized classes.
@@ -192,6 +194,14 @@ public class Config implements Serializable {
 	
 	public static void setPort(int p) {
 		me.port = p;
+	}
+	
+	public static String getStyle() {
+	    return me.style;
+	}
+	
+	public static void setStyle(String s) {
+	    me.style = s;
 	}
 
 }
