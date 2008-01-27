@@ -85,6 +85,7 @@ public class AboutBoxShell {
 	private void createShell() {
 		shell = new Shell(SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
 		shell.setText("About RepDev");
+		shell.setImage(RepDevMain.smallProgramIcon);
 		
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 0;

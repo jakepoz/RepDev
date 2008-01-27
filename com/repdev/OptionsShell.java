@@ -161,7 +161,7 @@ public class OptionsShell {
 		tabSpinner.setSelection(Config.getTabSize());
 		
 		Label styleLabel = new Label(editorGroup, SWT.NONE);
-		styleLabel.setText("Style");
+		styleLabel.setText("Style (requires restart)");
 		
 		styleCombo = new Combo(editorGroup, SWT.DROP_DOWN);
 		File dir = new File("styles\\");
@@ -229,27 +229,27 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
-		data.width = 130;
+		data.width = 140;
 		serverLabel.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(serverLabel);
 		data.top = new FormAttachment(0);
 		data.right = new FormAttachment(100);
-		data.width = 120;
+		data.width = 140;
 		serverText.setLayoutData(data);
 		
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(serverText);
-		data.width = 130;
+		data.width = 140;
 		portLabel.setLayoutData(data);
 		
 		data = new FormData();
 		data.left = new FormAttachment(portLabel);
 		data.top = new FormAttachment(serverText);
 		data.right = new FormAttachment(100);
-		data.width = 120;
+		data.width = 140;
 		portText.setLayoutData(data);
 
 
@@ -257,7 +257,7 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
-		data.width = 120;
+		data.width = 160;
 		tabLabel.setLayoutData(data);
 
 		data = new FormData();
@@ -269,7 +269,7 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(tabSpinner);
-		data.width = 120;
+		data.width = 160;
 		styleLabel.setLayoutData(data);
 		
 		data = new FormData();
