@@ -103,6 +103,21 @@ public abstract class SymitarSession {
 		}		
 	}
 	
+	/**
+	 * Helper method for runRepGen stuff
+	 * @param progress
+	 * @param value
+	 * @param text
+	 * @param str
+	 */
+	protected void setProgress(ProgressBar progress, int value, Text text, String str){
+		if( progress != null && !progress.isDisposed() )
+			progress.setSelection(value);
+		
+		if( text != null && str != null && !text.isDisposed())
+			text.setText(str.replace("\r", "\n"));
+	}
+	
 	public abstract RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter);
 
 	/**

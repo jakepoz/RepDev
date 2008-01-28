@@ -159,7 +159,9 @@ public class TestingSymitarSession extends SymitarSession {
 
 	@Override
 	public RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
-		
+		setProgress(progress, 50, text, "Answer Prompts");
+		prompter.getPrompt("Test");
+		setProgress(progress, 100, text, "Error");
 		return new RunRepgenResult(-1,0);
 	}
 

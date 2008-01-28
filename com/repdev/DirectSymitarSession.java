@@ -915,20 +915,6 @@ public class DirectSymitarSession extends SymitarSession {
 		return result;
 	}
 	
-	/**
-	 * Helper method for runRepGen stuff
-	 * @param progress
-	 * @param value
-	 * @param text
-	 * @param str
-	 */
-	private void setProgress(ProgressBar progress, int value, Text text, String str){
-		if( progress != null && !progress.isDisposed() )
-			progress.setSelection(value);
-		
-		if( text != null && str != null && !text.isDisposed())
-			text.setText(str.replace("\r", "\n"));
-	}
 	
 	/**
 	 * Queue, -1 for first available,
