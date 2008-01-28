@@ -26,6 +26,10 @@ CREATEFINANCEFROMCREDREP|Creates Finance records for a loan application based on
 	ErrorText|If an error occurs the error will be stored in this variable|CHARACTER
 CTRLCHR|Converts the enclosed expression into a single control character|NUMBER
 	Expression|Numerical value of the control character desired|NUMBER
+DATE|Converts a sequence of three numerics to a date value|DATE
+	MonthVar|A number representing the month (-2200 to +2200)|NUMBER
+	DayVar|A number representing the day (1 to 31)|NUMBER
+	YearVar|A number representing the year (0 to 178 or 1900 to 2078)|NUMBER
 DATEOFFSET|Adjusts a date by the specified number of months and days|DATE
 	STARTDATE|Date that is to be adjusted|DATE
 	MONTHCOUNT|Numerical Constant, variable, or expression of the months to be adjusted by|NUMBER
@@ -158,6 +162,10 @@ FILEWRITELINE|Write to an open file beginning at the current byte position and a
 	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
 FLOAT|Converts a mathematical expression into a floating point value|FLOAT
 	Expression|Mathematical Expression that is desired as a floating point value|NUMBER,CODE,MONEY,DATE,RATE
+FLOATVALUE|A statement function which converts a string into a floating point variable|FLOAT
+	String|The input value's character string in scientific notation|CHARACTER
+	FloatVar|The variable to receive the converted value|FLOAT
+	ErrorPos|The postion of the error in the cahracter string|NUMBER
 FLOOR|Returns a number value that is less than or equal to the specified mathematical expression|NUMBER
 	Expression|Mathematical Expression in which the closest integer less than or equal to the expression is desired|NUMBER,FLOAT,MONEY
 FORMAT|Converts a numeric value to a specified pattern of characters|CHARACTER,NUMBER,MONEY,DATE,RATE,CODE
@@ -197,10 +205,47 @@ GETDATARATE|Retrieves the current value of a rate field in Parameter of Console 
 	Type4|Optional,Argument specific to the Parameter or Console field you are accessing|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE
 HOUR|Returns the hour value of a time stored in HHMM format|NUMBER
 	Expression|Time expression in HHMM format to return the hour value|NUMBER
+HPBOXDRAW|Print spec used to draw a box on a laser page|Null
+	X1|X coordinate of top left corner (Up to 2400 for Portrait, 3000 for Landscape)|NUMBER
+	Y1|Y coordinate of top left corner (Up to 3000 for Portrait, 2400 for Landscape)|NUMBER
+	X2|X coordinate of bottom right corner|NUMBER
+	Y2|Y coordinate of bottom right corner|NUMBER
+	Width|Line thickness (1 to 750)|NUMBER
+	FillLevel|Gray shading percentage (0=white to 100)|NUMBER
+HPESC|Print spec used to send ESC sequence to a laser printer|Null
+	String|Follow command with string|CHARACTER
+HPFONT|Print spec used to set font and size on a laser page|Null
+	FontNumber|Font number (0 to 44)|NUMBER
+	PointSize|Point size or pitch (4 to 127)|NUMBER
+HPLINEDRAW|Print spec used to draw a line on a laser page|Null
+	X1|X coordinate of end one (Up to 2400 for Portrait, 3000 for Landscape)|NUMBER
+	Y1|Y coordinate of end one (Up to 3000 for Portrait, 2400 for Landscape)|NUMBER
+	X2|X coordinate of end two|NUMBER
+	Y2|Y coordinate of end two|NUMBER
+	Width|Line thickness (1 to 750)|NUMBER
+HPLINESPERINCH|Print spec used to set vertical lines per inch on a laser page|Null
+	LPI|Lines per inch (1=300 lpi to 48=6.24 lpi)|NUMBER
+HPRESET|Print spec used to reset page size/orientation to factory defaults on a laser printer|Null
+HPSETUP|Print spec used to set page size/orientation on a laser printer|Null
+	Size|Page size (e.g. Letter, Legal)|CHARACTER
+	Orientation|Page orientation (e.g. Portrait, Landscape)|CHARACTER
+HPUNDERLINE|Print spec used to turn on/off underlining on a laser page|Null
+	Mode|1=On, 0=Off|NUMBER
+HPXPOS|Print spec used to set horizotal position on a laser page|Null
+	Xpos|X coordinate position (Up to 2400 for Portrait, 3000 for Landscape)|NUMBER
+HPYPOS|Print spec used to set vertical position on a laser page|Null
+	Ypos|Y coordinate position (Up to 3000 for Portrait, 2400 for Landscape)|NUMBER
+HTMLVIEWLINE|Display HTML command to Windows screen|Null
+	HTMLLINE|Character line of HTML, enclosed in double quotes|CHARACTER
 INT|Returns the integer part of a given expression|NUMBER
 	Expression|Expression where the integer value is desired|NUMBER,MONEY,FLOAT
+INITSUBROUTINE|Initializes the subrouting variable passing (up to 60 arguments)|Null
+	ErrorText|Error message returned if error occured; blank otherwise|CHARACTER
 LENGTH|Returns the number of characters in a character expression|CHARACTER
 	CharacterExpression|Character Expression where the length of the expression is desired|CHARACTER
+LOANPROJECTINIT|Initializes the default loan projection variables (only in SETUP, PRINT, TOTAL)|Null
+	DataSource|Data Source (0 to 4)|NUMBER
+	ParameterType|Parameter Default Type (Loan Number)|NUMBER
 LOG|Returns the natural logarithm of an expression|FLOAT
 	Expression|Arithmetic Expression where the natural logarithm of that expression is desired|NUMBER,CODE,FLOAT
 LOWERCASE|Converts alphabetic characters in an expression to lowercase|CHARACTER
@@ -222,8 +267,14 @@ NUMBER|Converts a money, code, float, or rate value into a number value|NUMBER
 	Expression|Arithmetic expression to be expressed as a number|MONEY,CODE,FLOAT,RATE
 NUMBERREAD|Prompts the user for input in a batch program and expects a number value response|NUMBER
 	Prompt|Prompt that the user sees when running the program|CHARACTER
+OUTPUTSWITCH|Change the current output channel to a different one|Null
+	OutputChannel|The channel to switch output to|NUMBER
+	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER	
 PASSWORDHASH|Used with the MD5HASH function to encrypt and decrypt audio and home banking codes/passwords|CHARACTER
 	Expression|String Expression to be encrypted or decrypted|CHARACTER
+POPUPMESSAGE|Generate a popup message window to the user (DEMAND SpecFiles in the SETUP division)|Null
+	MsgType|The type of popup message (0=Info, 1=Warn, 2=Error)|NUMBER
+	MsgText|The text to display in the popup message|CHARACTER
 PWR|Returns the float value of raising on numeric value to the power of another|FLOAT
 	ArithmeticExpression1|Numerical value to be raised to a power|NUMBER
 	ArithmeticExpression2|Numerical value used as the exponent|NUMBER
@@ -243,12 +294,23 @@ SEGMENT|Returns a specified part of a character expression|CHARACTER
 	CharacterExpression|Character Expression to segment|CHARACTER
 	StartPOS|Starting position to start searching through the Character Expression|NUMBER
 	EndPOS|Ending position to stop searching through the Character Expression|NUMBER
+SCREENXYPOS|Positions the cursor to a specified location|Null
+	Column|X position (1 to 80)|NUMBER
+	Row|Y position (1 to 24)|NUMBER
 UPPERCASE|Converts a character expression to all uppercase characters|CHARACTER
 	CharacterExpression|Character Expression that is desired to be in all uppercase letters|CHARACTER
+VALIDATEFIELDSET|Allows setting of values in up to 30 fields (used in Validation)|Null
+	RecordType|Type=Account,GL,AcctPay,Payee,Check,Inventory,Remittance|Null
+	FieldMnemonic|Name of desired field|Null
+	Value|Value to set Mnemonic to|NUMBER,CHARACTER,CODE,MONEY,DATE,RATE 
+VALUE|Function that returns a numeric value of a character string|NUMBER
+	String|The character string to convert to a numeric value|CHARACTER
 YEAR|Returns a value equivalent to the two-digit year in a date expression|NUMBER
 	DateExpression|Date expression where the two-digit year is desired|DATE
 YESNOREAD|Displays a prompt, waits for a Y/N response, then returns true or false|Boolean
 	Prompt|A Y/N question where the answer is used in a Boolean expression|CHARACTER
+YESNOPROMPT|Displays prompt in a popup box with yes/no buttons and returns selected button|Null
+	Prompt|Prompt string|CHARACTER
 	
 CHARACTER
 GetFieldDataMax
@@ -258,7 +320,6 @@ GetFieldMnemonic
 GetFieldName
 GetFieldNumber
 COPYAPP
-DATE
 DIALOGINTROTEXT
 DIALOGNEWCOLUMN
 DIALOGPROMPTCHAR
@@ -283,27 +344,11 @@ DIALOGTEXTLISTOPTION
 DIALOGTEXTLISTSTART
 DIVPROJECTINIT
 
-FLOATVALUE
-HPBOXDRAW
-HPESC
-HPFONT
-HPLINEDRAW
-HPLINESPERINCH
-HPRESET
-HPSETUP
-HPUNDERLINE
-HPXPOS
-HPYPOS
-HTMLVIEWLINE
-INITSUBROUTINE
-LOANPROJECTINIT
+
 OUPUTCLOSE
 OUTPUTOPEN
-OUTPUTSWITCH
-POPUPMESSAGE
-SCREENXYPOS
-VALIDATEFIELDSET
-VALUE
+
+
 WINCODEBIGMENUINIT
 WINCODEBIGMENUOPTION
 WINCODEBIGMENUSELECT
@@ -344,4 +389,3 @@ WINDDEDISCONNECT
 WINDDEEXECUTE
 WINDDEPOKEDATA
 WINDOWSSEND
-YESNOPROMPT 

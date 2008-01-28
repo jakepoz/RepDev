@@ -47,10 +47,12 @@ public class FunctionLayout {
 
 		Pattern argPattern = Pattern.compile("\\t(.*)\\|(.*)\\|(.*)");
 		Matcher argMatcher;
-
+		
+		String line = null;
+		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(new File("functions.txt")));
-			String line;
+			
 			Function cur = null;
 
 			while ((line = br.readLine()) != null) {
@@ -102,6 +104,13 @@ public class FunctionLayout {
 			});
 
 		} catch (IOException e) {
+			System.err.println("Cannot load function definitions due to an IO error");
+		}
+		catch( IllegalArgumentException e){
+			if( line != null)
+				System.err.println("Error parsing Function Defintions on line: " + line);
+			else
+				System.err.println("Error parsing function defintions");
 		}
 	}
 

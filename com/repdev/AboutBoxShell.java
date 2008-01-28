@@ -71,6 +71,7 @@ public class AboutBoxShell {
 		  +"Michael Webb   - Documentation\n"
 		  +"Yoni Kristt    - Documentation\n"
 		  +"Ken Kondo      - Documentation\n"
+		  +"William Hampe  - Documentation\n"
 		  +"Plus, all of our snippet authors!\n"
 		  +"\n\n"
 		  +"A special thanks to Greg Varnell and Trust Data Solutions\n"

@@ -163,7 +163,7 @@ public class OptionsShell {
 		Label styleLabel = new Label(editorGroup, SWT.NONE);
 		styleLabel.setText("Style (requires restart)");
 		
-		styleCombo = new Combo(editorGroup, SWT.DROP_DOWN);
+		styleCombo = new Combo(editorGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 		File dir = new File("styles\\");
 		if( dir.isDirectory() ) {
 		    for( String file: dir.list() ) {
