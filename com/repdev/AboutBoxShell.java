@@ -68,6 +68,7 @@ public class AboutBoxShell {
 		  +"Ryan Schultz   - Programmer\n"
 		  +"Sean Delaney   - Programmer\n"
 		  +"Bruce Chang    - Programmer/Documentation\n"
+		  +"Greg Varnell   - Web hosting\n"
 		  +"Michael Webb   - Documentation\n"
 		  +"Yoni Kristt    - Documentation\n"
 		  +"Ken Kondo      - Documentation\n"
