@@ -410,21 +410,21 @@ public class SuggestShell {
 
 		if( snippetMode){ //If we are in snippet mode, we always want the list to show ALL available snippets, but still want to update the tooltip
 						  //to show documentation - Bruce Chang's idea, I chagned it a bit
-			int largestMatch = -1;
+			boolean found = false;
 			
 			for( TableItem item : table.getItems()){
 				if( item.getData("snippet") instanceof Snippet ){
 					Snippet cur = (Snippet)item.getData("snippet");
-					int dif = firstDifferenceLoc(tokenStr,cur.getTitle().toLowerCase());
 					
-					if ( dif > 0 && dif > largestMatch){
+					if ( cur.getTitle().toLowerCase().startsWith(tokenStr)){
 						table.setSelection(item);
-						largestMatch = dif;
+						found = true;
+						break;
 					}
 				}
 			}
 			
-			if( largestMatch == -1 ) 
+			if( !found) 
 				table.setSelection(0);
 		}
 				
@@ -692,18 +692,5 @@ public class SuggestShell {
 			toolText.setText("");
 	}
 	
-	
-	//Little helper method for showing tooltips
-	private int firstDifferenceLoc(String a, String b){
-		if( a.length() == 0 || b.length() == 0)
-			return -1;
-		
-		for( int y = 0; y < Math.min(b.length(), a.length()); y++)
-			if( a.charAt(y) != b.charAt(y))
-				return y;		
-		
-		return Math.min(b.length(), a.length());
-	}
-
 
 }
