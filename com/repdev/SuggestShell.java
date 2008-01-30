@@ -407,17 +407,16 @@ public class SuggestShell {
 		table.setRedraw(true);
 		table.setSelection(0);
 		
-		firstDifferenceLoc("em", "email");
-		
+
 		if( snippetMode){ //If we are in snippet mode, we always want the list to show ALL available snippets, but still want to update the tooltip
-						  //to show documentation
+						  //to show documentation - Bruce Chang's idea, I chagned it a bit
 			int largestMatch = -1;
 			
 			for( TableItem item : table.getItems()){
 				if( item.getData("snippet") instanceof Snippet ){
 					Snippet cur = (Snippet)item.getData("snippet");
 					int dif = firstDifferenceLoc(tokenStr,cur.getTitle().toLowerCase());
-					System.out.println("First Dif: " + tokenStr + "  " + cur.getTitle().toLowerCase() + "  " + dif);
+					
 					if ( dif > 0 && dif > largestMatch){
 						table.setSelection(item);
 						largestMatch = dif;
