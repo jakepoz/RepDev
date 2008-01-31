@@ -77,6 +77,7 @@ public class SuggestShell {
 	private StyledText txt;
 	private RepgenParser parser;
 	private boolean open = false, snippetMode = false;
+	private boolean notFound = false; // Bruce - added this var 01/31/08
 	private Token current;
 	private EditorComposite editor;
 	
@@ -433,11 +434,25 @@ public class SuggestShell {
 		if( RepDevMain.DEVELOPER)
 			System.out.println(System.currentTimeMillis()-timer);
 		
+		/* Bruce - Modified this section to the following 01/31/08
 		if( table.getItemCount() == 0){
 			close();
 			return false;
 		}
+		*/
 		
+		if( table.getItemCount() == 0){
+			// If no item is found, the non-snippet tool tip is not visible
+			// Set notFound to true so if the user press Ctrl+Space again, the
+			// snippet tool tip can be accessed.
+			notFound = true;
+			close();
+			return false;
+		}
+		else{
+			notFound = false;
+		}
+
 		return true;
 	}
 
@@ -445,6 +460,7 @@ public class SuggestShell {
 		StyledText txt = editor.getStyledText();
 
 		this.editor = editor;
+		notFound = false;
 		
 		if (txt == null || parser== null || shell == null || this.txt != txt || this.parser != parser|| shell.isDisposed()) {
 			this.txt = txt;
@@ -483,8 +499,10 @@ public class SuggestShell {
 			txt.addKeyListener(new KeyListener() {
 	
 				public void keyPressed(KeyEvent e) {
-					if (open && (e.keyCode == SWT.ESC || e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT))
+					if (open && (e.keyCode == SWT.ESC || e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT)){
 						close();
+						notFound = false; // Bruce - 01/31/08
+					}
 					
 					if (open && e.keyCode != SWT.ARROW_DOWN && e.keyCode != SWT.ARROW_UP && e.keyCode != SWT.PAGE_DOWN  && e.keyCode != SWT.PAGE_UP && e.keyCode != SWT.SHIFT)
 						update();
@@ -494,6 +512,11 @@ public class SuggestShell {
 						if( open && (e.character == ' ' && e.stateMask == SWT.CTRL)){
 							snippetMode = !snippetMode;
 							update();
+						}
+						// Bruce - inserted this if statement 01/31/08
+						// If notFound is true then open the snippet tool tip.
+						else if (notFound && (e.character == ' ' && e.stateMask == SWT.CTRL)){
+							open(true);
 						}
 						else
 							open();
@@ -509,8 +532,10 @@ public class SuggestShell {
 	
 			txt.addMouseListener(new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
-					if (open)
+					if (open){
+						notFound = false; // Bruce - 01/31/08
 						close();
+					}
 				}
 			});
 			
@@ -528,6 +553,7 @@ public class SuggestShell {
 
 							public void handleEvent(Event event) {
 								if( event.widget != table && event.widget != shell && event.widget != tooltip && event.widget != toolText){
+									notFound = false; // Bruce - 01/31/08
 									close();			
 								}
 								
