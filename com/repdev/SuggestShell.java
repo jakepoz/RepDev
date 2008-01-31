@@ -552,7 +552,7 @@ public class SuggestShell {
 						Display.getCurrent().addFilter(SWT.FocusIn, new Listener(){
 
 							public void handleEvent(Event event) {
-								if( event.widget != table && event.widget != shell && event.widget != tooltip && event.widget != toolText){
+								if( !event.widget.isDisposed() && event.widget != table && event.widget != shell && event.widget != tooltip && event.widget != toolText){
 									notFound = false; // Bruce - 01/31/08
 									close();			
 								}
