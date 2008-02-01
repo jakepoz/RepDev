@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Rain RepDev</name>
+    <version>1.0</version>
+    <author>Sean</author>
+    <description><![CDATA[Blue/grey hues to wash away your stress.]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="D1D7DF" fgColor="374280" line="94B7E1" token="99A9C9" font="Courier New" fontSize="11" />
+
+    <comments fgColor="#7F8896" />
+    <variables fgColor="#005CFF" style="bold" />    
+    <functions fgColor="#0000FF" style="bold" />    
+    <keywords fgColor="#0000FF" />
+    <task fgColor="#404040" style="bold" />
+    
+    <typeChar fgColor="#2B79F1" />
+    <typeDate fgColor="#2B79F1" style="bold" />
+    
+    <struct1 fgColor="#635DAF" />
+    <struct1Inv fgColor="#635DAF" bgColor="#9394CA" />    
+    <struct2 fgColor="#6C66B8" />
+    <struct2Inv fgColor="#6C66B8" bgColor="#9394CA" />    
+  </style>
+</RepDevStyle>

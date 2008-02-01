@@ -61,7 +61,12 @@ public class Style {
 	    e.printStackTrace();
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	    //e.printStackTrace(); was annoying since if config never sets style this will always trace
+		if( xmlFile.toString().contains("null") ){
+			System.out.println("Please set your default style");
+		}else{
+			System.out.println("Style does not exist");
+		}
 	}
     }
 

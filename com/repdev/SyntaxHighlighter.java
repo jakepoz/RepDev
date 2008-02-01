@@ -177,7 +177,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			STRUCT2_INVALID = new EStyle(style.getColor("struct2Inv", "fgColor"), style.getColor("struct2Inv", "bgColor"), style.getStyle("struct2Inv"));
 			TASK = new EStyle(style.getColor("task", "fgColor"), style.getColor("task", "bgColor"), style.getStyle("task"));
 		}catch(Exception e){
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			System.out.println("Invalid theme using default");
 			FONT_NAME = "Courier New";
 			FONT_SIZE = 11;

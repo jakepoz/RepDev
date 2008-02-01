@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Monochrome RepDev</name>
+    <version>1.0</version>
+    <author>Sean</author>
+    <description><![CDATA[Colors are for the weak.]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="F1F1F1" fgColor="1D1D1D" line="D5D5D5" token="ABABAB" font="Courier New" fontSize="11" />
+
+    <comments fgColor="#969AA1" />
+    <variables fgColor="#515151" style="bold" />    
+    <functions fgColor="#515151" style="bold" />    
+    <keywords fgColor="#515151" />
+    <task fgColor="#404040" style="bold" />
+    
+    <typeChar fgColor="#878787" />
+    <typeDate fgColor="#878787" style="bold" />
+    
+    <struct1 fgColor="#242424" />
+    <struct1Inv fgColor="#242424" bgColor="#7A7A7A" />    
+    <struct2 fgColor="#242424" />
+    <struct2Inv fgColor="#242424" bgColor="#7A7A7A" />    
+  </style>
+</RepDevStyle>

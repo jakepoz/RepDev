@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Sunset RepDev</name>
+    <version>1.0</version>
+    <author>Sean</author>
+    <description><![CDATA[This is a dark theme that is modeled after the colors of sunset.]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="060404" fgColor="B5380B" line="301C1A" token="672609" font="Courier New" fontSize="11" />
+    
+	<comments fgColor="#7F0000" />
+    <variables fgColor="#DEA46B" style="bold" />    
+    <functions fgColor="#E20000" style="bold" />    
+    <keywords fgColor="#E20000" />
+    <task fgColor="#404040" style="bold" />
+    
+    <typeChar fgColor="#CF0000" />
+    <typeDate fgColor="#CF0000" style="bold" />
+    
+    <struct1 fgColor="#FF2F00" />
+    <struct1Inv fgColor="#FF2F00" bgColor="#C44309" />    
+    <struct2 fgColor="#FF4F00" />
+    <struct2Inv fgColor="#FF4F00" bgColor="#C44309" />    
+  </style>
+</RepDevStyle>
