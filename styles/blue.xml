@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Blue RepDev</name>
+    <version>1.0</version>
+    <author>Sean</author>
+    <description><![CDATA[Random blue colors!]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="$blue" fgColor="$blue" line="$blue" token="$blue" font="Courier New" fontSize="11" />
+
+    <comments fgColor="$blue" />
+    <variables fgColor="$blue" style="bold" />    
+    <functions fgColor="$blue" style="bold" />    
+    <keywords fgColor="$blue" />
+    <task fgColor="$blue" style="bold" />
+    
+    <typeChar fgColor="$blue" />
+    <typeDate fgColor="$blue" style="bold" />
+    
+    <struct1 fgColor="$blue" />
+    <struct1Inv fgColor="$blue" bgColor="$blue" />    
+    <struct2 fgColor="$blue" />
+    <struct2Inv fgColor="$blue" bgColor="$blue" />    
+  </style>
+</RepDevStyle>

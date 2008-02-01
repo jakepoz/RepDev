@@ -85,8 +85,45 @@ public class Style {
 	int[] rgb = {0,0,0};
 	if( hexColor.equals("") ) return null; 
 	if( hexColor.indexOf("#") == 0 ) hexColor = hexColor.substring(1);
-	if( hexColor.length() != 6 && hexColor.length() != 3 ) return null;
-	if( hexColor.length() == 6 ){
+	if( hexColor.length() != 6 && hexColor.length() != 3 && hexColor.indexOf("$") == -1) return null;
+	if( hexColor.indexOf("$") == 0 ){
+		hexColor = hexColor.substring(1);
+		if( hexColor.indexOf("rand") != -1 ){
+			rgb[0] = (int)(Math.random()*255.0);
+			rgb[1] = (int)(Math.random()*255.0);
+			rgb[2] = (int)(Math.random()*255.0);
+		}else if( hexColor.indexOf("red") != -1){
+			rgb[0] = (int)(Math.random()*255.0);
+			rgb[1] = 7*16+7;
+			rgb[2] = 7*16+7;
+		}else if( hexColor.indexOf("green") != -1){
+			rgb[0] = 7*16+7;
+			rgb[1] = (int)(Math.random()*255.0);
+			rgb[2] = 7*16+7;
+		}else if( hexColor.indexOf("blue") != -1){
+			rgb[0] = 7*16+7;
+			rgb[1] = 7*16+7;
+			rgb[2] = (int)(Math.random()*255.0);
+		}else if( hexColor.indexOf("!") == 0){
+			hexColor = hexColor.substring(1);
+			if( hexColor.length() == 6 ){
+				int colors[] = {Integer.parseInt(hexColor.substring(0,1), 17),
+								Integer.parseInt(hexColor.substring(1,2), 17),
+								Integer.parseInt(hexColor.substring(2,3), 17),
+								Integer.parseInt(hexColor.substring(3,4), 17),
+								Integer.parseInt(hexColor.substring(4,5), 17),
+								Integer.parseInt(hexColor.substring(5,6), 17)};
+				for( int i = 0; i < 6; i++ ){
+					colors[i]=(colors[i]==16)?(int)(Math.random()*16):colors[i];
+				}
+				for( int i = 0; i < 3; i++ ){
+					rgb[i]=colors[i*2]*16+colors[i*2+1];
+				}
+			}else{
+				return null;
+			}
+		}
+    }else if( hexColor.length() == 6 ){
 		rgb[0] = Integer.parseInt(hexColor.substring(0,2), 16);
 		rgb[1] = Integer.parseInt(hexColor.substring(2,4), 16);
 		rgb[2] = Integer.parseInt(hexColor.substring(4), 16);

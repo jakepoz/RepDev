@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Red RepDev</name>
+    <version>1.0</version>
+    <author>Sean</author>
+    <description><![CDATA[Random red colors!]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="$red" fgColor="$red" line="$red" token="$red" font="Courier New" fontSize="11" />
+
+    <comments fgColor="$red" />
+    <variables fgColor="$red" style="bold" />    
+    <functions fgColor="$red" style="bold" />    
+    <keywords fgColor="$red" />
+    <task fgColor="$red" style="bold" />
+    
+    <typeChar fgColor="$red" />
+    <typeDate fgColor="$red" style="bold" />
+    
+    <struct1 fgColor="$red" />
+    <struct1Inv fgColor="$red" bgColor="$red" />    
+    <struct2 fgColor="$red" />
+    <struct2Inv fgColor="$red" bgColor="$red" />    
+  </style>
+</RepDevStyle>

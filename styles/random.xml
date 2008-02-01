@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Random RepDev</name>
+    <version>1.0</version>
+    <author>Sean</author>
+    <description><![CDATA[Isn't random more exciting? (lol random)]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="$rand" fgColor="$rand" line="$rand" token="$rand" font="Courier New" fontSize="11" />
+
+    <comments fgColor="$rand" />
+    <variables fgColor="$rand" style="bold" />    
+    <functions fgColor="$rand" style="bold" />    
+    <keywords fgColor="$rand" />
+    <task fgColor="$rand" style="bold" />
+    
+    <typeChar fgColor="$rand" />
+    <typeDate fgColor="$rand" style="bold" />
+    
+    <struct1 fgColor="$rand" />
+    <struct1Inv fgColor="$rand" bgColor="$rand" />    
+    <struct2 fgColor="$rand" />
+    <struct2Inv fgColor="$rand" bgColor="$rand" />    
+  </style>
+</RepDevStyle>

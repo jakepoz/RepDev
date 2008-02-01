@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Green RepDev</name>
+    <version>1.0</version>
+    <author>Sean</author>
+    <description><![CDATA[Random green colors!]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="$green" fgColor="$green" line="$green" token="$green" font="Courier New" fontSize="11" />
+
+    <comments fgColor="$green" />
+    <variables fgColor="$green" style="bold" />    
+    <functions fgColor="$green" style="bold" />    
+    <keywords fgColor="$green" />
+    <task fgColor="$green" style="bold" />
+    
+    <typeChar fgColor="$green" />
+    <typeDate fgColor="$green" style="bold" />
+    
+    <struct1 fgColor="$green" />
+    <struct1Inv fgColor="$green" bgColor="$green" />    
+    <struct2 fgColor="$green" />
+    <struct2Inv fgColor="$green" bgColor="$green" />    
+  </style>
+</RepDevStyle>
