@@ -312,14 +312,54 @@ YESNOREAD|Displays a prompt, waits for a Y/N response, then returns true or fals
 YESNOPROMPT|Displays prompt in a popup box with yes/no buttons and returns selected button|Null
 	Prompt|Prompt string|CHARACTER
 	
-CHARACTER
-GetFieldDataMax
-GetFieldDataType
-GetFieldHelpFile
-GetFieldMnemonic
-GetFieldName
-GetFieldNumber
-COPYAPP
+GetFieldDataMax|Returns character string length; code field max value; other = 0|NUMBER
+	RecordNumber|See RD.GETFIELD.DEF for list|NUMBER
+	FieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+	SubFieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+GetFieldDataType|Returns data type of selected field|NUMBER
+	RecordNumber|See RD.GETFIELD.DEF for list|NUMBER
+	FieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+	SubFieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+GetFieldHelpFile|Takes record/field/subfield number and returns field help file number|NUMBER
+	RecordNumber|See RD.GETFIELD.DEF for list|NUMBER
+	FieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+	SubFieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+GetFieldMnemonic|Takes record/field/subfield number and returns field mnemonic|CHARACTER
+	RecordNumber|See RD.GETFIELD.DEF for list|NUMBER
+	FieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+	SubFieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+GetFieldName|Takes record/field/subfield number and returns field name|CHARACTER
+	RecordNumber|See RD.GETFIELD.DEF for list|NUMBER
+	FieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+	SubFieldNumber|See RD.GETFIELD.DEF for list|NUMBER
+GetFieldNumber|Takes record number/field name and returns field number|NUMBER
+	RecordNumber|See RD.GETFIELD.DEF for list|NUMBER
+	Field Mnemonic|See RD.GETFIELD.DEF for list|CHARACTER
+	
+COPYAPP|Copy information from one loan application to another|NULL
+	SourceAppId|The application ID to be copied or moved|CHARACTER
+	DestAcct|The account to which the application is being copied or moved|CHARACTER
+	DestAppId|The ID of the destination application copy|CHARACTER
+	MoveFlag|0=Copy, 1=Move|NUMBER
+	PersonFlag|0=Do not copy, 1=Copy|NUMBER
+	FinFlag|0=Do not copy, 1=Copy|NUMBER
+	TrackingFlag|0=Do not copy, 1=Copy|NUMBER
+	NoteFlag|0=Do not copy, 1=Copy|NUMBER
+	PreferenceFlag|0=Do not copy, 1=Copy|NUMBER
+	CBIFlag|0=Do not copy, 1=Copy|NUMBER
+	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
+	
+OUTPUTCLOSE|Close the specified output channel|Null
+	OutputChannel|The output channel to close|NUMBER
+	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
+OUPUTOPEN|Opens an output destination|Null
+	DeviceType|Type of output device (e.g. OUTPUTDEVREPORT)|CHARACTER
+	PrintNumber|The printer number (if OUTPUTDEVLINEPRINT)|NUMBER
+	ReportTitle|The report title|CHARACTER
+	ReportCategory|A 10 character output identifier|CHARACTER
+    	OutputChannel|The channel number to open|NUMBER
+	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
+
 DIALOGINTROTEXT
 DIALOGNEWCOLUMN
 DIALOGPROMPTCHAR
@@ -343,10 +383,6 @@ DIALOGTEXTLISTEND
 DIALOGTEXTLISTOPTION
 DIALOGTEXTLISTSTART
 DIVPROJECTINIT
-
-
-OUPUTCLOSE
-OUTPUTOPEN
 
 
 WINCODEBIGMENUINIT
