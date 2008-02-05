@@ -75,6 +75,9 @@ public class AboutBoxShell {
 		  +"William Hampe  - Documentation\n"
 		  +"Plus, all of our snippet authors!\n"
 		  +"\n\n"
+		  +"Contributors: \n"
+		  +"Kathy Cope"
+		  +"\n\n"
 		  +"A special thanks to Greg Varnell and Trust Data Solutions\n"
 		  +"for hosting RepDev's subversion repository.";
 	
