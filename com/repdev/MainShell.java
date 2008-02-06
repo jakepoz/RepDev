@@ -1352,7 +1352,7 @@ public class MainShell {
 					 */
 
 					for (CTabItem item : mainfolder.getItems()) {
-						if (confirmClose(item) && (((SymitarFile) item.getData("file")).getSym() == sym)) {
+						if ( item.getData("file") != null && (((SymitarFile) item.getData("file")).getSym() == sym) && confirmClose(item)) {
 							clearErrorAndTaskList(item);
 							item.dispose();
 							setLineColumn();
