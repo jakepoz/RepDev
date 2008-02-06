@@ -134,8 +134,10 @@ public class OptionsShell {
 
 				RepDevMain.FORGET_PASS_ON_EXIT = devForgetBox.getSelection();
 				
-				if(styleCombo.getSelectionIndex() > -1)
+				if(styleCombo.getSelectionIndex() > -1) {
 				    Config.setStyle(styleCombo.getItem(styleCombo.getSelectionIndex()));
+				    SyntaxHighlighter.loadStyle(Config.getStyle());
+				}
 				
 				
 				shell.close();

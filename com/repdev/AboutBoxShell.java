@@ -83,8 +83,7 @@ public class AboutBoxShell {
 	
 	public static void show() {
 		AboutBoxShell me = new AboutBoxShell();
-		me.createShell();
-		
+		me.createShell();		
 	}
 	
 	private void createShell() {

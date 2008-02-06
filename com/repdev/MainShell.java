@@ -2858,7 +2858,7 @@ public class MainShell {
 		hltoggle.setImage(RepDevMain.smallHighlight);
 		hltoggle.setToolTipText("Toggles the coloring of text");
 		hltoggle.setEnabled(false);
-
+		
 		// EditorBar button actions
 		savetb.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
