@@ -854,6 +854,18 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		    } 
 		});
 		
+		// Bruce - Start 02/04/08
+		final MenuItem defineVar = new MenuItem(contextMenu, SWT.NONE);
+		defineVar.setText("Define Variable");
+		//defineVar.setImage(IMAGE HERE PLEASE);
+		defineVar.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String sTmpString=txt.getSelectionText();
+				defineVarShell(sTmpString);
+			} 
+		});
+		// Bruce - End
+		
 		new MenuItem(contextMenu,SWT.SEPARATOR);
 		
 		final MenuItem editCut = new MenuItem(contextMenu,SWT.PUSH);
@@ -904,6 +916,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					surroundWithDialog.setEnabled(true);
 					surroundWithPrint.setEnabled(true);
 				}
+				// Bruce - Start 02/04/08
+				// Enable the Defind Variable Menu option only if a word is highlighted
+				// and the DEFINE section is found.
+				if(isAlpha(txt.getSelectionText()) && canDefineVariable()){
+					defineVar.setEnabled(true);
+				}
+				else{
+					defineVar.setEnabled(false);
+				}
+				// Bruce - End
 			}
 
 		});
@@ -944,6 +966,141 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		highlight(doParse,true);
 	}
 	
+	// Bruce - Start 02/04/08
+
+	/**
+	 *  defineVariable will call the getDefineSection method and obtain an insertion
+	 *  point at the end of the DEFINE section.  Then it will take the sStr string and
+	 *  insert it.  But if the DEFINE section is not found, an error message will be
+	 *  displayed.
+	 *
+	 *  @param sStr preformulated string for defining a variable ex. XYZ=CHARACTER(5) ARRAY(99)
+	 */
+	public void defineVariable(String sStr){
+		int iEndPos, iCurPos;
+		
+		if(canDefineVariable()){
+			// Get the insertion point in the DEFINE section.
+			iEndPos = getDefineSection();
+			// Save the current position of the cursor so that we can return to this
+			// point after the variable has been inserted.
+			iCurPos = txt.getCaretOffset();
+			// Move the cursor to the insertion point and insert the variable definition.
+			txt.setCaretOffset(iEndPos);
+			txt.insert(sStr+"\n");
+			// if the original cursor is after the define section, then recalculate the
+			// new cursor position.
+			if(iCurPos>iEndPos){
+				iCurPos=iCurPos+sStr.length()+1;
+			}
+			txt.setSelection(iCurPos);
+			lineHighlight();
+		}
+		else{
+			//Alert no Define section Found.
+			MessageBox dialog = new MessageBox(this.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setMessage("DEFINE Section was not found.  Variable was not added.");
+			dialog.setText("Define Variable");
+			dialog.open();
+		}
+	}
+
+	/**
+	 * canDefineVariable will look for the DEFINE section and return true if the DEFINE
+	 * section is found, otherwise false is returned.
+	 */
+	public boolean canDefineVariable(){
+		ArrayList<Token> tokens = parser.getLtokens();
+		boolean b=false;
+		for( Token tok: tokens ) {
+
+// TEST CODE HERE
+//System.out.println(tok.getStr()+"\tCDepth:"+tok.getCDepth()+"\tEndDepth:"+tok.getEndCDepth()+"\tinDate:"+tok.inDate()+"\tinStr:"+tok.inString()+"\tisHead:"+tok.isHead()+"\tisRealHead:"+tok.isRealHead()+"\tisEnd:"+tok.isEnd()+"\tisRealEnd:"+tok.isRealEnd());
+			if(tok.inDefs()==false && tok.getBefore().inDefs()==true){
+				b=true;
+				//break;
+			}
+		}
+
+		return b;
+	}
+
+	/**
+	 * getDefineSection will look for the end of the Define section and return
+	 * the offset.  It will return -1 if the DEFINE section is not found.
+	 */
+	public int getDefineSection(){
+		ArrayList<Token> tokens = parser.getLtokens();
+
+		for( Token tok: tokens ) {
+			if(tok.inDefs()==false && tok.getBefore().inDefs()==true){
+				return tok.getStart();
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Calls and creates the Define Variable Shell, which will allow the user to select
+	 * the variable type. Define an array size as well as a comment.
+	 *
+	 * @param varName name of the variable to define.
+	 */
+	public void defineVarShell(String varName){
+		DefineVarShell.create(this, varName);
+	}
+	
+	/**
+	 *  isAlpha will return true if all the characters in str are A-Z or a-z.  Otherwise
+	 *  false is returned.  A null string will also return false.
+	 *
+	 *  @param str string to check
+	 */
+	public boolean isAlpha(String str){
+		
+		int i;
+		char c;
+		boolean b=true;
+		
+		if(str.length()==0)
+			return false;
+
+		for(i=0;i<str.length();i++){
+			c=str.toLowerCase().charAt(i);
+			if(!Character.isLetter(c)){
+				b=false;
+				break;
+			}
+		}
+		return b;
+	}
+
+	/**
+	 *  isNum will return true if all the characters in str are 0-9.  Otherwise
+	 *  false is returned.  A null string will also return false.
+	 *
+	 *  @param str string to check
+	 */
+	public boolean isNum(String str){
+		int i;
+		char c;
+		boolean b=true;
+		
+		if(str.length()==0)
+			return false;
+
+		for(i=0;i<str.length();i++){
+			c=str.toLowerCase().charAt(i);
+			if(!Character.isDigit(c)){
+				b=false;
+				break;
+			}
+		}
+		return b;
+	}
+
+	// Bruce - End
+
 	/**
 	 * Saves the currently open report
 	 * @param errorCheck Flag to check errors with symitar
