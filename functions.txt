@@ -360,28 +360,59 @@ OUPUTOPEN|Opens an output destination|Null
     	OutputChannel|The channel number to open|NUMBER
 	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
 
-DIALOGINTROTEXT
-DIALOGNEWCOLUMN
-DIALOGPROMPTCHAR
-DIALOGPROMPTCODE
-DIALOGPROMPTCOMBOEND
-DIALOGPROMPTCOMBOOPTION
-DIALOGPROMPTCOMBOSTART
-DIALOGPROMPTDATE
-DIALOGPROMPTLISTEND
-DIALOGPROMPTLISTOPTION
-DIALOGPROMPTLISTSTART
-DIALOGPROMPTMONEY
-DIALOGPROMPTNUMBER
-DIALOGPROMPTPASSWORD
-DIALOGPROMPTRATE
-DIALOGPROMPTYESNO
-DIALOGSTART
-DIALOGSTARTGROUPBOX
-DIALOGSTARTGROUPING
-DIALOGTEXTLISTEND
-DIALOGTEXTLISTOPTION
-DIALOGTEXTLISTSTART
+
+DIALOGINTROTEXT|Produces interactive, dynamic dialog box|Null
+	TextLine|Line of text to display (in double quotes)|CHARACTER
+DIALOGPROMPTCHAR|Command to prompt for a character value|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	MaxLength|Maximum allowable number of characters|NUMBER
+	Default|Default character value for the field (in double quotes)|CHARACTER
+DIALOGPROMPTCODE|Command to prompt for a code value|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	MaxValue|Maximum allowable value for field|NUMBER
+	Default|Default code value for the field|CODE
+DIALOGPROMPTCOMBOOPTION|Command adds an item to the combo box|Null
+	Value|Numeric value associated with the item (>=0)|NUMBER
+	Text|Text description of the item to display (<40)|CHARACTER
+DIALOGPROMPTCOMBOSTART|Command starts a combo box|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	Default|Default value to display|NUMBER
+DIALOGPROMPTDATE|Command to prompt for a date value|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	Default|Default date value for the field|DATE
+DIALOGPROMPTLISTOPTION|Command to add a list item|Null
+	Value|Numeric value of the item (>=0)|NUMBER
+	Text|Text description to display (in double quotes)|CHARACTER
+DIALOGPROMPTLISTSTART|Command to start a list box (in double quotes)|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	Default|Default item to display|NUMBER
+DIALOGPROMPTMONEY|Command to prompt for a money value|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	Default|Default money value for the field|MONEY
+DIALOGPROMPTNUMBER|Command to prompt for a number value|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	Default|Default number value for the field|NUMBER
+DIALOGPROMPTPASSWORD|Command to prompt for password|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	MaxLength|Maximum allowable number of characters|NUMBER
+	Default|Default character value for the field (in double quotes)|CHARACTER
+DIALOGPROMPTRATE|Command to prompt for a rate value|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	Default|Default rate value for the field|RATE
+DIALOGPROMPTYESNO|Command to prompt for Yes/No value|Null
+	Prompt|Line of text to display (in double quotes)|CHARACTER
+	Default|Default value for the field (1=Yes, 0=No)|NUMBER
+DIALOGSTART|Initiates a new dynamic dialog|Null
+	DialogTitle|Window title|CHARACTER
+	WHRatio|Width to height ratio (1% to 5000%)|RATE
+	Alignment|0=Left, 1=Right|NUMBER
+DIALOGSTARTGROUPBOX|Command to initialize a dialog group box|Null
+	GroupBoxTitle|Title of the group box|CHARACTER
+DIALOGTEXTLISTOPTION|Command to add an item to the list|Null
+	Text|Line of text to be displayed in the box|CHARACTER
+DIALOGTEXTLISTSTART|Command to start a text list box (in double quotes)|Null
+	Title|Title of the box|CHARACTER
+
 DIVPROJECTINIT
 
 

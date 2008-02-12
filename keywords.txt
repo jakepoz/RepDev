@@ -159,10 +159,16 @@ WITH|Used with ANY to list attributes|ANY ACCOUNT WITH (ACCOUNT:CLOSEDATE=SYSTEM
 WRAP|You can use the WRAP keyword when printing any value right-justified in a specific column|COL=30 WRAP SHARE:BALANCE 
 WRITE|When you use the FILEOPEN statement, you can open the file you want to access in a number of ways|"WRITE"
 
-DIALOGCLOSE
-DIALOGDISPLAY
-DIALOGENDGROUPBOX
-DIALOGENDGROUPING
+DIALOGCLOSE|Closes a dynamic dialog|
+DIALOGNEWCOLUMN|Command to start a new dialog column|
+DIALOGPROMPTCOMBOEND|Command to end a combo box|
+DIALOGPROMPTLISTEND|Command to end a list box|
+DIALOGENDGROUPBOX|Command to end a dialog group box|
+DIALOGENDGROUPING|Command to end column group|
+DIALOGSTARTGROUPING|Command to keeps prompts together in a column|
+DIALOGTEXTLISTEND|Command to end a text list box|
+DIALOGDISPLAY|Displays the dynamic dialog you created|
+
 
 FMPERFORM
 TRANPERFORM
