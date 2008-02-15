@@ -71,6 +71,8 @@ public class DefineVarShell {
 	 */
 	public void open() {
 		shell = new Shell(SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM );
+		shell.setImage(RepDevMain.smallDefineVarImage);
+		
 		// Open the GUI only if a single word is passed in.
 		if(ec.isAlpha(varName)){
 			FormLayout layout = new FormLayout();

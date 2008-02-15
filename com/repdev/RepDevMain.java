@@ -61,7 +61,7 @@ public class RepDevMain {
 	smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
 	smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
 	smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage, smallProgramIcon, smallInstallImage, smallCompareImage, smallSurroundImage, smallSurroundPrint,
-	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage, smallFunctionImage, smallSnippetImage, smallKeywordImage;
+	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage, smallFunctionImage, smallSnippetImage, smallKeywordImage, smallDefineVarImage;
 	public static final String IMAGE_DIR = "repdev-icons/";
 	
 	public static SnippetManager snippetManager;
@@ -181,7 +181,7 @@ public class RepDevMain {
 		smallFunctionImage = new Image(display, IMAGE_DIR + "small-function.png");
 		smallKeywordImage = new Image(display, IMAGE_DIR + "small-keyword.png");
 		smallSnippetImage = new Image(display, IMAGE_DIR + "small-snippet.png");
-	
+		smallDefineVarImage = new Image(display, IMAGE_DIR + "small-define-var.png");
 	}
 
 	/**
