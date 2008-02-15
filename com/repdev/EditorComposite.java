@@ -165,15 +165,17 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 	
 	public boolean canUndo(){
-		return undos.size() > 0;
+		return undos.size() > 0 && !snippetMode;
 	}
 	
 	public boolean canRedo(){
-		return redos.size() > 0;	
+		return redos.size() > 0 && !snippetMode;	
 	}
 
 	public void undo() {
-	
+		if( !canUndo() )
+			return;
+		
 		try {
 			TextChange change;
 
@@ -223,7 +225,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 
 	public void redo() {
-
+		if( !canRedo() )
+			return;
+		
 		try {
 			TextChange change;
 
@@ -1342,7 +1346,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		
 		//Clear all other special backgrounds, possibly move this up to previous loop in future to make faster
 		for( Token tok : tokens){
-			if( tok.getSpecialBackground() != null){
+			if( tok.getSpecialBackground() != null && tok.getBackgroundReason() == Token.SpecialBackgroundReason.BLOCK_MATCHER){
 				tok.setSpecialBackground(null);
 				tok.setBackgroundReason(Token.SpecialBackgroundReason.NONE);
 				redrawTokens.add(tok);
