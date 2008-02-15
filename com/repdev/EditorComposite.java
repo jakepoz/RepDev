@@ -1325,16 +1325,17 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		//Find your current token
 		for( Token tok: tokens ) {
-			if(!found)
-				tokloc++;	
-			
+			tokloc++;
+
 			if( tok.getStart() <= txt.getCaretOffset() && tok.getEnd() >= txt.getCaretOffset() ) {
 				cur = tok;
-				found = true;
-				//break;
+				break;
 			}
-			
-			if( tok.getSpecialBackground() != null && tok.getBackgroundReason() == Token.SpecialBackgroundReason.BLOCK_MATCHER){
+		}
+		
+		//Clear all other special backgrounds, possibly move this up to previous loop in future to make faster
+		for( Token tok : tokens){
+			if( tok.getSpecialBackground() != null){
 				tok.setSpecialBackground(null);
 				tok.setBackgroundReason(Token.SpecialBackgroundReason.NONE);
 				redrawTokens.add(tok);
