@@ -77,7 +77,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	private StyledText txt;
 	private CTabItem tabItem;
 
-	private static final int UNDO_LIMIT = 500;
+	private static final int UNDO_LIMIT = 1000;
 	private Stack<TextChange> undos = new Stack<TextChange>();
 	private Stack<TextChange> redos = new Stack<TextChange>();
 
@@ -182,9 +182,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					undos.pop();
 
 				undoMode = 2;
+				
+				//Ok, I am only allowing the last undo in the redo stack
+				redos.clear();
+				
 				txt.setRedraw(false);
+				
 				if( parser != null)
 					parser.setReparse(false);
+				
+				
 				
 				while (!(undos.size() == 0 || (change = undos.pop()).isCommit())) {
 					txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
