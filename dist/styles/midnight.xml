@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Midnight</name>
+    <version>1.0</version>
+    <author>Ryan</author>
+    <description><![CDATA[A nice dark blue theme]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="#220044" fgColor="#ffffff" line="#444499" token="#FFDD00" font="Courier New" fontSize="10" />
+
+    <comments fgColor="#7F7F7F" />
+    <variables fgColor="#CCCC00" style="bold" />    
+    <functions fgColor="#CCCC00" style="bold" />    
+    <keywords fgColor="#FFB200" />
+    <task fgColor="#404040" style="bold" />
+    
+    <typeChar fgColor="#FF0000" />
+    <typeDate fgColor="#FF0000" style="bold" />
+    
+    <struct1 fgColor="#FF00FF" />
+    <struct1Inv fgColor="#FF00FF" bgColor="#7F0000" />    
+    <struct2 fgColor="#FF7FFF" />
+    <struct2Inv fgColor="#FF7FFF" bgColor="#7F0000" />    
+  </style>
+</RepDevStyle>

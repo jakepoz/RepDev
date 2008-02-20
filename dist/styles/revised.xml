@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Revised RepDev</name>
+    <version>1.0</version>
+    <author>Sean (originally by Jake, with original style by ryan)</author>
+    <description><![CDATA[This is the default/standard repdev style with a twist. Adjusted to be more appealing.]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="F3F3F3" fgColor="300030" line="DEE6FF" token="A7A9BC" font="Courier New" fontSize="11" />
+
+    <comments fgColor="#7F7F7F" />
+    <variables fgColor="#300030" style="bold" />    
+    <functions fgColor="#4848E0" style="bold" />    
+    <keywords fgColor="#BE0000" />
+    <task fgColor="#404040" style="bold" />
+    
+    <typeChar fgColor="#3C3CA3" />
+    <typeDate fgColor="#3C3CA3" style="bold" />
+    
+    <struct1 fgColor="#FF00FF" />
+    <struct1Inv fgColor="#FF00FF" bgColor="#7F0000" />    
+    <struct2 fgColor="#FF7FFF" />
+    <struct2Inv fgColor="#FF7FFF" bgColor="#7F0000" />    
+  </style>
+</RepDevStyle>
