@@ -413,6 +413,28 @@ DIALOGTEXTLISTOPTION|Command to add an item to the list|Null
 DIALOGTEXTLISTSTART|Command to start a text list box (in double quotes)|Null
 	Title|Title of the box|CHARACTER
 
+
+WINDDECONNECT|This command connects with another Windows application using Dynamic Data Exchange (DDE) under a specified topic.|NUMBER,CHARACTER
+	Application Name|The DDE server program documentation tells you the Application Name and Topic to use|CHARACTER
+	Topic|The DDE server program documentation tells you the Application Name and Topic to use|CHARACTER
+	Conversation Number|Symitar updates that variable with a number that identifies the conversation that connected.|NUMBER
+	Error Text|If an error occurs while Episys is attempting to establish a DDE connection, Episys updates that variable with a short error message. If there are no errors, that variable is blank.|CHARACTER
+WINDDEDISCONNECT|This command disconnects a previously connected Dynamic Data Exchange (DDE) conversation.|CHARACTER
+	Conversation Number|Number that identifies the conversation that is connected|NUMBER
+	Error Text|If an error occurs while Episys is attempting to disconnect a DDE conversation, Episys updates that variable with a short error message.  If there are no errors, that variable is blank.|CHARACTER
+WINDDEEXECUTE|This command executes a Dynamic Data Exchange (DDE) macro|CHARACTER
+	Conversation Number|Number that identifies the conversation that is connected|NUMBER
+	Macro String|The Macro String varies depending on the Windows application.|CHARACTER
+	Error Text|If an error occurs while Episys is attempting to establish a DDE connection, Episys updates that variable with a short error message. If there are no errors, that variable is blank.|CHARACTER
+WINDDEPOKEDATA|This command inserts Dynamic Data Exchange (DDE) data into a connected DDE conversation (an example of this is posting a value into a cell of a spreadsheet).|CHARACTER
+	Conversation Number|Number that identifies the conversation that is connected|NUMBER
+	DDE Text 1|The values for these fields vary depending on the Windows application. You must refer to your particular Windows application documentation for appropriate use.|CHARACTER
+	DDE Text 2|The values for these fields vary depending on the Windows application. You must refer to your particular Windows application documentation for appropriate use.|CHARACTER
+	Error Text|If an error occurs while Episys is attempting to establish a DDE connection, Episys updates that variable with a short error message. If there are no errors, that variable is blank.|CHARACTER
+WINDOWSSEND|Allows interaction between your specfile and the Windows environment.|NULL
+	Wincode|The RD.WINDOWS.DEF #INCLUDE file in the Report Generator Library contains the valid entries for WinCode. This file should be placed in the DEFINE division of your specfile.|NUMBER
+	Wintext|Text that is potentially used by the wincode for display.|CHARACTER
+
 DIVPROJECTINIT
 
 
@@ -451,8 +473,3 @@ WINCODEVIEWLINE
 WINCODEWARNINGMESSAGE
 WINCODEWINEXEC
 WINCODEYESNOQUESTION
-WINDDECONNECT
-WINDDEDISCONNECT
-WINDDEEXECUTE
-WINDDEPOKEDATA
-WINDOWSSEND
