@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.MessageBox;
 
 import com.repdev.parser.RepgenParser;
-
+ 
 /**
  *  DefineVarShell will display a GUI for the user to select the variable type.
  *  It also has the option to allow the user to define the character length and
