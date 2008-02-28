@@ -90,10 +90,8 @@ public class BackgroundSectionParser{
 	 * between the END statement and the next section title, nothing will be returned.
 	 * @return <B>String</B> Section Title
 	 */
-	public String whereAmI(int txtOffset){
+	public synchronized String whereAmI(int txtOffset){
 		String tmpTitle = "";
-		
-		waitIfParsing();
 		for(SectionInfo sec : sectionInfo){
 			if(txtOffset >= sec.getPos() && txtOffset <= sec.getLastInsertPos()+3){
 				tmpTitle = sec.getTitle();
@@ -108,8 +106,7 @@ public class BackgroundSectionParser{
 	 * Returns the array list of all the sectionInfo found.
 	 * @return <B>ArrayList</B> SectionInfo
 	 */
-	public ArrayList<SectionInfo> getList(){
-		waitIfParsing();
+	public synchronized ArrayList<SectionInfo> getList(){
 		return this.sectionInfo;
 	}
 	
@@ -135,8 +132,8 @@ public class BackgroundSectionParser{
 	 * Before obtaining the info for the section again, it will check to see if the info is
 	 * current.
 	 */
-	private void getSectionInfo(String section){
-		waitIfParsing();
+	private synchronized void getSectionInfo(String section){
+	
 		if(!curSection.equals(section.toLowerCase())){
 			curSection = section.toLowerCase();
 			curPos = -1;
@@ -156,27 +153,6 @@ public class BackgroundSectionParser{
 		}
 	}
 	
-	/**
-	 * This is an internal method that checks to see if the background parser
-	 * is still parsing, and wait if it is.
-	 */
-	private synchronized void waitIfParsing(){
-		boolean isParsing =  false;
-		
-		if(parsing){
-			System.out.println("Waiting for parseSections to complete");
-			isParsing = true;
-		}
-		if(parsing){
-			try{
-				wait();
-			}
-			catch (InterruptedException e) {System.out.println("Waiting...");}
-		}
-		if(isParsing){
-			System.out.println("parseSections is complete");
-		}
-	}
 	
 	/**
 	 * This is the main engine that parse out all of the sections along with the pointers.
@@ -185,6 +161,13 @@ public class BackgroundSectionParser{
 	private synchronized void parseSections() {
 		int curDepth = 0;
 		SectionInfo si = new SectionInfo();
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		sectionInfo.clear();
 		for(Token tok : token){
@@ -221,7 +204,6 @@ public class BackgroundSectionParser{
 		
 		curSection = "";
 		parsing = false;
-		notify();
 	}
 	
 	/**
