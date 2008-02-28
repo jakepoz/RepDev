@@ -62,6 +62,8 @@ import com.repdev.parser.Formatter;
 import com.repdev.parser.Include;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Token;
+import com.repdev.parser.BackgroundSectionParser;
+import com.repdev.parser.SectionInfo;
 
 /**
  * Main editor for repgen, help, and letter files
@@ -76,7 +78,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	private Color lineBackgroundColor, blockMatchColor;
 	private StyledText txt;
 	private CTabItem tabItem;
-
+	
+	// For Section Infos
+	private BackgroundSectionParser sec;
+	private int prevTxtLine = -1; // Used by the handleCaretChange method to determine if the cursor moved to another line.
+	
 	private static final int UNDO_LIMIT = 1000;
 	private Stack<TextChange> undos = new Stack<TextChange>();
 	private Stack<TextChange> redos = new Stack<TextChange>();
@@ -474,6 +480,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		
 		final EditorComposite tempEditor = this;
 		
+		// Load the Section Info
+		sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
+		
 		txt.addDisposeListener(new DisposeListener(){
 
 			public void widgetDisposed(DisposeEvent e) {
@@ -712,6 +721,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'O':
 						RepDevMain.mainShell.showFileOpenMenu();
 						break;
+					case 'g':
+					case 'G':
+						gotoSectionShell();
+						break;
 					}
 				}
 				else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
@@ -732,6 +745,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 't':
 					case 'T':
 						sendToFormatter();
+						break;
+					case 'd':
+					case 'D':
+						String sTmpString=txt.getSelectionText();
+						if(isAlphaNumeric(sTmpString))
+							defineVarShell(sTmpString);
 						break;
 					}
 				}
@@ -786,8 +805,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					else	
 						RepDevMain.mainShell.openFile(new SymitarFile(sym, fileStr, FileType.REPGEN));
 				}
-				
-				
+				else if(txt.getSelectionText().equalsIgnoreCase("CALL")) {
+					Token tmpToken;
+					
+					tmpToken = getTokenAt(txt.getCaretOffset());
+					if(tmpToken != null){
+						if(sec.exist(tmpToken.getStr())){
+							gotoSection(tmpToken.getStr());
+						}
+					}
+				}
 			}
 
 		});
@@ -867,8 +894,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		
 		// Bruce - Start 02/04/08
 		final MenuItem defineVar = new MenuItem(contextMenu, SWT.NONE);
-		defineVar.setText("Define Variable");
-		//defineVar.setImage(IMAGE HERE PLEASE);
+		defineVar.setText("Define Variable\tCTRL+SHIFT+D");
+		defineVar.setImage(RepDevMain.smallDefineVarImage);
 		defineVar.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String sTmpString=txt.getSelectionText();
@@ -877,6 +904,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		});
 		// Bruce - End
 		
+		final MenuItem gotoSection = new MenuItem(contextMenu, SWT.NONE);
+		gotoSection.setText("Goto Section\tCTRL+G");
+		//gotoSection.setImage(RepDevMain.xxxxx);
+		gotoSection.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				gotoSectionShell();
+			} 
+		});
 		new MenuItem(contextMenu,SWT.SEPARATOR);
 		
 		final MenuItem editCut = new MenuItem(contextMenu,SWT.PUSH);
@@ -930,7 +965,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				// Bruce - Start 02/04/08
 				// Enable the Defind Variable Menu option only if a word is highlighted
 				// and the DEFINE section is found.
-				if(isAlpha(txt.getSelectionText()) && canDefineVariable()){
+				if(isAlphaNumeric(txt.getSelectionText()) && sec.exist("define")){
 					defineVar.setEnabled(true);
 				}
 				else{
@@ -990,9 +1025,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void defineVariable(String sStr){
 		int iEndPos, iCurPos;
 		
-		if(canDefineVariable()){
+		if(sec.exist("define")){
 			// Get the insertion point in the DEFINE section.
-			iEndPos = getDefineSection();
+			iEndPos = sec.getLastInsertPos("define");
 			// Save the current position of the cursor so that we can return to this
 			// point after the variable has been inserted.
 			iCurPos = txt.getCaretOffset();
@@ -1017,41 +1052,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 
 	/**
-	 * canDefineVariable will look for the DEFINE section and return true if the DEFINE
-	 * section is found, otherwise false is returned.
-	 */
-	public boolean canDefineVariable(){
-		ArrayList<Token> tokens = parser.getLtokens();
-		boolean b=false;
-		for( Token tok: tokens ) {
-
-// TEST CODE HERE
-//System.out.println(tok.getStr()+"\tCDepth:"+tok.getCDepth()+"\tEndDepth:"+tok.getEndCDepth()+"\tinDate:"+tok.inDate()+"\tinStr:"+tok.inString()+"\tisHead:"+tok.isHead()+"\tisRealHead:"+tok.isRealHead()+"\tisEnd:"+tok.isEnd()+"\tisRealEnd:"+tok.isRealEnd());
-			if(tok.inDefs()==false && tok.getBefore().inDefs()==true){
-				b=true;
-				//break;
-			}
-		}
-
-		return b;
-	}
-
-	/**
-	 * getDefineSection will look for the end of the Define section and return
-	 * the offset.  It will return -1 if the DEFINE section is not found.
-	 */
-	public int getDefineSection(){
-		ArrayList<Token> tokens = parser.getLtokens();
-
-		for( Token tok: tokens ) {
-			if(tok.inDefs()==false && tok.getBefore().inDefs()==true){
-				return tok.getStart();
-			}
-		}
-		return -1;
-	}
-
-	/**
 	 * Calls and creates the Define Variable Shell, which will allow the user to select
 	 * the variable type. Define an array size as well as a comment.
 	 *
@@ -1061,6 +1061,63 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		DefineVarShell.create(this, varName);
 	}
 	
+	/**
+	 * Calls and creates the Goto Section Shell, which allows the user to select the Section/
+	 * Procedure to jump to.  The default selection will be the Section/Procedure the caret is
+	 * in.
+	 */
+	public void gotoSectionShell(){
+		GotoSectionShell.create(this, txt.getCaretOffset());
+	}
+	
+	/**
+	 * Return the list of SectionInfo
+	 * @return ArrayList<SectionInfo>
+	 */
+	public ArrayList<SectionInfo> getSectionInfoList(){
+		return sec.getList();
+	}
+	
+	/**
+	 * gotoSection will jump to the specified section, if it exists.
+	 * @param <B>section</B> - Name of the section/procedure
+	 */
+	public void gotoSection(String section){
+		if(!section.equals("") && sec.exist(section)){
+			txt.setCaretOffset(txt.getText().length());
+			txt.showSelection();
+			txt.setCaretOffset(sec.getPos(section));
+			handleCaretChange();
+			txt.showSelection();
+			lineHighlight();
+		}
+	}
+	
+	/**
+	 *  isAlphaNumeric will return true if all the characters in str are A-Z or a-z or 0-9.  Otherwise
+	 *  false is returned.  A null string will also return false.
+	 *
+	 *  @param str string to check
+	 */
+	public boolean isAlphaNumeric(String str){
+		
+		int i;
+		char c;
+		boolean b=true;
+		
+		if(str.length()==0)
+			return false;
+
+		for(i=0;i<str.length();i++){
+			c=str.toLowerCase().charAt(i);
+			if(!Character.isLetter(c) && !Character.isDigit(c)){
+				b=false;
+				break;
+			}
+		}
+		return b;
+	}
+
 	/**
 	 *  isAlpha will return true if all the characters in str are A-Z or a-z.  Otherwise
 	 *  false is returned.  A null string will also return false.
@@ -1109,7 +1166,33 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 		return b;
 	}
-
+	
+	/**
+	 * Returns the token pointed by offset.  If the pointer is at the begining or the
+	 * middle of a token, then that token is returned.  And if the pointer is at the end of
+	 * a token, then the next token is returned.  But if the pointer is after the last token
+	 * then null is returned.  NOTE: Make sure you check for null prior to using the returned
+	 * value
+	 *
+	 * @param offset
+	 * @return Token
+	 */
+	public Token getTokenAt(int offset){
+		int beforeTokenEnd = 0;
+		Token token = null;
+		
+		for(Token tok : parser.getLtokens()){
+			if(offset == 0){
+				token = tok;
+				break;
+			}
+			else if(offset >= tok.getBefore().getEnd() && offset < tok.getEnd()){
+				token = tok;
+				break;
+			}
+		}
+		return token;
+	}
 	// Bruce - End
 
 	/**
@@ -1317,7 +1400,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		ArrayList<Token> redrawTokens = new ArrayList<Token>();
 		
 		RepDevMain.mainShell.setLineColumn();
-		
 		if( parser == null )
 			return;
 		
@@ -1333,7 +1415,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 		
 		tokens = parser.getLtokens();
-
+		
 		//Find your current token
 		for( Token tok: tokens ) {
 			tokloc++;
@@ -1352,6 +1434,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				redrawTokens.add(tok);
 			}
 		}
+		
+		// Refresh the Section Info
+		if(prevTxtLine != txt.getLineAtOffset(txt.getCaretOffset())){
+			sec.refreshList(tokens, txt.getText());
+			prevTxtLine = txt.getLineAtOffset(txt.getCaretOffset());
+		}
+		
 		
 		found = false;
 		

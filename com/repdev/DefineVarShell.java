@@ -74,7 +74,7 @@ public class DefineVarShell {
 		shell.setImage(RepDevMain.smallDefineVarImage);
 		
 		// Open the GUI only if a single word is passed in.
-		if(ec.isAlpha(varName)){
+		if(ec.isAlphaNumeric(varName)){
 			FormLayout layout = new FormLayout();
 			layout.marginTop = 10;
 			layout.marginBottom = 10;

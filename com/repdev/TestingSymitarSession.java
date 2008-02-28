@@ -65,6 +65,7 @@ public class TestingSymitarSession extends SymitarSession {
 		System.out.println("Requesting File: " + file.getName() + " from Sym " + sym);
 
 		try {
+			Thread.sleep(500);
 			in = new BufferedReader(new FileReader("testdata" + System.getProperty("file.separator") + getSym() + "." + file.getType().toString() + "." + file.getName() + ".txt"));
 
 			while ((line = in.readLine()) != null) {
