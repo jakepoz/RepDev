@@ -162,13 +162,6 @@ public class BackgroundSectionParser{
 		int curDepth = 0;
 		SectionInfo si = new SectionInfo();
 		
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		sectionInfo.clear();
 		for(Token tok : token){
 			if(tok.isRealHead()){
