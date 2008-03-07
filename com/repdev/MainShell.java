@@ -796,7 +796,7 @@ public class MainShell {
 					return;
 				}
 
-				// Only allow if all thiings are the same type
+				// Only allow if all things are the same type
 				Object first = tree.getSelection()[0].getData();
 				boolean allSameType = true;
 
@@ -903,7 +903,7 @@ public class MainShell {
 							System.out.println("exists: " + exists);
 
 							if (exists && (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0) {
-								RepeatOperationShell dialog = new RepeatOperationShell(shell, "File " + destination.getName() + " already exits at the destination. Overwrite?");
+								RepeatOperationShell dialog = new RepeatOperationShell(shell, "File " + destination.getName() + " already exists at the destination. Overwrite?");
 								overwrite = dialog.open();
 
 								if ((overwrite & RepeatOperationShell.CANCEL) != 0) {
@@ -954,7 +954,7 @@ public class MainShell {
 									exists = Util.fileExists(newFile);
 
 								if (exists && (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0) {
-									RepeatOperationShell dialog = new RepeatOperationShell(shell, "File " + newFile.getName() + " already exits at the destination. Overwrite?");
+									RepeatOperationShell dialog = new RepeatOperationShell(shell, "File " + newFile.getName() + " already exists at the destination. Overwrite?");
 									overwrite = dialog.open();
 
 									if ((overwrite & RepeatOperationShell.CANCEL) != 0) {
