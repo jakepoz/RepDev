@@ -1009,7 +1009,7 @@ public class RepgenParser {
 				e.printStackTrace();
 			}
 			// parse(file.getName(),txt.getText(),txt.,end,end,ltokens,lvars);
-			System.out.println("Parse time: " + (System.currentTimeMillis() - time));
+			//System.out.println("Parse time: " + (System.currentTimeMillis() - time));
 		}
 	}
 
