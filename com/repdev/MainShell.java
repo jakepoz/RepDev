@@ -252,8 +252,10 @@ public class MainShell {
 		bottom.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
 				if (bottom.getSize().y < MIN_COMP_SIZE) {
-					frmSashHoriz.top = new FormAttachment(right.getSize().y - MIN_COMP_SIZE, right.getSize().y, 0);
-					right.layout();
+					if( right.getSize().y - MIN_COMP_SIZE >= 0 ){
+						frmSashHoriz.top = new FormAttachment(right.getSize().y - MIN_COMP_SIZE, right.getSize().y, 0);
+						right.layout();
+					}
 				}
 			}
 		});
