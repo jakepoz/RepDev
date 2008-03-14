@@ -19,11 +19,11 @@
 
 package com.repdev;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
@@ -70,6 +70,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -2738,6 +2739,22 @@ public class MainShell {
 				showAboutBox();
 			}
 		});
+		
+		if( RepDevMain.DEVELOPER ) { // TODO: Set as public for release.
+			MenuItem helpDocs = new MenuItem(helpMenu, SWT.PUSH);
+			helpDocs.setText("&Documentation");
+			helpDocs.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if( System.getProperty("os.name").startsWith("Windows") ) {
+						try {
+							Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler http://repdev.org/doc/repdev.html");
+						} catch (IOException e1) {
+							System.out.println("Error opening URL for repdev docs.  Please manually go to: http://repdev.org/doc/repdev.html");
+						}
+					}				
+				}			
+			});
+		}
 
 		shell.setMenuBar(bar);
 	}
