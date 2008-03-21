@@ -366,6 +366,12 @@ public class DirectSymitarSession extends SymitarSession {
 		if( cmd.getCommand().equals("MsgDlg") && cmd.getParameters().get("Text").contains("From PID") )
 			return readNextCommand();
 		else
+			//TODO:Fix logons for syms that require password updates,
+			//there is interception here for finding if symitar wants the password changed
+			//but this might not be the idea place to do it
+			if ( cmd.toString().indexOf("User Password NOT changed") != -1){
+				System.out.println("Please update your password");
+			}
 			return cmd;
 	
 	}
