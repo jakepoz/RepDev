@@ -460,6 +460,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		return doParse;
 	}
 	
+	public Color getLineColor(){
+		return highlighter.getLineColor();
+	}
 	private void buildGUI() {
 		setLayout(new FormLayout());
 		

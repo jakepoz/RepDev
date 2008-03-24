@@ -55,6 +55,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -70,7 +71,6 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.printing.PrintDialog;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
-import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -1758,13 +1758,33 @@ public class MainShell {
 	protected void compare() {
 		if (tree.getSelectionCount() != 2)
 			return;
-
+		
 		if (!(tree.getSelection()[0].getData() instanceof SymitarFile))
 			return;
 
 		if (!(tree.getSelection()[1].getData() instanceof SymitarFile))
 			return;
-
+		
+		Color bgcolor = new Color(Display.getCurrent(),200,200,200);
+		
+		
+		//This code gets the correct color to highlight the lines of the compare shell.
+		//The only drawback is that it is a bit on the slow side (usually takes about 1 second).
+		//In my opinion it is fine to take this bit of time, because the compare shell looks
+		//hideous with a custom style without this code. Hopefully we can find a faster way to do
+		//this, but for the time being it should work.
+		EditorComposite temp = (EditorComposite)openFile((SymitarFile)tree.getSelection()[1].getData());
+		for (CTabItem tab : mainfolder.getItems()){
+			if (tab.getControl() != null && tab.getControl() instanceof EditorComposite){
+				bgcolor =((EditorComposite)mainfolder.getSelection().getControl()).getLineColor();
+			}
+			if (tab.getControl() != null && tab.getControl() instanceof EditorComposite && tab.getControl() == temp){
+				tab.dispose();
+			}
+		}
+		//TODO:Rewrite the above section so that it runs faster, or determines the color in another way
+		
+		
 		CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
 
 		item.setText("Compare Text BETA");
@@ -1772,8 +1792,8 @@ public class MainShell {
 		// item.setImage(getFileImage(file));
 		// item.setData("file", file);
 		// item.setData("loc", loc);
-
-		item.setControl(new CompareComposite(mainfolder, item, (SymitarFile) tree.getSelection()[0].getData(), (SymitarFile) tree.getSelection()[1].getData()));
+		
+		item.setControl(new CompareComposite(mainfolder, item, (SymitarFile) tree.getSelection()[0].getData(), (SymitarFile) tree.getSelection()[1].getData(), bgcolor));
 
 		item.addDisposeListener(new DisposeListener(){
 

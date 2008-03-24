@@ -368,9 +368,9 @@ public class DirectSymitarSession extends SymitarSession {
 		else
 			//TODO:Fix logons for syms that require password updates,
 			//there is interception here for finding if symitar wants the password changed
-			//but this might not be the idea place to do it
+			//but this might not be the ideal place to do it
 			if ( cmd.toString().indexOf("User Password NOT changed") != -1){
-				System.out.println("Please update your password");
+				System.out.println("Please update your password");		//I added in this brief explination to help people
 			}
 			return cmd;
 	

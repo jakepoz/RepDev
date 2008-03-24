@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.swtcompare.BasicCompareComposite;
 import org.swtcompare.RangeDifference;
@@ -40,7 +41,7 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 	private RepgenParser leftParser, rightParser;
 	private int[] lIntLines, rIntLines; //Lines needing background highlighting
 	
-	public CompareComposite(Composite parent, CTabItem tabItem, SymitarFile leftFile, SymitarFile rightFile){
+	public CompareComposite(Composite parent, CTabItem tabItem, SymitarFile leftFile, SymitarFile rightFile, Color bgcolor){
 		super(parent,leftFile.getName(), rightFile.getName(),RepDevMain.mainShell.getFileImage(leftFile),RepDevMain.mainShell.getFileImage(rightFile));
 		
 		this.leftFile = leftFile;
@@ -57,7 +58,8 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 		if( leftFile.getType() == FileType.REPGEN)
 		{
 			leftParser = new RepgenParser(leftTxt, leftFile);
-			leftHighlighter = new SyntaxHighlighter(leftParser, BasicCompareComposite.boxFill,lIntLines);
+			//leftHighlighter = new SyntaxHighlighter(leftParser, BasicCompareComposite.boxFill,lIntLines);
+			leftHighlighter = new SyntaxHighlighter(leftParser, bgcolor,lIntLines);
 			leftParser.reparseAll();
 		}
 		
@@ -71,7 +73,8 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 		if( rightFile.getType() == FileType.REPGEN)
 		{
 			rightParser = new RepgenParser(rightTxt, rightFile);
-			rightHighlighter = new SyntaxHighlighter(rightParser, BasicCompareComposite.boxFill,rIntLines);
+			//rightHighlighter = new SyntaxHighlighter(rightParser, BasicCompareComposite.boxFill,rIntLines);
+			rightHighlighter = new SyntaxHighlighter(rightParser, bgcolor,rIntLines);
 			rightParser.reparseAll();
 		}
 		
