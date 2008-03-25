@@ -869,13 +869,21 @@ public class MainShell {
 					}
 
 					int overwrite;
-
+					
+					//this is the code that is causing the file/project copy problems when moving files around
+					//from my testing whenever I move a file to sym 0 from local it will leave overwrite as 10 (first line)
+					//but any other transfers will be 17 (second line), could this have something to do with
+					//sym 0 (0 == false), sym 1 (1 == true) etc...?
+					//TODO:fix this code
 					if ((getTreeDir(root) == null || getTreeDir(dragSourceItems[0]) == null || getTreeDir(root).equals(getTreeDir(dragSourceItems[0])))
 							&& getTreeSym(root) == getTreeSym(dragSourceItems[0]))
 						overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
 					else
 						overwrite = RepeatOperationShell.ASK_TO_ALL | RepeatOperationShell.YES;
 
+					
+					
+					
 					shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 
 					if (dragSourceItems[0].getData() instanceof SymitarFile) {
@@ -945,7 +953,7 @@ public class MainShell {
 
 							for (SymitarFile file : source.getFiles()) {
 								boolean exists = false;
-
+								
 								SymitarFile newFile;
 
 								if (isItemLocal(root))
@@ -967,10 +975,11 @@ public class MainShell {
 								}
 
 								SessionError error = SessionError.NONE;
-
+								if(exists)System.out.print("Exists, ");
+								System.out.println("overwrite = " + overwrite);
 								if ((overwrite & RepeatOperationShell.YES) != 0)
 									error = newFile.saveFile(file.getData());
-
+								System.out.println("error = " + error.toString());
 								if (error == SessionError.NONE)
 									destination.addFile(newFile);
 							}
