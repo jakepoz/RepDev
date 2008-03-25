@@ -863,20 +863,24 @@ public class MainShell {
 					// item.setText(text);
 				} else {
 					TreeItem root = (TreeItem) event.item;
-
 					if (root.getData() instanceof SymitarFile) {
 						root = root.getParentItem();
 					}
 
 					int overwrite;
 					
-					//this is the code that is causing the file/project copy problems when moving files around
-					//from my testing whenever I move a file to sym 0 from local it will leave overwrite as 10 (first line)
-					//but any other transfers will be 17 (second line), could this have something to do with
-					//sym 0 (0 == false), sym 1 (1 == true) etc...?
-					//TODO:fix this code
+					
+					//This section now copys to sym 0 correctly
+					//The problem was that when you were copying from a local directory
+					//getTreeSym(dragSourceItems[0]) (aka where its from) would equal 0
+					//and thus the check getTreeSym(root) == getTreeSym(dragSourceItems[0])
+					//would be 0 == 0? so it would think that you are not copying anything
+					//this seems to be working now though
+					int tempSymNumber = 0;
+					if((getTreeDir(dragSourceItems[0]) != null) && (getTreeDir(dragSourceItems[0]).indexOf("sym", 1))==-1)
+						tempSymNumber = -1;
 					if ((getTreeDir(root) == null || getTreeDir(dragSourceItems[0]) == null || getTreeDir(root).equals(getTreeDir(dragSourceItems[0])))
-							&& getTreeSym(root) == getTreeSym(dragSourceItems[0]))
+							&& getTreeSym(root) == ((tempSymNumber == -1)?-1:getTreeSym(dragSourceItems[0])))
 						overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
 					else
 						overwrite = RepeatOperationShell.ASK_TO_ALL | RepeatOperationShell.YES;
