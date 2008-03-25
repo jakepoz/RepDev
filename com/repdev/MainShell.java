@@ -979,11 +979,11 @@ public class MainShell {
 								}
 
 								SessionError error = SessionError.NONE;
-								if(exists)System.out.print("Exists, ");
-								System.out.println("overwrite = " + overwrite);
+								//if(exists)System.out.print("Exists, ");
+								//System.out.println("overwrite = " + overwrite);
 								if ((overwrite & RepeatOperationShell.YES) != 0)
 									error = newFile.saveFile(file.getData());
-								System.out.println("error = " + error.toString());
+								//System.out.println("error = " + error.toString());
 								if (error == SessionError.NONE)
 									destination.addFile(newFile);
 							}
