@@ -869,21 +869,44 @@ public class MainShell {
 
 					int overwrite;
 					
+					//I have compleatly rewritten this section, it works correctly now
+					//basically rootSym will be either the sym number or -1 if it is local
+					//dragSym will be the sym number if it is not local, but if it is local
+					//then it checks if rootSym is also local, if it is not then dragSym is -1
+					//if it is then it checks if it is the same directory if it is it sets itself
+					//to -1 (in this case the same as rootSym, so no transfer) if it is not then
+					//it sets itself to -2 so that a transfer can take place
+					//refer to table below (its more clear as to how it works)
 					
-					//This section now copys to sym 0 correctly
-					//The problem was that when you were copying from a local directory
-					//getTreeSym(dragSourceItems[0]) (aka where its from) would equal 0
-					//and thus the check getTreeSym(root) == getTreeSym(dragSourceItems[0])
-					//would be 0 == 0? so it would think that you are not copying anything
-					//this seems to be working now though
-					int tempSymNumber = 0;
-					if((getTreeDir(dragSourceItems[0]) != null) && (getTreeDir(dragSourceItems[0]).indexOf("sym", 1))==-1)
-						tempSymNumber = -1;
-					if ((getTreeDir(root) == null || getTreeDir(dragSourceItems[0]) == null || getTreeDir(root).equals(getTreeDir(dragSourceItems[0])))
-							&& getTreeSym(root) == ((tempSymNumber == -1)?-1:getTreeSym(dragSourceItems[0])))
+					/*			rootSym			dragSym
+					 *local		   -1				$	
+					 *sym		 sym #			 sym #
+					 * 
+					 *	$: -3 if rootSym is not local
+					 *	   -2 if rootSym is local but a different directory
+					 * 	   -1 if rootSym is local but the same directory
+					 */
+					
+					int rootSym = -9, dragSym = -9;
+	
+					if(getTreeDir(root) != null){
+						rootSym = -1;
+					}else{
+						rootSym = getTreeSym(root);}
+					if(getTreeDir(dragSourceItems[0]) != null){
+						dragSym = (rootSym == -1)?(getTreeDir(root).equals(getTreeDir(dragSourceItems[0])))?-1:-2:-3;
+					}else{
+						dragSym = getTreeSym(dragSourceItems[0]);}
+					
+					if(rootSym == dragSym)
 						overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
 					else
 						overwrite = RepeatOperationShell.ASK_TO_ALL | RepeatOperationShell.YES;
+					//if ((getTreeDir(root) == null || getTreeDir(dragSourceItems[0]) == null || getTreeDir(root).equals(getTreeDir(dragSourceItems[0])))
+					//		&& getTreeSym(root) == getTreeSym(dragSourceItems[0]))
+					//	overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
+					//else
+					//	overwrite = RepeatOperationShell.ASK_TO_ALL | RepeatOperationShell.YES;
 
 					
 					
