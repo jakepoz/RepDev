@@ -176,7 +176,7 @@ public class RepDevMain {
 		smallFolderRemoveImage = new Image(display, IMAGE_DIR + "small-folder-remove.png");
 		smallActionSaveAsImage = new Image(display, IMAGE_DIR + "small-action-save-as.png");
 
-		smallProgramIcon = new Image(display, IMAGE_DIR + "icon-16x16.png");
+		smallProgramIcon = new Image(display, IMAGE_DIR + "monkeyIcon16.png");
 		smallInstallImage = new Image(display, IMAGE_DIR + "small-install-repgen.png");
 		smallCompareImage = new Image(display, IMAGE_DIR + "small-compare.png");
 		smallSurroundImage = new Image(display, IMAGE_DIR + "small-surround.png");

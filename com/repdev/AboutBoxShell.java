@@ -71,7 +71,7 @@ public class AboutBoxShell {
 		  +"Greg Varnell   - Web hosting\n"
 		  +"Michael Webb   - Documentation\n"
 		  +"Yoni Kristt    - Documentation\n"
-		  +"Ken Kondo      - Documentation\n"
+		  +"Ken Kondo      - Documentation/Icon (icon contest winner!)\n"
 		  +"William Hampe  - Documentation\n"
 		  +"Plus, all of our snippet authors!\n"
 		  +"\n\n"
