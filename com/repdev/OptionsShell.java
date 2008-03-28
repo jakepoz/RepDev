@@ -45,11 +45,11 @@ import org.eclipse.swt.widgets.Text;
 public class OptionsShell {
 	private Shell shell;
 	private static OptionsShell me = new OptionsShell();
-	private Button /*telnetRadio, testRadio,*/ devForgetBox;
+	private Button /*telnetRadio, testRadio,*/ devForgetBox,varsButton;
 	private Text serverText,portText;
 	private Spinner tabSpinner;
-	private Label serverLabel,portLabel;
-	private Combo styleCombo;
+	private Label serverLabel,portLabel,varsLabel;
+	private Combo styleCombo, hour, minute;
 
 	private void create(Shell parent) {
 		FormLayout layout = new FormLayout();
@@ -124,6 +124,9 @@ public class OptionsShell {
 		ok.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Config.setTabSize(tabSpinner.getSelection());
+				Config.setListUnusedVars(varsButton.getSelection());
+				Config.setTerminateHour(hour.getSelectionIndex()+1);
+				Config.setTerminateMinute(minute.getSelectionIndex()*10);
 
 				/*if (testRadio.getSelection())
 					Config.setServer("test");
@@ -176,6 +179,37 @@ public class OptionsShell {
 		if( Config.getStyle() != null ) 
 		    styleCombo.setText(Config.getStyle());
 		
+		varsLabel = new Label(editorGroup, SWT.NONE);
+		varsLabel.setText("List unused variables");
+		
+		varsButton = new Button(editorGroup, SWT.CHECK);
+		varsButton.setSelection(Config.getListUnusedVars());
+		
+		// Keep Alive Options
+		Group keepAliveGroup = new Group(shell,SWT.NONE);
+		keepAliveGroup.setText("Keep Alive Options");
+		layout = new FormLayout();
+		layout.marginTop = 5;
+		layout.marginBottom = 5;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		keepAliveGroup.setLayout(layout);
+		
+		Label keepAliveLabel = new Label(keepAliveGroup,  SWT.NONE);
+		keepAliveLabel.setText("Terminate Time (HH:MM)"+Character.toString((char)10)+"(Log out Sym Required)");
+		hour = new Combo(keepAliveGroup, SWT.READ_ONLY);
+		for(int i=0 ; i<24 ; i++){
+			hour.add(((i+1) < 10 ? "0" : "")+Integer.toString(i+1),i);
+		}
+		hour.select(Config.getTerminateHour()-1);
+		Label colon = new Label(keepAliveGroup, SWT.NONE);
+		colon.setText(" : ");
+		minute = new Combo(keepAliveGroup,  SWT.READ_ONLY);
+		for(int i=0 ; i<6 ; i++){
+			minute.add(((i * 10) < 10 ? "0" : "")+Integer.toString(i * 10),i);
+		}
+		minute.select(Config.getTerminateMinute()/10);
+		
 		/// Developer Options (dev's only :D)
 		Group devGroup = new Group(shell, SWT.NONE);
 		devGroup.setText("Developer Options");
@@ -205,13 +239,20 @@ public class OptionsShell {
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(serverGroup);
-		if(!RepDevMain.DEVELOPER) data.bottom = new FormAttachment(cancel);
+		//data.bottom = new FormAttachment(keepAliveGroup);
 		editorGroup.setLayoutData(data);
 		
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(editorGroup);
+		if(!RepDevMain.DEVELOPER) data.bottom = new FormAttachment(cancel);
+		keepAliveGroup.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		data.top = new FormAttachment(keepAliveGroup);
 		data.bottom = new FormAttachment(cancel);
 		devGroup.setLayoutData(data);
 
@@ -279,6 +320,42 @@ public class OptionsShell {
 		data.top = new FormAttachment(tabSpinner);
 		data.right = new FormAttachment(100);
 		styleCombo.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(styleCombo);
+		data.width = 160;
+		varsLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(varsLabel);
+		data.top = new FormAttachment(styleCombo);
+		data.right = new FormAttachment(100);
+		varsButton.setLayoutData(data);
+		
+		// KeepAlive Options
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(0);
+		data.width = 160;
+		keepAliveLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(keepAliveLabel);
+		data.top = new FormAttachment(0);
+		data.width = 10;
+		hour.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(hour);
+		data.top = new FormAttachment(0);
+		colon.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(colon);
+		data.top = new FormAttachment(0);
+		data.width = 10;
+		minute.setLayoutData(data);
 		
 		// Developer Options
 		data = new FormData();

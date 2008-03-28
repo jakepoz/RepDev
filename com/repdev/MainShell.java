@@ -152,6 +152,8 @@ public class MainShell {
 		shell = new Shell(display);
 		shell.setText(RepDevMain.NAMESTR);
 		shell.setImage(RepDevMain.smallProgramIcon);
+		if(Config.getWindowSize() != null)
+			shell.setSize(Config.getWindowSize());
 
 		createMenuDefault();
 
@@ -161,6 +163,11 @@ public class MainShell {
 
 			public void shellClosed(ShellEvent e) {
 				boolean close = true;
+				Config.setWindowMaximized(shell.getMaximized());
+				if(shell.getMaximized()){
+					shell.setMaximized(false);
+				}
+				Config.setWindowSize(shell.getSize());
 
 				for (CTabItem tab : mainfolder.getItems())
 					if (!confirmClose(tab))
@@ -210,7 +217,10 @@ public class MainShell {
 
 		final FormData frmSashVert = new FormData();
 		frmSashVert.top = new FormAttachment(coolBar);
-		frmSashVert.left = new FormAttachment(leftPercent);
+		if(Config.getSashVSize() != 0)
+			frmSashVert.left = new FormAttachment(0,Config.getSashVSize());
+		else
+			frmSashVert.left = new FormAttachment(leftPercent);
 		frmSashVert.bottom = new FormAttachment(statusBar);
 		sashVert.setLayoutData(frmSashVert);
 
@@ -229,7 +239,10 @@ public class MainShell {
 		main.setLayoutData(frmMain);
 
 		final FormData frmSashHoriz = new FormData();
-		frmSashHoriz.top = new FormAttachment(100 - bottomPercent);
+		if(Config.getSashHSize() != 0)
+			frmSashHoriz.top = new FormAttachment (100, -Config.getSashHSize());
+		else
+			frmSashHoriz.top = new FormAttachment(100 - bottomPercent);
 		frmSashHoriz.left = new FormAttachment(0);
 		frmSashHoriz.right = new FormAttachment(100);
 		sashHoriz.setLayoutData(frmSashHoriz);
@@ -274,6 +287,7 @@ public class MainShell {
 					frmSashVert.left = new FormAttachment(0, e.x);
 					shell.layout();
 				}
+				Config.setSashVSize(e.x);
 			}
 		});
 
@@ -289,11 +303,13 @@ public class MainShell {
 					frmSashHoriz.top = new FormAttachment(e.y, right.getSize().y, 0);
 					right.layout();
 				}
+				Config.setSashHSize(bottom.getSize().y);
 			}
 		});
 
 		findReplaceShell = new FindReplaceShell(shell);
 		shell.setMinimumSize(3 * MIN_COMP_SIZE, 3 * MIN_COMP_SIZE);
+		shell.setMaximized(Config.getWindowMaximized());
 	}
 
 	public Object openFile(Sequence seq, int sym) {
@@ -2868,6 +2884,9 @@ public class MainShell {
 	}
 
 	private void close() {
+		System.out.println("This MAX:"+shell.getMaximized());
+		Config.setWindowMaximized(shell.getMaximized());
+		Config.setWindowSize(shell.getSize());
 		shell.dispose();
 	}
 

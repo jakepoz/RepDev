@@ -19,6 +19,7 @@
 
 package com.repdev;
 
+import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,14 +32,17 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.MessageBox;
 
 /**
  * This is the main connection object to the Symitar host, it provides all the routines you would need to connect
@@ -57,6 +61,8 @@ public class DirectSymitarSession extends SymitarSession {
 	PrintWriter out;
 	boolean connected = false;
 	Thread keepAlive;
+	private final int NO_ACTIVITY_DELAY = 20;
+	private final int KEEP_ALIVE_WARNING = 30;
 
 	private String log(String str) {
 		System.out.println(str);
@@ -66,10 +72,19 @@ public class DirectSymitarSession extends SymitarSession {
 	private String log(Object o){
 		return log( o.toString() );
 	}
+	
+	/**
+	 * Updates the lastActivity variable in RepDevMain so that the Keep Alive Thread will not terminate
+	 * if there has been activity, from any of the SYMs, within the minutes specified by NO_ACTIVITY_DELAY.
+	 */
+	private void setLastActivity(){
+		RepDevMain.setLastActivity(new GregorianCalendar());		
+	}
 
 	@Override
 	public SessionError connect(String server, String aixUsername, String aixPassword, int sym, String userID) {
 		String line = "";
+		setLastActivity();
 
 		if( connected )
 			return SessionError.ALREADY_CONNECTED;
@@ -79,6 +94,7 @@ public class DirectSymitarSession extends SymitarSession {
 		this.aixUsername = aixUsername;
 		this.aixPassword = aixPassword;
 		this.userID = userID;
+		final int tmpSym = this.sym;
 
 		try {
 			socket = new Socket(server, Config.getPort());
@@ -201,13 +217,44 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			//Establish keepalive timer, every 55 seconds send an empty command
 			keepAlive = new Thread(new Runnable(){
-
 				public void run() {
+					Calendar cal = new GregorianCalendar();
+					int terminateTime;
+					int lastActivityTime = (RepDevMain.getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+RepDevMain.getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
+					int termOptionTime = (Config.getTerminateHour()*60)+Config.getTerminateMinute();
+					int curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
+					
+					terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
+					
+					boolean firstRun = true;
 					try{
-						while(true){
+						while(terminateTime > curTime){
+							firstRun = false;
 							Thread.sleep(55000);
-							log("Keep Alive");
 							wakeUp();
+							
+							cal = Calendar.getInstance();
+							curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
+							lastActivityTime = (RepDevMain.getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+RepDevMain.getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
+							terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
+							if (terminateTime-curTime < KEEP_ALIVE_WARNING){
+								log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") will terminate in "+(terminateTime-curTime)+" minutes");
+							}
+							else{
+								log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") ");
+							}
+						}
+						
+						log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") Terminated");
+						if (!firstRun){
+							Display.getDefault().syncExec(new Runnable(){
+								public void run(){
+									MessageBox msg = new MessageBox(RepDevMain.mainShell.getShell(), SWT.ICON_WARNING);
+									msg.setText("Keep Alive");
+									msg.setMessage("Keep Alive has terminated for SYM "+tmpSym+".  Please take proper measures to avoid the lost of work.");
+									msg.open();
+								}
+							});
 						}
 					}
 					catch(InterruptedException e){
@@ -488,7 +535,7 @@ public class DirectSymitarSession extends SymitarSession {
 		
 		if( !connected )
 			return null;
-		
+		setLastActivity();
 		Command current;
 		Command retrieve = new Command();
 		retrieve.setCommand("File");
@@ -541,7 +588,7 @@ public class DirectSymitarSession extends SymitarSession {
 	public synchronized ArrayList<SymitarFile> getFileList(FileType type, String search) {
 		ArrayList<SymitarFile> toRet = new ArrayList<SymitarFile>();
 		Command current;
-		
+		setLastActivity();
 		if( !connected )
 			return toRet;
 
@@ -945,7 +992,7 @@ public class DirectSymitarSession extends SymitarSession {
 		//queueAvailable is from a seperate request saying which ones can actually run repwriters
 		
 		int seq = -1, time = 0;
-		
+		setLastActivity();
 		for( int i = 0; i < queueCounts.length; i++)
 			queueCounts[i] = -1;
 		
@@ -1158,6 +1205,7 @@ public class DirectSymitarSession extends SymitarSession {
 		char[] buf = new char[16];
 		String pad20 = "";
 
+		setLastActivity();
 		if (!connected)
 			return SessionError.NOT_CONNECTED;
 		

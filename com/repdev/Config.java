@@ -22,6 +22,7 @@ package com.repdev;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.eclipse.swt.graphics.Point;
 /**
  * Configuration class is serialized at the start/end of the program to store things like syms open, server, and other global config things
  * @author Jake Poznanski
@@ -41,6 +42,21 @@ public class Config implements Serializable {
 	private int rotkeyp=0, rotkeyu=0;
 	
 	private String style = "default";
+	
+	/**
+	 * REVISION is a constant.  This constant should be incrmented everytime there is a new
+	 * feature added.  RepDevMain will compare REVISION with getRevision() and if they are
+	 * different, then a popup will notify the user and will launch the OptionsShell so that
+	 * the users can config the new options.
+	 */
+	public final static int REVISION = 1; // Modify this everytime we add new options to prompt the user.
+	private int revision=-1;
+	private boolean windowMaximized;
+	private Point windowSize;
+	private boolean listUnusedVars, wrapSearch, caseSensitive;
+	private int terminateHour;
+	private int terminateMinute;
+	private int sashHSize, sashVSize;
 	
 	@SuppressWarnings("unused")
 	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.
@@ -202,6 +218,168 @@ public class Config implements Serializable {
 	
 	public static void setStyle(String s) {
 	    me.style = s;
+	}
+	
+	/**
+	 * Returns true if the main shell window was maximized, and false
+	 * if it was not maximized, when RepDev terminated
+	 * @return b
+	 */
+	public static boolean getWindowMaximized(){
+		return me.windowMaximized;
+	}
+	
+	/**
+	 * Used to rember the state of the main shell window.  This should be set true if
+	 * the window is maximized and set false if it is not.
+	 * @param boolean
+	 */
+	public static void setWindowMaximized(boolean b){
+		me.windowMaximized = b;
+	}
+	
+	/**
+	 * Returns the size of the main shell window
+	 * @return Point
+	 */
+	public static Point getWindowSize(){
+		return me.windowSize;
+	}
+	
+	/**
+	 * Used to remember the size of the main shell window.
+	 * @param Point
+	 */
+	public static void setWindowSize(Point p){
+		me.windowSize = p;
+	}
+	
+	/**
+	 * Returns true if the user would like to list the unused variables
+	 * @return boolean
+	 */
+	public static boolean getListUnusedVars(){
+		return me.listUnusedVars;
+	}
+	
+	/**
+	 * Set true if the user would like to list the usused variables.
+	 * @param b
+	 */
+	public static void setListUnusedVars(boolean b){
+		me.listUnusedVars = b;
+	}
+	
+	/**
+	 * Returns the Keep Alive Terminate Hour
+	 * @return hour
+	 */
+	public static int getTerminateHour(){
+		return me.terminateHour;
+	}
+	
+	/**
+	 * Set the Keep Alive Termination Hour.
+	 * @param hour.
+	 */
+	public static void setTerminateHour(int hour){
+		me.terminateHour = hour;
+	}
+	
+	/**
+	 * Returns the Keep Alive Termination Minute.
+	 * @return minute
+	 */
+	public static int getTerminateMinute(){
+		return me.terminateMinute;
+	}
+	
+	/**
+	 * Set the Keep Alive Termination Minute.
+	 * @param minute.
+	 */
+	public static void setTerminateMinute(int minute){
+		me.terminateMinute = minute;
+	}
+	
+	/**
+	 * Returns the size of the left pane of the main shell window.
+	 * @return size
+	 */
+	public static int getSashHSize(){
+		return me.sashHSize;
+	}
+	
+	/**
+	 * Set the size of the left pane of the main shell window.
+	 * @param size
+	 */
+	public static void setSashHSize(int size){
+		me.sashHSize = size;
+	}
+	
+	/**
+	 * Returns the size of the bottom pane of the main shell window.
+	 * @return size
+	 */
+	public static int getSashVSize(){
+		return me.sashVSize;
+	}
+	
+	/**
+	 * Set the size of the bottom pane of the main shell window.
+	 * @param size
+	 */
+	public static void setSashVSize(int size){
+		me.sashVSize = size;
+	}
+	
+	/**
+	 * Return true if Wrap Search is checked in the FindReplaceShell dialogue box.
+	 * @return boolean
+	 */
+	public static boolean getWrapSearch(){
+		return me.wrapSearch;
+	}
+	
+	/**
+	 * Set this to true if Wrap Search is checked in the FindReplaceShell dialogue box.
+	 * @param boolean
+	 */
+	public static void setWrapSearch(boolean b){
+		me.wrapSearch = b;
+	}
+
+	/**
+	 * Return true if Case Sensiive is checked in the FindReplaceShell dialogue box.
+	 * @return boolean
+	 */
+	public static boolean getCaseSensitive(){
+		return me.caseSensitive;
+	}
+	
+	/**
+	 * Set this to true if Case Sensitive is checked in the FindReplaceShell dialogue box.
+	 * @param boolean
+	 */
+	public static void setCaseSensitive(boolean b){
+		me.caseSensitive = b;
+	}
+	
+	/**
+	 * Returns the current version in the repdev.conf file
+	 * @return rev - the revision in the repdev.conf file
+	 */
+	public static int getRevision(){
+		return me.revision;
+	}
+	
+	/**
+	 * Sets the revision to save in the repdev.conf file.
+	 * @param rev the revision for the repdev.conf file
+	 */
+	public static void setRevision(int rev){
+		me.revision = rev;
 	}
 
 }

@@ -26,12 +26,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 
 /**
  * Main run class, runs as first startup
@@ -55,6 +58,13 @@ public class RepDevMain {
 	public static final String NAMESTR = "RepDev  v" + VERSION;
 	public static boolean FORGET_PASS_ON_EXIT = false; // set in options only please.
 
+	/**
+	 * lastActivity can be updated everytime you deem is an activity.  This will be used in the keepAlive
+	 * Thread within DirectSymitarSession to terminate Keep Alive if there has not been any activity
+	 * within a specific number of minutes.
+	 */
+	private static Calendar lastActivity = new GregorianCalendar();
+	
 	public static MainShell mainShell;
 	private static Display display;
 	public static Image smallAddImage, smallErrorsImage, smallFileImage, smallProjectImage, smallRemoveImage, smallRepGenImage, smallSymImage, smallTasksImage, smallActionSaveImage, smallFileAddImage, smallFileRemoveImage,
@@ -65,6 +75,11 @@ public class RepDevMain {
 	public static final String IMAGE_DIR = "repdev-icons/";
 	
 	public static SnippetManager snippetManager;
+	
+	private enum CONFIGREV{
+		NORMAL, NEW, OUTDATED
+	}
+	private static CONFIGREV configRev = CONFIGREV.NORMAL;
 	
 	public static void main(String[] args) throws Exception {
 		display = new Display();
@@ -210,10 +225,14 @@ public class RepDevMain {
 			System.out.println("FILE OUT OF DATE!");
 		} catch (IOException e) {
 			//Any odd defaults
+			Config.setRevision(-1);
 			Config.setRunOptionsQueue(-1);
 			Config.setLastPassword(""); // only saved if RepDevMain.DEVELOPER
 			Config.setLastUserID("");
 			Config.setLastUsername("");
+			Config.setTerminateHour(20);
+			Config.setTerminateMinute(0);
+			Config.setListUnusedVars(true);
 
 			System.out.println("Creating data file for the first time.");
 			saveSettings();
@@ -231,6 +250,18 @@ public class RepDevMain {
 				session = new DirectSymitarSession();
 
 			SYMITAR_SESSIONS.put(sym, session);
+		}
+		if(Config.getTerminateHour()==0){
+			Config.setTerminateHour(20);
+			Config.setTerminateMinute(0);
+			saveSettings();
+		}
+		
+		if(Config.getRevision()==-1){
+			configRev = CONFIGREV.NEW;
+		}
+		else if (Config.getRevision()!=Config.REVISION){
+			configRev = CONFIGREV.OUTDATED;
 		}
 	}
 
@@ -268,6 +299,36 @@ public class RepDevMain {
 	private static void createGUI() {
 		mainShell = new MainShell(display);
 		mainShell.open();
+		if(configRev != CONFIGREV.NORMAL){
+			MessageBox msg = new MessageBox(mainShell.getShell(), SWT.ICON_WARNING);
+			msg.setText("RepDev Options");
+			
+			if(configRev == CONFIGREV.NEW){
+				msg.setMessage("Welcome to RepDev. Please take a few moments to configure your Options.");
+			}
+			else{
+				msg.setMessage("The RepDev Team has added new options.  Please take a few moments to configure them.");
+			}
+			msg.open();
+			OptionsShell.showOptions(mainShell.getShell().getDisplay(), mainShell.getShell());
+			Config.setRevision(Config.REVISION);
+		}
+	}
+	
+	/**
+	 * Updates the lastActivity timestamp
+	 * @param cal
+	 */
+	public static void setLastActivity(Calendar cal){
+		lastActivity = cal;
+	}
+	
+	/**
+	 * Returns the lastActivity timestamp
+	 * @return cal
+	 */
+	public static Calendar getLastActivity(){
+		return lastActivity;
 	}
 
 }

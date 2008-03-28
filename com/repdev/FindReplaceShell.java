@@ -136,10 +136,32 @@ public class FindReplaceShell {
  		
  		caseButton = new Button(optionsGroup,SWT.CHECK);
  		caseButton.setText("Case sensitive");
- 		
+		caseButton.setSelection(Config.getCaseSensitive());
+ 		caseButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e){
+				if(caseButton.getSelection()){
+					Config.setCaseSensitive(true);
+				}
+				else{
+					Config.setCaseSensitive(false);
+				}
+			}
+		});
+		
  		wrapButton = new Button(optionsGroup,SWT.CHECK);
  		wrapButton.setText("Wrap search"); 				
-		
+		wrapButton.setSelection(Config.getWrapSearch());
+ 		wrapButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e){
+				if(wrapButton.getSelection()){
+					Config.setWrapSearch(true);
+				}
+				else{
+					Config.setWrapSearch(false);
+				}
+			}
+		});
+ 		
 		findButton = new Button(shell,SWT.NONE);
 		findButton.setText("Find");
 		findButton.addSelectionListener(new SelectionAdapter(){

@@ -290,7 +290,7 @@ public class RepgenParser {
 						if( unused && !tblErrors.isDisposed()){
 							display.syncExec(new Runnable() {
 								public void run() {
-									if (!txt.isDisposed()){
+									if (!txt.isDisposed() && com.repdev.Config.getListUnusedVars()){
 										errorList.add(new Error(var.getFilename(), "Variable Unused: " + var.getName().toUpperCase(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
 									}
 								}
