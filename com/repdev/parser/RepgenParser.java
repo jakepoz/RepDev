@@ -970,7 +970,7 @@ public class RepgenParser {
 						}
 					}
 				}
-
+				//problems here
 				for( Token cur : removedtokens){
 					if( cur.inDefs() )
 						rebuildVars = true;
