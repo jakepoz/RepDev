@@ -76,15 +76,22 @@ public class Token {
 	}
 
 	public void setNearTokens(ArrayList<Token> tokens, int mypos) {
-		after = null;
-		before = null;
+        after = null;
+        before = null;
 
-		if( tokens != null){
-			before = tokens.get(Math.max(0,mypos-1));
-			if( mypos + 1 < tokens.size())
-				after = tokens.get(mypos+1);
-		}
-	}
+        if( tokens != null){
+                if( mypos-1 >= 0)
+                        before = tokens.get(mypos-1);
+                else
+                        before = null;
+
+                if( mypos + 1 < tokens.size())
+                        after = tokens.get(mypos+1);
+                else
+                        after = null;
+        }
+}
+
 	
 	public Color getSpecialBackground() {
 		return specialBackground;
