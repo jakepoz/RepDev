@@ -15,7 +15,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package com.repdev;
 
@@ -70,13 +70,13 @@ public abstract class SymitarSession {
 	public abstract String getFile(SymitarFile file);
 
 	public abstract boolean fileExists(SymitarFile file);
-	
+
 	public abstract SessionError removeFile(SymitarFile file);
 
 	public abstract SessionError saveFile(SymitarFile file, String text);
 
 	public abstract SessionError renameFile(SymitarFile file, String newName);
-	
+
 	public class RunRepgenResult{
 		int seq, time;
 
@@ -102,7 +102,7 @@ public abstract class SymitarSession {
 			this.time = time;
 		}		
 	}
-	
+
 	/**
 	 * Helper method for runRepGen stuff
 	 * @param progress
@@ -113,11 +113,11 @@ public abstract class SymitarSession {
 	protected void setProgress(ProgressBar progress, int value, Text text, String str){
 		if( progress != null && !progress.isDisposed() )
 			progress.setSelection(value);
-		
+
 		if( text != null && str != null && !text.isDisposed())
 			text.setText(str.replace("\r", "\n"));
 	}
-	
+
 	public abstract RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter);
 
 	/**
@@ -137,44 +137,44 @@ public abstract class SymitarSession {
 
 
 	public abstract boolean isSeqRunning(int seq);
-	
+
 	public abstract void terminateRepgen(int seq);
 
 	public class RunFMResult{
 		private String resultTitle;
 		private int seq;
-		
+
 		public RunFMResult(){
 			setRandomTitle();
 		}
-		
+
 		public RunFMResult(String resultTitle, int seq) {
 			super();
 			this.resultTitle = resultTitle;
 			this.seq = seq;
 		}
-		
+
 		private void setRandomTitle(){
 			resultTitle = "RepDev FM - " + String.format("%06d", (int)(Math.random() * 10000000));
 		}
-		
+
 		public String getResultTitle() {
 			return resultTitle;
 		}
-		
+
 		public void setResultTitle(String resultTitle) {
 			this.resultTitle = resultTitle;
 		}
-		
+
 		public int getSeq() {
 			return seq;
 		}
-		
+
 		public void setSeq(int seq) {
 			this.seq = seq;
 		}		
 	}
-	
+
 	public enum FMFile{
 		ACCOUNT("Account"),
 		INVENTORY("Inventory"),
@@ -186,24 +186,24 @@ public abstract class SymitarSession {
 		DEALER("Dealer"),
 		USER("User"),
 		COLLATERAL("Collateral");
-		
+
 		private String displayName;
-		
+
 		private FMFile(String displayName){
 			this.displayName = displayName;
 		}
-		
+
 		public String getDisplayName()
 		{
 			return displayName;
 		}
 	}
-	
+
 	public abstract RunFMResult runBatchFM(String searchTitle, int searchDays, FMFile file, int queue);
 
 	public abstract ArrayList<PrintItem> getPrintItems( String query, int limit );
 	public abstract ArrayList<PrintItem> getPrintItems( Sequence seq );
-	
+
 	/**
 	 * Goes through past several batch output files in print control
 	 * If certain time is given, just returns that one, 
@@ -219,44 +219,53 @@ public abstract class SymitarSession {
 	 * @param limit
 	 * @return
 	 */
-	
+
 	//TODO: Do not take a time, but a regular Date object
 	//TODO: Only works if the reportName is the only one in it
-	public ArrayList<Sequence> getReportSeqs( String reportName, int time, int search, int limit){
+	public ArrayList<Sequence> getReportSeqs( String reportName, int time,
+			int search, int limit){
 		ArrayList<PrintItem> items = getPrintItems("REPWRITER", search);
 		ArrayList<Sequence> newItems = new ArrayList<Sequence>();
-		
+
 		//More than likely, if we are looking for anything, it will be the newest one first
 		Collections.reverse(items);
-		
+
 		for( PrintItem cur : items){
-			String file = new SymitarFile(sym,"" + cur.getSeq(),FileType.REPORT).getData();
-			
+			String file = new SymitarFile(sym,"" +
+					cur.getSeq(),FileType.REPORT).getData();
+
+			if( file.indexOf("Processing begun on") < 0 )
+				continue;
+
 			file = file.substring(file.indexOf("Processing begun on") + 41);
 			String timeStr = file.substring(0,8);
 			int curTime;
-			
+
 			curTime = Integer.parseInt(timeStr.substring(timeStr.lastIndexOf(":")+1));
-			curTime += 60 * Integer.parseInt(timeStr.substring(timeStr.indexOf(":")+1, timeStr.lastIndexOf(":")));
-			curTime += 3600 * Integer.parseInt(timeStr.substring(0,timeStr.indexOf(":")));
-			
+			curTime += 60 *
+			Integer.parseInt(timeStr.substring(timeStr.indexOf(":")+1,
+					timeStr.lastIndexOf(":")));
+			curTime += 3600 *
+			Integer.parseInt(timeStr.substring(0,timeStr.indexOf(":")));
+
 			//Advance to the right place
 			file =  file.substring(file.indexOf("(newline when done):") + 21);
-			
+
 			String name = file.substring(0,file.indexOf("\n"));
-			
-			if( (time == -1 || curTime - 1 == time || curTime == time || curTime +1 == time ) && name.equals(reportName) ){
+
+			if( (time == -1 || curTime - 1 == time || curTime == time ||
+					curTime +1 == time ) && name.equals(reportName) ){
 				newItems.add(new Sequence(sym,cur.getBatchSeq(), cur.getDate()));
-				
+
 				//If we have matched it, then we are done
 				if( time != -1 || newItems.size() >= limit )
 					break;
 			}
 		}
-		
+
 		return newItems;
 	}
-	
+
 	/**
 	 * Very similair to getReportSeqs, but instead, gets the batch sequence numbers for a given FM job,
 	 * since we can index things based on a specific report title, we use that as the key for finding what we want
@@ -269,30 +278,30 @@ public abstract class SymitarSession {
 	public ArrayList<Sequence> getFMSeqs( String reportName, int search, int limit){
 		ArrayList<PrintItem> items = getPrintItems("MISCFMPOST", search);
 		ArrayList<Sequence> newItems = new ArrayList<Sequence>();
-		
+
 		//More than likely, if we are looking for anything, it will be the newest one first
 		Collections.reverse(items);
-		
+
 		for( PrintItem cur : items){
 			String file = new SymitarFile(sym,"" + cur.getSeq(),FileType.REPORT).getData();
-			
+
 			//Advance to the right place
 			file =  file.substring(file.indexOf("Name of Posting: ") + 17);
-			
+
 			String name = file.substring(0,file.indexOf("\n")).trim();
-			
+
 			if( name.equals(reportName) ){
 				newItems.add(new Sequence(sym,cur.getBatchSeq(), cur.getDate()));
-				
+
 				//If we have matched it, then we are done
 				if( newItems.size() >= limit )
 					break;
 			}
 		}
-		
+
 		return newItems;
 	}
-	
+
 	/**
 	 * Supports default "+" as a wildcard
 	 * 
@@ -335,5 +344,5 @@ public abstract class SymitarSession {
 	}
 
 	public abstract ErrorCheckResult installRepgen(String f);
-	
+
 }
