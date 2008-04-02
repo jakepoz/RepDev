@@ -199,6 +199,7 @@ public class MainShell {
 		right.setLayout(new FormLayout());
 
 		createEditorBar();
+		coolBar.pack();
 
 		Composite main = new Composite(right, SWT.NONE);
 		createEditorPane(main);
