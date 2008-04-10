@@ -15,7 +15,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package com.repdev;
 
@@ -78,11 +78,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	private Color lineBackgroundColor, blockMatchColor;
 	private StyledText txt;
 	private CTabItem tabItem;
-	
+
 	// For Section Infos
 	private BackgroundSectionParser sec;
 	private int prevTxtLine = -1; // Used by the handleCaretChange method to determine if the cursor moved to another line.
-	
+
 	private static final int UNDO_LIMIT = 1000;
 	private Stack<TextChange> undos = new Stack<TextChange>();
 	private Stack<TextChange> redos = new Stack<TextChange>();
@@ -97,7 +97,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	private RepgenParser parser;
 	private boolean modified = false;
 	private boolean doParse = true;
-	
+
 	//Snippet Mode Variables
 	private boolean snippetMode = false;
 	private Snippet currentSnippet = null;
@@ -108,11 +108,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	private final static Color SNIPPET_VAR = new Color(Display.getCurrent(),new RGB(170,185,220)); //Generic Snippet Var
 	private final static Color SNIPPET_VAR_CURRENT = new Color(Display.getCurrent(),new RGB(180,215,255));  //All other instances of current one you are editing
 	private final static Color SNIPPET_VAR_EDITING = new Color(Display.getCurrent(),new RGB(180,215,255)); //Current one you are editing
-	
+
 	static SuggestShell suggest = new SuggestShell();
-	
+
 	private static Font DEFAULT_FONT;
-	
+
 	static {
 		Font cur = null;
 
@@ -143,7 +143,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		public int getTopIndex(){
 			return topIndex;
 		}
-		
+
 		public boolean isCommit() {
 			return commit;
 		}
@@ -169,11 +169,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		buildGUI();
 	}
-	
+
 	public boolean canUndo(){
 		return undos.size() > 0 && !snippetMode;
 	}
-	
+
 	public boolean canRedo(){
 		return redos.size() > 0 && !snippetMode;	
 	}
@@ -181,7 +181,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void undo() {
 		if( !canUndo() )
 			return;
-		
+
 		try {
 			TextChange change;
 
@@ -190,22 +190,22 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					undos.pop();
 
 				undoMode = 2;
-				
+
 				//Ok, I am only allowing the last undo in the redo stack
 				redos.clear();
-				
+
 				txt.setRedraw(false);
-				
+
 				if( parser != null)
 					parser.setReparse(false);
-				
-				
-				
+
+
+
 				while (!(undos.size() == 0 || (change = undos.pop()).isCommit())) {
 					txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
 					txt.setCaretOffset(change.getStart());
 					txt.setTopIndex(change.getTopIndex());
-				
+
 				}
 
 				redos.push(new TextChange(true));
@@ -225,7 +225,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				parser.setReparse(true);
 				parser.reparseAll();
 			}
-			
+
 			lineHighlight();
 		}
 	}
@@ -233,7 +233,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void redo() {
 		if( !canRedo() )
 			return;
-		
+
 		try {
 			TextChange change;
 
@@ -243,7 +243,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 				undoMode = 1;
 				txt.setRedraw(false);
-				
+
 				if( parser != null)
 					parser.setReparse(false);
 
@@ -269,7 +269,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				parser.setReparse(true);
 				parser.reparseAll();
 			}
-			
+
 			lineHighlight();
 		}
 	}
@@ -280,10 +280,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 
 	public void setLineColor(SyntaxHighlighter hiColor){
-	    	lineBackgroundColor=hiColor.getLineColor();
-	    	blockMatchColor=hiColor.getBlockMatchColor();
+		lineBackgroundColor=hiColor.getLineColor();
+		blockMatchColor=hiColor.getBlockMatchColor();
 	}
-	
+
 	private void lineHighlight() {
 		try {
 			int start, end, currentLine;
@@ -299,7 +299,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				start = txt.getOffsetAtLine(lastLine);
 			else
 				start = txt.getOffsetAtLine(txt.getLineCount()-1);
-			
+
 			end = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, lastLine + 1));
 
 			if (lastLine + 1 == txt.getLineCount())
@@ -322,11 +322,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			lastLine = txt.getLineAtOffset(txt.getCaretOffset());
 		}
 	}
-	
+
 	//Allow for unindenting single lines -- Fixed
 	private void groupIndent(int direction, int startLine, int endLine) {
 		String tabStr = getTabStr();
-		
+
 		if (endLine > txt.getLineCount() - 1 )
 			endLine = Math.max(txt.getLineCount() - 1, startLine + 1);
 
@@ -342,7 +342,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					int startOffset = txt.getOffsetAtLine(i);
 					int endOffset;
 					String line;
-					
+
 					if( i >= txt.getLineCount() - 1 ){
 						endOffset = txt.getCharCount() ;
 					}
@@ -353,7 +353,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						line = "\n";
 					else
 						line = txt.getText(startOffset, endOffset - 1);		
-					
+
 
 					for (int x = 0; x < Math.min(tabStr.length(), line.length()); x++)
 						if (line.charAt(x) > 32)
@@ -366,7 +366,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				int startOffset = txt.getOffsetAtLine(i);
 				int endOffset;
 				String line;
-				
+
 				if( i >= txt.getLineCount() - 1 ){
 					endOffset = txt.getCharCount() ;
 				}
@@ -377,8 +377,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					line = "\n";
 				else
 					line = txt.getText(startOffset, endOffset - 1);			
-				
-				
+
+
 				if (direction > 0)
 					txt.replaceTextRange(startOffset, endOffset - startOffset, tabStr + line);
 				else {
@@ -393,14 +393,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				parser.setReparse(true);
 
 			oldSelection.y += offset;
-			
+
 			oldSelection.x = Math.max(oldSelection.x + tabStr.length() * direction, txt.getOffsetAtLine(startLine));
 
 			//if( txt.getText().charAt(oldSelection.x) == '\n' && txt.getText().charAt(Math.max(0,oldSelection.x-1)) == '\r')
 			//	oldSelection.x++;
-			
 
-			
+
+
 			// TODO: This fails if you are right inbetween a /r
 			// and /n, better fix it ;)
 			txt.setSelection(oldSelection);
@@ -433,11 +433,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		return tabStr;
 	}
-	
+
 	public StyledText getStyledText(){
 		return txt;
 	}
-	
+
 	/*
 	 * This Function turns highlighting of the editor composite on and off by either
 	 * creating or destroying the syntax highlighter
@@ -455,19 +455,19 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if(!firstRun)doParse=parse;
 		txt.redraw();
 	}
-	
+
 	public boolean getHighlight(){
 		return doParse;
 	}
-	
+
 	public Color getLineColor(){
 		return highlighter.getLineColor();
 	}
 	private void buildGUI() {
 		setLayout(new FormLayout());
-		
+
 		txt = new StyledText(this, SWT.H_SCROLL | SWT.V_SCROLL);
-		
+
 		if (file.getType() == FileType.REPGEN){
 			doParse=true;
 			parser = new RepgenParser(txt, file, true);
@@ -477,24 +477,24 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			if( DEFAULT_FONT != null)
 				txt.setFont(DEFAULT_FONT);
 		}
-		
+
 		highlighter = new SyntaxHighlighter(parser);
 		setLineColor(highlighter);
-		
+
 		final EditorComposite tempEditor = this;
-		
+
 		// Load the Section Info
 		sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
-		
+
 		txt.addDisposeListener(new DisposeListener(){
 
 			public void widgetDisposed(DisposeEvent e) {
 				if( parser != null)
 					parser.cleanupTokenCache();
 			}
-			
+
 		});
-		
+
 		txt.addFocusListener(new FocusListener(){
 
 			public void focusGained(FocusEvent e) {
@@ -503,7 +503,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 			public void focusLost(FocusEvent e){
 			}
-			
+
 		});
 
 		suggest.attach(this, parser);
@@ -526,12 +526,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		});
 
-		
+
 		//Place any auto complete things in here
 		txt.addVerifyListener(new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
 				if (e.text.equals("\t")) {
-					
+
 					if(snippetMode){
 						if( currentEditVarPos != -1){
 							currentEditVarPos = (currentEditVarPos + 1) % currentSnippet.getNumberOfUniqueVars();
@@ -542,7 +542,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						}
 						return;
 					}
-					
+
 					int direction = (e.stateMask == SWT.SHIFT) ? -1 : 1;
 
 					if (txt.getSelectionCount() > 1) {
@@ -585,7 +585,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 			public void modifyText(ExtendedModifyEvent event) {
 				lineHighlight();
-				
+
 				modified = true;
 				updateModified();
 
@@ -602,9 +602,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					if (stack.size() > UNDO_LIMIT)
 						stack.remove(0);
 				}
-			
 
-	
+
+
 				if( snippetMode && currentEditVarPos != -1 ){ 
 					int offset = 0;
 					int end = event.start + event.length;
@@ -612,19 +612,19 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					int varStart, varEnd, oldLength = currentEditVar.getValue().length();
 					int oldUndoMode = undoMode;
 					boolean wasEdited = false;
-					
+
 					ArrayList<Integer> pos;
-					
+
 					if( end > oldEnd)
 						offset = end - event.start;
 					else
 						offset = event.start - oldEnd;
-					
+
 					SnippetVariable var = currentEditVar;
-					
+
 					varStart = snippetStartPos + currentSnippet.getVarEditPos(currentEditVarPos);
 					varEnd = varStart + var.getValue().length() + offset - 1;
-					
+
 					if( varStart == varEnd + 1) //Single edit var changed to "" 
 						var.setValue("");
 					else if( varStart > varEnd){ //End snippet mode, we've edited too much
@@ -638,32 +638,32 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						else{						
 							var.setValue(txt.getText(event.start,end-1));				
 						}
-						
+
 						var.setEdited(true);
 						wasEdited = true; //Make the replace loop below replace the edit var as well, since we changed it beyond what the user did
 					}
 					else
 						var.setValue(txt.getText(varStart,varEnd));
-					
-					
+
+
 					//Replace all the old variable values
 					pos = currentSnippet.getLocations(currentEditVarPos);
 					snippetMode = false;			
-					
-					
+
+
 					for( int x = (wasEdited ? 0 : 2); x < pos.size(); x+=2 ){ //If it was edited, then we need to replace the original edit position as well
 						if( x==0)
 							undoMode = oldUndoMode;
 						else
 							undoMode = 0;
-		
+
 						txt.replaceTextRange(snippetStartPos + pos.get(x), oldLength + (x==0 ? event.length : 0), var.getValue()); //If we are changing the original edit position, compensate for the length of the string that we typed in
 					}
-					
+
 					undoMode = oldUndoMode;
-					
+
 					snippetMode = true;			
-					
+
 					//commitUndo();
 					updateSnippet();
 				}
@@ -672,12 +672,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		});
 
-		
+
 		txt.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				lineHighlight();
 				handleCaretChange();
-				
+
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
 					case 's':
@@ -736,7 +736,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'S':
 						RepDevMain.mainShell.saveAllRepgens();
 						break;
-						
+
 					case 'o':
 					case 'O':
 						RepDevMain.mainShell.showOptions();
@@ -763,7 +763,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					if( e.keyCode == SWT.F8 )
 						installRepgen(true);
 				}
-				
+
 
 				if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT || e.keyCode == SWT.ARROW_UP)
 					commitUndo();
@@ -774,7 +774,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 			}
 		});
-		
+
 		txt.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
 				lineHighlight();
@@ -793,14 +793,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				int startOffset = txt.getOffsetAtLine(curLine);
 				int endOffset;
 				String line;
-				
+
 				endOffset = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, curLine + 1));
 
 				if( endOffset - 1 <= startOffset)
 					line = "";
 				else
 					line = txt.getText(startOffset, endOffset - 1);	
-								
+
 				if( line.indexOf("#INCLUDE") != -1 ) {
 					String fileStr = line.substring(line.indexOf("\"")+1, line.lastIndexOf("\""));
 					if( file.isLocal() )
@@ -810,7 +810,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 				else if(txt.getSelectionText().equalsIgnoreCase("CALL")) {
 					Token tmpToken;
-					
+
 					tmpToken = getTokenAt(txt.getCaretOffset());
 					if(tmpToken != null){
 						if(sec.exist(tmpToken.getStr())){
@@ -853,9 +853,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				groupIndent(-1, startLine, endLine);
 			}
 		});
-		
+
 		new MenuItem(contextMenu,SWT.SEPARATOR);
-		
+
 		final MenuItem surroundWithDialog = new MenuItem(contextMenu, SWT.NONE);
 		surroundWithDialog.setText("Surround Text Dialog\tCTRL+SHIFT+R");
 		surroundWithDialog.setImage(RepDevMain.smallSurroundImage);
@@ -864,7 +864,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				surroundWithShell();
 			}
 		});
-		
+
 		// TODO: New icon for SurroundWithPrints
 		final MenuItem surroundWithPrint = new MenuItem(contextMenu, SWT.NONE);
 		surroundWithPrint.setText("Surround Text with PRINTs\tCTRL+U");
@@ -874,27 +874,27 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				surroundEachLineWith("PRINT \"", "\"\nNEWLINE\n", true);
 			}
 		});
-		
+
 		final MenuItem formatCode = new MenuItem(contextMenu, SWT.NONE);
 		formatCode.setText("Format Code (BETA)\tCTRL+SHIFT+T");
 		formatCode.setImage(RepDevMain.smallFormatCodeImage);
 		formatCode.addSelectionListener(new SelectionAdapter() {
-		    public void widgetSelected(SelectionEvent e) {
-			sendToFormatter();
-		    } 
+			public void widgetSelected(SelectionEvent e) {
+				sendToFormatter();
+			} 
 		});
-		
+
 		new MenuItem(contextMenu,SWT.SEPARATOR);
-		
+
 		final MenuItem insertSnippet = new MenuItem(contextMenu, SWT.NONE);
 		insertSnippet.setText("Insert Snippet\t(CTRL+SPACE) X 2");
 		insertSnippet.setImage(RepDevMain.smallInsertSnippetImage);
 		insertSnippet.addSelectionListener(new SelectionAdapter() {
-		    public void widgetSelected(SelectionEvent e) {
-			   suggest.open(true);
-		    } 
+			public void widgetSelected(SelectionEvent e) {
+				suggest.open(true);
+			} 
 		});
-		
+
 		// Bruce - Start 02/04/08
 		final MenuItem defineVar = new MenuItem(contextMenu, SWT.NONE);
 		defineVar.setText("Define Variable\tCTRL+SHIFT+D");
@@ -906,7 +906,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			} 
 		});
 		// Bruce - End
-		
+
 		final MenuItem gotoSection = new MenuItem(contextMenu, SWT.NONE);
 		gotoSection.setText("Goto Section\tCTRL+G");
 		//gotoSection.setImage(RepDevMain.xxxxx);
@@ -916,7 +916,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			} 
 		});
 		new MenuItem(contextMenu,SWT.SEPARATOR);
-		
+
 		final MenuItem editCut = new MenuItem(contextMenu,SWT.PUSH);
 		editCut.setImage(RepDevMain.smallCutImage);
 		editCut.setText("Cut\tCTRL+X");
@@ -925,7 +925,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				txt.cut();
 			}
 		});
-		
+
 		final MenuItem editCopy = new MenuItem(contextMenu,SWT.PUSH);
 		editCopy.setImage(RepDevMain.smallCopyImage);
 		editCopy.setText("Copy\tCTRL+C");
@@ -934,7 +934,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				txt.copy();
 			}
 		});
-		
+
 		final MenuItem editPaste = new MenuItem(contextMenu,SWT.PUSH);
 		editPaste.setImage(RepDevMain.smallPasteImage);
 		editPaste.setText("Paste\tCTRL+V");
@@ -943,7 +943,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				txt.paste();
 			}
 		});
-		
+
 
 		contextMenu.addMenuListener(new MenuListener() {
 
@@ -982,18 +982,18 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		txt.setMenu(contextMenu);
 
 		String str = file.getData();
-		
+
 		if (str == null){
 			tabItem.dispose();
 			return;
 		}
-		
+
 		txt.setText(str);
 		handleCaretChange();
 
 		suggest.close();
 
-/*		FormData frmBar = new FormData();
+		/*		FormData frmBar = new FormData();
 		frmBar.top = new FormAttachment(0);
 		frmBar.left = new FormAttachment(0);
 		frmBar.right = new FormAttachment(100);
@@ -1008,13 +1008,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		if( parser != null && !file.isLocal())
 			parser.errorCheck();
-		
+
 		undoMode = 1;
 		modified = false;
 		updateModified();
 		highlight(doParse,true);
 	}
-	
+
 	// Bruce - Start 02/04/08
 
 	/**
@@ -1027,7 +1027,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 */
 	public void defineVariable(String sStr){
 		int iEndPos, iCurPos;
-		
+
 		if(sec.exist("define")){
 			// Get the insertion point in the DEFINE section.
 			iEndPos = sec.getLastInsertPos("define");
@@ -1063,7 +1063,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void defineVarShell(String varName){
 		DefineVarShell.create(this, varName);
 	}
-	
+
 	/**
 	 * Calls and creates the Goto Section Shell, which allows the user to select the Section/
 	 * Procedure to jump to.  The default selection will be the Section/Procedure the caret is
@@ -1072,7 +1072,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void gotoSectionShell(){
 		GotoSectionShell.create(this, txt.getCaretOffset());
 	}
-	
+
 	/**
 	 * Return the list of SectionInfo
 	 * @return ArrayList<SectionInfo>
@@ -1080,7 +1080,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public ArrayList<SectionInfo> getSectionInfoList(){
 		return sec.getList();
 	}
-	
+
 	/**
 	 * gotoSection will jump to the specified section, if it exists.
 	 * @param <B>section</B> - Name of the section/procedure
@@ -1095,7 +1095,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			lineHighlight();
 		}
 	}
-	
+
 	/**
 	 *  isAlphaNumeric will return true if all the characters in str are A-Z or a-z or 0-9.  Otherwise
 	 *  false is returned.  A null string will also return false.
@@ -1103,11 +1103,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 *  @param str string to check
 	 */
 	public boolean isAlphaNumeric(String str){
-		
+
 		int i;
 		char c;
 		boolean b=true;
-		
+
 		if(str.length()==0)
 			return false;
 
@@ -1128,11 +1128,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 *  @param str string to check
 	 */
 	public boolean isAlpha(String str){
-		
+
 		int i;
 		char c;
 		boolean b=true;
-		
+
 		if(str.length()==0)
 			return false;
 
@@ -1156,7 +1156,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		int i;
 		char c;
 		boolean b=true;
-		
+
 		if(str.length()==0)
 			return false;
 
@@ -1169,7 +1169,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 		return b;
 	}
-	
+
 	/**
 	 * Returns the token pointed by offset.  If the pointer is at the begining or the
 	 * middle of a token, then that token is returned.  And if the pointer is at the end of
@@ -1183,19 +1183,22 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public Token getTokenAt(int offset){
 		int beforeTokenEnd = 0;
 		Token token = null;
-		
+
 		for(Token tok : parser.getLtokens()){
 			if(offset == 0){
 				token = tok;
 				break;
 			}
-			else if(offset >= tok.getBefore().getEnd() && offset < tok.getEnd()){
-				token = tok;
-				break;
+			else if(tok.getBefore() != null){
+				if(offset >= tok.getBefore().getEnd() && offset < tok.getEnd()){
+					token = tok;
+					break;
+				}
 			}
 		}
 		return token;
 	}
+
 	// Bruce - End
 
 	/**
@@ -1207,27 +1210,27 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		commitUndo();
 		modified = false;
 		updateModified();
-		
+
 		//If this was an include file to some other files we are currently ediditing, we must update those
 		//We also want to do it before the error checker, so any errors with include files get put in asap
 		if( parser.needRefreshIncludes() )
 			parser.parseIncludes();
-		
+
 		//Check other open tabs, and if needed set the flag to reparse their includes
 		CTabFolder folder = (CTabFolder)getParent();
 		Object loc;
-		
+
 		if( file.isLocal())
 			loc = file.getDir();
 		else
 			loc = file.getSym();
-		
+
 		for( CTabItem cur : folder.getItems()){
 			if( cur.getControl() == null || !(cur.getControl() instanceof EditorComposite) )
 				continue;
-			
+
 			RepgenParser parser = ((EditorComposite)cur.getControl()).getParser();
-			
+
 			if( parser != null){
 				for( Include inc : parser.getIncludes()){
 					if( inc.getFileName().equals(file.getName())){
@@ -1237,21 +1240,21 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 			}
 		}
-		
-		
+
+
 		if( parser != null && errorCheck && !file.isLocal())
 			parser.errorCheck();
 	}
-	
+
 	public void updateModified(){
 		CTabFolder folder = (CTabFolder)getParent();
 		Object loc;
-		
+
 		if( file.isLocal())
 			loc = file.getDir();
 		else
 			loc = file.getSym();
-		
+
 		for( CTabItem cur : folder.getItems())
 			if( cur.getData("file") != null && ((SymitarFile)cur.getData("file")).equals(file) && cur.getData("loc").equals(loc)  )
 				if( modified && ( cur.getData("modified") == null || !((Boolean)cur.getData("modified")))){
@@ -1263,7 +1266,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					cur.setText(cur.getText().substring(0,cur.getText().length() - 2));
 				}
 	}
-	
+
 	/**
 	 * @param confirm Pops up an SWT Message box if true, confirms wether the repgen should be installed or not
 	 */
@@ -1271,118 +1274,118 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if( file.getType() != FileType.REPGEN || file.isLocal() ) {
 			return;
 		}
-		
+
 		MessageBox dialog = new MessageBox(Display.getCurrent().getActiveShell(),SWT.YES | SWT.NO | SWT.ICON_QUESTION);
 		MessageBox dialog2 = null;
-		
+
 		dialog.setText("Confirm Repgen Installation");
 		dialog.setMessage("Are you sure you want to save this file and install this repgen?");
-				
+
 		if( !confirm || dialog.open() == SWT.YES ){
 			getShell().setCursor(getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
-			
+
 			if(modified) saveFile(true);
 			ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).installRepgen(file.getName());
-			
+
 			getShell().setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
-			
-			
+
+
 			dialog2 = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | ( result.getType() == ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY ? SWT.ICON_INFORMATION : SWT.ICON_ERROR ));
 			dialog2.setText("Installation Result");
-			
+
 			if( result.getType() != ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY )
 				dialog2.setMessage("Error Installing Repgen: \n" + result.getErrorMessage());
 			else
 				dialog2.setMessage("Repgen Installed, Size: " + result.getInstallSize());
-			
+
 			dialog2.open();
 		}
 	}
-	
+
 	public void surroundEachLineWith(String start, String end, boolean escapeBadChars) {
-        int old = txt.getTopIndex();
+		int old = txt.getTopIndex();
 		//My algorithm: Go through each line of the current text, if it's a line we are working with (Defined by the selection),
-        //we append it + start and end stuff to the new Txt, otherwise, just append the regular line to the new Txt
-        //When you are done, just write out the newTxt to the box and reparse/reload the highlighting, etc.
-        //I decided not to alter the tabbing of the surrounded text, the user should be able to select what they want after the operation
-        char[] badChars = { '"' }; //TODO: Add more to list later
-        
-        StringBuilder newTxt = new StringBuilder();
-        int startLine, endLine;
-        
-        //If not selecting anything, operate on current line
-        if( txt.getSelectionCount() == 0)
-        {
-            startLine = endLine = txt.getLineAtOffset(txt.getCaretOffset());
-        }
-        else{
-            startLine = txt.getLineAtOffset(txt.getSelection().x);
-            endLine = txt.getLineAtOffset (txt.getSelection().y);
-        }
-        
-        if (endLine > txt.getLineCount() - 1 )
-            endLine = Math.max(txt.getLineCount() - 1, startLine + 1);
+		//we append it + start and end stuff to the new Txt, otherwise, just append the regular line to the new Txt
+		//When you are done, just write out the newTxt to the box and reparse/reload the highlighting, etc.
+		//I decided not to alter the tabbing of the surrounded text, the user should be able to select what they want after the operation
+		char[] badChars = { '"' }; //TODO: Add more to list later
 
-        try {
+		StringBuilder newTxt = new StringBuilder();
+		int startLine, endLine;
 
-            for (int i = 0; i < txt.getLineCount(); i++) {
-                int startOffset = txt.getOffsetAtLine(i);
-                int endOffset;
-                String line;
-                
-                if( i >= txt.getLineCount () - 1 ){
-                    endOffset = txt.getCharCount() ;
-                }
-                else
-                    endOffset = txt.getOffsetAtLine(i + 1);
+		//If not selecting anything, operate on current line
+		if( txt.getSelectionCount() == 0)
+		{
+			startLine = endLine = txt.getLineAtOffset(txt.getCaretOffset());
+		}
+		else{
+			startLine = txt.getLineAtOffset(txt.getSelection().x);
+			endLine = txt.getLineAtOffset (txt.getSelection().y);
+		}
 
-                if( endOffset - 1 <= startOffset)
-                    line = "";
-                else
-                    line = txt.getText(startOffset, endOffset - 1);            
+		if (endLine > txt.getLineCount() - 1 )
+			endLine = Math.max(txt.getLineCount() - 1, startLine + 1);
 
-                if( i >= startLine && i <= endLine )
-                {    
-                	newTxt.append(start);
-                
-                	int j;
-                	for( j = line.length()-1; j >= 0; j--){
-                		if(line.charAt(j) != '\n' && line.charAt(j) != '\r'){
-                			break;
-                		}
-                	}
-                	if(j!=-1){
-                		line = line.substring(0,j+1);
-                	}
-                    if( escapeBadChars )
-                        for(char cur : badChars)
-                            line = line.replaceAll("\\"+cur, "\"+CTRLCHR("+((int)cur)+")+\"");
-                
-                    newTxt.append(line);
-                     newTxt.append(end);
-                }
-                else
-                    newTxt.append(line);
-            }
+		try {
+
+			for (int i = 0; i < txt.getLineCount(); i++) {
+				int startOffset = txt.getOffsetAtLine(i);
+				int endOffset;
+				String line;
+
+				if( i >= txt.getLineCount () - 1 ){
+					endOffset = txt.getCharCount() ;
+				}
+				else
+					endOffset = txt.getOffsetAtLine(i + 1);
+
+				if( endOffset - 1 <= startOffset)
+					line = "";
+				else
+					line = txt.getText(startOffset, endOffset - 1);            
+
+				if( i >= startLine && i <= endLine )
+				{    
+					newTxt.append(start);
+
+					int j;
+					for( j = line.length()-1; j >= 0; j--){
+						if(line.charAt(j) != '\n' && line.charAt(j) != '\r'){
+							break;
+						}
+					}
+					if(j!=-1){
+						line = line.substring(0,j+1);
+					}
+					if( escapeBadChars )
+						for(char cur : badChars)
+							line = line.replaceAll("\\"+cur, "\"+CTRLCHR("+((int)cur)+")+\"");
+
+					newTxt.append(line);
+					newTxt.append(end);
+				}
+				else
+					newTxt.append(line);
+			}
 
 
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-        	if( parser != null )
-        		parser.setReparse(false);
-        	
-            txt.setText(newTxt.toString());
-            
-            if( parser != null ){
-                parser.reparseAll();
-                parser.setReparse(true);
-            }
-        }
-        txt.setTopIndex(old);
-    }
-	
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			if( parser != null )
+				parser.setReparse(false);
+
+			txt.setText(newTxt.toString());
+
+			if( parser != null ){
+				parser.reparseAll();
+				parser.setReparse(true);
+			}
+		}
+		txt.setTopIndex(old);
+	}
+
 	public RepgenParser getParser() {
 		return parser;
 	}
@@ -1390,35 +1393,35 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void setParser(RepgenParser parser) {
 		this.parser = parser;
 	}
-	
+
 	public SymitarFile getFile() {
 		return file;
 	}
-	
+
 	public void handleCaretChange() {
 		boolean found = false;
 		Token cur = null;
 		int tokloc = 0;
 		ArrayList<Token> tokens = null;
 		ArrayList<Token> redrawTokens = new ArrayList<Token>();
-		
+
 		RepDevMain.mainShell.setLineColumn();
 		if( parser == null )
 			return;
-		
+
 
 		if( snippetMode ){
 			if(currentEditVarPos != -1 && txt.getCaretOffset() < snippetStartPos + currentSnippet.getVarEditPos(currentEditVarPos))
-					snippetMode = false;
+				snippetMode = false;
 			else if( currentEditVarPos != -1 && txt.getCaretOffset() > snippetStartPos + currentSnippet.getVarEditPos(currentEditVarPos) + currentEditVar.getValue().length())
-					snippetMode = false;
-			
+				snippetMode = false;
+
 			if( !snippetMode )
 				clearSnippetMode();
 		}
-		
+
 		tokens = parser.getLtokens();
-		
+
 		//Find your current token
 		for( Token tok: tokens ) {
 			tokloc++;
@@ -1428,7 +1431,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				break;
 			}
 		}
-		
+
 		//Clear all other special backgrounds, possibly move this up to previous loop in future to make faster
 		for( Token tok : tokens){
 			if( tok.getSpecialBackground() != null && tok.getBackgroundReason() == Token.SpecialBackgroundReason.BLOCK_MATCHER){
@@ -1437,32 +1440,32 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				redrawTokens.add(tok);
 			}
 		}
-		
+
 		// Refresh the Section Info
 		if(prevTxtLine != txt.getLineAtOffset(txt.getCaretOffset())){
 			sec.refreshList(tokens, txt.getText());
 			prevTxtLine = txt.getLineAtOffset(txt.getCaretOffset());
 		}
-		
-		
+
+
 		found = false;
-		
+
 		if( cur != null ) {
-			
+
 			//If it's a start token, read forward to the matching block
 			if(cur.isRealHead())
 			{
-				
+
 				Stack<Token> tStack = new Stack<Token>();
 				tStack.push(cur);
-				
+
 				//tokloc is already set at next token since it was set before the break in the for loop above
 				//All this messy code is to differentiate between starts and ends that are the same
 				while( tokloc < tokens.size() ) {
 					if( tokens.get(tokloc).isHead() && 
-						(tokens.get(tokloc).getCDepth() == 0 ||tokens.get(tokloc).getStr().equals("["))&&
-						((!tokens.get(tokloc).inDate() || tokens.get(tokloc).getStr().equals("'")) && tStack.size() == 0 || !tStack.peek().getStr().equals("\'")) && 
-						((!tokens.get(tokloc).inString() || tokens.get(tokloc).getStr().equals("\"")) && tStack.size() == 0 || !tStack.peek().getStr().equals("\"")))
+							(tokens.get(tokloc).getCDepth() == 0 ||tokens.get(tokloc).getStr().equals("["))&&
+							((!tokens.get(tokloc).inDate() || tokens.get(tokloc).getStr().equals("'")) && tStack.size() == 0 || !tStack.peek().getStr().equals("\'")) && 
+							((!tokens.get(tokloc).inString() || tokens.get(tokloc).getStr().equals("\"")) && tStack.size() == 0 || !tStack.peek().getStr().equals("\"")))
 					{
 						tStack.push(tokens.get(tokloc));
 					}
@@ -1473,15 +1476,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					{
 						tStack.pop();						
 					}
-					
+
 					if( tStack.size() == 0 ) {
 						found = true;
 						break;
 					}
-					
+
 					tokloc++;
 				}
-				
+
 				if( found ){
 					//TODO:Special background
 					setLineColor(highlighter);
@@ -1492,16 +1495,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					redrawTokens.add(cur);
 					redrawTokens.add(tokens.get(tokloc));
 				}
-				
+
 			} else if( cur.isRealEnd() )
-				{
+			{
 
 				Stack<Token> tStack = new Stack<Token>();
 				tStack.push(cur);
-				
+
 				//tokloc must be moved back, one back to current token, one more back to first one we should be reading
 				tokloc = Math.max(0,tokloc-2);
-				
+
 				//All this messy code is to differentiate between starts and ends that are the same
 				while( tokloc >=0 ) {
 					if( tokens.get(tokloc).isEnd() && 
@@ -1518,16 +1521,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					{
 						tStack.pop();	
 					}
-				
-					
+
+
 					if( tStack.size() == 0 ) {
 						found = true;
 						break;
 					}
-					
+
 					tokloc--;
 				}
-				
+
 				if( found ){
 					setLineColor(highlighter);
 					cur.setSpecialBackground(blockMatchColor);
@@ -1539,16 +1542,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 			}
 		}
-	
+
 		//IF we need to update, only call this once
 		for( Token tok : redrawTokens )
 			txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
 	}
-	
+
 	private void clearSnippetMode() {
 		if( parser == null)
 			return;
-	
+
 		for( Token tok : parser.getLtokens()){
 			if(tok.getBackgroundReason() == Token.SpecialBackgroundReason.CODE_SNIPPET){
 				tok.setBackgroundReason(Token.SpecialBackgroundReason.NONE);
@@ -1557,7 +1560,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
 			}
 		}
-		
+
 		currentEditVar = null;
 		currentEditVarPos = -1;
 		currentSnippet = null;
@@ -1576,11 +1579,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		parser.setReparse(true);
 		parser.reparseAll();
 	}
-	
+
 	public boolean isModified() {
 		return modified;
 	}
-	
+
 	/**Puts us into snippet mode, if text is selected, we surround it with a snippet if supported, otherwise we insert it in, and start the editing mode
 	 * 
 	 * @param test
@@ -1588,23 +1591,23 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void activateSnippet(Snippet snippet) {
 		String indent = "";
 		String lastLine, sText;
-		
+
 		if( parser == null)
 			return;
-		
-		
+
+
 		commitUndo();
-		
+
 		currentSnippet = snippet;
 		snippet.setup();
-		
+
 		snippetStartPos = txt.getCaretOffset();
-			
+
 		int startOffset = txt.getOffsetAtLine(txt.getLineAtOffset(txt.getCaretOffset()));
 		int endOffset;
 
 		endOffset = txt.getCaretOffset();
-		
+
 		if( endOffset <= startOffset)
 			lastLine = "\n";
 		else
@@ -1615,16 +1618,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				break;
 			else
 				indent += lastLine.charAt(i);
-		
+
 
 		sText = snippet.getReplacedText(txt.getSelectionText(),indent);
-		
+
 		txt.insert(sText);
 		//undos.push(new TextChange(snippetStartPos,sText.length(),"",0));
 		commitUndo();
 		snippetMode = true;
 		//Set the snippet mode on so the edit listener doens't do anything until after the initial insertion of the snippet
-	
+
 		if( snippet.getNumberOfUniqueVars() > 0){
 			currentEditVarPos = 0;
 			currentEditVar = snippet.getVar(0);
@@ -1636,43 +1639,43 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			currentEditVarPos = -1;
 			currentEditVar = null;
 		}
-		
+
 
 		//Highlight the variables
 		//Find the tokens
 		updateSnippet();
-		
+
 	}
-	
+
 	//Highlights the tokens, etc
 	private void updateSnippet(){
 		ArrayList<Integer> list;
-		
+
 		if( !snippetMode )
 			return;
-	
+
 		//TODO: These loops are super inefficient!
 		for( int i = 0; i < currentSnippet.getNumberOfUniqueVars(); i++){
 			list = currentSnippet.getLocations(i);
-			
+
 			if( list == null)
 				continue;
-			
+
 
 			for( int x = 0; x < list.size(); x+=2){
 				for( Token tok : parser.getLtokens()){
-					
+
 
 					if( tok.getStart() >= (list.get(x) + snippetStartPos) && tok.getEnd() <= (snippetStartPos + list.get(x) + list.get(x+1))){
 						if( i == currentEditVarPos ){
 							tok.setSpecialBackground(SNIPPET_VAR_CURRENT);
-							
+
 							if( x == 0 )
 								tok.setSpecialBackground(SNIPPET_VAR_EDITING);
 						}
 						else
 							tok.setSpecialBackground(SNIPPET_VAR);
-						
+
 						tok.setBackgroundReason(Token.SpecialBackgroundReason.CODE_SNIPPET);
 						tok.setCurrentVar(currentSnippet.getVar(i));
 						txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
@@ -1680,9 +1683,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 			}
 		}
-		
+
 		txt.redraw();
 	}
-	
-	
+
+
 }
