@@ -19,16 +19,15 @@
 
 package com.repdev;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Composite;
-import org.swtcompare.BasicCompareComposite;
-import org.swtcompare.RangeDifference;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.swtcompare.*;
 
-import com.repdev.parser.RepgenParser;
+import com.repdev.parser.*;
 
 /**
  * Extends the basic compare composite to add repdev specific features
@@ -40,6 +39,7 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 	private SyntaxHighlighter leftHighlighter, rightHighlighter;
 	private RepgenParser leftParser, rightParser;
 	private int[] lIntLines, rIntLines; //Lines needing background highlighting
+	private boolean changed = false;
 	
 	public CompareComposite(Composite parent, CTabItem tabItem, SymitarFile leftFile, SymitarFile rightFile, Color bgcolor){
 		super(parent,leftFile.getName(), rightFile.getName(),RepDevMain.mainShell.getFileImage(leftFile),RepDevMain.mainShell.getFileImage(rightFile));
@@ -79,6 +79,13 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 		}
 		
 		refreshDiffs();
+		
+		if( !changed ){
+			MessageBox mb = new MessageBox(this.getShell(),SWT.OK | SWT.ICON_INFORMATION);
+			mb.setMessage("There are no differences between these two files!");
+			mb.setText("No Differences");
+			mb.open();
+		}
 	}
 	
 	@Override
@@ -102,6 +109,8 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 		
 		for( RangeDifference diff : diffs){
 			if( diff.kind() != RangeDifference.NOCHANGE ){
+				changed = true;
+				
 				for( int i = diff.leftStart(); i < diff.leftEnd(); i++)
 					lLines.add(i);
 				
@@ -133,6 +142,7 @@ public class CompareComposite extends BasicCompareComposite implements TabView {
 			leftHighlighter.setCustomLines(lIntLines);
 		if( rightHighlighter != null)
 			rightHighlighter.setCustomLines(rIntLines);
+		
 	}
 
 }
