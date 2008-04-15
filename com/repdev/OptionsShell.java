@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 public class OptionsShell {
 	private Shell shell;
 	private static OptionsShell me = new OptionsShell();
-	private Button /*telnetRadio, testRadio,*/ devForgetBox,varsButton;
+	private Button /*telnetRadio, testRadio,*/ devForgetBox,varsButton,neverTerm;
 	private Text serverText,portText;
 	private Spinner tabSpinner;
 	private Label serverLabel,portLabel,varsLabel;
@@ -127,6 +127,7 @@ public class OptionsShell {
 				Config.setListUnusedVars(varsButton.getSelection());
 				Config.setTerminateHour(hour.getSelectionIndex()+1);
 				Config.setTerminateMinute(minute.getSelectionIndex()*10);
+				Config.setNeverTerminate(neverTerm.getSelection());
 
 				/*if (testRadio.getSelection())
 					Config.setServer("test");
@@ -187,7 +188,7 @@ public class OptionsShell {
 		
 		// Keep Alive Options
 		Group keepAliveGroup = new Group(shell,SWT.NONE);
-		keepAliveGroup.setText("Keep Alive Options");
+		keepAliveGroup.setText("Keep Alive Options (Log out Sym Required)");
 		layout = new FormLayout();
 		layout.marginTop = 5;
 		layout.marginBottom = 5;
@@ -195,8 +196,26 @@ public class OptionsShell {
 		layout.marginRight = 5;
 		keepAliveGroup.setLayout(layout);
 		
+		Label neverTermLabel = new Label(keepAliveGroup, SWT.NONE);
+		neverTermLabel.setText("Never Terminate");
+		
+		neverTerm = new Button(keepAliveGroup, SWT.CHECK);
+		neverTerm.setSelection(Config.getNeverTerminate());
+		neverTerm.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(neverTerm.getSelection()){
+					hour.setEnabled(false);
+					minute.setEnabled(false);
+				}
+				else{
+					hour.setEnabled(true);
+					minute.setEnabled(true);					
+				}
+			}
+		});
+		
 		Label keepAliveLabel = new Label(keepAliveGroup,  SWT.NONE);
-		keepAliveLabel.setText("Terminate Time (HH:MM)"+Character.toString((char)10)+"(Log out Sym Required)");
+		keepAliveLabel.setText("Terminate Time (HH:MM)");
 		hour = new Combo(keepAliveGroup, SWT.READ_ONLY);
 		for(int i=0 ; i<24 ; i++){
 			hour.add(((i+1) < 10 ? "0" : "")+Integer.toString(i+1),i);
@@ -209,6 +228,15 @@ public class OptionsShell {
 			minute.add(((i * 10) < 10 ? "0" : "")+Integer.toString(i * 10),i);
 		}
 		minute.select(Config.getTerminateMinute()/10);
+		
+		if(neverTerm.getSelection()){
+			hour.setEnabled(false);
+			minute.setEnabled(false);
+		}
+		else{
+			hour.setEnabled(true);
+			minute.setEnabled(true);					
+		}
 		
 		/// Developer Options (dev's only :D)
 		Group devGroup = new Group(shell, SWT.NONE);
@@ -338,22 +366,33 @@ public class OptionsShell {
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
 		data.width = 160;
+		neverTermLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(neverTermLabel);
+		data.top = new FormAttachment(0);
+		neverTerm.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(neverTerm,4);
+		data.width = 160;
 		keepAliveLabel.setLayoutData(data);
 		
 		data = new FormData();
 		data.left = new FormAttachment(keepAliveLabel);
-		data.top = new FormAttachment(0);
+		data.top = new FormAttachment(neverTerm,4);
 		data.width = 10;
 		hour.setLayoutData(data);
 		
 		data = new FormData();
 		data.left = new FormAttachment(hour);
-		data.top = new FormAttachment(0);
+		data.top = new FormAttachment(neverTerm,4);
 		colon.setLayoutData(data);
 		
 		data = new FormData();
 		data.left = new FormAttachment(colon);
-		data.top = new FormAttachment(0);
+		data.top = new FormAttachment(neverTerm,4);
 		data.width = 10;
 		minute.setLayoutData(data);
 		

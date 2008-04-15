@@ -223,12 +223,14 @@ public class DirectSymitarSession extends SymitarSession {
 					int lastActivityTime = (RepDevMain.getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+RepDevMain.getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
 					int termOptionTime = (Config.getTerminateHour()*60)+Config.getTerminateMinute();
 					int curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
+					boolean neverTerminate;
 					
 					terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
+					neverTerminate = Config.getNeverTerminate();
 					
 					boolean firstRun = true;
 					try{
-						while(terminateTime > curTime){
+						while(terminateTime > curTime || neverTerminate){
 							firstRun = false;
 							Thread.sleep(55000);
 							wakeUp();
@@ -237,7 +239,7 @@ public class DirectSymitarSession extends SymitarSession {
 							curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
 							lastActivityTime = (RepDevMain.getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+RepDevMain.getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
 							terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
-							if (terminateTime-curTime < KEEP_ALIVE_WARNING){
+							if (terminateTime-curTime < KEEP_ALIVE_WARNING && !neverTerminate){
 								log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") will terminate in "+(terminateTime-curTime)+" minutes");
 							}
 							else{

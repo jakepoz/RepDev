@@ -49,11 +49,11 @@ public class Config implements Serializable {
 	 * different, then a popup will notify the user and will launch the OptionsShell so that
 	 * the users can config the new options.
 	 */
-	public final static int REVISION = 1; // Modify this everytime we add new options to prompt the user.
+	public final static int REVISION = 2; // Modify this everytime we add new options to prompt the user.
 	private int revision=-1;
 	private boolean windowMaximized;
 	private Point windowSize;
-	private boolean listUnusedVars, wrapSearch, caseSensitive;
+	private boolean listUnusedVars, wrapSearch, caseSensitive, neverTerminateKeepAlive;
 	private int terminateHour;
 	private int terminateMinute;
 	private int sashHSize, sashVSize;
@@ -380,6 +380,23 @@ public class Config implements Serializable {
 	 */
 	public static void setRevision(int rev){
 		me.revision = rev;
+	}
+	
+	/*
+	 * Returns true if the user does not want to terminate Keep Alive at the selected time.
+	 * after the set time.
+	 * @return boolean
+	 */
+	public static boolean getNeverTerminate(){
+		return me.neverTerminateKeepAlive;
+	}
+	
+	/*
+	 * Set true if the user does not want to terminat Keep Alive at the selected time.
+	 * Set false if the user does want to terminate Keep Alive at the selected time.
+	 */
+	public static void setNeverTerminate(boolean b){
+		me.neverTerminateKeepAlive = b;
 	}
 
 }
