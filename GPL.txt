@@ -1,3 +1,5 @@
+This project is copyright 2007-2008 RepDev LLC (registered in Wayne County, MI)
+
                  GNU GENERAL PUBLIC LICENSE 
                        Version 3, 29 June 2007
 
