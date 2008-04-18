@@ -59,7 +59,7 @@ public class RepDevMain {
 	public static boolean FORGET_PASS_ON_EXIT = false; // set in options only please.
 
 	/**
-	 * lastActivity can be updated everytime you deem is an activity.  This will be used in the keepAlive
+	 * lastActivity can be updated every time you deem is an activity.  This will be used in the keepAlive
 	 * Thread within DirectSymitarSession to terminate Keep Alive if there has not been any activity
 	 * within a specific number of minutes.
 	 */
