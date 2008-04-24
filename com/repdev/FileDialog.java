@@ -361,10 +361,14 @@ public class FileDialog {
 			// Populate the table.
 			for (SymitarFile cur : fileList) {
 				TableItem item = new TableItem(table, SWT.NONE);
-				item.setText(0, ((cur.getOnDemand())?"Demand: ":"")+cur.getName());
+				item.setText(0, cur.getName());
 				
 				if( cur.getType() == FileType.REPGEN )
-					item.setImage(0, RepDevMain.smallRepGenImage);
+					if( cur.getOnDemand() ) 
+						item.setImage(0, RepDevMain.smallRepGenDemandImage);
+					else
+						item.setImage(0, RepDevMain.smallRepGenImage);
+				
 				else
 					item.setImage(0, RepDevMain.smallFileImage);
 				
@@ -392,7 +396,7 @@ public class FileDialog {
 	 * If the sort column is not size or date, it will be sorted by name.
 	 * @param ArrayList&lt;SymitarFile&gt;
 	 * @param sortColumn column to sort by
-	 * @param sortDirection sort asscending or decending.
+	 * @param sortDirection sort ascending or decending.
 	 * @return ArrayList&lt;SymitarFile&gt;
 	 */
 	public ArrayList<SymitarFile> sortFileList(ArrayList<SymitarFile> fileList, TABLE_COLUMN sortColumn, int sortDirection){

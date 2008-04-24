@@ -52,7 +52,8 @@ public class AboutBoxShell {
 	
 	public static final String aboutText = "\n" 
 		  +"RepDev (" + RepDevMain.VERSION + ")\n"
-		  +"(c) 2007 http://repdev.org/\n"
+		  +"(c) 2007-2008 RepDev LLC\n"
+		  +"http://repdev.org/\n"
 		  +"support@repdev.org\n"
 		  +"\nSWT Version: " + SWT.getVersion() + "\n\n"
 		  +"RepDev is a community based free IDE for use writing\n"

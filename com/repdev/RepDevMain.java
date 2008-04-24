@@ -54,7 +54,7 @@ public class RepDevMain {
 	public static final int VFIX   = 6;
 	public static final String VSPECIAL = ""; // "special" string for release names, beta, etc
 
-	public static final String VERSION = VMAJOR + "." + VMINOR + (VFIX>0?"."+VFIX:"") + (DEVELOPER ? "-dev" : "") + " " + VSPECIAL;
+	public static final String VERSION = VMAJOR + "." + VMINOR + (VFIX>0?"."+VFIX:"") + (DEVELOPER ? "-dev" : "") + (!VSPECIAL.equals("")? " " + VSPECIAL : "");
 	public static final String NAMESTR = "RepDev  v" + VERSION;
 	public static boolean FORGET_PASS_ON_EXIT = false; // set in options only please.
 
@@ -71,7 +71,8 @@ public class RepDevMain {
 	smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
 	smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
 	smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage, smallProgramIcon, smallInstallImage, smallCompareImage, smallSurroundImage, smallSurroundPrint,
-	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage, smallFunctionImage, smallSnippetImage, smallKeywordImage, smallDefineVarImage;
+	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage, smallFunctionImage, smallSnippetImage, smallKeywordImage, smallDefineVarImage,
+	smallRepGenDemandImage;
 	public static final String IMAGE_DIR = "repdev-icons/";
 	
 	public static SnippetManager snippetManager;
@@ -143,6 +144,7 @@ public class RepDevMain {
 		smallProjectImage = new Image(display, IMAGE_DIR + "small-project.png");
 		smallRemoveImage = new Image(display, IMAGE_DIR + "small-remove.png");
 		smallRepGenImage = new Image(display, IMAGE_DIR + "small-repgen.png");
+		smallRepGenDemandImage = new Image(display, IMAGE_DIR + "small-repgen-demand.png");
 		smallRunImage = new Image(display, IMAGE_DIR + "small-run.png");
 		smallSymImage = new Image(display, IMAGE_DIR + "small-sym.png");
 		smallTasksImage = new Image(display, IMAGE_DIR + "small-tasks.png");
