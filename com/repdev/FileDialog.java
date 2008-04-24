@@ -361,7 +361,7 @@ public class FileDialog {
 			// Populate the table.
 			for (SymitarFile cur : fileList) {
 				TableItem item = new TableItem(table, SWT.NONE);
-				item.setText(0, cur.getName());
+				item.setText(0, ((cur.getOnDemand())?"Demand: ":"")+cur.getName());
 				
 				if( cur.getType() == FileType.REPGEN )
 					item.setImage(0, RepDevMain.smallRepGenImage);

@@ -35,15 +35,14 @@ import java.util.Date;
  *
  */
 public class SymitarFile implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 	
 	private String name, dir = "";
 	private FileType type;
 	private Date modified = new Date(0), installed = new Date(0);
 	private long size = -1;
-	private boolean local = false;
+	private boolean local = false, onDemand=false;
 	private int sym;
-
 	
 	/**
 	 * New Local file
@@ -77,6 +76,15 @@ public class SymitarFile implements Serializable {
 		this.type = type;
 		this.modified = modified;
 		this.size = size;
+	}
+	
+	public SymitarFile(int sym, String name, FileType type, Date modified, long size, boolean demand) {
+		this.sym = sym;
+		this.name = name;
+		this.type = type;
+		this.modified = modified;
+		this.size = size;
+		this.onDemand = demand;
 	}
 	
 	public String getData(){
@@ -222,5 +230,9 @@ public class SymitarFile implements Serializable {
 	
 	public String getPath(){
 		return dir + "\\" + name;
+	}
+	
+	public boolean getOnDemand(){
+		return onDemand;
 	}
 }
