@@ -177,7 +177,13 @@ public class ProjectManager {
 		if( session == null || !session.isConnected() )
 			return null;
 		
-		
+		//TODO: possiablly recode so that this code works fine for ID's <3 characters long
+		//ex: if the id number is '35' and the password is 'password' getUserID() will return '35password'
+		//of which we use '35p' for the project id but due to the fact that it is less than 3 digits,
+		//the password partially was used, thus if this user changes their password to 'newpassword' 
+		//the new id will then be '35newpassword' and the new project id will be '35n'
+		//this is a problem, the users projects will all be listed in '35p' but when repdev goes to open '35n'
+		//it will just find a blank file
 		if (session.getUserID() != null && session.getUserID().length() >= 3)
 			prefix = session.userID.substring(0, 3);
 		else if( session.getUserID() != null)
