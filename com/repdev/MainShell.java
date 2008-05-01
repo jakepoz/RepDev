@@ -586,7 +586,15 @@ public class MainShell {
 			sym = (Integer) cur.getData();
 		else if (cur.getData() instanceof String)
 			dir = (String) cur.getData();
-
+		
+		if( dir == null && sym != -1 && !RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() ) {
+			MessageBox err = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR );
+			err.setText("Can not create project");
+			err.setMessage("Unable to create project when not connected to a sym");
+			err.open();
+			return;
+		}
+		
 		String str = NewProjShell.askForName(display, shell);
 
 		if (str != null) {
