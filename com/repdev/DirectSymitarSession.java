@@ -1233,7 +1233,9 @@ public class DirectSymitarSession extends SymitarSession {
 		DecimalFormat f5 = new DecimalFormat("00000");
 		char[] buf = new char[16];
 		String pad20 = "";
-
+		
+		System.out.println("This file exists : "+fileExists(file));
+		
 		setLastActivity();
 		if (!connected)
 			return SessionError.NOT_CONNECTED;
@@ -1278,9 +1280,16 @@ public class DirectSymitarSession extends SymitarSession {
 				
 				current = readNextCommand();
 			}
-			else{
-				System.out.println("Save file command:\n" + current.toString()+ "\n");
+			
+			int breakcount = 0;
+			while(current.toString().indexOf("BadCharList") == -1){
+				current = readNextCommand();
+				if(breakcount++ > 5){
+					return SessionError.NULL_POINTER;
+				}
 			}
+			
+			System.out.println("Save file command:\n" + current.toString()+ "\n");
 			
 			if( current.getParameters().get("Status") != null && current.getParameters().get("Status").contains("Filename is too long") )
 				return SessionError.FILENAME_TOO_LONG;
