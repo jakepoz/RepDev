@@ -19,7 +19,6 @@
 
 package com.repdev;
 
-import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,17 +31,15 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * This is the main connection object to the Symitar host, it provides all the routines you would need to connect
