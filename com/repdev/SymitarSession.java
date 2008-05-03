@@ -227,6 +227,9 @@ public abstract class SymitarSession {
 		ArrayList<PrintItem> items = getPrintItems("REPWRITER", search);
 		ArrayList<Sequence> newItems = new ArrayList<Sequence>();
 
+		if( items == null )
+			return newItems;
+		
 		//More than likely, if we are looking for anything, it will be the newest one first
 		Collections.reverse(items);
 

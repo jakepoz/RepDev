@@ -1321,6 +1321,78 @@ public class MainShell {
 
 		});
 
+		final MenuItem installFile = new MenuItem(treeMenu, SWT.NONE);
+		installFile.setText("Install");
+		installFile.setImage(RepDevMain.smallInstallImage);
+		installFile.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean modified = false;
+				boolean tabFound = false;
+				
+				// Get the Symitar File and the current SYM
+				SymitarFile file = (SymitarFile) tree.getSelection()[0].getData();
+				int sym = file.getSym();
+				
+				// Go thru the Tab Items to see if the RepGen is currently open.  If it is,
+				// Then install it.
+				for(CTabItem tf : mainfolder.getItems()){
+					// Run only if the RepGen is found.
+					try{
+						if(tf.getControl() instanceof EditorComposite &&
+								tf.getData("file").toString().compareTo(file.getName()) == 0 &&
+								((SymitarFile) tf.getData("file")).getSym() == sym &&
+								((SymitarFile) tf.getData("file")).getType() == FileType.REPGEN){
+							tabFound = true;
+							// Check if the RepGen has been modified.
+							modified = (Boolean)tf.getData("modified");
+						
+							// Activate the Tab for the RepGen
+							mainfolder.setSelection(tf);
+							if(modified == true){
+								// If the RepGen was modified, prompt to save and install
+								((EditorComposite) mainfolder.getSelection().getControl()).installRepgen(true);
+							}
+							else{
+								// If the RepGen was not modified, install
+								((EditorComposite) mainfolder.getSelection().getControl()).installRepgen(false);
+							}
+						}
+					}
+					catch(NullPointerException err){
+						MessageBox dialog = null;
+						dialog = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | SWT.ICON_ERROR );
+						dialog.setText("Installation Result");
+						dialog.setMessage("Error Installing RepGen: \nThis may be a new, unsaved, RepGen.");
+						dialog.open();
+					}
+				}
+				
+				
+				// If the RepGen is not currently open, attempt to install it
+				if(!tabFound){
+					MessageBox dialog = null;
+					
+					try{
+						ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).installRepgen(file.getName());
+						dialog = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | ( result.getType() == ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY ? SWT.ICON_INFORMATION : SWT.ICON_ERROR ));
+						dialog.setText("Installation Result");
+						if( result.getType() != ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY )
+							dialog.setMessage("Error Installing Repgen: \n" + result.getErrorMessage());
+						else
+							dialog.setMessage("Repgen Installed, Size: " + result.getInstallSize());
+
+						dialog.open();
+					}
+					catch(NullPointerException err){
+						dialog = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | SWT.ICON_ERROR );
+						dialog.setText("Installation Result");
+						dialog.setMessage("Error Installing RepGen: \nThe File may not, currently exist on Symitar");
+						dialog.open();
+					}
+				}	
+			}
+		});
+		
 		new MenuItem(treeMenu, SWT.SEPARATOR);
 
 		final MenuItem deleteFile = new MenuItem(treeMenu, SWT.NONE);
@@ -1451,6 +1523,7 @@ public class MainShell {
 
 				openAllItem.setEnabled(false);
 				runMenuItem.setEnabled(false);
+				installFile.setEnabled(false);
 				newFreeFile.setEnabled(false);
 				newProject.setEnabled(false);
 				openFile.setEnabled(false);
@@ -1502,8 +1575,10 @@ public class MainShell {
 				}
 
 				if (tree.getSelectionCount() == 1 && tree.getSelection()[0].getData() instanceof SymitarFile
-						&& ((SymitarFile) tree.getSelection()[0].getData()).getType() == FileType.REPGEN && !((SymitarFile) tree.getSelection()[0].getData()).isLocal())
+						&& ((SymitarFile) tree.getSelection()[0].getData()).getType() == FileType.REPGEN && !((SymitarFile) tree.getSelection()[0].getData()).isLocal()){
 					runMenuItem.setEnabled(true);
+					installFile.setEnabled(true);
+				}
 
 			}
 
