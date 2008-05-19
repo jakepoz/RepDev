@@ -312,7 +312,7 @@ public class RepDevMain {
 				msg.setMessage("The RepDev Team has added new options.  Please take a few moments to configure them.");
 			}
 			msg.open();
-			OptionsShell.showOptions(mainShell.getShell().getDisplay(), mainShell.getShell());
+			OptionsShell.show(mainShell.getShell());
 			Config.setRevision(Config.REVISION);
 		}
 	}

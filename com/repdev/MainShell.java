@@ -2887,6 +2887,13 @@ public class MainShell {
 			}
 		});
 		
+		MenuItem toolsProject = new MenuItem(toolsMenu, SWT.PUSH);
+		toolsProject.setText("&Project File");
+		toolsProject.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ProjectBackupShell.open();
+			}
+		});
 
 		MenuItem helpAbout = new MenuItem(helpMenu, SWT.PUSH);
 		helpAbout.setText("&About");
@@ -2896,21 +2903,31 @@ public class MainShell {
 			}
 		});
 		
-		if( RepDevMain.DEVELOPER ) { // TODO: Set as public for release.
-			MenuItem helpDocs = new MenuItem(helpMenu, SWT.PUSH);
-			helpDocs.setText("&Documentation");
-			helpDocs.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if( System.getProperty("os.name").startsWith("Windows") ) {
-						try {
-							Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler http://repdev.org/doc/repdev.html");
-						} catch (IOException e1) {
-							System.out.println("Error opening URL for repdev docs.  Please manually go to: http://repdev.org/doc/repdev.html");
-						}
-					}				
-				}			
-			});
-		}
+		MenuItem helpDocs = new MenuItem(helpMenu, SWT.PUSH);
+		helpDocs.setText("&Documentation");
+		helpDocs.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if( System.getProperty("os.name").startsWith("Windows") ) {
+					try {
+						Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler http://repdev.org/doc/repdev.html");
+					} catch (IOException e1) {
+						System.out.println("Error opening URL for repdev docs.  Please manually go to: http://repdev.org/doc/repdev.html");
+					}
+				}				
+			}			
+		});
+		
+		// TODO: OLP Entries in the help menu 
+		//  Why?  It'll save me so much time from having to minimize everything, open Docs/ on
+		//  My desktop, find the olp doc, open the correct one, remaximize everything.
+		MenuItem helpOLP = new MenuItem(helpMenu, SWT.CASCADE);
+		helpOLP.setText("Symitar OLP");
+		Menu OLPMenu = new Menu(helpMenu);
+		helpOLP.setMenu(OLPMenu);
+		
+		// Populate OLPMenu:		
+		MenuItem olpAdmin = new MenuItem(OLPMenu, SWT.PUSH);
+		olpAdmin.setText("Admin OLP");
 
 		shell.setMenuBar(bar);
 	}
@@ -2952,7 +2969,7 @@ public class MainShell {
 	}
 
 	public void showOptions() {
-		OptionsShell.showOptions(shell.getDisplay(), shell);
+		OptionsShell.show(shell);
 	}
 
 	private void showAboutBox() {

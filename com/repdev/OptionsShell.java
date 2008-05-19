@@ -1,26 +1,6 @@
-/**
- *  RepDev - RepGen IDE for Symitar
- *  Copyright (C) 2007  Jake Poznanski, Ryan Schultz, Sean Delaney
- *  http://repdev.org/ <support@repdev.org>
- *
- *  This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 package com.repdev;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,88 +8,66 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Global options window
- * @author Jake Poznanski
- *
+ * OptionsShell version 2
+ * @author Ryan Schultz
+ * 
+ *  I created this because the current (previous?) dialog has gotten crowded
+ *  and has outgrown its original simple functionality.  This new one features
+ *  a tabbed view to allow for more options.
  */
+
 public class OptionsShell {
 	private Shell shell;
 	private static OptionsShell me = new OptionsShell();
-	private Button /*telnetRadio, testRadio,*/ devForgetBox,varsButton,neverTerm;
-	private Text serverText,portText;
+	
+	// Tabs and their contents
+	private TabFolder tabs;
+	private Composite serverOptions, editorOptions, developerOptions;
+	
+	// Controls
 	private Spinner tabSpinner;
-	private Label serverLabel,portLabel,varsLabel;
 	private Combo styleCombo, hour, minute;
-
+	private Label varsLabel, serverLabel, portLabel;
+	private Text  serverText, portText;
+	private Button varsButton, neverTerm, devForgetBox, backupEnable;
+	
+	public static void show(Shell parent) {
+		me.create(parent);		
+		me.shell.open();
+		
+		Display display = me.shell.getDisplay();		
+		while (!me.shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+	}
+	
 	private void create(Shell parent) {
-		FormLayout layout = new FormLayout();
-		layout.marginTop = 5;
-		layout.marginBottom = 5;
-		layout.marginLeft = 5;
-		layout.marginRight = 5;
-		layout.spacing = 5;
-
-		FormData data = new FormData();
-
-		shell = new Shell(parent, SWT.APPLICATION_MODAL | SWT.CLOSE | SWT.TITLE);
-		shell.setText("Global Options");
-		shell.setImage(RepDevMain.smallOptionsImage);
-		shell.setLayout(layout);
-
-		Group serverGroup = new Group(shell, SWT.NONE);
-		serverGroup.setText("Symitar Connection Options");
-		layout = new FormLayout();
-		layout.marginTop = 5;
-		layout.marginBottom = 5;
-		layout.marginLeft = 5;
-		layout.marginRight = 5;
-		layout.spacing = 5;
-		serverGroup.setLayout(layout);
+		shell = new Shell(parent, SWT.CLOSE | SWT.TITLE | SWT.APPLICATION_MODAL );
+		shell.setText("Settings");
+		shell.setMinimumSize(400, 300);	
+		tabs = new TabFolder(shell, SWT.NONE);
 		
-		/*telnetRadio = new Button(serverGroup, SWT.RADIO);
-		telnetRadio.setText("Direct Symitar Session");
-		telnetRadio.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				redraw();
-			}
-		});
-
-		testRadio = new Button(serverGroup, SWT.RADIO);
-		testRadio.setText("Local Symitar Emulation");
-		testRadio.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				redraw();
-			}
-		});
-
-		if (Config.getServer().equals("test")) {
-			testRadio.setSelection(true);
-		} else
-			telnetRadio.setSelection(true);
-		*/
-		
-		serverLabel = new Label(serverGroup, SWT.NONE);
-		serverLabel.setText("Symitar Server IP Address:");
-
-		serverText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
-		serverText.setText(Config.getServer());
-		
-		portLabel = new Label(serverGroup, SWT.NONE);
-		portLabel.setText("Port (usually 23)");
-		
-		portText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
-		portText.setText(""+Config.getPort());
-			
+		// Add tabs/controls
+		createServerOptions();
+		createEditorOptions();
+		if( RepDevMain.DEVELOPER )
+			createDevOptions();	
 		
 		Button cancel = new Button(shell, SWT.PUSH);
 		cancel.setText("Cancel");
@@ -143,51 +101,72 @@ public class OptionsShell {
 				    SyntaxHighlighter.loadStyle(Config.getStyle());
 				}
 				
+				// Project file backup
+				Config.setBackupProjectFile( backupEnable.getSelection() );				
 				
 				shell.close();
 			}
 		});
-
-		Group editorGroup = new Group(shell, SWT.NONE);
-		editorGroup.setText("Editor Options");
+		
+		// Layout the shell
+		GridLayout layout = new GridLayout();
+		layout.horizontalSpacing = 5;
+		layout.verticalSpacing   = 5;
+		layout.numColumns = 2;
+		shell.setLayout(layout);
+		
+		GridData data;
+		data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		tabs.setLayoutData(data);
+		
+		data = new GridData( SWT.END, SWT.FILL, false, false, 1, 1 );
+		ok.setLayoutData(data);
+		
+		data = new GridData( SWT.END, SWT.FILL, true, false, 1, 1 );
+		cancel.setLayoutData(data);
+		
+		shell.setDefaultButton(ok);
+		shell.pack();
+	}
+	
+	private void createServerOptions() {
+		serverOptions = new Composite(tabs, SWT.NONE);
+		
+		TabItem serverOptionsTab = new TabItem(tabs, SWT.NONE);
+		serverOptionsTab.setText("Server Options");
+		serverOptionsTab.setControl(serverOptions);
+		
+		Group serverGroup = new Group(serverOptions, SWT.NONE);
+		serverGroup.setText("Symitar Connection Options");
+		FormLayout layout = new FormLayout();
+		layout.marginTop = 5;
+		layout.marginBottom = 5;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		layout.spacing = 5;
+		serverGroup.setLayout(layout);
+		
 		layout = new FormLayout();
 		layout.marginTop = 5;
 		layout.marginBottom = 5;
 		layout.marginLeft = 5;
 		layout.marginRight = 5;
 		layout.spacing = 5;
-		editorGroup.setLayout(layout);
+		serverOptions.setLayout(layout);
+		
+		serverLabel = new Label(serverGroup, SWT.NONE);
+		serverLabel.setText("Symitar Server IP Address:");
 
-		Label tabLabel = new Label(editorGroup, SWT.NONE);
-		tabLabel.setText("Tab Width (0 for Regular Tabs):");
-
-		tabSpinner = new Spinner(editorGroup, SWT.BORDER);
-		tabSpinner.setMaximum(99);
-		tabSpinner.setMinimum(0);
-		tabSpinner.setSelection(Config.getTabSize());
+		serverText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
+		serverText.setText(Config.getServer());
 		
-		Label styleLabel = new Label(editorGroup, SWT.NONE);
-		styleLabel.setText("Style (requires restart)");
+		portLabel = new Label(serverGroup, SWT.NONE);
+		portLabel.setText("Port (usually 23)");
 		
-		styleCombo = new Combo(editorGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
-		File dir = new File("styles\\");
-		if( dir.isDirectory() ) {
-		    for( String file: dir.list() ) {
-			if( file.endsWith(".xml") ) styleCombo.add(file.substring(0, file.length()-4));
-		    }
-		}
+		portText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
+		portText.setText(""+Config.getPort());
 		
-		if( Config.getStyle() != null ) 
-		    styleCombo.setText(Config.getStyle());
-		
-		varsLabel = new Label(editorGroup, SWT.NONE);
-		varsLabel.setText("List unused variables");
-		
-		varsButton = new Button(editorGroup, SWT.CHECK);
-		varsButton.setSelection(Config.getListUnusedVars());
-		
-		// Keep Alive Options
-		Group keepAliveGroup = new Group(shell,SWT.NONE);
+		Group keepAliveGroup = new Group(serverOptions,SWT.NONE);
 		keepAliveGroup.setText("Keep Alive Options (Log out Sym Required)");
 		layout = new FormLayout();
 		layout.marginTop = 5;
@@ -238,65 +217,20 @@ public class OptionsShell {
 			minute.setEnabled(true);					
 		}
 		
-		/// Developer Options (dev's only :D)
-		Group devGroup = new Group(shell, SWT.NONE);
-		devGroup.setText("Developer Options");
-		layout = new FormLayout();
-		layout.marginTop = 5;
-		layout.marginBottom = 5;
-		layout.marginLeft = 5;
-		layout.marginRight = 5;
-		layout.spacing = 5;
-		devGroup.setLayout(layout);
-		
-		Label devNotice = new Label(devGroup, SWT.NONE);
-		devNotice.setText("Developer mode enabled");
-				
-		devForgetBox = new Button(devGroup, SWT.CHECK);
-		devForgetBox.setText("Forget Passwords on exit");
-		devForgetBox.setSelection(RepDevMain.FORGET_PASS_ON_EXIT);
-		
-		data = new FormData();
+		FormData data = new FormData();
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(0);
-		data.bottom = new FormAttachment(editorGroup);
+		data.bottom = new FormAttachment(keepAliveGroup);
 		serverGroup.setLayoutData(data);
-
+		
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(serverGroup);
-		//data.bottom = new FormAttachment(keepAliveGroup);
-		editorGroup.setLayoutData(data);
-		
-		data = new FormData();
-		data.left = new FormAttachment(0);
-		data.right = new FormAttachment(100);
-		data.top = new FormAttachment(editorGroup);
-		if(!RepDevMain.DEVELOPER) data.bottom = new FormAttachment(cancel);
 		keepAliveGroup.setLayoutData(data);
 		
-		data = new FormData();
-		data.left = new FormAttachment(0);
-		data.right = new FormAttachment(100);
-		data.top = new FormAttachment(keepAliveGroup);
-		data.bottom = new FormAttachment(cancel);
-		devGroup.setLayoutData(data);
-
-		if( !RepDevMain.DEVELOPER ) devGroup.setVisible(false);
-		
-		// Connection options
-		/*data = new FormData();
-		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(0);
-		telnetRadio.setLayoutData(data);
-
-		data = new FormData();
-		data.left = new FormAttachment(telnetRadio);
-		data.top = new FormAttachment(0);
-		testRadio.setLayoutData(data);*/
-
+		// align the controls for the server group:
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
@@ -322,9 +256,97 @@ public class OptionsShell {
 		data.right = new FormAttachment(100);
 		data.width = 140;
 		portText.setLayoutData(data);
+		
+		// align controls for the keepalive group:
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(0);
+		data.width = 160;
+		neverTermLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(neverTermLabel);
+		data.top = new FormAttachment(0);
+		neverTerm.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(neverTerm,4);
+		data.width = 160;
+		keepAliveLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(keepAliveLabel);
+		data.top = new FormAttachment(neverTerm,4);
+		data.width = 10;
+		hour.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(hour);
+		data.top = new FormAttachment(neverTerm,4);
+		colon.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(colon);
+		data.top = new FormAttachment(neverTerm,4);
+		data.width = 10;
+		minute.setLayoutData(data);
+				
+	}
+	
+	private void createEditorOptions() {
+		editorOptions = new Composite(tabs,SWT.NONE);
+		
+		TabItem editorOptionsTab = new TabItem(tabs, SWT.NONE);
+		editorOptionsTab.setText("Editor Options");
+		editorOptionsTab.setControl(editorOptions);
+		
+		Group editorGroup = new Group(editorOptions, SWT.NONE);
+		editorGroup.setText("Editor Options");
+		FormLayout layout = new FormLayout();
+		layout.marginTop = 5;
+		layout.marginBottom = 5;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		layout.spacing = 5;
+		editorGroup.setLayout(layout);
+		editorOptions.setLayout(layout);
 
+		Label tabLabel = new Label(editorGroup, SWT.NONE);
+		tabLabel.setText("Tab Width (0 for Regular Tabs):");
 
-		// Editor options
+		tabSpinner = new Spinner(editorGroup, SWT.BORDER);
+		tabSpinner.setMaximum(99);
+		tabSpinner.setMinimum(0);
+		tabSpinner.setSelection(Config.getTabSize());
+		
+		Label styleLabel = new Label(editorGroup, SWT.NONE);
+		styleLabel.setText("Style (requires restart)");
+		
+		styleCombo = new Combo(editorGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+		File dir = new File("styles\\");
+		if( dir.isDirectory() ) {
+		    for( String file: dir.list() ) {
+			if( file.endsWith(".xml") ) styleCombo.add(file.substring(0, file.length()-4));
+		    }
+		}
+		
+		if( Config.getStyle() != null ) 
+		    styleCombo.setText(Config.getStyle());
+		
+		varsLabel = new Label(editorGroup, SWT.NONE);
+		varsLabel.setText("List unused variables");
+		
+		varsButton = new Button(editorGroup, SWT.CHECK);
+		varsButton.setSelection(Config.getListUnusedVars());
+		
+		FormData data = new FormData();
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		data.top = new FormAttachment(0);
+		//data.bottom = new FormAttachment(0);
+		editorGroup.setLayoutData(data);
+		
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
@@ -359,44 +381,47 @@ public class OptionsShell {
 		data.left = new FormAttachment(varsLabel);
 		data.top = new FormAttachment(styleCombo);
 		data.right = new FormAttachment(100);
-		varsButton.setLayoutData(data);
+		varsButton.setLayoutData(data);		
+	}
+	
+	private void createDevOptions() {
+		developerOptions = new Composite(tabs, SWT.NONE);
+		TabItem devOptionsTab = new TabItem(tabs, SWT.NONE);
+		devOptionsTab.setText("Developer");
+		devOptionsTab.setControl(developerOptions);
 		
-		// KeepAlive Options
-		data = new FormData();
+		Group devGroup = new Group(developerOptions, SWT.NONE);
+		devGroup.setText("Developer Options");
+		FormLayout layout = new FormLayout();
+		layout.marginTop = 5;
+		layout.marginBottom = 5;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		layout.spacing = 5;
+		devGroup.setLayout(layout);
+		developerOptions.setLayout(layout);
+		
+		Label devNotice = new Label(devGroup, SWT.NONE);
+		devNotice.setText("Developer mode enabled");
+				
+		devForgetBox = new Button(devGroup, SWT.CHECK);
+		devForgetBox.setText("Forget Passwords on exit");
+		devForgetBox.setSelection(RepDevMain.FORGET_PASS_ON_EXIT);
+		
+		Group devBackup = new Group(developerOptions, SWT.NONE);
+		devBackup.setText("Backup Options");
+		devBackup.setLayout(new GridLayout(2, false));
+		
+		backupEnable = new Button(devBackup, SWT.CHECK);
+		backupEnable.setText("Enable project file backup");
+		backupEnable.setSelection(Config.getBackupProjectFiles());
+				
+		FormData data = new FormData();
 		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(0);
-		data.width = 160;
-		neverTermLabel.setLayoutData(data);
+		devGroup.setLayoutData(data);
 		
-		data = new FormData();
-		data.left = new FormAttachment(neverTermLabel);
-		data.top = new FormAttachment(0);
-		neverTerm.setLayoutData(data);
-		
-		data = new FormData();
-		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(neverTerm,4);
-		data.width = 160;
-		keepAliveLabel.setLayoutData(data);
-		
-		data = new FormData();
-		data.left = new FormAttachment(keepAliveLabel);
-		data.top = new FormAttachment(neverTerm,4);
-		data.width = 10;
-		hour.setLayoutData(data);
-		
-		data = new FormData();
-		data.left = new FormAttachment(hour);
-		data.top = new FormAttachment(neverTerm,4);
-		colon.setLayoutData(data);
-		
-		data = new FormData();
-		data.left = new FormAttachment(colon);
-		data.top = new FormAttachment(neverTerm,4);
-		data.width = 10;
-		minute.setLayoutData(data);
-		
-		// Developer Options
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
@@ -407,43 +432,11 @@ public class OptionsShell {
 		data.top = new FormAttachment(devNotice);
 		devForgetBox.setLayoutData(data);
 		
-		// Ok/Cancel buttons
+		// Backup options under normal dev options
 		data = new FormData();
+		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
-		data.bottom = new FormAttachment(100);
-		cancel.setLayoutData(data);
-
-		data = new FormData();
-		data.bottom = new FormAttachment(100);
-		data.right = new FormAttachment(cancel);
-		ok.setLayoutData(data);
-
-		//redraw();
-
-		shell.setDefaultButton(ok);
-		shell.pack();
-		shell.open();
-	}
-
-	/*private void redraw() {
-		if (telnetRadio.getSelection()) {
-			serverText.setEnabled(true);
-			serverLabel.setEnabled(true);
-		} else if (testRadio.getSelection()) {
-			serverText.setEnabled(false);
-			serverLabel.setEnabled(false);
-			serverText.setText("");
-		}
-
-	}*/
-
-	public static void showOptions(Display display, Shell parent) {
-		me.create(parent);
-
-		while (!me.shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-
+		data.top = new FormAttachment(devGroup);
+		devBackup.setLayoutData(data);
 	}
 }

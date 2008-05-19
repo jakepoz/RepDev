@@ -20,7 +20,12 @@
 package com.repdev;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -112,10 +117,36 @@ public class ProjectManager {
 		if( RepDevMain.SYMITAR_SESSIONS.get(sym) == null || !RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() )
 			return;
 		
-		SymitarFile file = getProjectFile(sym);
+		SymitarFile file = getProjectFile(sym);		
+		String projectFile = processSaveProjects(myProjects);
 		
 		if( file != null )
-			file.saveFile(processSaveProjects(myProjects));
+			file.saveFile(projectFile);
+
+		// TODO: Set to live when ready...
+		if( !RepDevMain.DEVELOPER && Config.getBackupProjectFiles() ) // only dev's can backup project files for now
+			return;
+		
+		// Make a backup of the projects file
+		try {
+			File dir = new File("backup\\");
+			if( !dir.isDirectory() ) {
+				dir.mkdir();
+			}
+			
+			SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
+			SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
+			PrintWriter out = new PrintWriter(
+					new FileWriter("backup\\" + session.getUserID().substring(0,3) + "projects_sym" + sym 
+							+ "_" + date.format(new Date())));
+			out.write(projectFile);
+			out.flush();
+			out.close();
+			System.out.println( "Backup of projects for sym" + sym + " created" );
+		} catch( IOException e ) {
+			//e.printStackTrace();
+			System.err.println("ERROR: Unable to create backup of projects file on sym " + sym);
+		}
 	}
 
 	public static Project createProject(String name, int sym) {
