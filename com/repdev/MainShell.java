@@ -22,6 +22,8 @@ package com.repdev;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -1416,6 +1418,36 @@ public class MainShell {
 
 		});
 
+		final MenuItem archiveFile = new MenuItem(treeMenu, SWT.NONE);
+		archiveFile.setText("Date Archive");
+		archiveFile.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				SimpleDateFormat date = new SimpleDateFormat(".MMddyy");
+				String name;
+				int nameLen;
+				
+				MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+				dialog.setMessage("Are you sure you want to rename the selected file(s)?");
+				dialog.setText("Date Archive");
+				
+				if(dialog.open() == SWT.YES){
+					for(TreeItem ti : tree.getSelection()){
+						if(ti.getData() instanceof Project)
+							name = ((Project)ti.getData()).getName();
+						else
+							name = ((SymitarFile)ti.getData()).getName();
+
+						nameLen = (name.length() > 22 ? 23 : name.length());
+						name = name.substring(0, nameLen).concat(date.format(new Date()));
+						System.out.println("NAME: "+name);
+						handleRenameItem(ti, name);
+					}
+				}
+			}
+
+		});
+
 		final MenuItem compareFile = new MenuItem(treeMenu, SWT.NONE);
 		compareFile.setText("Compare Two Files");
 		compareFile.setImage(RepDevMain.smallCompareImage);
@@ -1529,6 +1561,7 @@ public class MainShell {
 				openFile.setEnabled(false);
 
 				deleteFile.setEnabled(false);
+				archiveFile.setEnabled(true);
 
 				symLogoff.setEnabled(false);
 
@@ -1542,6 +1575,13 @@ public class MainShell {
 				for (TreeItem item : tree.getSelection()) {
 					if (!(item.getData().getClass().isInstance(first))) {
 						allSameType = false;
+						break;
+					}
+				}
+
+				for (TreeItem item : tree.getSelection()) {
+					if(!((item.getData() instanceof SymitarFile))) {
+						archiveFile.setEnabled(false);
 						break;
 					}
 				}
