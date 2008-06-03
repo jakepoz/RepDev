@@ -548,6 +548,7 @@ public class DirectSymitarSession extends SymitarSession {
 			retrieve.getParameters().put("Type", "Letter");
 		else if( file.getType() == FileType.REPORT)
 			retrieve.getParameters().put("Type", "Report");
+
 		
 		retrieve.getParameters().put("Name", file.getName());
 
@@ -594,7 +595,7 @@ public class DirectSymitarSession extends SymitarSession {
 		Command list = new Command("File");
 
 		if (type == FileType.REPGEN)
-			list.getParameters().put("Type", "RepWriterCode");
+			list.getParameters().put("Type", "RepWriter");
 		else if (type == FileType.HELP)
 			list.getParameters().put("Type", "Help");
 		else if (type == FileType.LETTER)
@@ -604,16 +605,7 @@ public class DirectSymitarSession extends SymitarSession {
 		list.getParameters().put("Action", "List");
 
 		write(list);
-		if (type == FileType.REPGEN){
-			Command list2 = new Command("File");
-			list2.getParameters().put("Type", "RepWriter");
-			list2.getParameters().put("Name", search);
-			list2.getParameters().put("Action", "List");
-			write(list2);
-		}
-		
-		int onDemandId=0,oldId;
-		boolean idChanged=false;
+
 		while (true) {
 			try {
 				current = readNextCommand();
@@ -621,35 +613,17 @@ public class DirectSymitarSession extends SymitarSession {
 				e.printStackTrace();
 				return toRet;
 			}
-			if (type != FileType.REPGEN) idChanged=true;
-			oldId=onDemandId;
-			//log(current.toString());
-			if(onDemandId==0){
-				try {
-					onDemandId=Integer.parseInt(current.getParameters().get("MsgId"));
-				} catch (NumberFormatException e){}				//we'll just leave it at zero if it fails
-				oldId=onDemandId;
-			}else{
-				try {
-					onDemandId=Integer.parseInt(current.getParameters().get("MsgId"));
-				} catch (NumberFormatException e){}	
-			}
 
-			if((onDemandId != 0) && (onDemandId != oldId)) idChanged = true;
-			
+			//log(current.toString());
+
 			if (current.getParameters().get("Status") != null)
 				break;
 
-			if( current.getParameters().get("Name") != null){
-				boolean found = false;
-				for(SymitarFile cur: toRet){
-					if(cur.getName().equalsIgnoreCase(current.getParameters().get("Name")))
-						found = true;
-				}
-				if(!found) toRet.add(new SymitarFile(sym, current.getParameters().get("Name"), type, Util.parseDate(current.getParameters().get("Date"), current.getParameters().get("Time")), Integer.parseInt(current.getParameters().get("Size")),!idChanged));
-			}
+			if( current.getParameters().get("Name") != null)
+				toRet.add(new SymitarFile(sym, current.getParameters().get("Name"), type, Util.parseDate(current.getParameters().get("Date"), current.getParameters().get("Time")), Integer.parseInt(current.getParameters().get("Size"))));
+		
 						
-			if(current.getParameters().get("Done") != null && idChanged)
+			if(current.getParameters().get("Done") != null)
 				break;
 		}
 
@@ -1230,8 +1204,6 @@ public class DirectSymitarSession extends SymitarSession {
 		DecimalFormat f5 = new DecimalFormat("00000");
 		char[] buf = new char[16];
 		String pad20 = "";
-		
-		System.out.println("This file exists : "+fileExists(file));
 		
 		setLastActivity();
 		if (!connected)

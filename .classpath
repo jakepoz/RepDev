@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="bin/|dist/|ftptemp/|res/|snippets/|styles/|testdata/" kind="src" path=""/>
+	<classpathentry excluding="backup/|bin/|dist/|res/|snippets/|styles/|testdata/" kind="src" path=""/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="swtcompare.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>

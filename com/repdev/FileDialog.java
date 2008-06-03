@@ -34,8 +34,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -62,7 +60,6 @@ public class FileDialog {
 	Combo typeCombo;
 	Text nameText;
 	String dir;
-	enum TABLE_COLUMN{NAME, SIZE, DATE};
 	
 	boolean listLoaded = false;
 
@@ -164,24 +161,6 @@ public class FileDialog {
 		dateCol.setText("Date");
 		dateCol.setWidth(150);
 
-		// Add sort indicator and sort data when column selected
-		Listener sortListener = new Listener() {
-			public void handleEvent(Event e) {
-				TableColumn column = (TableColumn)e.widget;
-				if(column != table.getSortColumn()){
-					table.setSortDirection(SWT.UP);
-					table.setSortColumn(column);
-				}
-				else{
-					table.setSortDirection(table.getSortDirection() == SWT.UP ? SWT.DOWN : SWT.UP);
-				}
-				createList();				
-			}
-		};
-		nameCol.addListener(SWT.Selection, sortListener);
-		sizeCol.addListener(SWT.Selection, sortListener);
-		dateCol.addListener(SWT.Selection, sortListener);
-	
 		nameText = new Text(shell, SWT.SINGLE | SWT.BORDER);
 
 		nameText.addSelectionListener(new SelectionAdapter() {
@@ -338,37 +317,12 @@ public class FileDialog {
 				fileList = Util.getFileList(dir, nameText.getText());
 			}
 			
-			// If the table sort column and direction has not been set, set them to default.
-			if(table.getSortColumn() == null){
-				table.setSortColumn(table.getColumn(0));
-				table.setSortDirection(SWT.UP);
-			}
-			
-			// Get the current sort column to pass into the sortFileList method.
-			TABLE_COLUMN col;
-			if(table.getSortColumn().getText().equalsIgnoreCase("size")){
-				col = TABLE_COLUMN.SIZE;
-			}
-			else if(table.getSortColumn().getText().equalsIgnoreCase("date")){
-				col = TABLE_COLUMN.DATE;
-			}
-			else{
-				col = TABLE_COLUMN.NAME;
-			}
-			
-			// Sort the list prior to populating the table.
-			fileList = sortFileList(fileList, col, table.getSortDirection());
-			// Populate the table.
 			for (SymitarFile cur : fileList) {
 				TableItem item = new TableItem(table, SWT.NONE);
 				item.setText(0, cur.getName());
 				
 				if( cur.getType() == FileType.REPGEN )
-					if( cur.getOnDemand() ) 
-						item.setImage(0, RepDevMain.smallRepGenDemandImage);
-					else
-						item.setImage(0, RepDevMain.smallRepGenImage);
-				
+					item.setImage(0, RepDevMain.smallRepGenImage);
 				else
 					item.setImage(0, RepDevMain.smallFileImage);
 				
@@ -391,56 +345,6 @@ public class FileDialog {
 		listLoaded = true;
 	}
 
-	/**
-	 * This Method is designed to sort an ArrayList of SymitarFile, given the sort column and direction.
-	 * If the sort column is not size or date, it will be sorted by name.
-	 * @param ArrayList&lt;SymitarFile&gt;
-	 * @param sortColumn column to sort by
-	 * @param sortDirection sort ascending or decending.
-	 * @return ArrayList&lt;SymitarFile&gt;
-	 */
-	public ArrayList<SymitarFile> sortFileList(ArrayList<SymitarFile> fileList, TABLE_COLUMN sortColumn, int sortDirection){
-		for (int i = 1; i < fileList.size(); i++) {
-			SymitarFile file1 = fileList.get(i);
-			int diff;
-			for (int j = 0; j < i; j++){
-				SymitarFile file2 = fileList.get(j);
-				// Compare the File Info
-				if(sortColumn == TABLE_COLUMN.SIZE){
-					if(file1.getSize() > file2.getSize())
-						diff = 1;
-					else if(file1.getSize() < file2.getSize())
-						diff = -1;
-					else diff = 0;
-				}
-				else if(sortColumn == TABLE_COLUMN.DATE){
-					diff = file1.getModified().compareTo(file2.getModified());
-				}
-				else{
-					diff = file1.getName().compareTo(file2.getName());
-				}
-				
-				// Shift in array
-				if(sortDirection != SWT.DOWN){
-					if(diff < 0){
-						fileList.remove(i);
-						fileList.add(j, file1);
-						break;
-					}
-				}
-				else{
-					if(diff > 0){
-						fileList.remove(i);
-						fileList.add(j, file1);
-						break;
-					}
-				}
-			}
-		}
-		return fileList;
-            
-	}
-	
 	public ArrayList<SymitarFile> open() {
 		create();
 
