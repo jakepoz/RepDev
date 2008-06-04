@@ -348,19 +348,16 @@ COPYAPP|Copy information from one loan application to another|NULL
 	PreferenceFlag|0=Do not copy, 1=Copy|NUMBER
 	CBIFlag|0=Do not copy, 1=Copy|NUMBER
 	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
-	
 OUTPUTCLOSE|Close the specified output channel|Null
 	OutputChannel|The output channel to close|NUMBER
 	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
-OUPUTOPEN|Opens an output destination|Null
+OUPUTOPEN|Opens an output destination|NULL
 	DeviceType|Type of output device (e.g. OUTPUTDEVREPORT)|CHARACTER
 	PrintNumber|The printer number (if OUTPUTDEVLINEPRINT)|NUMBER
 	ReportTitle|The report title|CHARACTER
 	ReportCategory|A 10 character output identifier|CHARACTER
-    	OutputChannel|The channel number to open|NUMBER
+    OutputChannel|The channel number to open|NUMBER
 	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
-
-
 DIALOGINTROTEXT|Produces interactive, dynamic dialog box|Null
 	TextLine|Line of text to display (in double quotes)|CHARACTER
 DIALOGPROMPTCHAR|Command to prompt for a character value|Null
