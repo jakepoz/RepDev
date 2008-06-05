@@ -49,7 +49,7 @@ public class Config implements Serializable {
 	 * different, then a popup will notify the user and will launch the OptionsShell so that
 	 * the users can config the new options.
 	 */
-	public final static int REVISION = 3; // Modify this everytime we add new options to prompt the user.
+	public final static int REVISION = 4; // Modify this everytime we add new options to prompt the user.
 	private int revision=-1;
 	private boolean windowMaximized;
 	private Point windowSize;
@@ -57,7 +57,7 @@ public class Config implements Serializable {
 	private int terminateHour;
 	private int terminateMinute;
 	private int sashHSize, sashVSize;
-	private boolean backupProjectFiles;
+	private boolean backupProjectFiles = false;
 	
 	@SuppressWarnings("unused")
 	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.

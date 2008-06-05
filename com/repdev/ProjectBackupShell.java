@@ -79,12 +79,33 @@ public class ProjectBackupShell {
 			public void widgetSelected(SelectionEvent e) {
 				org.eclipse.swt.widgets.FileDialog f = new org.eclipse.swt.widgets.FileDialog(shell, SWT.OPEN);
 				String fn = f.open();
-				file.setText(fn);
+				if( fn != null )
+					file.setText(fn);
 			}
 		});
 		
 		doit.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// Oh my god, error checking like this sucks.  I am tempted to make an
+				// "easy error dialog" static method... Imagine...
+				//   ErrorBox.open("Error: no file specified", "You must specify a file to continue");
+				// that would be so much nicer than this crappy 7 line method of doing it.
+				if( file.getText() == null || !(new File(file.getText())).exists() ) {
+					MessageBox error = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+					error.setText("File Error");
+					error.setMessage("You must specify a file that exists.");
+					error.open();
+					return;
+				}
+				
+				if( symCombo.getSelectionIndex() == -1 ) {
+					MessageBox error = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+					error.setText("Select a sym");
+					error.setMessage("You must select a sym");
+					error.open();
+					return;
+				}
+				
 				int sym = Integer.parseInt( symCombo.getItem(symCombo.getSelectionIndex()).substring(4) );
 				if( RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() ) {
 					MessageBox error = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR );
@@ -93,7 +114,7 @@ public class ProjectBackupShell {
 					error.open();
 					return;
 				}
-				
+								
 				progress.setSelection(10);				
 				status.setText(status.getText() + "Logging in to sym " + sym + "\r\n" );				
 				

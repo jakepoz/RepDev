@@ -19,10 +19,13 @@
 
 package com.repdev;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
@@ -2557,7 +2560,7 @@ public class MainShell {
 		}
 	}
 
-	private void createMenuDefault() {
+	public void createMenuDefault() {
 		Menu bar = new Menu(shell, SWT.BAR);
 
 		MenuItem fileItem = new MenuItem(bar, SWT.CASCADE);
@@ -2942,10 +2945,19 @@ public class MainShell {
 				showAboutBox();
 			}
 		});
+				
+		// TODO: OLP Entries in the help menu 
+		//  Why?  It'll save me so much time from having to minimize everything, open Docs/ on
+		//  My desktop, find the olp doc, open the correct one, remaximize everything.
 		
-		MenuItem helpDocs = new MenuItem(helpMenu, SWT.PUSH);
+		MenuItem helpDocs = new MenuItem(helpMenu, SWT.CASCADE);
 		helpDocs.setText("&Documentation");
-		helpDocs.addSelectionListener(new SelectionAdapter() {
+		Menu docsMenu = new Menu(helpMenu);
+		helpDocs.setMenu(docsMenu);
+		
+		MenuItem helpDocsItem = new MenuItem(docsMenu, SWT.PUSH);
+		helpDocsItem.setText("&RepDev Docs");
+		helpDocsItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if( System.getProperty("os.name").startsWith("Windows") ) {
 					try {
@@ -2957,17 +2969,38 @@ public class MainShell {
 			}			
 		});
 		
-		// TODO: OLP Entries in the help menu 
-		//  Why?  It'll save me so much time from having to minimize everything, open Docs/ on
-		//  My desktop, find the olp doc, open the correct one, remaximize everything.
-		MenuItem helpOLP = new MenuItem(helpMenu, SWT.CASCADE);
-		helpOLP.setText("Symitar OLP");
-		Menu OLPMenu = new Menu(helpMenu);
-		helpOLP.setMenu(OLPMenu);
+		new MenuItem(docsMenu, SWT.SEPARATOR);
 		
-		// Populate OLPMenu:		
-		MenuItem olpAdmin = new MenuItem(OLPMenu, SWT.PUSH);
-		olpAdmin.setText("Admin OLP");
+		// Populate Docs Menu:
+		try {
+			FileReader hmf = new FileReader("helpmenu.conf");
+			BufferedReader hm = new BufferedReader(hmf);
+			String line;
+			while( (line = hm.readLine()) != null ) {
+				if( line.equals("----") ) {
+					new MenuItem(docsMenu, SWT.SEPARATOR);
+					continue;
+				}
+				
+				final String[] info = line.split("=");
+				if( info.length != 2 ) continue; // Ignore bad entries
+				
+				MenuItem item = new MenuItem(docsMenu, SWT.PUSH);
+				item.setText(info[0].trim());
+				item.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						try {
+							Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + info[1].trim());
+						} catch (IOException e1) {
+							System.err.println("Error: could not open file " + info[1].trim() );
+						}
+					}					
+				});
+			}			
+		} catch( Exception e ) {
+			// Ignore Errors...
+		}
+		
 
 		shell.setMenuBar(bar);
 	}

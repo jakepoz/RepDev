@@ -1,6 +1,11 @@
 package com.repdev;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -10,12 +15,14 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabFolder;
@@ -37,7 +44,7 @@ public class OptionsShell {
 	
 	// Tabs and their contents
 	private TabFolder tabs;
-	private Composite serverOptions, editorOptions, developerOptions;
+	private Composite serverOptions, editorOptions, documentationOptions, developerOptions;
 	
 	// Controls
 	private Spinner tabSpinner;
@@ -60,12 +67,14 @@ public class OptionsShell {
 	private void create(Shell parent) {
 		shell = new Shell(parent, SWT.CLOSE | SWT.TITLE | SWT.APPLICATION_MODAL );
 		shell.setText("Settings");
+		shell.setImage(RepDevMain.smallOptionsImage);
 		shell.setMinimumSize(400, 300);	
 		tabs = new TabFolder(shell, SWT.NONE);
 		
 		// Add tabs/controls
 		createServerOptions();
 		createEditorOptions();
+		createDocumentationOptions();
 		if( RepDevMain.DEVELOPER )
 			createDevOptions();	
 		
@@ -439,4 +448,151 @@ public class OptionsShell {
 		data.top = new FormAttachment(devGroup);
 		devBackup.setLayoutData(data);
 	}
+	
+	private void createDocumentationOptions() {
+		documentationOptions = new Composite(tabs, SWT.NONE);
+		TabItem docOptionsTab = new TabItem(tabs, SWT.NONE);
+		docOptionsTab.setText("Documentation");
+		docOptionsTab.setControl(documentationOptions);
+		
+		GridLayout layout = new GridLayout(4, false);
+		layout.marginBottom = layout.marginTop = layout.marginLeft = layout.marginRight = 5;
+		documentationOptions.setLayout(layout);
+		
+		Group docGroup = new Group(documentationOptions, SWT.NONE);
+		docGroup.setText("Add Item");
+		
+		layout = new GridLayout(3,false);
+		docGroup.setLayout(layout);
+		
+		Label nameLabel = new Label( docGroup, SWT.NONE );
+		nameLabel.setText("Name");		
+		final Text name = new Text( docGroup, SWT.SINGLE | SWT.BORDER );
+		
+		Label locLabel = new Label( docGroup, SWT.NONE );
+		locLabel.setText("Location");
+		final Text location = new Text( docGroup, SWT.SINGLE | SWT.BORDER);
+		
+		Button browse = new Button( docGroup, SWT.PUSH );
+		browse.setText("Browse");
+		browse.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				org.eclipse.swt.widgets.FileDialog dialog = new org.eclipse.swt.widgets.FileDialog(shell,SWT.OPEN);
+				String fn = dialog.open();
+				if( fn != null ) location.setText(fn);
+			}			
+		});
+				
+		final List items = new List( documentationOptions, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL );
+		
+		// populate items:
+		File docsFile = new File("helpmenu.conf");
+		try {
+			if( !docsFile.exists() )
+				docsFile.createNewFile();
+			BufferedReader docsReader = new BufferedReader(new FileReader(docsFile));
+			String line;
+			while( (line = docsReader.readLine()) != null ) {
+				if( line.equals("----") ) {
+					items.add("----");
+					continue;
+				}				
+				String data[] = line.split("=");
+				if( data.length != 2 ) continue; // ignore bad lines.
+				items.add(data[0].trim());
+				items.setData(data[0].trim(),data[1].trim());
+			}			
+		} catch( Exception e ) {
+			e.printStackTrace();
+		}
+		
+		items.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				name.setText(items.getSelection()[0]);
+				if( items.getSelection()[0].equals("----")) {
+					location.setText("");
+					return;
+				}
+				location.setText((String)items.getData(items.getSelection()[0]));
+			}			
+		});
+		
+		Composite upDownGroup = new Composite(documentationOptions, SWT.NONE);
+		upDownGroup.setLayout(new GridLayout());
+		Button moveUp = new Button(upDownGroup, SWT.ARROW | SWT.UP);
+		Button moveDn = new Button(upDownGroup, SWT.ARROW | SWT.DOWN);
+				
+		Composite addRemGroup = new Composite(documentationOptions, SWT.NONE);
+		addRemGroup.setLayout(new GridLayout(2, false));
+		Button addItem = new Button(addRemGroup, SWT.PUSH);
+		addItem.setText("Add");
+		addItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int index = items.getSelectionIndex();
+				if( index == -1 ) index = items.getItemCount();
+				items.add(name.getText(),index);
+				items.setData(name.getText(), location.getText());
+				
+				name.setText("");
+				location.setText("");
+			}
+		});
+		
+		Button remItem = new Button(addRemGroup, SWT.PUSH);
+		remItem.setText("Remove");
+		remItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(items.getSelectionIndex() == -1) return;
+				
+				items.setData(items.getSelection()[0], null);
+				items.remove(items.getSelectionIndex());
+				
+				name.setText("");
+				location.setText("");				
+			}
+		});
+		
+		addRemGroup.pack();
+		
+		Button save = new Button(documentationOptions, SWT.PUSH );
+		save.setText("Save");
+		save.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					FileWriter newMenu = new FileWriter("helpmenu.conf");
+					PrintWriter file = new PrintWriter(newMenu);				
+					for( String item: items.getItems() ) {
+						if( item.equals("----") ) {
+							file.println("----");
+						} else {
+							String data = (String)items.getData(item);
+							if( data != null )
+								file.println(item + "     =  " + data);
+						}
+					}			
+					file.flush();
+					file.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				} finally {
+					RepDevMain.mainShell.createMenuDefault();
+				}
+			}	
+		});
+		
+		// Do the layout/grid data:
+		docGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
+		name.setLayoutData(new GridData(SWT.FILL,SWT.CENTER, true, false, 2, 1));
+		location.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		browse.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER, false, false));
+		
+		items.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 2));
+		upDownGroup.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, true, 1, 2));
+		addRemGroup.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, true, 3, 1));
+		save.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 4, 1));
+		
+		documentationOptions.pack();
+		
+	}
+	
 }
