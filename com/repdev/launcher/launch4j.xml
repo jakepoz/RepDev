@@ -22,4 +22,16 @@
     <maxHeapSize>384</maxHeapSize>
     <opt>-Djava.library.path=swt-win</opt>
   </jre>
+  <versionInfo>
+    <fileVersion>0.1.0.0</fileVersion>
+    <txtFileVersion>0.1.0.0</txtFileVersion>
+    <fileDescription>RepDev Launcher</fileDescription>
+    <copyright>(c) 2008 RepDev LLC</copyright>
+    <productVersion>1.6.0.0</productVersion>
+    <txtProductVersion>1.6.0</txtProductVersion>
+    <productName>RepDev</productName>
+    <companyName>RepDev LLC</companyName>
+    <internalName>RepDev</internalName>
+    <originalFilename>repdev.exe</originalFilename>
+  </versionInfo>
 </launch4jConfig>
