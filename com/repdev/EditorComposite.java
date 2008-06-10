@@ -1035,15 +1035,25 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			// point after the variable has been inserted.
 			iCurPos = txt.getCaretOffset();
 			// Move the cursor to the insertion point and insert the variable definition.
-			txt.setCaretOffset(iEndPos);
-			txt.insert(sStr+"\n");
-			// if the original cursor is after the define section, then recalculate the
-			// new cursor position.
-			if(iCurPos>iEndPos){
-				iCurPos=iCurPos+sStr.length()+1;
+			
+			try{		
+				txt.setCaretOffset(iEndPos);
+				txt.insert(sStr+"\n");
+				// if the original cursor is after the define section, then recalculate the
+				// new cursor position.
+				if(iCurPos>iEndPos){
+					iCurPos=iCurPos+sStr.length()+1;
+				}
+				txt.setSelection(iCurPos);
+				lineHighlight();
 			}
-			txt.setSelection(iCurPos);
-			lineHighlight();
+			catch(Exception e ){
+				//Alert no Define section Found.
+				MessageBox dialog = new MessageBox(this.getShell(), SWT.ICON_ERROR | SWT.OK);
+				dialog.setMessage("DEFINE Section was not found.  Variable was not added.");
+				dialog.setText("Define Variable");
+				dialog.open();
+			}
 		}
 		else{
 			//Alert no Define section Found.
