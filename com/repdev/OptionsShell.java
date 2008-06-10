@@ -521,6 +521,32 @@ public class OptionsShell {
 		upDownGroup.setLayout(new GridLayout());
 		Button moveUp = new Button(upDownGroup, SWT.ARROW | SWT.UP);
 		Button moveDn = new Button(upDownGroup, SWT.ARROW | SWT.DOWN);
+		
+		moveUp.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int index = items.getSelectionIndex();
+				if( index < 1 ) return;
+				
+				String name = items.getItem(index);
+				//String loc  = (String)items.getData(name);	// not actually used				
+				items.remove(index);
+				items.add(name, index-1);
+				items.setSelection(index-1);
+			}	
+		});
+		
+		moveDn.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int index = items.getSelectionIndex();
+				if( index >= items.getItemCount()-1 ) return;
+				
+				String name = items.getItem(index);
+				//String loc  = (String)items.getData(name);	// not actually used				
+				items.remove(index);
+				items.add(name, index+1);
+				items.setSelection(index+1);
+			}	
+		});
 				
 		Composite addRemGroup = new Composite(documentationOptions, SWT.NONE);
 		addRemGroup.setLayout(new GridLayout(2, false));
