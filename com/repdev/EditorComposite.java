@@ -1199,7 +1199,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				token = tok;
 				break;
 			}
-			else if(tok.getBefore() != null){
+			else if(tok != null && tok.getBefore() != null){
 				if(offset >= tok.getBefore().getEnd() && offset < tok.getEnd()){
 					token = tok;
 					break;
