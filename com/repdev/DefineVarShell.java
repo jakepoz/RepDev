@@ -354,7 +354,10 @@ public class DefineVarShell {
 
 		//Added by Jake, make it no more than 80 chars at a time
 		if( sTmpStr.length() > 90){
-			sTmpStr = sTmpStr.substring(0,90) + "...";
+			if( commentText.length()!=0)
+				sTmpStr = sTmpStr.substring(0,90) + "..]";
+			else
+				sTmpStr = sTmpStr.substring(0,90) + "...";
 		}
 				
 	}
