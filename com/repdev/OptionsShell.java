@@ -545,6 +545,7 @@ public class OptionsShell {
 			public void widgetSelected(SelectionEvent e) {
 				int index = items.getSelectionIndex();
 				if( index >= items.getItemCount()-1 ) return;
+				if( index == -1 ) return;
 				
 				String name = items.getItem(index);
 				//String loc  = (String)items.getData(name);	// not actually used				
