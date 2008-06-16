@@ -49,7 +49,7 @@ public class Config implements Serializable {
 	 * different, then a popup will notify the user and will launch the OptionsShell so that
 	 * the users can config the new options.
 	 */
-	public final static int REVISION = 3; // Modify this everytime we add new options to prompt the user.
+	public final static int REVISION = 2; // Modify this everytime we add new options to prompt the user.
 	private int revision=-1;
 	private boolean windowMaximized;
 	private Point windowSize;
