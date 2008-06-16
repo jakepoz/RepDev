@@ -39,11 +39,13 @@
 				<exclude name="**/*.java" />
 				<exclude name="**/bin/**" />
 				<exclude name="**/dist/**" />
+				<exclude name="**/backup/**" />
 			</fileset>
 		</copy>
 		
 		<delete dir="${build}" />
 		<delete dir="${dist}/bin" />
+		<delete dir="${dist}/backup" />
 		<delete dir="${dist}/dist" />
 		
 		<!-- Now that the config is in the main folder, dont dist it -->

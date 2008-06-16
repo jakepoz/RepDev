@@ -1,0 +1,81 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Header - Alternate</Title>
+      <Author>Ryan Schultz (orig: Jake Poznanski)</Author>
+      <Shortcut>
+      </Shortcut>
+      <Description>A standard template for a repgen.</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>date</ID>
+          <Default>Date('MM-dd-yyyy')</Default>
+          <ToolTip>The date.</ToolTip>
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>filename</ID>
+          <Default>Filename()</Default>
+          <ToolTip>The filename</ToolTip>
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>notes</ID>
+          <Default>Any notes can go here</Default>
+          <ToolTip />
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>description</ID>
+          <Default>Case Description</Default>
+          <ToolTip />
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>username</ID>
+          <Default>Username()</Default>
+          <ToolTip>The username.</ToolTip>
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>case</ID>
+          <Default>&lt;Case Number&gt;</Default>
+          <ToolTip>The Case number.</ToolTip>
+        </Literal>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>title</ID>
+          <Default>Case Title</Default>
+          <ToolTip>The Title of the case this is for</ToolTip>
+        </Literal>
+      </Declarations>
+      <Code Language="PowerOn"><![CDATA[[$filename$
+  Created on $date$ by $username$
+
+  Case #$case$ - $title$
+  Description:
+    $description$
+
+  $notes$
+]
+TARGET=ACCOUNT
+
+DEFINE
+ TRUE=1
+ FALSE=0
+END
+
+SETUP
+END
+
+SELECT
+ ALL
+END
+
+PRINT TITLE=""
+ HEADERS
+ END
+END
+]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

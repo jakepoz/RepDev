@@ -508,6 +508,9 @@ public class OptionsShell {
 		
 		items.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if( items.getSelectionIndex() == -1 )
+					return;
+				
 				name.setText(items.getSelection()[0]);
 				if( items.getSelection()[0].equals("----")) {
 					location.setText("");
@@ -554,6 +557,9 @@ public class OptionsShell {
 		addItem.setText("Add");
 		addItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if( name.getText().trim().equals("") || location.getText().trim().equals("" ))
+					return;
+				
 				int index = items.getSelectionIndex();
 				if( index == -1 ) index = items.getItemCount();
 				items.add(name.getText(),index);
