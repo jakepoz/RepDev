@@ -103,7 +103,8 @@ public class OptionsShell {
 					Config.setPort(Integer.parseInt(portText.getText()));
 				//}
 
-				RepDevMain.FORGET_PASS_ON_EXIT = devForgetBox.getSelection();
+				if( RepDevMain.DEVELOPER )
+					RepDevMain.FORGET_PASS_ON_EXIT = devForgetBox.getSelection();
 				
 				if(styleCombo.getSelectionIndex() > -1) {
 				    Config.setStyle(styleCombo.getItem(styleCombo.getSelectionIndex()));
