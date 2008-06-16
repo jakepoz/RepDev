@@ -62,8 +62,9 @@
 	
 	<target name="Launcher-jar" description="Make a jar of the launcher">
 		<jar jarfile="com/repdev/launcher/launcher.jar" 
-				basedir="com/repdev/launcher/"
-				manifest="${src}/com/repdev/launcher/manifest.mf" />
+			basedir="com/repdev/launcher/"
+			excludes="*.jar,*.zip"
+			manifest="${src}/com/repdev/launcher/manifest.mf" />
 	</target>
 	
 </project>
