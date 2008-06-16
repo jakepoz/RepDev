@@ -112,7 +112,9 @@ public class OptionsShell {
 				}
 				
 				// Project file backup
-				Config.setBackupProjectFile( backupEnable.getSelection() );				
+
+				if( RepDevMain.DEVELOPER )
+					Config.setBackupProjectFile( backupEnable.getSelection() );				
 				
 				shell.close();
 			}
