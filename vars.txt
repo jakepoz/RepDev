@@ -6,7 +6,6 @@ SYSCONSOLENUM|Console number of user running this repgen|NUMBER|
 SYSSYMDIRECTORY|SYM Number|NUMBER|
 SYSTEMDATE|Current banking date|DATE|
 SYSTEMEMOMODE|Memo Mode|NUMBER|
-SYSUSERNAME|User name of current user|CHARACTER|
 SYSUSERNUMBER|User number of current user|NUMBER|
 SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 

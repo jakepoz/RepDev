@@ -431,7 +431,9 @@ WINDDEPOKEDATA|This command inserts Dynamic Data Exchange (DDE) data into a conn
 WINDOWSSEND|Allows interaction between your specfile and the Windows environment.|NULL
 	Wincode|The RD.WINDOWS.DEF #INCLUDE file in the Report Generator Library contains the valid entries for WinCode. This file should be placed in the DEFINE division of your specfile.|NUMBER
 	Wintext|Text that is potentially used by the wincode for display.|CHARACTER
-
+SYSUSERNAME|User name of current user|CHARACTER
+	User Number|The usernumber of the user, typically SYSUSERNUMBER|NUMBER
+	
 DIVPROJECTINIT
 
 
