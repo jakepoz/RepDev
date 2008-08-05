@@ -2644,6 +2644,10 @@ public class MainShell {
 					 * tmp1.saveFile(tmp);
 					 */
 					ArrayList<SymitarFile> result = dialog.open();
+					
+					if( result.size() == 0 )
+						return;
+					
 					if (local) {
 						String path = result.get(0).getPath().substring(0, result.get(0).getPath().indexOf(result.get(0).getName()));
 						SymitarFile tbs = new SymitarFile(path, result.get(0).getName());
