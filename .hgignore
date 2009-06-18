@@ -1,0 +1,8 @@
+syntax: regexp
+\.conf$
+syntax: regexp
+^backup$
+syntax: regexp
+^stderr\.txt$
+syntax: regexp
+^stdout\.txt$
