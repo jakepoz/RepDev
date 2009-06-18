@@ -1,3 +1,4 @@
+
 syntax: regexp
 \.conf$
 syntax: regexp
@@ -6,3 +7,5 @@ syntax: regexp
 ^stderr\.txt$
 syntax: regexp
 ^stdout\.txt$
+syntax: regexp
+\.class$
