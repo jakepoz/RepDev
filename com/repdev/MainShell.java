@@ -1480,43 +1480,6 @@ public class MainShell {
 			}			
 		});
 
-		/**
-		 * There isn't a nice friendly way of doing some of this stuff... We should
-		 * make our API better for 2.0.  If it ever happens...
-		 * 
-		 * Srsly, how cool would a "session.fileExists(String name)" be?
-		 * or how about a session.renameFile(String orig, String newName)?
-		 */
-		final MenuItem removeDotNew = new MenuItem(treeMenu, SWT.NONE);
-		removeDotNew.setText("\"Install\" .NEW");
-		removeDotNew.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {			
-				TreeItem item = tree.getSelection()[0];
-				SymitarFile file = (SymitarFile) item.getData();
-				SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(file.getSym());
-				
-				String newName = file.getName().substring(0, file.getName().lastIndexOf(".NEW"));
-				int suffix = 0;
-				while( session.fileExists(new SymitarFile(file.getSym(), newName + ".OLD" + (suffix==0?"":"."+suffix), file.getType())) ) {
-					suffix++;
-				}
-				
-				String oldName = newName + ".OLD" + (suffix==0?"":"."+suffix);
-				
-				MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-				dialog.setText("\"Install\" .NEW (UNSUPPORTED BUGGY BETA!)");
-				dialog.setMessage("This will rename " + file.getName() + " to " + newName
-						+ "\n" + newName + " will be renamed to " + oldName );
-				
-				if( dialog.open() != SWT.YES ) return;
-				
-				SessionError error = session.renameFile( new SymitarFile(file.getSym(), newName, file.getType() ),
-						oldName );
-
-				handleRenameItem(item, newName);		
-			}
-		});
-
 		final MenuItem compareFile = new MenuItem(treeMenu, SWT.NONE);
 		compareFile.setText("Compare Two Files");
 		compareFile.setImage(RepDevMain.smallCompareImage);
