@@ -355,7 +355,7 @@ public class MainShell {
 			savetb.setEnabled(false);
 			install.setEnabled(false);
 			hltoggle.setEnabled(false);
-			
+
 			// If anything goes wrong initializing the error, it will dispose of
 			// the current item
 			// So, then we shouldn't do anything
@@ -404,11 +404,11 @@ public class MainShell {
 				editor = new ReportComposite(mainfolder, item, file);
 			else {
 				editor = new EditorComposite(mainfolder, item, file /*
-																	 * ,save,
-																	 * install,
-																	 * print,
-																	 * run
-																	 */);
+				 * ,save,
+				 * install,
+				 * print,
+				 * run
+				 */);
 			}
 
 			// If anything goes wrong creating the Editor, we want to fail here
@@ -425,8 +425,8 @@ public class MainShell {
 			mainfolder.setSelection(item);
 			mainfolder.notifyListeners(SWT.Selection, new Event());
 			item.setControl(editor);
-			
-			
+
+
 			//When we are closing, we must dispose the control in the CTabItem, otherwise we leak swt objects
 			item.addDisposeListener(new DisposeListener(){
 				public void widgetDisposed(DisposeEvent e) {
@@ -445,10 +445,10 @@ public class MainShell {
 				run.setEnabled(true);
 
 			savetb.setEnabled(true);
-			
+
 			if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP))
 				hltoggle.setEnabled(true);
-			
+
 			if (mainfolder.getSelection().getControl() instanceof EditorComposite){
 				if(((EditorComposite)mainfolder.getSelection().getControl()).getHighlight()){
 					hltoggle.setImage(RepDevMain.smallHighlight);
@@ -591,7 +591,7 @@ public class MainShell {
 			sym = (Integer) cur.getData();
 		else if (cur.getData() instanceof String)
 			dir = (String) cur.getData();
-		
+
 		if( dir == null && sym != -1 && !RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected() ) {
 			MessageBox err = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR );
 			err.setText("Can not create project");
@@ -599,7 +599,7 @@ public class MainShell {
 			err.open();
 			return;
 		}
-		
+
 		String str = NewProjShell.askForName(display, shell);
 
 		if (str != null) {
@@ -898,7 +898,7 @@ public class MainShell {
 					}
 
 					int overwrite;
-					
+
 					//I have compleatly rewritten this section, it works correctly now
 					//basically rootSym will be either the sym number or -1 if it is local
 					//dragSym will be the sym number if it is not local, but if it is local
@@ -907,7 +907,7 @@ public class MainShell {
 					//to -1 (in this case the same as rootSym, so no transfer) if it is not then
 					//it sets itself to -2 so that a transfer can take place
 					//refer to table below (its more clear as to how it works)
-					
+
 					/*			rootSym			dragSym
 					 *local		   -1				$	
 					 *sym		 sym #			 sym #
@@ -916,9 +916,9 @@ public class MainShell {
 					 *	   -2 if rootSym is local but a different directory
 					 * 	   -1 if rootSym is local but the same directory
 					 */
-					
+
 					int rootSym = -9, dragSym = -9;
-	
+
 					if(getTreeDir(root) != null){
 						rootSym = -1;
 					}else{
@@ -927,7 +927,7 @@ public class MainShell {
 						dragSym = (rootSym == -1)?(getTreeDir(root).equals(getTreeDir(dragSourceItems[0])))?-1:-2:-3;
 					}else{
 						dragSym = getTreeSym(dragSourceItems[0]);}
-					
+
 					if(rootSym == dragSym)
 						overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
 					else
@@ -938,9 +938,9 @@ public class MainShell {
 					//else
 					//	overwrite = RepeatOperationShell.ASK_TO_ALL | RepeatOperationShell.YES;
 
-					
-					
-					
+
+
+
 					shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 
 					if (dragSourceItems[0].getData() instanceof SymitarFile) {
@@ -1010,7 +1010,7 @@ public class MainShell {
 
 							for (SymitarFile file : source.getFiles()) {
 								boolean exists = false;
-								
+
 								SymitarFile newFile;
 
 								if (isItemLocal(root))
@@ -1333,11 +1333,11 @@ public class MainShell {
 			public void widgetSelected(SelectionEvent e) {
 				boolean modified = false;
 				boolean tabFound = false;
-				
+
 				// Get the Symitar File and the current SYM
 				SymitarFile file = (SymitarFile) tree.getSelection()[0].getData();
 				int sym = file.getSym();
-				
+
 				// Go thru the Tab Items to see if the RepGen is currently open.  If it is,
 				// Then install it.
 				for(CTabItem tf : mainfolder.getItems()){
@@ -1350,7 +1350,7 @@ public class MainShell {
 							tabFound = true;
 							// Check if the RepGen has been modified.
 							modified = (Boolean)tf.getData("modified");
-						
+
 							// Activate the Tab for the RepGen
 							mainfolder.setSelection(tf);
 							if(modified == true){
@@ -1371,12 +1371,12 @@ public class MainShell {
 						dialog.open();
 					}
 				}
-				
-				
+
+
 				// If the RepGen is not currently open, attempt to install it
 				if(!tabFound){
 					MessageBox dialog = null;
-					
+
 					try{
 						ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).installRepgen(file.getName());
 						dialog = new MessageBox(Display.getCurrent().getActiveShell(),SWT.OK | ( result.getType() == ErrorCheckResult.Type.INSTALLED_SUCCESSFULLY ? SWT.ICON_INFORMATION : SWT.ICON_ERROR ));
@@ -1397,7 +1397,7 @@ public class MainShell {
 				}	
 			}
 		});
-		
+
 		new MenuItem(treeMenu, SWT.SEPARATOR);
 
 		final MenuItem deleteFile = new MenuItem(treeMenu, SWT.NONE);
@@ -1429,11 +1429,11 @@ public class MainShell {
 				SimpleDateFormat date = new SimpleDateFormat(".MMddyy");
 				String name;
 				int nameLen;
-				
+
 				MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 				dialog.setMessage("Are you sure you want to rename the selected file(s)?");
 				dialog.setText("Date Archive");
-				
+
 				if(dialog.open() == SWT.YES){
 					for(TreeItem ti : tree.getSelection()){
 						if(ti.getData() instanceof Project)
@@ -1449,6 +1449,73 @@ public class MainShell {
 				}
 			}
 
+		});
+
+		/**
+		 *  Pretty much a copy of the above (by bruce) - .NEW by ryan
+		 *  Sidenote/OT: Bah, auto-suggest is broak for me :(
+		 */
+		final MenuItem dotNew = new MenuItem(treeMenu, SWT.NONE);
+		dotNew.setText("Append .NEW to filename(s)");
+		dotNew.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO );
+				dialog.setMessage("Are you sure you want to rename the selected file(s)?");
+				dialog.setText("Append .NEW to filename(s)");
+
+				String name;
+				int len;
+
+				if( dialog.open() == SWT.YES ) {
+					for( TreeItem item: tree.getSelection() ) {
+						if( item.getData() instanceof SymitarFile ) {
+							name = ((SymitarFile)item.getData()).getName();
+							len = (name.length() > 25 ? 26 : name.length());
+
+							name = name.substring(0,len).concat(".NEW");
+							handleRenameItem(item, name);
+						}
+					}
+
+				}
+			}			
+		});
+
+		/**
+		 * There isn't a nice friendly way of doing some of this stuff... We should
+		 * make our API better for 2.0.  If it ever happens...
+		 * 
+		 * Srsly, how cool would a "session.fileExists(String name)" be?
+		 * or how about a session.renameFile(String orig, String newName)?
+		 */
+		final MenuItem removeDotNew = new MenuItem(treeMenu, SWT.NONE);
+		removeDotNew.setText("\"Install\" .NEW");
+		removeDotNew.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {			
+				TreeItem item = tree.getSelection()[0];
+				SymitarFile file = (SymitarFile) item.getData();
+				SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(file.getSym());
+				
+				String newName = file.getName().substring(0, file.getName().lastIndexOf(".NEW"));
+				int suffix = 0;
+				while( session.fileExists(new SymitarFile(file.getSym(), newName + ".OLD" + (suffix==0?"":"."+suffix), file.getType())) ) {
+					suffix++;
+				}
+				
+				String oldName = newName + ".OLD" + (suffix==0?"":"."+suffix);
+				
+				MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+				dialog.setText("\"Install\" .NEW (UNSUPPORTED BUGGY BETA!)");
+				dialog.setMessage("This will rename " + file.getName() + " to " + newName
+						+ "\n" + newName + " will be renamed to " + oldName );
+				
+				if( dialog.open() != SWT.YES ) return;
+				
+				SessionError error = session.renameFile( new SymitarFile(file.getSym(), newName, file.getType() ),
+						oldName );
+
+				handleRenameItem(item, newName);		
+			}
 		});
 
 		final MenuItem compareFile = new MenuItem(treeMenu, SWT.NONE);
@@ -1593,7 +1660,7 @@ public class MainShell {
 
 				if (tree.getSelectionCount() == 1) {
 					boolean loggedIn = tree.getSelection()[0].getData() instanceof String
-							|| (tree.getSelection()[0].getData() instanceof Integer && RepDevMain.SYMITAR_SESSIONS.get(tree.getSelection()[0].getData()).isConnected());
+					|| (tree.getSelection()[0].getData() instanceof Integer && RepDevMain.SYMITAR_SESSIONS.get(tree.getSelection()[0].getData()).isConnected());
 					newFreeFile.setEnabled(loggedIn);
 					newProject.setEnabled(loggedIn);
 					openFile.setEnabled(loggedIn);
@@ -1798,7 +1865,7 @@ public class MainShell {
 		frmTree.bottom = new FormAttachment(100);
 		tree.setLayoutData(frmTree);
 	}
-	
+
 	public void showFileOpenMenu(){
 		//For current dir/sym
 		FileDialog dialog;
@@ -1821,9 +1888,9 @@ public class MainShell {
 			// Now, set name in any open tabs
 			for (CTabItem c : mainfolder.getItems())
 				if (c.getData("file") == item.getData()) // Be sure it's the
-				// exact same
-				// instance, like it
-				// should be
+					// exact same
+					// instance, like it
+					// should be
 				{
 					c.setText(newName);
 					if (c.getControl() instanceof EditorComposite) {
@@ -1937,16 +2004,16 @@ public class MainShell {
 	protected void compare() {
 		if (tree.getSelectionCount() != 2)
 			return;
-		
+
 		if (!(tree.getSelection()[0].getData() instanceof SymitarFile))
 			return;
 
 		if (!(tree.getSelection()[1].getData() instanceof SymitarFile))
 			return;
-		
+
 		Color bgcolor = new Color(Display.getCurrent(),200,200,200);
-		
-		
+
+
 		//This code gets the correct color to highlight the lines of the compare shell.
 		//The only drawback is that it is a bit on the slow side (usually takes about 1 second).
 		//In my opinion it is fine to take this bit of time, because the compare shell looks
@@ -1962,8 +2029,8 @@ public class MainShell {
 			}
 		}
 		//TODO:Rewrite the above section so that it runs faster, or determines the color in another way
-		
-		
+
+
 		CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
 
 		item.setText("Compare Text BETA");
@@ -1971,7 +2038,7 @@ public class MainShell {
 		// item.setImage(getFileImage(file));
 		// item.setData("file", file);
 		// item.setData("loc", loc);
-		
+
 		item.setControl(new CompareComposite(mainfolder, item, (SymitarFile) tree.getSelection()[0].getData(), (SymitarFile) tree.getSelection()[1].getData(), bgcolor));
 
 		item.addDisposeListener(new DisposeListener(){
@@ -1979,9 +2046,9 @@ public class MainShell {
 			public void widgetDisposed(DisposeEvent e) {
 				((CTabItem)e.widget).getControl().dispose();
 			}
-			
+
 		});
-		
+
 		mainfolder.setSelection(item);
 	}
 
@@ -2220,7 +2287,7 @@ public class MainShell {
 
 					if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP))
 						hltoggle.setEnabled(true);
-					
+
 					savetb.setEnabled(true);
 					print.setEnabled(true);
 				} else {
@@ -2335,8 +2402,8 @@ public class MainShell {
 				closeAll.setEnabled(flag);
 
 				save
-						.setEnabled((flag && (mainfolder.getSelection().getControl() instanceof EditorComposite) && mainfolder.getSelection().getData("modified") != null && (Boolean) mainfolder
-								.getSelection().getData("modified")));
+				.setEnabled((flag && (mainfolder.getSelection().getControl() instanceof EditorComposite) && mainfolder.getSelection().getData("modified") != null && (Boolean) mainfolder
+						.getSelection().getData("modified")));
 
 				saveAll.setEnabled(flag);
 				installRepgen.setEnabled(flag && (mainfolder.getSelection().getControl() instanceof EditorComposite)
@@ -2356,9 +2423,12 @@ public class MainShell {
 					findReplaceShell.attach(((EditorComposite) mainfolder.getSelection().getControl()).getStyledText(), true);
 				else if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof ReportComposite)
 					findReplaceShell.attach(((ReportComposite) mainfolder.getSelection().getControl()).getStyledText(), false);
+				
+				// show active repgen's title in the window title
+				shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR);
 			}
 		});
-		
+
 		mainfolder.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
 				if (mainfolder.getSelection().getControl() instanceof EditorComposite){
@@ -2377,6 +2447,8 @@ public class MainShell {
 				setLineColumn();
 
 				if (event.doit) {
+					if( mainfolder.getSelection() == event.item )
+						shell.setText(RepDevMain.NAMESTR); // remove active repgen name from title
 					clearErrorAndTaskList((CTabItem) event.item);
 				}
 
@@ -2400,20 +2472,20 @@ public class MainShell {
 				if (((SymitarFile) eItem.getData("file")).equals(file))
 					eItem.dispose();
 			}
-			
+
 			for (TableItem tItem : tblTasks.getItems()) {
 				if (((SymitarFile) tItem.getData("file")).equals(file))
 					tItem.dispose();
 			}
-			
+
 			for( CTabItem tab: ((CTabFolder)tblErrors.getParent()).getItems() ) {
-			    if( tab.getText().indexOf("Errors") != -1 ) {
-				tab.setText("Errors (" + tblErrors.getItemCount() + ")" );
-			    } else if( tab.getText().indexOf("Tasks") != -1 ) {
-				tab.setText("Tasks (" + tblTasks.getItemCount() + ")" );
-			    }
+				if( tab.getText().indexOf("Errors") != -1 ) {
+					tab.setText("Errors (" + tblErrors.getItemCount() + ")" );
+				} else if( tab.getText().indexOf("Tasks") != -1 ) {
+					tab.setText("Tasks (" + tblTasks.getItemCount() + ")" );
+				}
 			}
-			
+
 		}
 	}
 
@@ -2492,7 +2564,7 @@ public class MainShell {
 		tasks.setImage(RepDevMain.smallTasksImage);
 		tblTasks = new Table(folder, SWT.MULTI | SWT.FULL_SELECTION);
 		createTable(tblTasks);
-		
+
 		tblTasks.addSelectionListener(new SelectionAdapter() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				TableItem item = (TableItem) e.item;
@@ -2522,9 +2594,9 @@ public class MainShell {
 				}
 			}
 		});
-			
+
 		tasks.setControl(tblTasks);
-		
+
 		folder.setSelection(errors);
 	}
 
@@ -2861,7 +2933,7 @@ public class MainShell {
 				GotoLineShell.show(txt.getParent().getShell(), txt);
 			}
 		});
-		
+
 		final MenuItem editFormat = new MenuItem(editMenu, SWT.PUSH);
 		editFormat.setText("&Format Code (BETA)\tCTRL+SHIFT+T");
 		editFormat.setImage(RepDevMain.smallFormatCodeImage);
@@ -2900,7 +2972,7 @@ public class MainShell {
 					editSelectAll.setEnabled(true);
 					editFindNext.setEnabled(true);
 					editFind.setEnabled(true);
-					
+
 					if( mainfolder.getSelection() != null &&  mainfolder.getSelection().getControl() instanceof EditorComposite) 
 						editFormat.setEnabled(true);
 
@@ -2933,7 +3005,7 @@ public class MainShell {
 				showOptions();
 			}
 		});
-		
+
 		MenuItem toolsProject = new MenuItem(toolsMenu, SWT.PUSH);
 		toolsProject.setText("&Project File");
 		toolsProject.addSelectionListener(new SelectionAdapter() {
@@ -2949,16 +3021,16 @@ public class MainShell {
 				showAboutBox();
 			}
 		});
-				
+
 		// TODO: OLP Entries in the help menu 
 		//  Why?  It'll save me so much time from having to minimize everything, open Docs/ on
 		//  My desktop, find the olp doc, open the correct one, remaximize everything.
-		
+
 		MenuItem helpDocs = new MenuItem(helpMenu, SWT.CASCADE);
 		helpDocs.setText("&Documentation");
 		Menu docsMenu = new Menu(helpMenu);
 		helpDocs.setMenu(docsMenu);
-		
+
 		MenuItem helpDocsItem = new MenuItem(docsMenu, SWT.PUSH);
 		helpDocsItem.setText("&RepDev Docs");
 		helpDocsItem.addSelectionListener(new SelectionAdapter() {
@@ -2972,9 +3044,9 @@ public class MainShell {
 				}				
 			}			
 		});
-		
+
 		new MenuItem(docsMenu, SWT.SEPARATOR);
-		
+
 		// Populate Docs Menu:
 		try {
 			FileReader hmf = new FileReader("helpmenu.conf");
@@ -2985,10 +3057,10 @@ public class MainShell {
 					new MenuItem(docsMenu, SWT.SEPARATOR);
 					continue;
 				}
-				
+
 				final String[] info = line.split("=");
 				if( info.length != 2 ) continue; // Ignore bad entries
-				
+
 				MenuItem item = new MenuItem(docsMenu, SWT.PUSH);
 				item.setText(info[0].trim());
 				item.addSelectionListener(new SelectionAdapter() {
@@ -3004,7 +3076,7 @@ public class MainShell {
 		} catch( Exception e ) {
 			// Ignore Errors...
 		}
-		
+
 
 		shell.setMenuBar(bar);
 	}
@@ -3110,7 +3182,7 @@ public class MainShell {
 		savetb.setImage(RepDevMain.smallActionSaveImage);
 		savetb.setToolTipText("Saves the current file.");
 		savetb.setEnabled(false);
-		
+
 		install = new ToolItem(editorBar, SWT.NONE);
 		install.setImage(RepDevMain.smallInstallImage);
 		install.setToolTipText("Installs current file for onDemand use.");
@@ -3125,12 +3197,12 @@ public class MainShell {
 		print.setImage(RepDevMain.smallPrintImage);
 		print.setToolTipText("Prints the current file to a local printer.");
 		print.setEnabled(false);
-		
+
 		hltoggle = new ToolItem(editorBar, SWT.NONE);
 		hltoggle.setImage(RepDevMain.smallHighlight);
 		hltoggle.setToolTipText("Toggles the coloring of text");
 		hltoggle.setEnabled(false);
-		
+
 		// EditorBar button actions
 		savetb.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -3153,7 +3225,7 @@ public class MainShell {
 				}
 			}
 		});
-		
+
 		install.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (mainfolder.getSelection().getControl() instanceof EditorComposite)
@@ -3189,7 +3261,7 @@ public class MainShell {
 				run.setEnabled(true);
 
 			savetb.setEnabled(true);
-			
+
 			if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP))
 				hltoggle.setEnabled(true);
 		} else {
