@@ -1,8 +1,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\workspace\RepDev\com\repdev\launcher\launcher.jar</jar>
-  <outfile>C:\workspace\RepDev\repdev.exe</outfile>
+  <jar>C:\workspace\RepDev-hg\com\repdev\launcher\launcher.jar</jar>
+  <outfile>C:\workspace\RepDev-hg\repdev.exe</outfile>
   <errTitle></errTitle>
   <cmdLine>--log</cmdLine>
   <chdir></chdir>
@@ -12,7 +12,7 @@
   <customProcName>true</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>C:\workspace\RepDev\repdev-icons\monkeyIcon32.ico</icon>
+  <icon>C:\workspace\RepDev-hg\repdev-icons\monkeyIcon32.ico</icon>
   <jre>
     <path></path>
     <minVersion>1.5.0</minVersion>
@@ -23,12 +23,12 @@
     <opt>-Djava.library.path=swt-win</opt>
   </jre>
   <versionInfo>
-    <fileVersion>0.1.0.0</fileVersion>
-    <txtFileVersion>0.1.0.0</txtFileVersion>
+    <fileVersion>0.1.6.2</fileVersion>
+    <txtFileVersion>1.6.2</txtFileVersion>
     <fileDescription>RepDev Launcher</fileDescription>
-    <copyright>(c) 2008 RepDev LLC</copyright>
-    <productVersion>1.6.0.0</productVersion>
-    <txtProductVersion>1.6.0</txtProductVersion>
+    <copyright>(c) 2008-2009 RepDev LLC</copyright>
+    <productVersion>1.6.2.0</productVersion>
+    <txtProductVersion>1.6.2</txtProductVersion>
     <productName>RepDev</productName>
     <companyName>RepDev LLC</companyName>
     <internalName>RepDev</internalName>

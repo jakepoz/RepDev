@@ -38,11 +38,13 @@
 			<fileset dir="${src}">
 				<exclude name="**/*.java" />
 				<exclude name="**/*.conf" />
-				<exclude name="**/.svn/**" />
-				<exclude name="**/.hg/**" />
 				<exclude name="**/bin/**" />
 				<exclude name="**/dist/**" />
 				<exclude name="**/backup/**" />
+				<exclude name="**/swt-lin/**" />
+                <exclude name="**/.settings/**" />
+                <exclude name="**/.svn/**" />
+                <exclude name="**/.hg/**" />
 			</fileset>
 		</copy>
 		
@@ -53,6 +55,11 @@
 		
 		<!-- Now that the config is in the main folder, dont dist it -->
 		<delete file="${dist}/repdev.conf"/>
+		<delete file="${dist}/.hgignore"/>
+		<delete file="${dist}/.classpath"/>
+		<delete file="${dist}/.project"/>
+		<delete file="${dist}/stdout.txt"/>
+		<delete file="${dist}/stderr.txt"/>
 		
 	</target>
 
