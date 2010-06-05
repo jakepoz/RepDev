@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>GhostRider</name>
+    <version>1.0</version>
+    <author>Sean</author>
+    <description><![CDATA[This is Called GhostRider. Based on this VS2005 Theme (http://followtheheard.blogspot.com/2008/02/visual-studio-settings.html).]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="#3F3F3F" fgColor="#F7E29F" line="#373737" token="#020000" font="Consolas" fontSize="11" />
+    
+    <comments fgColor="#7F9F7F" style="italic"/>
+    <variables fgColor="#8EC46F" style="bold" />    
+    <functions fgColor="#DFDFBF" style="bold" />    
+    <keywords fgColor="#DCDCCC" />
+    <task fgColor="#FFFFFF" style="bold" />
+    
+    <typeChar fgColor="#C89191" />
+    <typeDate fgColor="#8ACCCF" style="bold" />
+    
+    <struct1 fgColor="#F7E29F" />
+    <struct1Inv fgColor="#F7E29F" bgColor="#C44309" />    
+    <struct2 fgColor="#F7E29F" />
+    <struct2Inv fgColor="#F7E29F" bgColor="#C44309" />    
+  </style>
+</RepDevStyle>
