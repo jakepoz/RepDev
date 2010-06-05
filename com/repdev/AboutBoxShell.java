@@ -70,6 +70,7 @@ public class AboutBoxShell {
 		  +"Jake Poznanski  -  Programmer/Project Head\n"
 		  +"Ryan Schultz  -  Programmer\n"
 		  +"Sean Delaney  -  Programmer\n"
+		  +"Ryan Lee  -  Programmer/Research\n"
 		  +"Bruce Chang  -  Programmer/Documentation\n"
 		  +"Greg Varnell  -  SVN hosting\n"
 		  +"Michael Webb  -  Documentation\n"
