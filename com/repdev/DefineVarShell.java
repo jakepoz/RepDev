@@ -341,7 +341,7 @@ public class DefineVarShell {
 	}
 	
 	private void formulateString(String varName, String varType, String charLength, String arraySize, String commentText){
-		sTmpStr=" "+varName+"="+varType;
+		sTmpStr=EditorComposite.getTabStr()+varName+"="+varType;
 		if(charLength.length()!=0){
 		sTmpStr=sTmpStr+"("+charLength+")";
 		}
