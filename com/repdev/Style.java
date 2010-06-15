@@ -69,7 +69,36 @@ public class Style {
 		}
 	}
     }
+    public String getFontValue(String item, String attrib)
+    {
+    	String fontValue = getValue(item, attrib);
+    	if(fontValue.length() == 0)
+    		return "Courier New"; //Default Font
 
+    		return fontValue;
+    }
+    public int getFontSize(String item, String attrib)
+    {
+    	String fontSize = getValue(item, attrib);
+    	if(fontSize.length() == 0)
+    		return 11; //Default size
+
+    		return Integer.parseInt(fontSize);
+    }
+    public String getValue(String item, String attrib)
+    {
+    	for( int i=0; i<style.getChildNodes().getLength(); i++ ) {
+    	    Node cur = style.getChildNodes().item(i);
+    	    if( cur.getNodeName().equals(item) ) {
+    		for( int j=0; j<cur.getAttributes().getLength(); j++ ) {
+    		    if( cur.getAttributes().item(j).getNodeName().equals(attrib) ) {
+    			return cur.getAttributes().item(j).getNodeValue();
+    		    }	    
+    		}
+    	    }
+    	}
+    	return "";
+    }
     public RGB getColor(String item, String attrib) {
 	String hexColor = "";
 	for( int i=0; i<style.getChildNodes().getLength(); i++ ) {

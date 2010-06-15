@@ -75,7 +75,22 @@ public class Project {
 
 		return false;
 	}
-
+	public int hasFileAt(SymitarFile file) {
+		int i = 0;
+		for (SymitarFile cFile : files){
+			if (cFile.getName().equals(file.getName()) && cFile.getType().equals(file.getType()))
+				break;
+			i++;
+		}
+		return i;
+	}
+	public void addFile(SymitarFile file, int index) {
+		removeFile(file, false);
+		if(files.size() < index)
+			files.add(file);
+		else
+			files.add(index, file);
+	}
 	public void addFile(SymitarFile file) {
 		if (!hasFile(file))
 			files.add(file);

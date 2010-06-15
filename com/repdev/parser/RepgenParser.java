@@ -24,8 +24,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -39,6 +41,7 @@ import com.repdev.ErrorCheckResult;
 import com.repdev.FileType;
 import com.repdev.RepDevMain;
 import com.repdev.SymitarFile;
+import com.repdev.parser.Token.TokenType;
 
 public class RepgenParser {
 	private StyledText txt;
@@ -79,6 +82,7 @@ public class RepgenParser {
 		this.sym = file.getSym();
 	}
 
+
 	public RepgenParser(StyledText txt, SymitarFile file, boolean parseFlag) {
 		this.txt = txt;
 		this.file = file;
@@ -117,7 +121,7 @@ public class RepgenParser {
 				return;
 
 			parse(fileName, data, 0, data.length(), 0, null, tokens, new ArrayList<Token>(), new ArrayList<Token>(), new ArrayList<Variable>(),null);
-
+			
 			includeTokenChache.put(fileName,tokens);
 
 			for( Token tok : tokens ){
@@ -222,8 +226,17 @@ public class RepgenParser {
 				taskList.clear();
 
 				// Error check with symitar
-				ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
-				errorList.add(new Error(result));
+				// Only check errors if File name does not end with .PRO, .SET, .DEF, .INC
+				String[] extensionsToExclude = ".PRO,.SET,.DEF,.INC".split(",");
+				boolean checkFile = true;
+				for(String extension : extensionsToExclude){
+					if(file.getName().endsWith(extension))
+						checkFile = false;
+				}
+				if(checkFile){
+					ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
+					errorList.add(new Error(result));
+				}
 
 
 				// Variable checking
@@ -344,48 +357,51 @@ public class RepgenParser {
 
 				display.syncExec(new Runnable() {
 					public void run() {
-						for (final Token tok : ltokens) {
-							boolean isTask = false;
-							for( String task: taskTokens )
-								if( tok.getStr().equals(task)) isTask = true;
-
-							if ( tok.getCDepth() > 0 && isTask && ( tok.getAfter()!=null ) && tok.getAfter().getStr().equals(":")) {
-
-								int line = txt.getLineAtOffset(tok.getStart());
-								int col = tok.getStart() - txt.getOffsetAtLine(line);
-								String desc = txt.getText(tok.getStart(), txt.getOffsetAtLine(line+1)-1);
-
-
-								desc = desc.trim();
-								desc = desc.replaceAll("\\]$", "");
-
-								Task.Type type;
-								type = Task.Type.TODO;
-								if( tok.getStr().equals("fixme") ) {
-									type = Task.Type.FIXME;
-								} else if( tok.getStr().equals("bug") || tok.getStr().equals("bugbug") ) {
-									type = Task.Type.BUG;
-								} else if( tok.getStr().equals("wtf") ) {
-									type = Task.Type.WTF;
+						try {
+							for (final Token tok : ltokens) {
+								boolean isTask = false;
+								for( String task: taskTokens )
+									if( tok.getStr().equals(task)) isTask = true;
+	
+								if ( tok.getCDepth() > 0 && isTask && ( tok.getAfter()!=null ) && tok.getAfter().getStr().equals(":")) {
+									int line = txt.getLineAtOffset(tok.getStart());
+									int col = tok.getStart() - txt.getOffsetAtLine(line);
+									String desc = txt.getText(tok.getStart(), txt.getOffsetAtLine(line+1)-1);
+	
+	
+									desc = desc.trim();
+									desc = desc.replaceAll("\\]$", "");
+	
+									Task.Type type;
+									type = Task.Type.TODO;
+									if( tok.getStr().equals("fixme") ) {
+										type = Task.Type.FIXME;
+									} else if( tok.getStr().equals("bug") || tok.getStr().equals("bugbug") ) {
+										type = Task.Type.BUG;
+									} else if( tok.getStr().equals("wtf") ) {
+										type = Task.Type.WTF;
+									}
+	
+	
+									/* Don't die if the item does not have a line following it...
+									 * Taken from my #include "" double click code.
+									 */
+									int startOffset = tok.getStart();
+									int endOffset = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, line + 1));
+	
+	
+									if( endOffset - 1 <= startOffset)
+										desc = "";
+									else
+										desc = txt.getText(startOffset, endOffset);
+									desc = desc.trim().substring(0, desc.trim().length()-1);
+	
+									Task task = new Task(file.getName(), desc, line, col, type);
+									taskList.add( task );
 								}
-
-
-								/* Don't die if the item does not have a line following it...
-								 * Taken from my #include "" double click code.
-								 */
-								int startOffset = tok.getStart();
-								int endOffset = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, line + 1));
-
-
-								if( endOffset - 1 <= startOffset)
-									desc = "";
-								else
-									desc = txt.getText(startOffset, endOffset - 1);
-
-
-								Task task = new Task(file.getName(), desc, line, col, type);
-								taskList.add( task );
 							}
+						} catch (Exception e) {
+							// TODO: handle exception (Places TC here to fix a crash when a repgen being parsed is closed)
 						}
 					}
 				});
@@ -453,6 +469,10 @@ public class RepgenParser {
 	 * @param tok
 	 */
 	private void addToken(ArrayList<Token> tokens, int spot, Token tok){
+		if(spot > 0 && tokens.get(spot-1).getStr().equals("procedure") && !tok.inString() && tok.getCDepth() == 0)
+			tok.setTokenType(TokenType.PROCEDURE); //TODO: add other types
+		if(spot > 0 && tok.getStr().equalsIgnoreCase("=") && tok.inDefs() && !tok.inString() && tok.getCDepth() == 0)
+			tokens.get(spot-1).setTokenType(TokenType.DEFINED_VARIABLE);
 		tokens.add(spot,tok);
 		lasttokens.add(tok);
 	}
@@ -506,7 +526,7 @@ public class RepgenParser {
 
 		char[] chars = str.substring(charStart, charEnd).toLowerCase().toCharArray();
 
-		boolean inString=false, inDate=false, inDefine = false;
+		boolean inString=false, inDate=false, inDefine = false, inSetup = false;
 		int commentDepth=0;
 		if(ftoken>0){
 			inString = tokens.get(ftoken-1).endInString();
@@ -546,8 +566,11 @@ public class RepgenParser {
 					if(commentDepth==0 && !inString) {
 						if(scur.equals("define")) {
 							inDefine = true;
+						} else if(scur.equals("setup")){
+							inSetup = true;
 						} else if(scur.equals("end")) {
 							inDefine = false;
+							inSetup = false;
 							allDefs = false;
 						}
 					}
@@ -1154,6 +1177,10 @@ public class RepgenParser {
 
 	public ArrayList<Include> getIncludes(){
 		return includes;
+	}
+
+	public HashMap<String,ArrayList<Token>> getIncludeTokenChache() {
+		return includeTokenChache;
 	}
 }
 

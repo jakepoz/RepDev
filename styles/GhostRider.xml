@@ -2,26 +2,39 @@
   <header>
     <name>GhostRider</name>
     <version>1.0</version>
-    <author>Sean</author>
+    <author>Ryan L</author>
     <description><![CDATA[This is Called GhostRider. Based on this VS2005 Theme (http://followtheheard.blogspot.com/2008/02/visual-studio-settings.html).]]>
     </description>
   </header>
-  
   <style>
+    <!-- General -->
     <editor bgColor="#3F3F3F" fgColor="#F7E29F" line="#373737" token="#020000" font="Consolas" fontSize="11" />
     
+    <!-- Comments -->
     <comments fgColor="#7F9F7F" style="italic"/>
-    <variables fgColor="#8EC46F" style="bold" />    
-    <functions fgColor="#DFDFBF" style="bold" />    
+    
+    <!-- Variables -->
+    <variables fgColor="#8EC46F" style="bold" />
+    
+    <!-- Built in functions -->  
+    <functions fgColor="#DFDFBF" style="bold" /> 
+    
+    <!-- Strings -->   
     <keywords fgColor="#DCDCCC" />
+    
+    <!-- Tasks (TODO ...) -->
     <task fgColor="#FFFFFF" style="bold" />
     
+    <!-- Strings -->
     <typeChar fgColor="#C89191" />
+    
+    <!-- Dates -->
     <typeDate fgColor="#8ACCCF" style="bold" />
     
+    <!-- colors for Tables and records  EX - struct1:struct2. Valid color and invalid color-->
     <struct1 fgColor="#F7E29F" />
-    <struct1Inv fgColor="#F7E29F" bgColor="#C44309" />    
+    <struct1Inv fgColor="#F7E29F" bgColor="#C44309" />   
     <struct2 fgColor="#F7E29F" />
-    <struct2Inv fgColor="#F7E29F" bgColor="#C44309" />    
+    <struct2Inv fgColor="#F7E29F" bgColor="#C44309" />   
   </style>
 </RepDevStyle>

@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -55,11 +56,14 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -78,6 +82,7 @@ import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -122,7 +127,7 @@ public class MainShell {
 	private FindReplaceShell findReplaceShell;
 	private SurroundWithShell surroundWithShell;
 	private final int MAX_RECENTS = 5;
-
+	//private ArrayList<EditorComposite> EditorCompositeList = new ArrayList<EditorComposite>();
 	// CoolBar for our universal tool bar at the top.
 	private CoolBar coolBar;
 	private ToolBar editorBar;
@@ -408,6 +413,7 @@ public class MainShell {
 				 * print,
 				 * run
 				 */);
+				//EditorCompositeList.add((EditorComposite)editor);
 			}
 
 			// If anything goes wrong creating the Editor, we want to fail here
@@ -429,7 +435,8 @@ public class MainShell {
 			//When we are closing, we must dispose the control in the CTabItem, otherwise we leak swt objects
 			item.addDisposeListener(new DisposeListener(){
 				public void widgetDisposed(DisposeEvent e) {
-					((CTabItem)e.widget).getControl().dispose();
+					if(((CTabItem)e.widget).getControl() != null)
+						((CTabItem)e.widget).getControl().dispose();
 				}
 			});
 
@@ -464,7 +471,6 @@ public class MainShell {
 
 			if (Config.getRecentFiles().size() > MAX_RECENTS)
 				Config.getRecentFiles().remove(Config.getRecentFiles().size() - 1);
-
 			return editor;
 		}
 
@@ -882,7 +888,7 @@ public class MainShell {
 					event.detail = DND.DROP_NONE;
 					return;
 				}
-
+				int index = 0;
 				String text = (String) event.data;
 				System.out.println("Event.data: " + text);
 
@@ -891,6 +897,59 @@ public class MainShell {
 					// TreeItem item = new TreeItem(tree, SWT.NONE);
 					// item.setText(text);
 				} else {
+					
+					//Adding code back in
+					TreeItem tItem = (TreeItem)event.item;
+					Point pt = display.map(null, tree, event.x, event.y);
+					Rectangle bounds = tItem.getBounds();
+					TreeItem parent = tItem.getParentItem();
+					if (parent != null) {
+						TreeItem[] items = parent.getItems();
+
+						for (int i = 0; i < items.length; i++) {
+							if (items[i] == tItem) {
+								index = i;
+								break;
+							}
+						}
+						if (pt.y < bounds.y + bounds.height/3) {
+//							TreeItem newItem = new TreeItem(parent, SWT.NONE, index);
+//							newItem.setText(text);
+						} else if (pt.y > bounds.y + 2*bounds.height/3) {
+//							TreeItem newItem = new TreeItem(parent, SWT.NONE, index+1);
+//							newItem.setText(text);
+							index += 1;
+						} else {
+//							TreeItem newItem = new TreeItem(tItem, SWT.NONE);
+//							newItem.setText(text);
+							index = 0;
+						}
+						
+					} else {
+						TreeItem[] items = tree.getItems();
+						for (int i = 0; i < items.length; i++) {
+							if (items[i] == tItem) {
+								index = i;
+								break;
+							}
+						}
+						if (pt.y < bounds.y + bounds.height/3) {
+//							TreeItem newItem = new TreeItem(tree, SWT.NONE, index);
+//							newItem.setText(text);
+							
+						} else if (pt.y > bounds.y + 2*bounds.height/3) {
+//							TreeItem newItem = new TreeItem(tree, SWT.NONE, index+1);
+//							newItem.setText(text);
+							index += 1;
+						} else {
+//							TreeItem newItem = new TreeItem(tItem, SWT.NONE);
+//							newItem.setText(text);
+							index = 0;
+						}
+					}
+
+					//End adding code back in
+					
 					TreeItem root = (TreeItem) event.item;
 					if (root.getData() instanceof SymitarFile) {
 						root = root.getParentItem();
@@ -929,6 +988,7 @@ public class MainShell {
 
 					if(rootSym == dragSym)
 						overwrite = RepeatOperationShell.APPLY_TO_ALL | RepeatOperationShell.NO;
+						//return;
 					else
 						overwrite = RepeatOperationShell.ASK_TO_ALL | RepeatOperationShell.YES;
 					//if ((getTreeDir(root) == null || getTreeDir(dragSourceItems[0]) == null || getTreeDir(root).equals(getTreeDir(dragSourceItems[0])))
@@ -950,7 +1010,7 @@ public class MainShell {
 							SymitarFile destination;
 
 							if (isItemLocal(root))
-								destination = new SymitarFile(getTreeDir(root), source.getName());
+								destination = new SymitarFile(getTreeDir(root), source.getName(), source.getType());
 							else {
 								if (RepDevMain.SYMITAR_SESSIONS.get(getTreeSym(root)) != null && RepDevMain.SYMITAR_SESSIONS.get(getTreeSym(root)).isConnected())
 									destination = new SymitarFile(getTreeSym(root), source.getName(), source.getType());
@@ -985,7 +1045,7 @@ public class MainShell {
 								error = destination.saveFile(source.getData());
 
 							if (error == SessionError.NONE && root.getData() instanceof Project)
-								((Project) root.getData()).addFile(destination);
+								((Project) root.getData()).addFile(destination, index);
 						}
 					} else if (dragSourceItems[0].getData() instanceof Project) {
 						for (TreeItem item : dragSourceItems) {
@@ -993,10 +1053,10 @@ public class MainShell {
 							Project destination;
 
 							if (isItemLocal(root))
-								destination = ProjectManager.createProject(source.getName(), getTreeDir(root));
+								destination = ProjectManager.createProject(source.getName(), getTreeDir(root), index);
 							else {
 								if (RepDevMain.SYMITAR_SESSIONS.get(getTreeSym(root)) != null && RepDevMain.SYMITAR_SESSIONS.get(getTreeSym(root)).isConnected())
-									destination = ProjectManager.createProject(source.getName(), getTreeSym(root));
+									destination = ProjectManager.createProject(source.getName(), getTreeSym(root), index);
 								else {
 									MessageBox dialog = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
 									dialog.setMessage("You are copying to a sym that is not logged in, log in and try again.");
@@ -1006,10 +1066,10 @@ public class MainShell {
 									return;
 								}
 							}
-
 							for (SymitarFile file : source.getFiles()) {
 								boolean exists = false;
-
+								int tmpOverwrite = overwrite;
+								
 								SymitarFile newFile;
 
 								if (isItemLocal(root))
@@ -1017,23 +1077,24 @@ public class MainShell {
 								else
 									newFile = new SymitarFile(getTreeSym(root), file.getName(), file.getType());
 
-								if ((overwrite & RepeatOperationShell.ASK_TO_ALL) != 0)
+								if ((tmpOverwrite & RepeatOperationShell.ASK_TO_ALL) != 0)
 									exists = Util.fileExists(newFile);
 
-								if (exists && (overwrite & RepeatOperationShell.ASK_TO_ALL) != 0) {
+								if (exists && (tmpOverwrite & RepeatOperationShell.ASK_TO_ALL) != 0) {
 									RepeatOperationShell dialog = new RepeatOperationShell(shell, "File " + newFile.getName() + " already exists at the destination. Overwrite?");
-									overwrite = dialog.open();
+									tmpOverwrite = dialog.open();
 
-									if ((overwrite & RepeatOperationShell.CANCEL) != 0) {
+									if ((tmpOverwrite & RepeatOperationShell.CANCEL) != 0) {
 										shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 										return;
 									}
+									
 								}
 
 								SessionError error = SessionError.NONE;
 								//if(exists)System.out.print("Exists, ");
 								//System.out.println("overwrite = " + overwrite);
-								if ((overwrite & RepeatOperationShell.YES) != 0)
+								if ((tmpOverwrite & RepeatOperationShell.YES) != 0)
 									error = newFile.saveFile(file.getData());
 								//System.out.println("error = " + error.toString());
 								if (error == SessionError.NONE)
@@ -1041,19 +1102,29 @@ public class MainShell {
 							}
 						}
 					}
+					
 
 					// Dont redraw if we added to sym/dir
 					if (dragSourceItems[0].getData() instanceof Project
 							|| (dragSourceItems[0].getData() instanceof SymitarFile && !(root.getData() instanceof String || root.getData() instanceof Integer))) {
-
+						ArrayList<String> treesToExpand = new ArrayList<String>();							
 						if (root.getData() instanceof SymitarFile)
 							root = root.getParentItem().getParentItem();
 						else if (root.getData() instanceof Project)
 							root = root.getParentItem();
-
+				
+						for (TreeItem sourceItem : dragSourceItems){
+							if(sourceItem.getData() instanceof Project && sourceItem.getExpanded())
+								treesToExpand.add(sourceItem.getText()); //Get Names of expanded Source trees
+						}
+						
 						// Redraws the tree, since it do be VIRTUAL!!!!
-						for (TreeItem victim : root.getItems())
+						for (TreeItem victim : root.getItems()){
+							if(victim.getExpanded())
+								treesToExpand.add(victim.getText()); //Get Names of expanded Destination trees
 							victim.dispose();
+						}
+
 
 						root.clearAll(true);
 						root.setExpanded(false);
@@ -1062,7 +1133,15 @@ public class MainShell {
 						Event e = new Event();
 						e.item = root;
 						tree.notifyListeners(SWT.Expand, e);
+						
+						// Restore expanded trees (trees that were expanded before the DND)
+						for (TreeItem destItem : root.getItems()){
+							if(treesToExpand.contains(destItem.getText()))
+								doTree(destItem);
+						}
 
+						//Project.setExpanded(false);
+						//doTree(Project);
 						// if( !(root.getData() instanceof String ||
 						// root.getData() instanceof Integer))
 						// root = root.getParentItem();
@@ -2207,9 +2286,14 @@ public class MainShell {
 
 	public Image getFileImage(SymitarFile file) {
 		Image img;
-
-		if (file.isLocal())
-			return RepDevMain.smallRepGenImage;
+			if (file.isLocal()){
+				switch (file.getType()) {
+				case REPGEN:
+					return RepDevMain.smallRepGenImage;
+				default:
+					return RepDevMain.smallFileImage;
+			}
+		}
 
 		switch (file.getType()) {
 		case REPGEN:
@@ -2223,14 +2307,158 @@ public class MainShell {
 
 	}
 
+	// Draw Rectangle Around Destination Tab Start
+	PaintListener destTabRectPL;
+	Rectangle destTabRect = new Rectangle(0, 0, 0, 0);
+	private void drawDestTabRect(CTabItem destTab){
+		if(destTab != null){
+			if(destTabRect.x != destTab.getBounds().x){ // Only do this if new or we are in a new tab spot
+				
+				if(destTabRectPL != null){ // dragging over new tab spot - remove old if exists
+					mainfolder.removePaintListener(destTabRectPL);
+					//destTabRect = null;
+					//destTabRectPL = null;
+				}
+				
+				destTabRect = destTab.getBounds();
+				destTabRectPL = new PaintListener()
+				{
+			        public void paintControl(PaintEvent e) {
+			            e.gc.setLineWidth(2);
+			            e.gc.setLineStyle(SWT.LINE_SOLID);
+			            e.gc.setForeground(display.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+			            e.gc.drawRectangle(destTabRect);
+			        }
+			    };
+				mainfolder.addPaintListener(destTabRectPL);
+				mainfolder.redraw();
+			}
+		}
+		else{
+			if(destTabRectPL != null)
+				mainfolder.removePaintListener(destTabRectPL); // Null destTab Argument means remove the rectangle
+			}
+		
+	}
+	// Draw Rectangle Around Destination Tab End
+
 	private void createEditorPane(Composite self) {
 		self.setLayout(new FillLayout());
 		mainfolder = new CTabFolder(self, SWT.FLAT | SWT.TOP | SWT.BORDER);
+		final Cursor cursor = new Cursor(display, SWT.CURSOR_SIZEALL);
 		mainfolder.setLayout(new FillLayout());
 		mainfolder.setSimple(false);
 
 		Menu tabContextMenu = new Menu(mainfolder);
 		mainfolder.setMenu(tabContextMenu);
+
+		// XP Theme Color Tabs With Gradient start
+		Color titleForeColor = display.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+		Color titleBackColor1 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		Color titleBackColor2 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		
+		mainfolder.setSelectionForeground(titleForeColor);
+		mainfolder.setSelectionBackground(new Color[] { titleBackColor1,titleBackColor2 }, new int[] { 100 }, true);
+		//  XP Theme Color Tabs With Gradient End
+		
+		// Drag tab code start
+		
+		Listener listener = new Listener() {
+			boolean drag = false;
+			boolean exitDrag = false;
+			CTabItem dragItem;
+			public void handleEvent(Event e) {
+				Point p = new Point(e.x, e.y);
+				if (e.type == SWT.DragDetect) {
+					p = mainfolder.toControl(display.getCursorLocation()); // see bug 43251
+				}
+				switch (e.type) {
+				case SWT.DragDetect: {
+					CTabItem item = mainfolder.getItem(p);
+					if (item == null)
+						return;
+					//e.image = display.getSystemImage(SWT.ICON_WARNING);
+
+					drag = true;
+					exitDrag = false;
+					dragItem = item;
+					mainfolder.setCursor(cursor);
+					break;
+				}
+				case SWT.MouseEnter:
+					if (exitDrag) {
+						exitDrag = false;
+						drag = e.button != 0;
+					}
+					break;
+				case SWT.MouseExit:
+					if (drag) {
+						mainfolder.setInsertMark(null, false);
+						exitDrag = true;
+						drag = false;
+					}
+					break;
+				case SWT.MouseUp: {
+					if (!drag)
+						return;
+					mainfolder.setInsertMark(null, false);
+					drawDestTabRect(null);
+					CTabItem item = mainfolder.getItem(new Point(p.x, 1));
+					if (item != null) {
+						Rectangle sourceRect = dragItem.getBounds();
+						Rectangle destRect = item.getBounds();
+						boolean after = sourceRect.x < destRect.x;
+						int index = mainfolder.indexOf(item);
+						index = after ? index + 1 : index - 0;
+						index = Math.max(0, index);
+						CTabItem newItem = new CTabItem(mainfolder, SWT.CLOSE, index);
+						//newItem.setText("new tab item");
+						newItem.setText(dragItem.getText());
+						Control c = dragItem.getControl();
+						
+						newItem.setControl(c);
+						dragItem.setControl(null);
+						dragItem.dispose();
+						mainfolder.setSelection(newItem);
+						if (mainfolder.getSelection() != null && (mainfolder.getSelection().getControl()) instanceof EditorComposite)
+							((EditorComposite) mainfolder.getSelection().getControl()).getStyledText().setFocus();
+						shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR);
+					}
+					drag = false;
+					exitDrag = false;
+					dragItem = null;
+					mainfolder.setCursor(null);
+					break;
+				}
+				case SWT.MouseMove: {
+					if (!drag)
+						return;
+					CTabItem item = mainfolder.getItem(new Point(p.x, 2));
+					if (item == null) {
+						mainfolder.setInsertMark(null, false);
+						drawDestTabRect(null);
+						return;
+					}
+					Rectangle rect = item.getBounds();
+					boolean after = p.x > rect.x + rect.width / 2;
+					mainfolder.setInsertMark(item, after);
+					drawDestTabRect(item);
+//				    // Workaround for bug #32846
+//				    if (item == -1) {
+//				    	mainfolder.redraw();
+//				    }
+					break;
+				}
+				}
+			}
+		};
+		mainfolder.addListener(SWT.DragDetect, listener);
+		mainfolder.addListener(SWT.MouseUp, listener);
+		mainfolder.addListener(SWT.MouseMove, listener);
+		mainfolder.addListener(SWT.MouseExit, listener);
+		mainfolder.addListener(SWT.MouseEnter, listener);
+
+		// Drag tab code end
 
 		mainfolder.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -2472,8 +2700,10 @@ public class MainShell {
 
 		if (mainfolder.getSelection().getControl() instanceof EditorComposite)
 			for (TableItem tItem : tblErrors.getItems())
-				if (tItem.getData("file").equals(mainfolder.getSelection().getData("file")) && tItem.getData("sym").equals(mainfolder.getSelection().getData("sym")))
+				if (tItem.getData("file").equals(mainfolder.getSelection().getData("file")) && tItem.getData("sym").equals(mainfolder.getSelection().getData("sym"))){
 					tItem.dispose();
+					//EditorCompositeList.remove(mainfolder.getSelection().getControl());
+				}
 
 		return true;
 	}
@@ -3238,4 +3468,12 @@ public class MainShell {
 	public Shell getShell() {
 		return shell;
 	}
+
+	public CTabFolder getMainfolder() {
+		return mainfolder;
+	}
+
+//	public ArrayList<EditorComposite> getEditorCompositeList() {
+//		return EditorCompositeList;
+//	}
 }

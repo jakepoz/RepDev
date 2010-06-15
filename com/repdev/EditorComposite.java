@@ -20,6 +20,7 @@
 package com.repdev;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -28,6 +29,16 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEffect;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -64,6 +75,8 @@ import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Token;
 import com.repdev.parser.BackgroundSectionParser;
 import com.repdev.parser.SectionInfo;
+import com.repdev.parser.Variable;
+import com.repdev.parser.Token.TokenType;
 
 /**
  * Main editor for repgen, help, and letter files
@@ -130,7 +143,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		private boolean commit;
 
 		public TextChange(boolean commit) {
-			this.commit = true;
+			this.commit = commit;
 		}
 		public TextChange(int start, int length, String replacedText, int topIndex) {
 			this.start = start;
@@ -192,7 +205,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				undoMode = 2;
 
 				//Ok, I am only allowing the last undo in the redo stack
-				redos.clear();
+				//redos.clear();
 
 				txt.setRedraw(false);
 
@@ -211,10 +224,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				redos.push(new TextChange(true));
 			}
 		} catch (Exception e) {
-			/*MessageBox dialog = new MessageBox(this.getShell(), SWT.ICON_ERROR | SWT.OK);
-			dialog.setMessage("The Undo Manager has failed!");
+			MessageBox dialog = new MessageBox(this.getShell(), SWT.ICON_ERROR | SWT.OK);
+			dialog.setMessage("The Undo Manager has failed during an Undo!");
 			dialog.setText("ERROR!");
-			dialog.open();*/
+			dialog.open();
 
 			e.printStackTrace();
 		}
@@ -252,11 +265,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					txt.setCaretOffset(change.getStart());
 					txt.setTopIndex(change.getTopIndex());
 				}
-
+				undos.push(new TextChange(true));
 			}
 		} catch (Exception e) {
 			MessageBox dialog = new MessageBox(this.getShell(), SWT.ICON_ERROR | SWT.OK);
-			dialog.setMessage("The Undo Manager has failed! Email Jake!");
+			dialog.setMessage("The Undo Manager has failed during a Redo!");
 			dialog.setText("ERROR!");
 			dialog.open();
 
@@ -355,13 +368,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						line = txt.getText(startOffset, endOffset - 1);		
 
 
-					for (int x = 0; x < Math.min(tabStr.length(), line.length()); x++)
-						if (line.charAt(x) > 32)
-							return;
+//					for (int x = 0; x < Math.min(tabStr.length(), line.length()); x++)
+//						if (line.charAt(x) > 32)
+//							return;
 				}
 			}
 			txt.setRedraw(false);
-
+			int totalSpaces = 0;
 			for (int i = startLine; i <= endLine; i++) {
 				int startOffset = txt.getOffsetAtLine(i);
 				int endOffset;
@@ -377,15 +390,23 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					line = "\n";
 				else
 					line = txt.getText(startOffset, endOffset - 1);			
-
+				int spaces = tabStr.length();
 
 				if (direction > 0)
 					txt.replaceTextRange(startOffset, endOffset - startOffset, tabStr + line);
 				else {
-					txt.replaceTextRange(startOffset, endOffset - startOffset, line.substring(Math.min(tabStr.length(), line.length())));
+					
+					for (int x = 0; x < Math.min(tabStr.length(), line.length()); x++)
+						if (line.charAt(x) > 32){
+							spaces = x;
+							break;
+						}
+					totalSpaces += spaces; // This is not currently being used
+					
+					txt.replaceTextRange(startOffset, endOffset - startOffset, line.substring(Math.min(spaces, line.length())));
 				}
 
-				offset += tabStr.length() * direction;
+				offset += spaces * direction;
 
 			}
 
@@ -471,6 +492,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if (file.getType() == FileType.REPGEN){
 			doParse=true;
 			parser = new RepgenParser(txt, file, true);
+//			if(parser.getIncludes().size() == 0){
+//				for(EditorComposite editorComposite :RepDevMain.mainShell.getEditorCompositeList()){
+//					for(Include inc : editorComposite.parser.getIncludes()){
+//						if(inc.getFileName().equalsIgnoreCase(file.getName())){
+//							parser = editorComposite.parser;
+//						}
+//					}
+//				}
+//			}
+				
 		}else{
 			doParse=false;
 			parser = new RepgenParser(txt, file, false);
@@ -752,8 +783,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'd':
 					case 'D':
 						String sTmpString=txt.getSelectionText();
+						if(sTmpString.length() == 0)
+							 sTmpString= getTokenAt(txt.getCaretOffset()) != null ? getTokenAt(txt.getCaretOffset()).getStr() : "";
 						if(isAlphaNumeric(sTmpString))
 							defineVarShell(sTmpString);
+						break;
+					case 'g':
+					case 'G':
+						gotoDefinition();
 						break;
 					}
 				}
@@ -774,7 +811,81 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 			}
 		});
+		final String DRAG_START_DATA = "DRAG_START_DATA";
 
+		// Drag Copy Text - Code taken from here 
+		// http://dev.eclipse.org/viewcvs/index.cgi/org.eclipse.swt.snippets/src/org/eclipse/swt/snippets/Snippet257.java?view=co
+		final DragSource source = new DragSource(txt, DND.DROP_COPY | DND.DROP_MOVE);
+		source.setDragSourceEffect(new DragSourceEffect(txt) {
+			public void dragStart(DragSourceEvent event) {
+				event.image = Display.getCurrent().getSystemImage(SWT.ICON_WORKING); //RepDevMain.smallCopyImage;
+			}
+		});
+		source.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+		source.addDragListener(new DragSourceAdapter() {
+			Point selection;
+			public void dragStart(DragSourceEvent event) {
+				selection = txt.getSelection();
+				event.doit = selection.x != selection.y;
+				txt.setData(DRAG_START_DATA, selection);
+			}
+			public void dragSetData(DragSourceEvent e) {
+				e.data = txt.getText(selection.x, selection.y-1);
+			}
+			public void dragFinished(DragSourceEvent event) {
+				if (event.detail == DND.DROP_MOVE) {
+					Point newSelection= txt.getSelection();
+					int length = selection.y - selection.x;
+					int delta = 0;
+					if (newSelection.x < selection.x)
+						delta = length; 
+					txt.replaceTextRange(selection.x + delta, length, "");
+				}
+				selection = null;
+				txt.setData(DRAG_START_DATA, null);
+			}
+		});
+		
+		DropTarget target = new DropTarget(txt, DND.DROP_DEFAULT | DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
+		target.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+		target.addDropListener(new DropTargetAdapter() {
+			public void dragEnter(DropTargetEvent event) {
+				if (event.detail == DND.DROP_DEFAULT) {
+					if (txt.getData(DRAG_START_DATA) == null)
+						event.detail = DND.DROP_COPY;
+					else 
+						event.detail = DND.DROP_MOVE;
+				}
+			}
+			public void dragOperationChanged(DropTargetEvent event) {
+				if (event.detail == DND.DROP_DEFAULT) {
+					if (txt.getData(DRAG_START_DATA) == null)
+						event.detail = DND.DROP_COPY;
+					else 
+						event.detail = DND.DROP_MOVE;
+				}
+			}
+			public void dragOver(DropTargetEvent event) {
+				event.feedback = DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;
+			}
+			public void drop(DropTargetEvent event) {
+				if (event.detail != DND.DROP_NONE) {
+					Point selection = (Point) txt.getData(DRAG_START_DATA);
+					int insertPos = txt.getCaretOffset();
+					if (event.detail == DND.DROP_MOVE && selection != null && selection.x <= insertPos  && insertPos <= selection.y 
+							|| event.detail == DND.DROP_COPY && selection != null && selection.x < insertPos  && insertPos < selection.y) {
+						txt.setSelection(selection);
+						event.detail = DND.DROP_COPY;  // prevent source from deleting selection
+					} else {
+						String string = (String)event.data;
+						txt.insert(string);
+						if (selection != null)
+							txt.setSelectionRange(insertPos, string.length());
+					}
+				}
+			}
+		});
+		// End Drag Copy Text
 		txt.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
 				lineHighlight();
@@ -809,14 +920,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						RepDevMain.mainShell.openFile(new SymitarFile(sym, fileStr, FileType.REPGEN));
 				}
 				else if(txt.getSelectionText().equalsIgnoreCase("CALL")) {
-					Token tmpToken;
-
-					tmpToken = getTokenAt(txt.getCaretOffset());
-					if(tmpToken != null){
-						if(sec.exist(tmpToken.getStr())){
-							gotoSection(tmpToken.getStr());
-						}
-					}
+					txt.setCaretOffset(txt.getCaretOffset()+1);
+					gotoDefinition();
+//					Token tmpToken;
+//
+//					tmpToken = getTokenAt(txt.getCaretOffset());
+//					if(tmpToken != null){
+//						if(sec.exist(tmpToken.getStr())){
+//							gotoSection(tmpToken.getStr());
+//						}
+//					}
 				}
 			}
 
@@ -902,14 +1015,26 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		defineVar.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String sTmpString=txt.getSelectionText();
-				defineVarShell(sTmpString);
+				if(sTmpString.length() == 0)
+					 sTmpString= getTokenAt(txt.getCaretOffset()) != null ? getTokenAt(txt.getCaretOffset()).getStr() : "";
+				if(isAlphaNumeric(sTmpString))
+					defineVarShell(sTmpString);
 			} 
 		});
 		// Bruce - End
 
+		final MenuItem gotoDefinition = new MenuItem(contextMenu, SWT.NONE);
+		gotoDefinition.setText("Goto Definition\tCTRL+SHIFT+G");
+		gotoDefinition.setImage(RepDevMain.smallFunctionImage);
+		gotoDefinition.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				gotoDefinition();
+			} 
+		});
+		
 		final MenuItem gotoSection = new MenuItem(contextMenu, SWT.NONE);
 		gotoSection.setText("Goto Section\tCTRL+G");
-		//gotoSection.setImage(RepDevMain.xxxxx);
+		gotoSection.setImage(RepDevMain.smallFindImage);
 		gotoSection.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				gotoSectionShell();
@@ -968,11 +1093,17 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				// Bruce - Start 02/04/08
 				// Enable the Defind Variable Menu option only if a word is highlighted
 				// and the DEFINE section is found.
-				if(isAlphaNumeric(txt.getSelectionText()) && sec.exist("define")){
+				if(getTokenAt(txt.getCaretOffset()) != null && isAlphaNumeric(getTokenAt(txt.getCaretOffset()).getStr()) && sec.exist("define")){
 					defineVar.setEnabled(true);
 				}
 				else{
 					defineVar.setEnabled(false);
+				}
+				if(getTokenAt(txt.getCaretOffset()) != null && isAlphaNumeric(getTokenAt(txt.getCaretOffset()).getStr())){
+					gotoDefinition.setEnabled(true);
+				}
+				else{
+					gotoDefinition.setEnabled(false);
 				}
 				// Bruce - End
 			}
@@ -1015,6 +1146,133 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		highlight(doParse,true);
 	}
 
+	public void gotoDefinition(){
+		
+		CTabFolder mainfolder = RepDevMain.mainShell.getMainfolder();
+			
+		HashMap<String, ArrayList<Token>> incTokenCache = parser.getIncludeTokenChache();
+		String selString=txt.getSelectionText();
+		if(selString.length() == 0)
+			selString=getTokenAt(txt.getCaretOffset()) != null ? getTokenAt(txt.getCaretOffset()).getStr() : "";
+		if(!isAlphaNumeric(selString))
+			return;
+		
+				
+		if( parser.needRefreshIncludes() )
+			parser.parseIncludes();
+		
+		//sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
+		//sec.refreshList(parser.getLtokens(),txt.getText());
+		if(sec.exist(selString)){
+			gotoSection(selString);
+			return;
+		}
+		for( String key : incTokenCache.keySet()){
+			for(Token token : incTokenCache.get(key)){
+				if(matchTokenAndGoto(token, key, selString))
+					return;
+			}
+		}
+		for(Variable var : parser.getLvars()){
+			if(matchVarAndGoto(var, selString))
+				return;
+		}
+		// Go through open files which include this file. Search for Variables/Procedures and goto. 
+		for(CTabItem tf : mainfolder.getItems()){
+			EditorComposite ec = ((EditorComposite) tf.getControl());
+			incTokenCache = ec.parser.getIncludeTokenChache();
+			for( String key : incTokenCache.keySet()){
+				if(key.equalsIgnoreCase(file.getName())){
+					
+					if( ec.parser.needRefreshIncludes() )
+						ec.parser.parseIncludes();
+					
+					if(ec.sec.exist(selString)){
+						gotoSection(selString);
+						return;
+					}
+					for( String key2 : incTokenCache.keySet()){
+						for(Token token : incTokenCache.get(key2)){
+							if(matchTokenAndGoto(token, key2, selString))
+								return;
+						}
+					}
+					for(Variable var : ec.parser.getLvars()){
+						if(matchVarAndGoto(var, selString))
+							return;
+					}
+				}
+			}
+		}
+	}
+	private Boolean matchVarAndGoto(Variable var, String varToMatch){
+		Object o;
+		if(var.getName().equals(varToMatch)){
+			if( file.isLocal() )
+				o = RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), var.getFilename()));
+			else	
+				o = RepDevMain.mainShell.openFile(new SymitarFile(sym, var.getFilename(), FileType.REPGEN));
+			
+			EditorComposite editor = null;
+
+			if (o instanceof EditorComposite)
+				editor = (EditorComposite) o;
+//					if (token.getStart() >= 0 && editor != null) {
+//						editor.getStyledText().setTopIndex(Math.max(0, task.getLine() - 10));
+				try {
+					StyledText newTxt = editor.getStyledText();
+					newTxt.setCaretOffset(newTxt.getText().length());
+					newTxt.showSelection();
+					newTxt.setCaretOffset(var.getPos());
+					editor.handleCaretChange();
+					newTxt.showSelection();
+					editor.lineHighlight();
+				} catch (IllegalArgumentException ex) {
+					// Just ignore it
+				}
+				editor.getStyledText().setFocus();
+			return true;
+		}
+		return false;
+	}
+	private Boolean matchTokenAndGoto(Token token, String key, String nameToMAtch){
+		Object o;
+		int i = 0;
+		if(token.getTokenType() != null && token.getTokenType().equals(TokenType.DEFINED_VARIABLE)){
+			i = 1;
+		}
+				
+		if(token.getTokenType() != null &&
+			(token.getTokenType().equals(TokenType.PROCEDURE) || 
+				token.getTokenType().equals(TokenType.DEFINED_VARIABLE)) &&
+			token.getStr().equalsIgnoreCase(nameToMAtch)){
+			if( file.isLocal() )
+				o = RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), key));
+			else	
+				o = RepDevMain.mainShell.openFile(new SymitarFile(sym, key, FileType.REPGEN));
+			
+			EditorComposite editor = null;
+
+			if (o instanceof EditorComposite)
+				editor = (EditorComposite) o;
+//			if (token.getStart() >= 0 && editor != null) {
+//				editor.getStyledText().setTopIndex(Math.max(0, task.getLine() - 10));
+				try {
+					StyledText newTxt = editor.getStyledText();
+					newTxt.setCaretOffset(newTxt.getText().length());
+					newTxt.showSelection();
+					newTxt.setCaretOffset(token.getBefore().getStart());
+					editor.handleCaretChange();
+					newTxt.showSelection();
+					editor.lineHighlight();
+				} catch (IllegalArgumentException ex) {
+					// Just ignore it
+				}
+				editor.getStyledText().setFocus();
+			return true;
+		}
+		return false;
+	}
 	// Bruce - Start 02/04/08
 
 	/**

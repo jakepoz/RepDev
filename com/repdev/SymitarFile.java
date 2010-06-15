@@ -69,6 +69,13 @@ public class SymitarFile implements Serializable {
 		this.name = name;
 		this.type = type;
 	}
+	
+	public SymitarFile(String dir, String name, FileType type) {
+		this.dir = dir;
+		this.name = name;
+		this.local = true;
+		this.type = type;
+	}
 
 	public SymitarFile(int sym, String name, FileType type, Date modified, long size) {
 		this.sym = sym;

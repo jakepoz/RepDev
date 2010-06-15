@@ -52,8 +52,8 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	//TODO: Style set here
 	private static String styleName = "default";
 
-	private static String FONT_NAME = "Courier New";
-	private static int FONT_SIZE = 11;
+	private static String FONT_NAME = ""; // "Courier New"; //Fix Font Behavior
+	private static int FONT_SIZE = 0;// = 11;
 
 	private static RGB BACKGROUND = new RGB(255, 255, 255), FOREGROUND = new RGB(0, 0, 0);
 	private static EStyle MAIN = new EStyle(null,null), 
@@ -81,8 +81,10 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	//Custom line background, used by the compare composite interface
 	private int[] customLines = null;
 	private static Color customColor, tokenColor;
-
+	
+	
 	static {
+		loadStyle(Config.getStyle());
 		Font cur = null;
 
 		try {
@@ -92,7 +94,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 		FONT = cur;
 		
-		loadStyle(Config.getStyle());
+		
 	}
 
 	public SyntaxHighlighter(RepgenParser parser) {
@@ -156,8 +158,8 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		System.out.println("Loading theme " + styleName + ".xml");
 		try{
 			Style style = new Style( new File("styles\\" + styleName + ".xml" ));
-			FONT_NAME = "Courier New";
-			FONT_SIZE = 11;
+			FONT_NAME = style.getFontValue("editor", "font"); // "Courier New";
+			FONT_SIZE = style.getFontSize("editor", "fontSize"); // 11;
 			BACKGROUND = style.getColor("editor", "bgColor");  // just... don't...
 			FOREGROUND = style.getColor("editor", "fgColor");  // ask, it's not worth it.
 			FORECOLOR = new Color(Display.getCurrent(), FOREGROUND);

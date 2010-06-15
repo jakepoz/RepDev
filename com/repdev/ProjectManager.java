@@ -47,6 +47,7 @@ public class ProjectManager {
 
 	public static void removeProject(Project project, boolean delete) {
 		int sym = project.getSym();
+		boolean found = false;
 		ArrayList<Project> projects = new ArrayList<Project>();
 		
 		if( project.isLocal() )
@@ -57,12 +58,15 @@ public class ProjectManager {
 		int i = 0;
 
 		for (Project cur : projects) {
-			if (cur.getName().equals(project.getName()))
+			if (cur.getName().equals(project.getName())){
+				found = true;
 				break;
+			}
 
 			i++;
 		}
-
+		if(!found)
+			return;
 		projects.remove(i);
 		
 		if( project.isLocal() )
@@ -149,20 +153,32 @@ public class ProjectManager {
 		}
 	}
 
+
 	public static Project createProject(String name, int sym) {
+		return createProject(name,  sym, -1);
+	}
+	public static Project createProject(String name, int sym, int index) {
+		//removeProject(project)
 		Project project = new Project(name, sym);
 		boolean exists = false;
 		
 		for( Project p : getProjects(sym) )
 			if( p.getName().equals(name))
 			{
+				if(index > -1){
+					removeProject(project, false);
+					break;
+				}
 				exists = true;
 				project = p;
 				break;
 			}
 		
 		if( !exists ){
-			getProjects(sym).add(project);
+			if(getProjects(sym).size() < index)
+				getProjects(sym).add(project);
+			else
+				getProjects(sym).add(index, project);
 			saveProjects(sym);
 		}
 		
@@ -170,19 +186,29 @@ public class ProjectManager {
 	}
 	
 	public static Project createProject(String name, String dir) {
+		return createProject(name, dir,-1);
+	}
+	public static Project createProject(String name, String dir, int index) {
 		Project project = new Project(name, dir);
 		boolean exists = false;
 		
-		for( Project p : getProjects(dir))
+		for( Project p : getProjects(dir) )
 			if( p.getName().equals(name))
 			{
-				exists = true;
+				if(index > -1){
+					removeProject(project, false);
+				}
+				else
+					exists = true;
 				project = p;
 				break;
 			}
 		
 		if( !exists ){
-			getProjects(dir).add(project);
+			if(getProjects(dir).size() < index)
+				getProjects(dir).add(project);
+			else
+				getProjects(dir).add(index, project);
 			saveProjects(dir);
 		}
 		
@@ -258,7 +284,7 @@ public class ProjectManager {
 				if( key instanceof Integer)
 					curProject.addFile(new SymitarFile((Integer)key,parts[2].trim(), FileType.valueOf(parts[1])));
 				else if ( key instanceof String )
-					curProject.addFile(new SymitarFile((String)key, parts[2].trim()));
+					curProject.addFile(new SymitarFile((String)key,parts[2].trim(), FileType.valueOf(parts[1])));
 			}
 		}
 

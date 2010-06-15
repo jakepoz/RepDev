@@ -29,13 +29,14 @@ public class Token {
 	private String str;
 	private Token after = null, before = null;
 	private int pos, commentDepth, afterDepth;
-	private boolean inString, afterString, inDate, afterDate, inDefs;
+	private boolean inString, afterString, inDate, afterDate, inDefs, inComment;
 
 	private static final String[] heads = { "setup", "print title", "select", "define", "do", "total", "headers", "(", "\"", "'", "[", "procedure", "sort" };
 	private static final String[] ends = {"end", ")", "\"", "'", "]"};
 	
 	private Color specialBackground = null;
 	private SpecialBackgroundReason backgroundReason;
+	private TokenType tokenType;
 	private SnippetVariable currentVar; //Used for background highlighting logic
 	
 	public enum SpecialBackgroundReason{
@@ -43,7 +44,12 @@ public class Token {
 		BLOCK_MATCHER,
 		CODE_SNIPPET,
 	}
-	
+	public enum TokenType{
+		CONSTANT,
+		DEFINED_VARIABLE,
+		PROCEDURE,
+		SYMITAR_KEYWORD,
+	}
 	public Token(String str, int pos, int commentDepth, int afterDepth, boolean inString, boolean afterString, boolean inDefs, boolean inDate, boolean afterDate) {
 		this.str = str;
 		this.pos = pos;
@@ -266,5 +272,21 @@ public class Token {
 
 	public SnippetVariable getSnippetVar() {
 		return currentVar;
+	}
+
+	public void setTokenType(TokenType tokenType) {
+		this.tokenType = tokenType;
+	}
+
+	public TokenType getTokenType() {
+		return tokenType;
+	}
+
+	private void setInComment(boolean inComment) {
+		this.inComment = inComment;
+	}
+
+	private boolean isInComment() {
+		return inComment;
 	}
 }
