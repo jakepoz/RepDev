@@ -110,6 +110,10 @@ public class GotoLineShell {
 	private void setLine(int ln) {
 		int offset = txt.getOffsetAtLine(ln-1);
 		txt.setSelection(offset,offset);
+		txt.showSelection();
+		// Drop Navigation Position
+		RepDevMain.mainShell.addToNavHistory(((EditorComposite)txt.getParent()).getFile(), txt.getLineAtOffset(txt.getCaretOffset()));
+		
 	}
 	
 }

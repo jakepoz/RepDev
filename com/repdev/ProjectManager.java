@@ -175,7 +175,7 @@ public class ProjectManager {
 			}
 		
 		if( !exists ){
-			if(getProjects(sym).size() < index)
+			if(getProjects(sym).size() == 0 || getProjects(sym).size() < index)
 				getProjects(sym).add(project);
 			else
 				getProjects(sym).add(index, project);

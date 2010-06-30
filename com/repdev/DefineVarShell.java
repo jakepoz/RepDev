@@ -138,12 +138,16 @@ public class DefineVarShell {
 			cancel.setText("Cancel");
 			
 			// Key Events
+
 			charLength.addKeyListener(new KeyListener() {
 				public void keyReleased(KeyEvent e){
 					formulateString(varName, varType.getText(), charLength.getText(),
 						arraySize.getText(), commentText.getText());
 					previewText.setText(sTmpStr+" ");
 					shell.pack(true);
+					if(e.keyCode == 27){
+						shell.dispose();
+					}
 				}
 				public void keyPressed(KeyEvent e){}
 			});
@@ -153,6 +157,9 @@ public class DefineVarShell {
 						arraySize.getText(), commentText.getText());
 					previewText.setText(sTmpStr+" ");
 					shell.pack(true);
+					if(e.keyCode == 27){
+						shell.dispose();
+					}
 				}
 				public void keyPressed(KeyEvent e){}
 			});
@@ -162,6 +169,18 @@ public class DefineVarShell {
 						arraySize.getText(), commentText.getText());
 					previewText.setText(sTmpStr+" ");
 					shell.pack(true);
+					if(e.keyCode == 27){
+						shell.dispose();
+					}
+				}
+				public void keyPressed(KeyEvent e){}
+			});
+			
+			varType.addKeyListener(new KeyListener() {
+				public void keyReleased(KeyEvent e){
+					if(e.keyCode == 27){
+						shell.dispose();
+					}
 				}
 				public void keyPressed(KeyEvent e){}
 			});

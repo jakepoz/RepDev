@@ -145,6 +145,7 @@ public class RepgenParser {
 
 			if( inDefs )
 				rebuildVars(fileName,data,tokens);
+			//txt.notifyListeners(getSym(), null);
 		}
 
 		public void run(){
@@ -310,6 +311,14 @@ public class RepgenParser {
 							});
 						}
 					}
+					// Redraw Main Screen after background variables are parsed
+					RepDevMain.mainShell.getShell().getDisplay().asyncExec( //can use asyncExec() or syncExec()
+							  new Runnable() {
+							    public void run(){
+							      txt.redraw();
+							    }
+							  });
+
 				}
 
 
@@ -1056,7 +1065,6 @@ public class RepgenParser {
 			ltokens = new ArrayList<Token>();
 			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, removedtokens, lvars, txt);
 			rebuildVars(file.getName(), txt.getText(), ltokens);
-
 			System.out.println("Reparsed");
 		} catch (Exception e) {
 			System.err.println("Syntax Highlighter error!");

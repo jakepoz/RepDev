@@ -252,4 +252,8 @@ public class ReportComposite extends Composite implements TabTextView{
 		
 		openTableItem(item);
 	}
+
+	public SymitarFile getFile() {
+		return file;
+	}
 }

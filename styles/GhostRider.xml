@@ -7,6 +7,8 @@
     </description>
   </header>
   <style>
+  	<!-- Editor Tab Theme -->
+  	<tabStyle fgColor="#FFFFFF" bgcolor1="0A246A" bgcolor2="A6CAF0" />
     <!-- General -->
     <editor bgColor="#3F3F3F" fgColor="#F7E29F" line="#373737" token="#020000" font="Consolas" fontSize="11" />
     
@@ -32,9 +34,9 @@
     <typeDate fgColor="#8ACCCF" style="bold" />
     
     <!-- colors for Tables and records  EX - struct1:struct2. Valid color and invalid color-->
-    <struct1 fgColor="#F7E29F" />
+    <struct1 fgColor="#C2A588" />
     <struct1Inv fgColor="#F7E29F" bgColor="#C44309" />   
-    <struct2 fgColor="#F7E29F" />
+    <struct2 fgColor="#A2A2C2" />
     <struct2Inv fgColor="#F7E29F" bgColor="#C44309" />   
   </style>
 </RepDevStyle>

@@ -29,8 +29,11 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
@@ -287,6 +290,8 @@ public class RunReportShell {
 					stillRunning = true;
 					
 					shell.getDisplay().timerExec(500, new Runnable(){
+						
+
 						public void run() {
 							if( shell == null || shell.isDisposed() )
 								return;
@@ -449,6 +454,14 @@ public class RunReportShell {
 		doEnable();
 		
 		shell.setDefaultButton(runButton);
+		// Enable closing (actually hides) the window and still getting the results when they are completed
+		shell.addListener(SWT.Close, new Listener() {
+		      public void handleEvent(Event event) {
+		        shell.setVisible(false);
+		        event.doit = !stillRunning;
+		      }
+		    });
+		
 		shell.pack();
 		shell.open();
 		shell.setMinimumSize(shell.getSize().x + 100, shell.getSize().y + 50);

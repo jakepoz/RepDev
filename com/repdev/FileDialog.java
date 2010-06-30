@@ -103,10 +103,10 @@ public class FileDialog {
 
 		typeCombo.add("REPGEN");
 		
-		if( dir == null){
+		//if( dir == null){
 			typeCombo.add("LETTER");
 			typeCombo.add("HELP");
-		}
+		//}
 		
 		typeCombo.select(0);
 
@@ -134,7 +134,7 @@ public class FileDialog {
 					if( dir == null)
 						files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
 					else
-						files.add(new SymitarFile(dir,nameText.getText().trim()));
+						files.add(new SymitarFile(dir,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
 					
 					shell.close();
 				}
@@ -193,7 +193,7 @@ public class FileDialog {
 					if( dir == null)
 						files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
 					else
-						files.add(new SymitarFile(dir,nameText.getText().trim()));
+						files.add(new SymitarFile(dir,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
 					
 					shell.close();
 				}
@@ -245,7 +245,7 @@ public class FileDialog {
 						if( dir == null)
 							files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
 						else
-							files.add(new SymitarFile(dir,nameText.getText().trim()));
+							files.add(new SymitarFile(dir,nameText.getText().trim(),  FileType.valueOf(typeCombo.getText())));
 						
 						shell.close();
 					}

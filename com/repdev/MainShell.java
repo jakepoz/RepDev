@@ -20,6 +20,7 @@
 package com.repdev;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -27,6 +28,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Stack;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -62,6 +68,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+//import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -103,9 +110,17 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.repdev.parser.Error;
+import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Task;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.sun.xml.internal.ws.util.xml.NodeListIterator;
 
 /**
  * Main graphical user interface. Provides some utility methods as well. Really
@@ -127,6 +142,9 @@ public class MainShell {
 	private FindReplaceShell findReplaceShell;
 	private SurroundWithShell surroundWithShell;
 	private final int MAX_RECENTS = 5;
+	private ArrayList<CTabItem> tabHistory = new ArrayList<CTabItem>();
+	private static final int TAB_HISTORY_LIMIT = 100;
+
 	//private ArrayList<EditorComposite> EditorCompositeList = new ArrayList<EditorComposite>();
 	// CoolBar for our universal tool bar at the top.
 	private CoolBar coolBar;
@@ -328,7 +346,7 @@ public class MainShell {
 
 		for (CTabItem c : mainfolder.getItems()) {
 			if (c.getData("seq") != null && (Sequence) c.getData("seq") == seq && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
-				mainfolder.setSelection(c);
+				setMainFolderSelection(c);
 				found = true;
 				return c.getControl();
 			}
@@ -366,7 +384,8 @@ public class MainShell {
 			if (item.isDisposed())
 				return null;
 
-			mainfolder.setSelection(item);
+			//mainfolder.setSelection(item);
+			setMainFolderSelection(item);
 			item.setControl(editor);
 
 			// Attach find/replace shell here as well (in addition to folder
@@ -391,7 +410,7 @@ public class MainShell {
 
 		for (CTabItem c : mainfolder.getItems()) {
 			if (c.getData("file") != null && c.getData("file").equals(file) && c.getData("loc") != null && c.getData("loc").equals(loc)) {
-				mainfolder.setSelection(c);
+				setMainFolderSelection(c);
 				found = true;
 				return c.getControl();
 			}
@@ -428,8 +447,10 @@ public class MainShell {
 			}
 
 			mainfolder.setSelection(item);
-			mainfolder.notifyListeners(SWT.Selection, new Event());
 			item.setControl(editor);
+			setMainFolderSelection(item);
+			mainfolder.notifyListeners(SWT.Selection, new Event());
+			
 
 
 			//When we are closing, we must dispose the control in the CTabItem, otherwise we leak swt objects
@@ -1073,7 +1094,7 @@ public class MainShell {
 								SymitarFile newFile;
 
 								if (isItemLocal(root))
-									newFile = new SymitarFile(getTreeDir(root), file.getName());
+									newFile = new SymitarFile(getTreeDir(root), file.getName(), file.getType());
 								else
 									newFile = new SymitarFile(getTreeSym(root), file.getName(), file.getType());
 
@@ -1430,7 +1451,7 @@ public class MainShell {
 							modified = (Boolean)tf.getData("modified");
 
 							// Activate the Tab for the RepGen
-							mainfolder.setSelection(tf);
+							setMainFolderSelection(tf);
 							if(modified == true){
 								// If the RepGen was modified, prompt to save and install
 								((EditorComposite) mainfolder.getSelection().getControl()).installRepgen(true);
@@ -2085,12 +2106,12 @@ public class MainShell {
 		item.addDisposeListener(new DisposeListener(){
 
 			public void widgetDisposed(DisposeEvent e) {
-				((CTabItem)e.widget).getControl().dispose();
+				if(((CTabItem)e.widget).getControl() != null)
+					((CTabItem)e.widget).getControl().dispose();
 			}
 
 		});
-
-		mainfolder.setSelection(item);
+		setMainFolderSelection(item);
 	}
 
 	private void removeDir(TreeItem currentItem) {
@@ -2341,10 +2362,24 @@ public class MainShell {
 		
 	}
 	// Draw Rectangle Around Destination Tab End
+	public static Color HextoColor(String hex) {
+		if (hex == null || hex.equals("")) {return null;}
+		hex = hex.replaceAll("#", "");
+		
+		while (hex.length() < 6) {
+			hex = "0" + hex;
+		}
+		
+		String red = "0x"+hex.substring(0, 2);
+		String green = "0x"+hex.substring(2, 4);
+		String blue = "0x"+hex.substring(4, 6);
+		return new Color(null, Integer.decode(red).intValue(), Integer.decode(green).intValue(), Integer.decode(blue).intValue() );
+		//return new RGB(Integer.decode(red).intValue(), Integer.decode(green).intValue(), Integer.decode(blue).intValue());
+	}
 
 	private void createEditorPane(Composite self) {
 		self.setLayout(new FillLayout());
-		mainfolder = new CTabFolder(self, SWT.FLAT | SWT.TOP | SWT.BORDER);
+		mainfolder = new CTabFolder(self,  SWT.TOP | SWT.BORDER);
 		final Cursor cursor = new Cursor(display, SWT.CURSOR_SIZEALL);
 		mainfolder.setLayout(new FillLayout());
 		mainfolder.setSimple(false);
@@ -2353,16 +2388,36 @@ public class MainShell {
 		mainfolder.setMenu(tabContextMenu);
 
 		// XP Theme Color Tabs With Gradient start
-		Color titleForeColor = display.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-		Color titleBackColor1 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-		Color titleBackColor2 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-		
+		Color titleForeColor = null, titleBackColor1 = null, titleBackColor2 = null;
+		  try {
+				  File file = new File("styles\\" + Config.getStyle() + ".xml");
+				  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+				  DocumentBuilder db = dbf.newDocumentBuilder();
+				  Document doc = db.parse(file);
+				  doc.getDocumentElement().normalize();
+				  NodeList nodeLst = doc.getElementsByTagName("tabStyle");
+				  if(nodeLst.getLength() > 0){
+					  NamedNodeMap attributes = nodeLst.item(0).getAttributes();
+					  titleForeColor = HextoColor(attributes.getNamedItem("fgColor").getTextContent());
+					  titleBackColor1 = HextoColor(attributes.getNamedItem("bgcolor1").getTextContent());
+					  titleBackColor2 = HextoColor(attributes.getNamedItem("bgcolor2").getTextContent());
+				  }
+			  } catch (Exception e) {
+				  e.printStackTrace();
+			  }
+			  if(titleForeColor == null || titleBackColor1 == null || titleBackColor2 == null){
+				titleForeColor = display.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
+				titleBackColor1 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+				titleBackColor2 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+			  }
+		//mainfolder.setBackground(titleBackColor2);
 		mainfolder.setSelectionForeground(titleForeColor);
 		mainfolder.setSelectionBackground(new Color[] { titleBackColor1,titleBackColor2 }, new int[] { 100 }, true);
 		//  XP Theme Color Tabs With Gradient End
 		
 		// Drag tab code start
-		
+		// Close tab with middle mouse code start
+		// Tab history code start
 		Listener listener = new Listener() {
 			boolean drag = false;
 			boolean exitDrag = false;
@@ -2373,6 +2428,20 @@ public class MainShell {
 					p = mainfolder.toControl(display.getCursorLocation()); // see bug 43251
 				}
 				switch (e.type) {
+				case SWT.MouseDown: {
+					  if (e.button == 2){ // Close tab with middle click (or mouse wheel click)
+							if (confirmClose(mainfolder.getSelection())) {
+								clearErrorAndTaskList(mainfolder.getSelection());
+								mainfolder.getSelection().dispose();
+								setLineColumn();
+							}
+					  }
+					  else{ // Record that tab selection was changed
+						  addToTabHistory();
+						  //addToNavHistory(((EditorComposite)item.getControl()).getFile(),line);
+					  }
+					  break;
+				}
 				case SWT.DragDetect: {
 					CTabItem item = mainfolder.getItem(p);
 					if (item == null)
@@ -2417,9 +2486,18 @@ public class MainShell {
 						Control c = dragItem.getControl();
 						
 						newItem.setControl(c);
+						// move over data attributes for files and reports
+						if(dragItem.getData("seq") != null)
+							newItem.setData("seq", dragItem.getData("seq"));
+						if(dragItem.getData("sym") != null)
+							newItem.setData("sym", dragItem.getData("sym"));
+						if(dragItem.getData("file") != null)
+							newItem.setData("file", dragItem.getData("file"));
+						if(dragItem.getData("loc") != null)
+							newItem.setData("loc", dragItem.getData("loc"));
 						dragItem.setControl(null);
 						dragItem.dispose();
-						mainfolder.setSelection(newItem);
+						setMainFolderSelection(newItem);
 						if (mainfolder.getSelection() != null && (mainfolder.getSelection().getControl()) instanceof EditorComposite)
 							((EditorComposite) mainfolder.getSelection().getControl()).getStyledText().setFocus();
 						shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR);
@@ -2457,6 +2535,7 @@ public class MainShell {
 		mainfolder.addListener(SWT.MouseMove, listener);
 		mainfolder.addListener(SWT.MouseExit, listener);
 		mainfolder.addListener(SWT.MouseEnter, listener);
+		mainfolder.addListener(SWT.MouseDown, listener);
 
 		// Drag tab code end
 
@@ -2704,7 +2783,11 @@ public class MainShell {
 					tItem.dispose();
 					//EditorCompositeList.remove(mainfolder.getSelection().getControl());
 				}
-
+		// Remove entries matching this tab from the tabHistory stack since we are closing the file
+		List<CTabItem> closingTab = Arrays.asList(item);
+		tabHistory.removeAll(closingTab);
+		if(!tabHistory.isEmpty())
+			setMainFolderSelection(tabHistory.get(tabHistory.size()-1));
 		return true;
 	}
 
@@ -2791,7 +2874,119 @@ public class MainShell {
 
 		folder.setSelection(errors);
 	}
+	SymitarFile currNavFile;
+	int currNavLine;
+	private ArrayList<NavHistoryItem> navHistory = new ArrayList<NavHistoryItem>();
+	private static final int NAVIGATE_HISTORY_LIMIT = 200;
+	private static final int NAVIGATE_HISTORY_LINE_CHANGE = 50;
+	
+	public void addToNavHistory(SymitarFile file, int line){
+		if(SuspendNavRecording || file == null) // Do not record navigation when this flag is set to true
+			return;
+		 // Switched tab
+		if(currNavFile == null || !file.equals(currNavFile) && !file.equals(navHistory.get(currHistoryStep-1))){
+			 // Truncate the navHistory arraylist if we are not at the end
+			if(currHistoryStep < navHistory.size())
+				navHistory.subList(currHistoryStep, navHistory.size()).clear(); 
+			navHistory.add(new NavHistoryItem(file, line));
+			currNavFile = file;
+			currNavLine = line;
+			currHistoryStep = navHistory.size();
+		}
+		// line number changed more than NAVIGATE_HISTORY_LINE_CHANGE lines
+		else
+			if(Math.abs(currNavLine - line) >= NAVIGATE_HISTORY_LINE_CHANGE){
+				 // Truncate the navHistory arraylist if we are not at the end
+				if(currHistoryStep < navHistory.size())
+					navHistory.subList(currHistoryStep - 1, navHistory.size()).clear(); 
+				navHistory.add(new NavHistoryItem(file, line));
+				currNavLine = line;
+				currHistoryStep = navHistory.size();
+			}
+		if(navHistory.size() > NAVIGATE_HISTORY_LIMIT)
+			navHistory.remove(0); // Keep limit to NAVIGATE_HISTORY_LIMIT
+	}
+	private boolean SuspendNavRecording = false;
+	private int currHistoryStep = 0;
+	
+	public void navigatToHistory(Boolean forward){
+		SuspendNavRecording = true;
+		if(!navHistory.isEmpty()){
+			if(forward && currHistoryStep < navHistory.size()){
+				
+				//open File and go to line
+				openFileGotoLine(navHistory.get(currHistoryStep).getFile(),
+						navHistory.get(currHistoryStep).getLineNumber());
+				currHistoryStep++;
+			}
+			if(!forward && currHistoryStep > 1){
+					
+				//open File and go to line
+					openFileGotoLine(navHistory.get(currHistoryStep-2).getFile(),
+							navHistory.get(currHistoryStep-2).getLineNumber());
+					currHistoryStep--;
+			}
+		}
+		SuspendNavRecording = false;
+	}
+	
+	private void openFileGotoLine(SymitarFile file, int line){
+		Object o;
+		o = openFile(file);
+		
+		EditorComposite editor = null;
+		if (o instanceof EditorComposite)
+			editor = (EditorComposite) o;
 
+		try {
+			if(editor == null)
+				return;
+			StyledText newTxt = editor.getStyledText();
+			//newTxt.setCaretOffset(newTxt.getText().length());
+			newTxt.showSelection();
+
+
+			int offset = newTxt.getOffsetAtLine(line);
+			newTxt.setSelection(offset,offset);
+			
+			editor.handleCaretChange();
+			// Drop Navigation Position
+			newTxt.showSelection();
+			editor.lineHighlight();
+		} catch (IllegalArgumentException ex) {
+			// Just ignore it
+		}
+	}
+			
+		
+	private void setMainFolderSelection(CTabItem item){
+		mainfolder.setSelection(item);
+		addToTabHistory();
+
+			//RepgenParser parser = ((EditorComposite)cur.getControl()).getParser();
+		
+	}
+	public void addToTabHistory()
+	{
+		if(mainfolder.getSelectionIndex() == -1)
+			return; // There is no index... return or we will crash with array out of bounds
+		  if( tabHistory.isEmpty() || !tabHistory.get(tabHistory.size()-1).equals(mainfolder.getSelection())){
+			  tabHistory.add(mainfolder.getSelection());
+			  // the following used to reside in setMainFolderSelection
+				if(((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()) != null){
+					StyledText txt = ((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText();
+					int line = txt.getLineAtOffset(txt.getCaretOffset());
+					//int col = txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1;
+					if(mainfolder.getSelection().getControl() instanceof EditorComposite)
+						addToNavHistory(((EditorComposite)mainfolder.getSelection().getControl()).getFile(),line);
+					// I do not deal with Reports for nav history (I ran into problems because their file instance is usually null)
+//					else if(mainfolder.getSelection().getControl() instanceof ReportComposite)
+//						addToNavHistory(((ReportComposite)mainfolder.getSelection().getControl()).getFile(),line);
+				}
+			  if(tabHistory.size() > TAB_HISTORY_LIMIT)
+				  tabHistory.remove(0); // Keep the history at TAB_HISTORY_LIMIT steps max
+		  }
+	}
 	private void createTable(Table tbl) {
 		tbl.setHeaderVisible(true);
 		tbl.setLinesVisible(true);
@@ -2914,7 +3109,7 @@ public class MainShell {
 					
 					if (local) {
 						String path = result.get(0).getPath().substring(0, result.get(0).getPath().indexOf(result.get(0).getName()));
-						SymitarFile tbs = new SymitarFile(path, result.get(0).getName());
+						SymitarFile tbs = new SymitarFile(path, result.get(0).getName(), result.get(0).getType());
 						System.out.println(path + "," + result.get(0).getName());
 						tbs.saveFile(tmp);
 						for (CTabItem item : mainfolder.getItems())
@@ -3003,6 +3198,16 @@ public class MainShell {
 				// Indicator used for creating recents list
 				MenuItem staticSeperator = new MenuItem(fileMenu, SWT.SEPARATOR);
 
+				
+				MenuItem closeTab = new MenuItem(fileMenu, SWT.PUSH);
+				closeTab.setText("C&lose tab");
+				closeTab.setImage(RepDevMain.smallVariableImage);
+				closeTab.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent arg0) {
+						closeCurrentTab();
+					}
+				});
+				
 				MenuItem fileExit = new MenuItem(fileMenu, SWT.PUSH);
 				fileExit.setText("E&xit");
 				fileExit.setImage(RepDevMain.smallExitImage);
@@ -3137,6 +3342,18 @@ public class MainShell {
 			}		    
 		});
 
+		//Replace Tabs
+		final MenuItem replaceTabs = new MenuItem(editMenu, SWT.PUSH);
+		replaceTabs.setText("&Replace Tab Characters");
+		replaceTabs.setImage(RepDevMain.smallFindReplaceImage);
+		replaceTabs.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if( mainfolder.getSelection() != null &&  mainfolder.getSelection().getControl() instanceof EditorComposite) {
+					ReplaceTabs();
+				}
+			}		    
+		});
+		
 		editMenu.addMenuListener(new MenuListener() {
 
 			public void menuHidden(MenuEvent e) {
@@ -3157,6 +3374,8 @@ public class MainShell {
 
 					editGotoLine.setEnabled(false);
 					editFormat.setEnabled(false);
+					replaceTabs.setEnabled(false);
+					
 				} else {
 					editCut.setEnabled(true);
 					editCopy.setEnabled(true);
@@ -3165,8 +3384,10 @@ public class MainShell {
 					editFindNext.setEnabled(true);
 					editFind.setEnabled(true);
 
-					if( mainfolder.getSelection() != null &&  mainfolder.getSelection().getControl() instanceof EditorComposite) 
+					if( mainfolder.getSelection() != null &&  mainfolder.getSelection().getControl() instanceof EditorComposite){ 
 						editFormat.setEnabled(true);
+						replaceTabs.setEnabled(true);
+					}
 
 					if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView
 							&& ((TabTextEditorView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canRedo())
@@ -3346,9 +3567,30 @@ public class MainShell {
 
 	public void closeCurrentTab() {
 		System.out.println(mainfolder.getSelection());
-		mainfolder.getSelection().dispose();
+		if(mainfolder.getSelection() != null)
+			mainfolder.getSelection().dispose();
 	}
-
+	
+	//Replace tabs in the document 
+	public void ReplaceTabs(){
+		StyledText txt = ((EditorComposite) mainfolder.getSelection().getControl()).getStyledText();
+		//RepgenParser parser = ((EditorComposite)cur.getControl()).getParser();
+		RepgenParser parser = ((EditorComposite) mainfolder.getSelection().getControl()).getParser();
+		txt.setRedraw(false);
+		if( parser != null)
+			parser.setReparse(false);
+		
+		// Do the replace
+		txt.setText(txt.getText().replaceAll("\t", EditorComposite.getTabStr()));
+		
+		if( parser != null){
+			parser.setReparse(true);
+			parser.reparseAll();
+		}
+		
+		txt.setRedraw(true);
+	}
+	
 	/**
 	 * Add a toolbar to the coolBar (sorry, but no pun intended.)
 	 */

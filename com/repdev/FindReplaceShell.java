@@ -409,8 +409,11 @@ public class FindReplaceShell {
 			infoLabel.setText("String not found");
 			return false;
 		}
-		else
+		else{
 			txt.setSelection(nextPos, nextPos + find.length());
+			// Drop Navigation Position
+			RepDevMain.mainShell.addToNavHistory(((EditorComposite)txt.getParent()).getFile(), txt.getLineAtOffset(txt.getCaretOffset()));
+		}
 		
 		return true;
 	}

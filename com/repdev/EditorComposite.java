@@ -121,7 +121,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	private final static Color SNIPPET_VAR = new Color(Display.getCurrent(),new RGB(170,185,220)); //Generic Snippet Var
 	private final static Color SNIPPET_VAR_CURRENT = new Color(Display.getCurrent(),new RGB(180,215,255));  //All other instances of current one you are editing
 	private final static Color SNIPPET_VAR_EDITING = new Color(Display.getCurrent(),new RGB(180,215,255)); //Current one you are editing
-
+	
+	private Token startBlockToken;
+	private Token endBlockToken;
+	
 	static SuggestShell suggest = new SuggestShell();
 
 	private static Font DEFAULT_FONT;
@@ -297,7 +300,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		blockMatchColor=hiColor.getBlockMatchColor();
 	}
 
-	private void lineHighlight() {
+	public void lineHighlight() {
 		try {
 			int start, end, currentLine;
 
@@ -553,6 +556,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 					e.detail = SWT.TRANSPARENCY_NONE;
 				}
+				//RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
+				RepDevMain.mainShell.addToTabHistory();
 			}
 
 		});
@@ -696,6 +701,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					snippetMode = true;			
 
 					//commitUndo();
+					// Drop Navigation Position
+					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 					updateSnippet();
 				}
 
@@ -708,9 +715,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			public void keyPressed(KeyEvent e) {
 				lineHighlight();
 				handleCaretChange();
-
+				// Drop Navigation Position
+				//RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
+					case SWT.HOME:
+					case SWT.END:
+						// Check to see if we need to add to a nav history
+						RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
+					break;
 					case 's':
 					case 'S':
 						saveFile(true);
@@ -747,6 +760,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'u':
 						surroundEachLineWith("PRINT \"", "\"\nNEWLINE\n", true);
 						break;
+					case 'w':
+					case 'W':
+						RepDevMain.mainShell.closeCurrentTab();
+						break;
 					case 'r':
 					case 'R':
 						RepDevMain.mainShell.runReport(file);
@@ -772,6 +789,32 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'O':
 						RepDevMain.mainShell.showOptions();
 						break;
+						
+					case 'p':
+					case 'P':
+						if(startBlockToken != null && endBlockToken != null){					
+							try {
+								int setPos = 0;
+								StyledText newTxt = tempEditor.getStyledText();
+								if(newTxt.getCaretOffset() >= startBlockToken.getStart() &&
+										newTxt.getCaretOffset() <= startBlockToken.getEnd())
+									setPos = endBlockToken.getEnd();
+								else
+									setPos = startBlockToken.getStart();
+								
+								//newTxt.setCaretOffset(txt.getText().length());
+								//newTxt.showSelection();
+								newTxt.setCaretOffset(setPos);
+								tempEditor.handleCaretChange();
+								newTxt.showSelection();
+								tempEditor.lineHighlight();
+							} catch (IllegalArgumentException ex) {
+								// Just ignore it
+							}
+							tempEditor.getStyledText().setFocus();
+						}
+						break;
+						
 					case 'r':
 					case 'R':
 						surroundWithShell();
@@ -794,6 +837,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						break;
 					}
 				}
+				else if(e.stateMask == (SWT.ALT)){
+					switch (e.keyCode) {
+					case SWT.ARROW_LEFT:
+						RepDevMain.mainShell.navigatToHistory(false);
+						break;
+					case SWT.ARROW_RIGHT:
+					RepDevMain.mainShell.navigatToHistory(true);
+						break;
+					}
+				}
 				else{
 					if( e.keyCode == SWT.F3 )
 						RepDevMain.mainShell.findNext();
@@ -801,10 +854,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						installRepgen(true);
 				}
 
-
-				if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT || e.keyCode == SWT.ARROW_UP)
+				if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_LEFT || e.keyCode == SWT.ARROW_RIGHT || e.keyCode == SWT.ARROW_UP){
 					commitUndo();
-
+									}
+				if (e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.PAGE_DOWN || e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN)
+					// Check to see if we need to add to a nav history
+					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 			}
 
 			public void keyReleased(KeyEvent e) {
@@ -896,6 +951,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			public void mouseUp(MouseEvent e) {
 				lineHighlight();
 				handleCaretChange();
+				// Drop Navigation Position
+				RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 			}
 
 			// TODO: Make double clicking include files work when last line of the file
@@ -915,7 +972,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				if( line.indexOf("#INCLUDE") != -1 ) {
 					String fileStr = line.substring(line.indexOf("\"")+1, line.lastIndexOf("\""));
 					if( file.isLocal() )
-						RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), fileStr));
+						RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), fileStr, file.getType()));
 					else	
 						RepDevMain.mainShell.openFile(new SymitarFile(sym, fileStr, FileType.REPGEN));
 				}
@@ -1121,7 +1178,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		txt.setText(str);
 		handleCaretChange();
-
+		// Drop Navigation Position
+		//RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 		suggest.close();
 
 		/*		FormData frmBar = new FormData();
@@ -1209,7 +1267,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		Object o;
 		if(var.getName().equals(varToMatch)){
 			if( file.isLocal() )
-				o = RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), var.getFilename()));
+				o = RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), var.getFilename(), file.getType()));
 			else	
 				o = RepDevMain.mainShell.openFile(new SymitarFile(sym, var.getFilename(), FileType.REPGEN));
 			
@@ -1225,6 +1283,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					newTxt.showSelection();
 					newTxt.setCaretOffset(var.getPos());
 					editor.handleCaretChange();
+					// Drop Navigation Position
+					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 					newTxt.showSelection();
 					editor.lineHighlight();
 				} catch (IllegalArgumentException ex) {
@@ -1247,7 +1307,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				token.getTokenType().equals(TokenType.DEFINED_VARIABLE)) &&
 			token.getStr().equalsIgnoreCase(nameToMAtch)){
 			if( file.isLocal() )
-				o = RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), key));
+				o = RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), key, file.getType()));
 			else	
 				o = RepDevMain.mainShell.openFile(new SymitarFile(sym, key, FileType.REPGEN));
 			
@@ -1263,6 +1323,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					newTxt.showSelection();
 					newTxt.setCaretOffset(token.getBefore().getStart());
 					editor.handleCaretChange();
+					// Drop Navigation Position
+					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 					newTxt.showSelection();
 					editor.lineHighlight();
 				} catch (IllegalArgumentException ex) {
@@ -1359,8 +1421,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			txt.showSelection();
 			txt.setCaretOffset(sec.getPos(section));
 			handleCaretChange();
+			// Drop Navigation Position
+			RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 			txt.showSelection();
 			lineHighlight();
+			
 		}
 	}
 
@@ -1694,7 +1759,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		for( Token tok: tokens ) {
 			tokloc++;
 
-			if( tok.getStart() <= txt.getCaretOffset() && tok.getEnd() >= txt.getCaretOffset() ) {
+			if(txt.getCaretOffset() >= tok.getStart()  && txt.getCaretOffset() <= tok.getEnd()) {
 				cur = tok;
 				break;
 			}
@@ -1762,8 +1827,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					tokens.get(tokloc).setBackgroundReason(Token.SpecialBackgroundReason.BLOCK_MATCHER);
 					redrawTokens.add(cur);
 					redrawTokens.add(tokens.get(tokloc));
+					startBlockToken = cur;
+					endBlockToken = tokens.get(tokloc);
 				}
-
 			} else if( cur.isRealEnd() )
 			{
 
@@ -1807,7 +1873,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					tokens.get(tokloc).setBackgroundReason(Token.SpecialBackgroundReason.BLOCK_MATCHER);
 					redrawTokens.add(cur);
 					redrawTokens.add(tokens.get(tokloc));
+					
+					startBlockToken = cur;
+					endBlockToken = tokens.get(tokloc);
 				}
+			}
+			else{
+				startBlockToken = null;
+				endBlockToken = null;
 			}
 		}
 
@@ -1953,6 +2026,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 
 		txt.redraw();
+	}
+
+	public SyntaxHighlighter getHighlighter() {
+		return highlighter;
 	}
 
 
