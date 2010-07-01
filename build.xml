@@ -45,6 +45,8 @@
                 <exclude name="**/.settings/**" />
                 <exclude name="**/.svn/**" />
                 <exclude name="**/.hg/**" />
+				<exclude name="**/swt-win/swt-debug.jar/**" />
+				<exclude name="**/swt-win/src.zip/**" />
 			</fileset>
 		</copy>
 		
