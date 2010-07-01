@@ -108,11 +108,14 @@ public class GotoLineShell {
 	}
 	
 	private void setLine(int ln) {
+		EditorComposite ec = (EditorComposite)txt.getParent();
 		int offset = txt.getOffsetAtLine(ln-1);
 		txt.setSelection(offset,offset);
 		txt.showSelection();
+		ec.handleCaretChange();
+		ec.lineHighlight();
 		// Drop Navigation Position
-		RepDevMain.mainShell.addToNavHistory(((EditorComposite)txt.getParent()).getFile(), txt.getLineAtOffset(txt.getCaretOffset()));
+		RepDevMain.mainShell.addToNavHistory(ec.getFile(), txt.getLineAtOffset(txt.getCaretOffset()));
 		
 	}
 	

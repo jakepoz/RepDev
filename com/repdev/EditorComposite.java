@@ -768,10 +768,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'R':
 						RepDevMain.mainShell.runReport(file);
 						break;
-					case 'o':
-					case 'O':
-						RepDevMain.mainShell.showFileOpenMenu();
-						break;
+
 					case 'g':
 					case 'G':
 						gotoSectionShell();
@@ -780,16 +777,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				}
 				else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
 					switch(e.keyCode) {
-					case 's':
-					case 'S':
-						RepDevMain.mainShell.saveAllRepgens();
-						break;
-
-					case 'o':
-					case 'O':
-						RepDevMain.mainShell.showOptions();
-						break;
-						
 					case 'p':
 					case 'P':
 						if(startBlockToken != null && endBlockToken != null){					

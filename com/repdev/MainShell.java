@@ -136,7 +136,7 @@ public class MainShell {
 	private static final int MIN_COL_WIDTH = 75, MIN_COMP_SIZE = 65;
 	private CTabFolder mainfolder;
 	private Display display;
-	private Shell shell;
+	//private Shell shell;
 	private Tree tree;
 	private Table tblErrors, tblTasks;
 	private FindReplaceShell findReplaceShell;
@@ -149,7 +149,7 @@ public class MainShell {
 	// CoolBar for our universal tool bar at the top.
 	private CoolBar coolBar;
 	private ToolBar editorBar;
-	private ToolItem savetb, install, print, run, hltoggle;
+	private ToolItem savetb, install, print, run, hltoggle, fscreen;
 	private ArrayList<CoolItem> coolItems; // <-- may not be needed, keep for
 	// future stuff though
 
@@ -172,11 +172,18 @@ public class MainShell {
 	public boolean isDisposed() {
 		return shell.isDisposed();
 	}
-
+	Shell shell = new Shell(display);
+	final Composite left = new Composite(shell, SWT.NONE);
+	final Sash sashVert = new Sash(shell, SWT.VERTICAL | SWT.SMOOTH);
+	final Composite right = new Composite(shell, SWT.NONE);
+	final Sash sashHoriz = new Sash(right, SWT.HORIZONTAL | SWT.SMOOTH);
+	final Composite bottom = new Composite(right, SWT.NONE);
+	final Composite main = new Composite(right, SWT.NONE);
+	final FormData frmSashVert = new FormData();
+	final FormData frmSashHoriz = new FormData();
+	
 	private void createShell() {
 		int leftPercent = 20, bottomPercent = 20;
-
-		shell = new Shell(display);
 		shell.setText(RepDevMain.NAMESTR);
 		shell.setImage(RepDevMain.smallProgramIcon);
 		if(Config.getWindowSize() != null)
@@ -219,19 +226,15 @@ public class MainShell {
 			}
 		});
 
-		final Composite left = new Composite(shell, SWT.NONE);
+		
 		createExplorer(left);
-		final Sash sashVert = new Sash(shell, SWT.VERTICAL | SWT.SMOOTH);
-		final Composite right = new Composite(shell, SWT.NONE);
+
 		right.setLayout(new FormLayout());
 
 		createEditorBar();
 		coolBar.pack();
 
-		Composite main = new Composite(right, SWT.NONE);
 		createEditorPane(main);
-		final Sash sashHoriz = new Sash(right, SWT.HORIZONTAL | SWT.SMOOTH);
-		final Composite bottom = new Composite(right, SWT.NONE);
 		createBottom(bottom);
 
 		createStatusBar();
@@ -243,12 +246,12 @@ public class MainShell {
 		frmLeft.bottom = new FormAttachment(statusBar);
 		left.setLayoutData(frmLeft);
 
-		final FormData frmSashVert = new FormData();
+		
 		frmSashVert.top = new FormAttachment(coolBar);
-		if(Config.getSashVSize() != 0)
+//		if(Config.getSashVSize() != 0)
 			frmSashVert.left = new FormAttachment(0,Config.getSashVSize());
-		else
-			frmSashVert.left = new FormAttachment(leftPercent);
+//		else
+//			frmSashVert.left = new FormAttachment(leftPercent);
 		frmSashVert.bottom = new FormAttachment(statusBar);
 		sashVert.setLayoutData(frmSashVert);
 
@@ -265,12 +268,11 @@ public class MainShell {
 		frmMain.right = new FormAttachment(100);
 		frmMain.bottom = new FormAttachment(sashHoriz);
 		main.setLayoutData(frmMain);
-
-		final FormData frmSashHoriz = new FormData();
+		
 		if(Config.getSashHSize() != 0)
 			frmSashHoriz.top = new FormAttachment (100, -Config.getSashHSize());
 		else
-			frmSashHoriz.top = new FormAttachment(100 - bottomPercent);
+			frmSashHoriz.top = new FormAttachment(100, -3);
 		frmSashHoriz.left = new FormAttachment(0);
 		frmSashHoriz.right = new FormAttachment(100);
 		sashHoriz.setLayoutData(frmSashHoriz);
@@ -284,32 +286,32 @@ public class MainShell {
 
 		left.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				if (left.getSize().x < MIN_COMP_SIZE) {
-					frmSashVert.left = new FormAttachment(0, MIN_COMP_SIZE);
-					shell.layout();
-				}
+//				if (left.getSize().x < MIN_COMP_SIZE) {
+//					frmSashVert.left = new FormAttachment(0, MIN_COMP_SIZE);
+//					shell.layout();
+//				}
 			}
 		});
 
 		bottom.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				if (bottom.getSize().y < MIN_COMP_SIZE) {
-					if( right.getSize().y - MIN_COMP_SIZE >= 0 ){
-						frmSashHoriz.top = new FormAttachment(right.getSize().y - MIN_COMP_SIZE, right.getSize().y, 0);
-						right.layout();
-					}
-				}
+//				if (bottom.getSize().y < MIN_COMP_SIZE) {
+//					if( right.getSize().y - MIN_COMP_SIZE >= 0 ){
+//						frmSashHoriz.top = new FormAttachment(right.getSize().y - MIN_COMP_SIZE, right.getSize().y, 0);
+//						right.layout();
+//					}
+//				}
 			}
 		});
 
 		sashVert.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-
-				if (e.x < MIN_COMP_SIZE)
-					e.x = MIN_COMP_SIZE;
-
-				if (shell.getClientArea().width - e.x < MIN_COMP_SIZE)
-					e.x = shell.getClientArea().width - MIN_COMP_SIZE;
+//
+//				if (e.x < MIN_COMP_SIZE)
+//					e.x = MIN_COMP_SIZE;
+//
+//				if (shell.getClientArea().width - e.x < MIN_COMP_SIZE)
+//					e.x = shell.getClientArea().width - MIN_COMP_SIZE;
 
 				if (e.x != sashVert.getBounds().x) {
 					frmSashVert.left = new FormAttachment(0, e.x);
@@ -319,13 +321,44 @@ public class MainShell {
 			}
 		});
 
+//		sashVert.addListener(SWT.MouseEnter, new Listener() {
+//			public void handleEvent(Event e) {
+//
+//				if (e.x < MIN_COMP_SIZE)
+//					e.x = MIN_COMP_SIZE;
+//
+//				if (shell.getClientArea().width - e.x < MIN_COMP_SIZE)
+//					e.x = shell.getClientArea().width - MIN_COMP_SIZE;
+//
+//				if (e.x != sashVert.getBounds().x) {
+//					frmSashVert.left = new FormAttachment(0, e.x);
+//					shell.layout();
+//				}
+//				//Config.setSashVSize(e.x);
+//			}
+//		});
+		
+//		sashVert.addListener(SWT.MouseExit, new Listener() {
+//			public void handleEvent(Event e) {
+//
+//				e.x = 0;
+//				e.x = shell.getClientArea().width;
+//
+//				if (e.x != sashVert.getBounds().x) {
+//					frmSashVert.left = new FormAttachment(0, e.x);
+//					shell.layout();
+//				}
+//				//Config.setSashVSize(e.x);
+//			}
+//		});
+		
 		sashHoriz.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
-				if (e.y < MIN_COMP_SIZE)
-					e.y = MIN_COMP_SIZE;
-
-				if (right.getSize().y - e.y < MIN_COMP_SIZE)
-					e.y = right.getSize().y - MIN_COMP_SIZE;
+//				if (e.y < MIN_COMP_SIZE)
+//					e.y = MIN_COMP_SIZE;
+//
+//				if (right.getSize().y - e.y < MIN_COMP_SIZE)
+//					e.y = right.getSize().y - MIN_COMP_SIZE;
 
 				if (e.y != sashHoriz.getBounds().y) {
 					frmSashHoriz.top = new FormAttachment(e.y, right.getSize().y, 0);
@@ -840,7 +873,18 @@ public class MainShell {
 		toolbar.pack();
 
 		tree = new Tree(self, SWT.NONE | SWT.BORDER | SWT.MULTI);
-
+//		tree.addListener(SWT.MouseEnter, new Listener() {
+//			public void handleEvent(Event e) {
+//				e.x = e.x;
+//			}
+//		});
+//		
+//		tree.addListener(SWT.MouseExit, new Listener() {
+//			public void handleEvent(Event e) {
+//				e.x = e.x;
+//			}
+//		});
+		
 		// Configure drag + drop
 		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
 		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
@@ -2376,7 +2420,7 @@ public class MainShell {
 		return new Color(null, Integer.decode(red).intValue(), Integer.decode(green).intValue(), Integer.decode(blue).intValue() );
 		//return new RGB(Integer.decode(red).intValue(), Integer.decode(green).intValue(), Integer.decode(blue).intValue());
 	}
-
+	Color titleForeColor = null, titleBackColor1 = null, titleBackColor2 = null;
 	private void createEditorPane(Composite self) {
 		self.setLayout(new FillLayout());
 		mainfolder = new CTabFolder(self,  SWT.TOP | SWT.BORDER);
@@ -2388,7 +2432,6 @@ public class MainShell {
 		mainfolder.setMenu(tabContextMenu);
 
 		// XP Theme Color Tabs With Gradient start
-		Color titleForeColor = null, titleBackColor1 = null, titleBackColor2 = null;
 		  try {
 				  File file = new File("styles\\" + Config.getStyle() + ".xml");
 				  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -2410,7 +2453,6 @@ public class MainShell {
 				titleBackColor1 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 				titleBackColor2 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
 			  }
-		//mainfolder.setBackground(titleBackColor2);
 		mainfolder.setSelectionForeground(titleForeColor);
 		mainfolder.setSelectionBackground(new Color[] { titleBackColor1,titleBackColor2 }, new int[] { 100 }, true);
 		//  XP Theme Color Tabs With Gradient End
@@ -2796,7 +2838,10 @@ public class MainShell {
 		CTabFolder folder = new CTabFolder(self, SWT.TOP | SWT.BORDER);
 		folder.setLayout(new FillLayout());
 		folder.setSimple(false);
-
+		// Apply tab theme/style
+		folder.setSelectionForeground(titleForeColor);
+		folder.setSelectionBackground(new Color[] { titleBackColor1,titleBackColor2 }, new int[] { 100 }, true);
+		
 		final CTabItem errors = new CTabItem(folder, SWT.NONE);
 		errors.setText("&Errors");
 		errors.setImage(RepDevMain.smallErrorsImage);
@@ -2823,6 +2868,10 @@ public class MainShell {
 						editor.getStyledText().setCaretOffset(
 								Math.min(editor.getStyledText().getOffsetAtLine(Math.max(0, error.getLine() - 1)) + Math.max(0, error.getCol() - 1), editor.getStyledText()
 										.getCharCount() - 1));
+						editor.handleCaretChange();
+						editor.lineHighlight();
+						// Drop Navigation Position
+						addToNavHistory(editor.getFile(), editor.getStyledText().getLineAtOffset(editor.getStyledText().getCaretOffset()));						
 					} catch (IllegalArgumentException ex) {
 						// Just ignore it
 					}
@@ -2861,6 +2910,10 @@ public class MainShell {
 						editor.getStyledText().setCaretOffset(
 								Math.min(editor.getStyledText().getOffsetAtLine(Math.max(0, task.getLine() - 1)) + Math.max(0, task.getCol() - 1), editor.getStyledText()
 										.getCharCount() - 1));
+						editor.handleCaretChange();
+						editor.lineHighlight();
+						// Drop Navigation Position
+						addToNavHistory(editor.getFile(), editor.getStyledText().getLineAtOffset(editor.getStyledText().getCaretOffset()));
 					} catch (IllegalArgumentException ex) {
 						// Just ignore it
 					}
@@ -3566,9 +3619,16 @@ public class MainShell {
 	}
 
 	public void closeCurrentTab() {
-		System.out.println(mainfolder.getSelection());
-		if(mainfolder.getSelection() != null)
-			mainfolder.getSelection().dispose();
+//		System.out.println(mainfolder.getSelection());
+//		if(mainfolder.getSelection() != null)
+//			mainfolder.getSelection().dispose();
+		if (mainfolder.getSelectionIndex() != -1) {
+			if (confirmClose(mainfolder.getSelection())) {
+				clearErrorAndTaskList(mainfolder.getSelection());
+				mainfolder.getSelection().dispose();
+				setLineColumn();
+			}
+		}
 	}
 	
 	//Replace tabs in the document 
@@ -3606,7 +3666,27 @@ public class MainShell {
 	public CoolBar getCoolBar() {
 		return this.coolBar;
 	}
-
+	boolean fullscreen = false;
+	public void toggleFullScreen()
+	{
+		if(fullscreen){
+			fscreen.setImage(RepDevMain.smallIndentLessImage);
+			frmSashVert.left = new FormAttachment(0, Config.getSashVSize());
+			frmSashHoriz.top = new FormAttachment (100, -Config.getSashHSize());
+			shell.layout();
+			//sashVert.setVisible(true);
+			fullscreen = false;
+		}else{
+			fscreen.setImage(RepDevMain.smallIndentMoreImage);
+			//sashVert.setSize(0, sashVert.getBounds().height);
+			//left.setSize(0, left.getBounds().height);
+			frmSashVert.left = new FormAttachment(0, 0);
+			frmSashHoriz.top = new FormAttachment (100, -3);
+			shell.layout();
+			//sashVert.setVisible(false);
+			fullscreen = true;
+		}
+	}
 	private void createEditorBar() {
 		editorBar = new ToolBar(coolBar, SWT.FLAT);
 		editorBar.setData("editorComposite");
@@ -3636,8 +3716,20 @@ public class MainShell {
 		hltoggle.setImage(RepDevMain.smallHighlight);
 		hltoggle.setToolTipText("Toggles the coloring of text");
 		hltoggle.setEnabled(false);
+		
+		fscreen = new ToolItem(editorBar, SWT.NONE);
+		fscreen.setImage(RepDevMain.smallIndentLessImage);
+		fscreen.setToolTipText("Toggles the visibility of the Explorer and Tasks panels");
+		//fscreen.setEnabled(false);
 
 		// EditorBar button actions
+		
+		fscreen.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				toggleFullScreen();
+				}
+			});
+		
 		savetb.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (mainfolder.getSelection().getControl() instanceof EditorComposite)

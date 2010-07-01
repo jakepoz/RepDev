@@ -23,12 +23,12 @@
     <opt>-Djava.library.path=swt-win</opt>
   </jre>
   <versionInfo>
-    <fileVersion>0.1.6.2</fileVersion>
-    <txtFileVersion>1.6.2</txtFileVersion>
+    <fileVersion>0.1.6.3</fileVersion>
+    <txtFileVersion>1.6.3</txtFileVersion>
     <fileDescription>RepDev Launcher</fileDescription>
     <copyright>(c) 2008-2009 RepDev LLC</copyright>
-    <productVersion>1.6.2.0</productVersion>
-    <txtProductVersion>1.6.2</txtProductVersion>
+    <productVersion>1.6.3.0</productVersion>
+    <txtProductVersion>1.6.3</txtProductVersion>
     <productName>RepDev</productName>
     <companyName>RepDev LLC</companyName>
     <internalName>RepDev</internalName>

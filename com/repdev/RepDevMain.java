@@ -33,6 +33,8 @@ import java.util.HashMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 
 /**
@@ -47,10 +49,10 @@ import org.eclipse.swt.widgets.MessageBox;
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
 
-	public static final boolean DEVELOPER = true; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
+	public static final boolean DEVELOPER = false; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
 	public static final int VMAJOR = 1;
 	public static final int VMINOR = 6;
-	public static final int VFIX   = 2;
+	public static final int VFIX   = 3;
 	public static final String VSPECIAL = ""; // "special" string for release names, beta, etc
 
 	public static final String VERSION = VMAJOR + "." + VMINOR + (VFIX>0?"."+VFIX:"") + (DEVELOPER ? "-dev" : "") + (!VSPECIAL.equals("")? " " + VSPECIAL : "");
@@ -300,6 +302,7 @@ public class RepDevMain {
 	private static void createGUI() {
 		mainShell = new MainShell(display);
 		mainShell.open();
+		createGlobalHotkeys();
 		if(configRev != CONFIGREV.NORMAL){
 			MessageBox msg = new MessageBox(mainShell.getShell(), SWT.ICON_WARNING);
 			msg.setText("RepDev Options");
@@ -331,5 +334,38 @@ public class RepDevMain {
 	public static Calendar getLastActivity(){
 		return lastActivity;
 	}
+	private static void createGlobalHotkeys(){
+		Display.getDefault().addFilter(SWT.KeyDown, new Listener() {
+			public void handleEvent(Event e) {
+				if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ){
+//					if(e.keyCode == SWT.F11)
+//						RepDevMain.mainShell.toggleFullScreen();
+					switch(e.keyCode) {
+					case 'f':
+					case 'F':
+						RepDevMain.mainShell.toggleFullScreen();
+						break;
+					case 's':
+					case 'S':
+						RepDevMain.mainShell.saveAllRepgens();
+						break;
 
+					case 'o':
+					case 'O':
+						RepDevMain.mainShell.showOptions();
+						break;
+					}
+
+				}
+				else if (e.stateMask == SWT.CTRL) {
+					switch (e.keyCode) {
+					case 'o':
+					case 'O':
+						RepDevMain.mainShell.showFileOpenMenu();
+						break;
+					}
+				}
+			}
+			});
+	}
 }
