@@ -715,8 +715,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			public void keyPressed(KeyEvent e) {
 				lineHighlight();
 				handleCaretChange();
-				// Drop Navigation Position
-				//RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 				if (e.stateMask == SWT.CTRL) {
 					switch (e.keyCode) {
 					case SWT.HOME:
@@ -724,6 +722,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 						// Check to see if we need to add to a nav history
 						RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
 					break;
+					// TODO: This does not work. I think that the CTabfolder is eating the key
+					case SWT.PAGE_UP:
+					case SWT.PAGE_DOWN:
+						RepDevMain.mainShell.addToTabHistory();
+						break;
 					case 's':
 					case 'S':
 						saveFile(true);
