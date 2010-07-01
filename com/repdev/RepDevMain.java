@@ -300,6 +300,12 @@ public class RepDevMain {
 	}
 
 	private static void createGUI() {
+		// Set Default Size
+		if(configRev == CONFIGREV.NEW){
+			Config.setSashHSize(150);
+			Config.setSashVSize(150);
+		}
+
 		mainShell = new MainShell(display);
 		mainShell.open();
 		createGlobalHotkeys();

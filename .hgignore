@@ -9,3 +9,6 @@ syntax: regexp
 ^stdout\.txt$
 syntax: regexp
 \.class$
+
+syntax: regexp
+^dist$
