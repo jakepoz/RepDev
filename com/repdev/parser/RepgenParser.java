@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import com.repdev.EditorComposite;
 import com.repdev.ErrorCheckResult;
 import com.repdev.FileType;
 import com.repdev.RepDevMain;
@@ -315,7 +316,8 @@ public class RepgenParser {
 					RepDevMain.mainShell.getShell().getDisplay().asyncExec( //can use asyncExec() or syncExec()
 							  new Runnable() {
 							    public void run(){
-							      txt.redraw();
+							    	if(!txt.isDisposed())
+							    		txt.redraw();
 							    }
 							  });
 

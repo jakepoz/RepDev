@@ -3021,7 +3021,7 @@ public class MainShell {
 	}
 	public void addToTabHistory()
 	{
-		if(mainfolder.getSelectionIndex() == -1)
+		if(mainfolder.getSelectionIndex() == -1 || !(mainfolder.getItem(mainfolder.getSelectionIndex()) instanceof TabTextView))
 			return; // There is no index... return or we will crash with array out of bounds
 		  if( tabHistory.isEmpty() || !tabHistory.get(tabHistory.size()-1).equals(mainfolder.getSelection())){
 			  tabHistory.add(mainfolder.getSelection());
