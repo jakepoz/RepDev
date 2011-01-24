@@ -411,8 +411,9 @@ public class FindReplaceShell {
 		}
 		else{
 			txt.setSelection(nextPos, nextPos + find.length());
-			// Drop Navigation Position
-			RepDevMain.mainShell.addToNavHistory(((EditorComposite)txt.getParent()).getFile(), txt.getLineAtOffset(txt.getCaretOffset()));
+			// Drop Navigation Position // Not currently for ReportComposite windows
+			if(txt.getParent() instanceof EditorComposite)
+				RepDevMain.mainShell.addToNavHistory(((EditorComposite)txt.getParent()).getFile(), txt.getLineAtOffset(txt.getCaretOffset()));
 		}
 		
 		return true;

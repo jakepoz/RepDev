@@ -140,6 +140,9 @@ public class SymitarFile implements Serializable {
 		}
 		else{
 			try {
+				File file = new File(getPath());
+				if(file.exists() && !file.canWrite())
+					file.setWritable(true);
 				PrintWriter out = new PrintWriter(new FileWriter(getPath()));
 				
 				if( data != null)

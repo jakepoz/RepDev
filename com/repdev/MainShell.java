@@ -389,6 +389,7 @@ public class MainShell {
 			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
 
 			item.setText("Sequence View: " + seq.getSeq());
+			// item.setToolTipText("Sequence View: " + seq.getSeq()); // only enable this if we are shrinking tabs
 
 			item.setData("seq", seq);
 			item.setData("sym", sym);
@@ -450,8 +451,9 @@ public class MainShell {
 		}
 
 		if (!found) {
-			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
+			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE); 
 			item.setText(file.getName());
+			// item.setToolTipText(file.getName()); // only use this if we are shrinking tabs
 			item.setImage(getFileImage(file));
 			item.setData("file", file);
 			item.setData("loc", loc);
@@ -2524,7 +2526,10 @@ public class MainShell {
 						index = Math.max(0, index);
 						CTabItem newItem = new CTabItem(mainfolder, SWT.CLOSE, index);
 						//newItem.setText("new tab item");
-						newItem.setText(dragItem.getText());
+						newItem.setText(dragItem.getText()); // move over the tab's text
+						newItem.setToolTipText(newItem.getToolTipText()); // move over tooltip text
+						
+						newItem.setImage(dragItem.getImage()); // Mover over the sym icon
 						Control c = dragItem.getControl();
 						
 						newItem.setControl(c);
@@ -2537,6 +2542,12 @@ public class MainShell {
 							newItem.setData("file", dragItem.getData("file"));
 						if(dragItem.getData("loc") != null)
 							newItem.setData("loc", dragItem.getData("loc"));
+						if(dragItem.getData("modified") != null)
+							newItem.setData("modified", dragItem.getData("modified"));
+						if(dragItem.getData("error") != null)
+							newItem.setData("error", dragItem.getData("error"));
+						if(dragItem.getData("task") != null)
+							newItem.setData("task", dragItem.getData("task"));
 						dragItem.setControl(null);
 						dragItem.dispose();
 						setMainFolderSelection(newItem);

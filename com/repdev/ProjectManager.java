@@ -175,7 +175,7 @@ public class ProjectManager {
 			}
 		
 		if( !exists ){
-			if(getProjects(sym).size() == 0 || getProjects(sym).size() < index)
+			if(getProjects(sym).size() == 0 || getProjects(sym).size() < index || index == -1)
 				getProjects(sym).add(project);
 			else
 				getProjects(sym).add(index, project);
@@ -205,7 +205,7 @@ public class ProjectManager {
 			}
 		
 		if( !exists ){
-			if(getProjects(dir).size() < index)
+			if(getProjects(dir).size() == 0 || getProjects(dir).size() < index || index == -1)
 				getProjects(dir).add(project);
 			else
 				getProjects(dir).add(index, project);
