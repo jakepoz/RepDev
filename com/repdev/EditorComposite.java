@@ -816,8 +816,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'd':
 					case 'D':
 						String sTmpString=txt.getSelectionText();
-						if(sTmpString.length() == 0)
-							 sTmpString= getTokenAt(txt.getCaretOffset()) != null ? getTokenAt(txt.getCaretOffset()).getStr() : "";
+						if(sTmpString.length() == 0 && getTokenAt(txt.getCaretOffset()) != null){
+							int iStart, iEnd;
+							iStart=getTokenAt(txt.getCaretOffset()).getStart();
+							iEnd=getTokenAt(txt.getCaretOffset()).getEnd();
+							txt.setSelection(iStart, iEnd);
+							sTmpString= txt.getSelectionText();
+						}
 						if(isAlphaNumeric(sTmpString))
 							defineVarShell(sTmpString);
 						break;
@@ -1062,8 +1067,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		defineVar.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String sTmpString=txt.getSelectionText();
-				if(sTmpString.length() == 0)
-					 sTmpString= getTokenAt(txt.getCaretOffset()) != null ? getTokenAt(txt.getCaretOffset()).getStr() : "";
+				if(sTmpString.length() == 0 && getTokenAt(txt.getCaretOffset()) != null){
+					int iStart, iEnd;
+					iStart=getTokenAt(txt.getCaretOffset()).getStart();
+					iEnd=getTokenAt(txt.getCaretOffset()).getEnd();
+					txt.setSelection(iStart, iEnd);
+					sTmpString= txt.getSelectionText();
+				}
 				if(isAlphaNumeric(sTmpString))
 					defineVarShell(sTmpString);
 			} 
