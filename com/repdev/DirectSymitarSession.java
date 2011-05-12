@@ -809,8 +809,8 @@ public class DirectSymitarSession extends SymitarSession {
 	@Override
 	public synchronized RunFMResult runBatchFM(String searchTitle, int searchDays, FMFile file, int queue) {
 		RunFMResult result = new RunFMResult();
-		int[] queueCounts = new int[9999];
-		boolean[] queueAvailable = new boolean[9999];
+		int[] queueCounts = new int[10000];
+		boolean[] queueAvailable = new boolean[10000];
 		
 		for( int i = 0; i < queueCounts.length; i++)
 			queueCounts[i] = -1;
@@ -984,8 +984,8 @@ public class DirectSymitarSession extends SymitarSession {
 	public synchronized RunRepgenResult runRepGen(String name, int queue, ProgressBar progress, Text text, PromptListener prompter) {
 		Command cur, old;
 		boolean isError = false;
-		int[] queueCounts = new int[9999];
-		boolean[] queueAvailable = new boolean[9999];
+		int[] queueCounts = new int[10000];
+		boolean[] queueAvailable = new boolean[10000];
 		
 		//We cannot use queueCounts as an availbility thing, though it would be nice
 		//The two arrays are parsed seperately, queueCounts from the list of queus and wahts in them
