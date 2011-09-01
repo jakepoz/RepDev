@@ -209,14 +209,26 @@ public class DefineVarShell {
 			ok.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					// Validate numeric characters for CharLength.
+					boolean valueError = false;
 					if(charLength.getText().length()!=0 && !ec.isNum(charLength.getText())){
 						messageBox("Invalid Character Length.  Please enter numbers only.");
+						valueError = true;
+					}else
+					if(arraySize.getText().length()!=0){
+						String validChar = "0123456789,";
+						for(int i=1;i<=arraySize.getText().length();i++){
+							if(validChar.indexOf(arraySize.getText().substring(i-1, i)) < 0){
+								valueError = true;
+								messageBox("Invalid Array Size.  Please enter numbers and comma only.");
+								break;
+							}
+						}
 					}
 					// Validate numeric characters for arraySize.
-					else if(arraySize.getText().length()!=0 && !ec.isNum(arraySize.getText())){
+					/*else if(arraySize.getText().length()!=0 && !ec.isNum(arraySize.getText())){
 						messageBox("Invalid Array Size.  Please enter numbers only.");
-					}
-					else{
+					}*/
+					if(valueError == false){
 						ec.defineVariable(sTmpStr);
 						shell.dispose();
 					}

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.IllegalArgumentException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -49,9 +50,9 @@ public class OptionsShell {
 	// Controls
 	private Spinner tabSpinner;
 	private Combo styleCombo, hour, minute;
-	private Label varsLabel, serverLabel, portLabel;
-	private Text  serverText, portText;
-	private Button varsButton, neverTerm, devForgetBox, backupEnable;
+	private Label varsLabel, serverLabel, portLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel;
+	private Text  serverText, portText, errCheckPrefix, errCheckSuffix;
+	private Button varsButton, neverTerm, devForgetBox, backupEnable, fileNameInTitle, hostInTitle;
 	
 	public static void show(Shell parent) {
 		me.create(parent);		
@@ -95,6 +96,10 @@ public class OptionsShell {
 				Config.setTerminateHour(hour.getSelectionIndex()+1);
 				Config.setTerminateMinute(minute.getSelectionIndex()*10);
 				Config.setNeverTerminate(neverTerm.getSelection());
+				Config.setNoErrorCheckPrefix(errCheckPrefix.getText());
+				Config.setNoErrorCheckSuffix(errCheckSuffix.getText());
+				Config.setFileNameInTitle(fileNameInTitle.getSelection());
+				Config.setHostNameInTitle(hostInTitle.getSelection());
 
 				/*if (testRadio.getSelection())
 					Config.setServer("test");
@@ -351,7 +356,50 @@ public class OptionsShell {
 		
 		varsButton = new Button(editorGroup, SWT.CHECK);
 		varsButton.setSelection(Config.getListUnusedVars());
-		
+
+		nameInTitleLabel = new Label(editorGroup, SWT.NONE);
+		nameInTitleLabel.setText("Display file name in main title");
+
+		fileNameInTitle = new Button(editorGroup, SWT.CHECK);
+		fileNameInTitle.setSelection(Config.getFileNameInTitle());
+
+		hostInTitleLabel = new Label(editorGroup, SWT.NONE);
+		hostInTitleLabel.setText("Display host name in main title");
+		hostInTitle = new Button(editorGroup, SWT.CHECK);
+		hostInTitle.setSelection((Config.getHostNameInTitle()));
+
+		Group noErrorCheckGroup = new Group(editorOptions,SWT.NONE);
+		noErrorCheckGroup.setText("No Error Check for these Files");
+		layout = new FormLayout();
+		layout.marginTop = 5;
+		layout.marginBottom = 5;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		layout.spacing = 5;
+		noErrorCheckGroup.setLayout(layout);
+
+		errChkPrefixLabel = new Label(noErrorCheckGroup,SWT.NONE);
+		errChkSuffixLabel = new Label(noErrorCheckGroup,SWT.NONE);
+		errCheckPrefix = new Text(noErrorCheckGroup, SWT.SINGLE | SWT.BORDER);
+		errCheckSuffix = new Text(noErrorCheckGroup, SWT.SINGLE | SWT.BORDER);
+		errChkPrefixLabel.setText("Prefix");
+		errChkSuffixLabel.setText("Suffix");
+		// This will prevent a crash because of new Options.  Probably can
+		// remove the try and catch section in subsequent release.
+		try{
+			errCheckPrefix.setText(Config.getNoErrorCheckPrefix());
+			errCheckSuffix.setText(Config.getNoErrorCheckSuffix());
+		} catch (IllegalArgumentException e){
+			Config.setNoErrorCheckPrefix("INC.");
+			Config.setNoErrorCheckSuffix(".DEF,.SET,.PRO,.INC");
+			errCheckPrefix.setText("INC.");
+			errCheckSuffix.setText(".DEF,.SET,.PRO,.INC");
+			Config.setFileNameInTitle(true);
+			Config.setHostNameInTitle(true);
+			fileNameInTitle.setSelection(true);
+			hostInTitle.setSelection(true);
+			RepDevMain.saveSettings();
+		}
 		FormData data = new FormData();
 		data.left = new FormAttachment(0);
 		data.right = new FormAttachment(100);
@@ -388,13 +436,70 @@ public class OptionsShell {
 		data.top = new FormAttachment(styleCombo);
 		data.width = 160;
 		varsLabel.setLayoutData(data);
-		
+
 		data = new FormData();
 		data.left = new FormAttachment(varsLabel);
 		data.top = new FormAttachment(styleCombo);
 		data.right = new FormAttachment(100);
-		varsButton.setLayoutData(data);		
-	}
+		varsButton.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(varsButton);
+		data.width = 160;
+		nameInTitleLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(nameInTitleLabel);
+		data.top = new FormAttachment(varsButton);
+		data.right = new FormAttachment(100);
+		fileNameInTitle.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(fileNameInTitle);
+		data.width = 160;
+		hostInTitleLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(hostInTitleLabel);
+		data.top = new FormAttachment(fileNameInTitle);
+		data.right = new FormAttachment(100);
+		hostInTitle.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		data.top = new FormAttachment(editorGroup);
+		//data.bottom = new FormAttachment(0);
+		noErrorCheckGroup.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(0);
+		//data.right = new FormAttachment(100);
+		data.width = 40;
+		errChkPrefixLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(errChkPrefixLabel);
+		data.top = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		errCheckPrefix.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(errChkPrefixLabel,4);
+		//data.right = new FormAttachment(100);
+		data.width = 40;
+		errChkSuffixLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(errChkSuffixLabel);
+		data.top = new FormAttachment(errChkPrefixLabel,4);
+		data.right = new FormAttachment(100);
+		errCheckSuffix.setLayoutData(data);
+}
 	
 	private void createDevOptions() {
 		developerOptions = new Composite(tabs, SWT.NONE);

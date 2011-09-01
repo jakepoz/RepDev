@@ -229,11 +229,21 @@ public class RepgenParser {
 
 				// Error check with symitar
 				// Only check errors if File name does not end with .PRO, .SET, .DEF, .INC
-				String[] extensionsToExclude = ".PRO,.SET,.DEF,.INC".split(",");
+				String[] extensionsToExclude = com.repdev.Config.getNoErrorCheckSuffix().split(",");
 				boolean checkFile = true;
-				for(String extension : extensionsToExclude){
-					if(file.getName().endsWith(extension))
+				if(extensionsToExclude[0] != ""){
+					for(String extension : extensionsToExclude){
+						if(file.getName().endsWith(extension))
+							checkFile = false;
+					}
+				}
+				//System.out.println(com.repdev.Config.getNoErrorCheckPrefix());
+				extensionsToExclude = com.repdev.Config.getNoErrorCheckPrefix().split(",");
+				if(extensionsToExclude[0] != ""){
+					for(String extension : extensionsToExclude){
+						if(file.getName().startsWith(extension))
 						checkFile = false;
+					}
 				}
 				if(checkFile){
 					ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());

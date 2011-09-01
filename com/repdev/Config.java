@@ -49,7 +49,7 @@ public class Config implements Serializable {
 	 * different, then a popup will notify the user and will launch the OptionsShell so that
 	 * the users can config the new options.
 	 */
-	public final static int REVISION = 2; // Modify this everytime we add new options to prompt the user.
+	public final static int REVISION = 3; // Modify this everytime we add new options to prompt the user.
 	private int revision=-1;
 	private boolean windowMaximized;
 	private Point windowSize;
@@ -58,6 +58,10 @@ public class Config implements Serializable {
 	private int terminateMinute;
 	private int sashHSize, sashVSize;
 	private boolean backupProjectFiles = false;
+	private String noErrorCheckSuffix = ".PRO,.SET,.DEF,.INC";
+	private String noErrorCheckPrefix = "INC.";
+	private boolean fileNameInWinTitle = true;
+	private boolean hostInTitle = true;
 	
 	@SuppressWarnings("unused")
 	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.
@@ -383,7 +387,7 @@ public class Config implements Serializable {
 		me.revision = rev;
 	}
 	
-	/*
+	/**
 	 * Returns true if the user does not want to terminate Keep Alive at the selected time.
 	 * after the set time.
 	 * @return boolean
@@ -392,7 +396,7 @@ public class Config implements Serializable {
 		return me.neverTerminateKeepAlive;
 	}
 	
-	/*
+	/**
 	 * Set true if the user does not want to terminat Keep Alive at the selected time.
 	 * Set false if the user does want to terminate Keep Alive at the selected time.
 	 */
@@ -406,5 +410,53 @@ public class Config implements Serializable {
 	
 	public static void setBackupProjectFile(boolean b){
 		me.backupProjectFiles = b;
+	}
+
+	/**
+	 * Any RepGens with these prefixes will not be checked for errors.
+	 * @param - a comma delimited list of prefixes.
+	 */
+	public static void setNoErrorCheckPrefix(String filePrefix){
+		me.noErrorCheckPrefix = filePrefix;
+	}
+
+	/**
+	 * Returns the string of prefixes to exclude from error check
+	 * @return comma delimited list of prefixes
+	 */
+	public static String getNoErrorCheckPrefix(){
+		return me.noErrorCheckPrefix;
+	}
+
+	/**
+	 * Any RepGens with these suffixes will not be checked for errors.
+	 * @param - a comma delimited list of suffixes.
+	 */
+	public static void setNoErrorCheckSuffix(String fileSuffix){
+		me.noErrorCheckSuffix = fileSuffix;
+	}
+
+	/**
+	 * Returns the string of suffixes to exclude from error check
+	 * @return comma delimited list of suffixes
+	 */
+	public static String getNoErrorCheckSuffix(){
+		return me.noErrorCheckSuffix;
+	}
+
+	public static void setFileNameInTitle(boolean nameInTitle){
+		me.fileNameInWinTitle = nameInTitle;
+	}
+
+	public static boolean getFileNameInTitle(){
+		return me.fileNameInWinTitle;
+	}
+
+	public static void setHostNameInTitle(boolean nameInTitle){
+		me.hostInTitle = nameInTitle;
+	}
+
+	public static boolean getHostNameInTitle(){
+		return me.hostInTitle;
 	}
 }

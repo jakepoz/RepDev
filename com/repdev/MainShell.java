@@ -120,7 +120,7 @@ import com.repdev.parser.Error;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Task;
 import com.sun.org.apache.xpath.internal.operations.Bool;
-import com.sun.xml.internal.ws.util.xml.NodeListIterator;
+//import com.sun.xml.internal.ws.util.xml.NodeListIterator;
 
 /**
  * Main graphical user interface. Provides some utility methods as well. Really
@@ -185,6 +185,8 @@ public class MainShell {
 	private void createShell() {
 		int leftPercent = 20, bottomPercent = 20;
 		shell.setText(RepDevMain.NAMESTR);
+		if(Config.getHostNameInTitle())
+			shell.setText(shell.getText() + " - " + Config.getServer());
 		shell.setImage(RepDevMain.smallProgramIcon);
 		if(Config.getWindowSize() != null)
 			shell.setSize(Config.getWindowSize());
@@ -2553,7 +2555,7 @@ public class MainShell {
 						setMainFolderSelection(newItem);
 						if (mainfolder.getSelection() != null && (mainfolder.getSelection().getControl()) instanceof EditorComposite)
 							((EditorComposite) mainfolder.getSelection().getControl()).getStyledText().setFocus();
-						shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR);
+						setMainTitle();
 					}
 					drag = false;
 					exitDrag = false;
@@ -2747,8 +2749,9 @@ public class MainShell {
 					findReplaceShell.attach(((ReportComposite) mainfolder.getSelection().getControl()).getStyledText(), false);
 				
 				// show active repgen's title in the window title
-				shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR);
+				setMainTitle();
 			}
+
 		});
 
 		mainfolder.addSelectionListener(new SelectionAdapter(){
@@ -2771,6 +2774,8 @@ public class MainShell {
 				if (event.doit) {
 					if( mainfolder.getSelection() == event.item )
 						shell.setText(RepDevMain.NAMESTR); // remove active repgen name from title
+					if(Config.getHostNameInTitle())
+						shell.setText(shell.getText() + " - " + Config.getServer());
 					clearErrorAndTaskList((CTabItem) event.item);
 				}
 
@@ -3816,6 +3821,15 @@ public class MainShell {
 
 	public CTabFolder getMainfolder() {
 		return mainfolder;
+	}
+
+	private void setMainTitle(){
+		if (Config.getFileNameInTitle())
+			shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR);
+		else
+			shell.setText(RepDevMain.NAMESTR);
+		if(Config.getHostNameInTitle())
+			shell.setText(shell.getText() + " - " + Config.getServer());
 	}
 
 //	public ArrayList<EditorComposite> getEditorCompositeList() {
