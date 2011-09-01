@@ -86,7 +86,7 @@ public class RepDevMain {
 	public static void main(String[] args) throws Exception {
 		display = new Display();
 
-		System.out.println("RepDev " + VERSION + " Copyright (C) 2008  RepDev.org Team\n"
+		System.out.println("RepDev " + VERSION + " Copyright (C) 2008-2011  RepDev.org Team\n"
 				+"This program comes with ABSOLUTELY NO WARRANTY.\n"
 				+"This is free software, and you are welcome to redistribute it\n"
 				+"under certain conditions.\n");
