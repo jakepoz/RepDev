@@ -7,14 +7,26 @@
 	BRANCH|Branch|7|5|9999
 	RESTRICT|Restricted Access|8|5|6
 	REFERENCE|Reference|9|0|20
-	WARNINGCODE:1|Warning 1 Code|10|5|99
-	WARNINGCODE:2|Warning 2 Code|10|5|99
-	WARNINGCODE:3|Warning 3 Code|10|5|99
-	WARNINGCODE:4|Warning 4 Code|10|5|99
-	WARNINGCODE:5|Warning 5 Code|10|5|99
-	WARNINGCODE:6|Warning 6 Code|10|5|99
-	WARNINGCODE:7|Warning 7 Code|10|5|99
-	WARNINGCODE:8|Warning 8 Code|10|5|99
+	WARNINGCODE:1|Warning 1 Code|10|5|999
+	WARNINGCODE:2|Warning 2 Code|10|5|999
+	WARNINGCODE:3|Warning 3 Code|10|5|999
+	WARNINGCODE:4|Warning 4 Code|10|5|999
+	WARNINGCODE:5|Warning 5 Code|10|5|999
+	WARNINGCODE:6|Warning 6 Code|10|5|999
+	WARNINGCODE:7|Warning 7 Code|10|5|999
+	WARNINGCODE:8|Warning 8 Code|10|5|999
+	WARNINGCODE:9|Warning 9 Code|10|5|999
+	WARNINGCODE:10|Warning 10 Code|10|5|999
+	WARNINGCODE:11|Warning 11 Code|10|5|999
+	WARNINGCODE:12|Warning 12 Code|10|5|999
+	WARNINGCODE:13|Warning 13 Code|10|5|999
+	WARNINGCODE:14|Warning 14 Code|10|5|999
+	WARNINGCODE:15|Warning 15 Code|10|5|999
+	WARNINGCODE:16|Warning 16 Code|10|5|999
+	WARNINGCODE:17|Warning 17 Code|10|5|999
+	WARNINGCODE:18|Warning 18 Code|10|5|999
+	WARNINGCODE:19|Warning 19 Code|10|5|999
+	WARNINGCODE:20|Warning 20 Code|10|5|999
 	PAYMENTHISTORY:1|Payments Made|11|5|9999
 	PAYMENTHISTORY:2|11- 30 Days DQ|11|5|9999
 	PAYMENTHISTORY:3|31- 60 Days DQ|11|5|9999
@@ -33,6 +45,18 @@
 	WARNINGEXPIRATION:6|Warning 6 Expiration|17|3|null
 	WARNINGEXPIRATION:7|Warning 7 Expiration|17|3|null
 	WARNINGEXPIRATION:8|Warning 8 Expiration|17|3|null
+	WARNINGEXPIRATION:9|Warning 9 Expiration|17|3|null
+	WARNINGEXPIRATION:10|Warning 10 Expiration|17|3|null
+	WARNINGEXPIRATION:11|Warning 11 Expiration|17|3|null
+	WARNINGEXPIRATION:12|Warning 12 Expiration|17|3|null
+	WARNINGEXPIRATION:13|Warning 13 Expiration|17|3|null
+	WARNINGEXPIRATION:14|Warning 14 Expiration|17|3|null
+	WARNINGEXPIRATION:15|Warning 15 Expiration|17|3|null
+	WARNINGEXPIRATION:16|Warning 16 Expiration|17|3|null
+	WARNINGEXPIRATION:17|Warning 17 Expiration|17|3|null
+	WARNINGEXPIRATION:18|Warning 18 Expiration|17|3|null
+	WARNINGEXPIRATION:19|Warning 19 Expiration|17|3|null
+	WARNINGEXPIRATION:20|Warning 20 Expiration|17|3|null
 	NSFMONTHLYCOUNT:1|NSF Month 01 Day Count|18|5|9999
 	NSFMONTHLYCOUNT:2|NSF Month 02 Day Count|18|5|9999
 	NSFMONTHLYCOUNT:3|NSF Month 03 Day Count|18|5|9999
@@ -629,14 +653,26 @@
 		OPENDATE|Open Date|6|3|null
 		CLOSEDATE|Close Date|7|3|null
 		REFERENCE|Reference|8|0|20
-		WARNINGCODE:1|Warning 1 Code|9|5|99
-		WARNINGCODE:2|Warning 2 Code|9|5|99
-		WARNINGCODE:3|Warning 3 Code|9|5|99
-		WARNINGCODE:4|Warning 4 Code|9|5|99
-		WARNINGCODE:5|Warning 5 Code|9|5|99
-		WARNINGCODE:6|Warning 6 Code|9|5|99
-		WARNINGCODE:7|Warning 7 Code|9|5|99
-		WARNINGCODE:8|Warning 8 Code|9|5|99
+		WARNINGCODE:1|Warning 1 Code|9|5|999
+		WARNINGCODE:2|Warning 2 Code|9|5|999
+		WARNINGCODE:3|Warning 3 Code|9|5|999
+		WARNINGCODE:4|Warning 4 Code|9|5|999
+		WARNINGCODE:5|Warning 5 Code|9|5|999
+		WARNINGCODE:6|Warning 6 Code|9|5|999
+		WARNINGCODE:7|Warning 7 Code|9|5|999
+		WARNINGCODE:8|Warning 8 Code|9|5|999
+		WARNINGCODE:9|Warning 9 Code|9|5|999
+		WARNINGCODE:10|Warning 10 Code|9|5|999
+		WARNINGCODE:11|Warning 11 Code|9|5|999
+		WARNINGCODE:12|Warning 12 Code|9|5|999
+		WARNINGCODE:13|Warning 13 Code|9|5|999
+		WARNINGCODE:14|Warning 14 Code|9|5|999
+		WARNINGCODE:15|Warning 15 Code|9|5|999
+		WARNINGCODE:16|Warning 16 Code|9|5|999
+		WARNINGCODE:17|Warning 17 Code|9|5|999
+		WARNINGCODE:18|Warning 18 Code|9|5|999
+		WARNINGCODE:19|Warning 19 Code|9|5|999
+		WARNINGCODE:20|Warning 20 Code|9|5|999
 		SERVICE:1|Service 1|10|5|99
 		SERVICE:2|Service 2|10|5|99
 		SERVICE:3|Service 3|10|5|99
@@ -710,6 +746,18 @@
 		WARNINGEXPIRATION:6|Warning 6 Expiration|66|3|null
 		WARNINGEXPIRATION:7|Warning 7 Expiration|66|3|null
 		WARNINGEXPIRATION:8|Warning 8 Expiration|66|3|null
+		WARNINGEXPIRATION:9|Warning 9 Expiration|66|3|null
+		WARNINGEXPIRATION:10|Warning 10 Expiration|66|3|null
+		WARNINGEXPIRATION:11|Warning 11 Expiration|66|3|null
+		WARNINGEXPIRATION:12|Warning 12 Expiration|66|3|null
+		WARNINGEXPIRATION:13|Warning 13 Expiration|66|3|null
+		WARNINGEXPIRATION:14|Warning 14 Expiration|66|3|null
+		WARNINGEXPIRATION:15|Warning 15 Expiration|66|3|null
+		WARNINGEXPIRATION:16|Warning 16 Expiration|66|3|null
+		WARNINGEXPIRATION:17|Warning 17 Expiration|66|3|null
+		WARNINGEXPIRATION:18|Warning 18 Expiration|66|3|null
+		WARNINGEXPIRATION:19|Warning 19 Expiration|66|3|null
+		WARNINGEXPIRATION:20|Warning 20 Expiration|66|3|null
 		FEECOUNT:1|Fee Count 1|67|5|9999
 		FEECOUNT:2|Fee Count 2|67|5|9999
 		FEECOUNT:3|Fee Count 3|67|5|9999
@@ -2075,14 +2123,26 @@
 		CHARGEOFFDATE|Charge Off Date|9|3|null
 		CLOSEDATE|Close Date|10|3|null
 		REFERENCE|Reference|11|0|20
-		WARNINGCODE:1|Warning 1 Code|12|5|99
-		WARNINGCODE:2|Warning 2 Code|12|5|99
-		WARNINGCODE:3|Warning 3 Code|12|5|99
-		WARNINGCODE:4|Warning 4 Code|12|5|99
-		WARNINGCODE:5|Warning 5 Code|12|5|99
-		WARNINGCODE:6|Warning 6 Code|12|5|99
-		WARNINGCODE:7|Warning 7 Code|12|5|99
-		WARNINGCODE:8|Warning 8 Code|12|5|99
+		WARNINGCODE:1|Warning 1 Code|12|5|999
+		WARNINGCODE:2|Warning 2 Code|12|5|999
+		WARNINGCODE:3|Warning 3 Code|12|5|999
+		WARNINGCODE:4|Warning 4 Code|12|5|999
+		WARNINGCODE:5|Warning 5 Code|12|5|999
+		WARNINGCODE:6|Warning 6 Code|12|5|999
+		WARNINGCODE:7|Warning 7 Code|12|5|999
+		WARNINGCODE:8|Warning 8 Code|12|5|999
+		WARNINGCODE:9|Warning 9 Code|12|5|999
+		WARNINGCODE:10|Warning 10 Code|12|5|999
+		WARNINGCODE:11|Warning 11 Code|12|5|999
+		WARNINGCODE:12|Warning 12 Code|12|5|999
+		WARNINGCODE:13|Warning 13 Code|12|5|999
+		WARNINGCODE:14|Warning 14 Code|12|5|999
+		WARNINGCODE:15|Warning 15 Code|12|5|999
+		WARNINGCODE:16|Warning 16 Code|12|5|999
+		WARNINGCODE:17|Warning 17 Code|12|5|999
+		WARNINGCODE:18|Warning 18 Code|12|5|999
+		WARNINGCODE:19|Warning 19 Code|12|5|999
+		WARNINGCODE:20|Warning 20 Code|12|5|999
 		SERVICE:1|Service 1|13|5|99
 		SERVICE:2|Service 2|13|5|99
 		SERVICE:3|Service 3|13|5|99
@@ -2176,6 +2236,18 @@
 		WARNINGEXPIRATION:6|Warning 6 Expiration|86|3|null
 		WARNINGEXPIRATION:7|Warning 7 Expiration|86|3|null
 		WARNINGEXPIRATION:8|Warning 8 Expiration|86|3|null
+		WARNINGEXPIRATION:9|Warning 9 Expiration|86|3|null
+		WARNINGEXPIRATION:10|Warning 10 Expiration|86|3|null
+		WARNINGEXPIRATION:11|Warning 11 Expiration|86|3|null
+		WARNINGEXPIRATION:12|Warning 12 Expiration|86|3|null
+		WARNINGEXPIRATION:13|Warning 13 Expiration|86|3|null
+		WARNINGEXPIRATION:14|Warning 14 Expiration|86|3|null
+		WARNINGEXPIRATION:15|Warning 15 Expiration|86|3|null
+		WARNINGEXPIRATION:16|Warning 16 Expiration|86|3|null
+		WARNINGEXPIRATION:17|Warning 17 Expiration|86|3|null
+		WARNINGEXPIRATION:18|Warning 18 Expiration|86|3|null
+		WARNINGEXPIRATION:19|Warning 19 Expiration|86|3|null
+		WARNINGEXPIRATION:20|Warning 20 Expiration|86|3|null
 		NSFMONTHTODATE|NSF Month to Date|87|5|9999
 		NSFYTD|NSF Year to Date|88|5|9999
 		NSFLASTYEAR|NSF Last Year|89|5|9999
@@ -3721,14 +3793,26 @@
 		PREVSUFFIX|Prev Card Suffix|35|0|2
 		PREVPINACTUAL|Prev PIN Actual|36|4|null
 		PREVPINOFFSET|Prev PIN Offset|37|4|null
-		WARNINGCODE:1|Warning 1 Code|38|5|99
-		WARNINGCODE:2|Warning 2 Code|38|5|99
-		WARNINGCODE:3|Warning 3 Code|38|5|99
-		WARNINGCODE:4|Warning 4 Code|38|5|99
-		WARNINGCODE:5|Warning 5 Code|38|5|99
-		WARNINGCODE:6|Warning 6 Code|38|5|99
-		WARNINGCODE:7|Warning 7 Code|38|5|99
-		WARNINGCODE:8|Warning 8 Code|38|5|99
+		WARNINGCODE:1|Warning 1 Code|38|5|999
+		WARNINGCODE:2|Warning 2 Code|38|5|999
+		WARNINGCODE:3|Warning 3 Code|38|5|999
+		WARNINGCODE:4|Warning 4 Code|38|5|999
+		WARNINGCODE:5|Warning 5 Code|38|5|999
+		WARNINGCODE:6|Warning 6 Code|38|5|999
+		WARNINGCODE:7|Warning 7 Code|38|5|999
+		WARNINGCODE:8|Warning 8 Code|38|5|999
+		WARNINGCODE:9|Warning 9 Code|38|5|999
+		WARNINGCODE:10|Warning 10 Code|38|5|999
+		WARNINGCODE:11|Warning 11 Code|38|5|999
+		WARNINGCODE:12|Warning 12 Code|38|5|999
+		WARNINGCODE:13|Warning 13 Code|38|5|999
+		WARNINGCODE:14|Warning 14 Code|38|5|999
+		WARNINGCODE:15|Warning 15 Code|38|5|999
+		WARNINGCODE:16|Warning 16 Code|38|5|999
+		WARNINGCODE:17|Warning 17 Code|38|5|999
+		WARNINGCODE:18|Warning 18 Code|38|5|999
+		WARNINGCODE:19|Warning 19 Code|38|5|999
+		WARNINGCODE:20|Warning 20 Code|38|5|999
 		WARNINGEXPIRATION:1|Warning 1 Expiration|39|3|null
 		WARNINGEXPIRATION:2|Warning 2 Expiration|39|3|null
 		WARNINGEXPIRATION:3|Warning 3 Expiration|39|3|null
@@ -3737,6 +3821,18 @@
 		WARNINGEXPIRATION:6|Warning 6 Expiration|39|3|null
 		WARNINGEXPIRATION:7|Warning 7 Expiration|39|3|null
 		WARNINGEXPIRATION:8|Warning 8 Expiration|39|3|null
+		WARNINGEXPIRATION:9|Warning 9 Expiration|39|3|null
+		WARNINGEXPIRATION:10|Warning 10 Expiration|39|3|null
+		WARNINGEXPIRATION:11|Warning 11 Expiration|39|3|null
+		WARNINGEXPIRATION:12|Warning 12 Expiration|39|3|null
+		WARNINGEXPIRATION:13|Warning 13 Expiration|39|3|null
+		WARNINGEXPIRATION:14|Warning 14 Expiration|39|3|null
+		WARNINGEXPIRATION:15|Warning 15 Expiration|39|3|null
+		WARNINGEXPIRATION:16|Warning 16 Expiration|39|3|null
+		WARNINGEXPIRATION:17|Warning 17 Expiration|39|3|null
+		WARNINGEXPIRATION:18|Warning 18 Expiration|39|3|null
+		WARNINGEXPIRATION:19|Warning 19 Expiration|39|3|null
+		WARNINGEXPIRATION:20|Warning 20 Expiration|39|3|null
 		SERVICE:1|Service 1|40|5|99
 		SERVICE:2|Service 2|40|5|99
 		SERVICE:3|Service 3|40|5|99
