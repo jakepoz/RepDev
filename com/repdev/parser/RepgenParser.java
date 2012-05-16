@@ -231,7 +231,7 @@ public class RepgenParser {
 				// Only check errors if File name does not end with .PRO, .SET, .DEF, .INC
 				String[] extensionsToExclude = com.repdev.Config.getNoErrorCheckSuffix().split(",");
 				boolean checkFile = true;
-				if(extensionsToExclude[0] != ""){
+				if(extensionsToExclude[0].length() != 0){
 					for(String extension : extensionsToExclude){
 						if(file.getName().endsWith(extension))
 							checkFile = false;
@@ -239,7 +239,7 @@ public class RepgenParser {
 				}
 				//System.out.println(com.repdev.Config.getNoErrorCheckPrefix());
 				extensionsToExclude = com.repdev.Config.getNoErrorCheckPrefix().split(",");
-				if(extensionsToExclude[0] != ""){
+				if(extensionsToExclude[0].length() != 0){
 					for(String extension : extensionsToExclude){
 						if(file.getName().startsWith(extension))
 						checkFile = false;
