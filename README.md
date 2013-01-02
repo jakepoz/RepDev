@@ -12,4 +12,5 @@ Features:
  - Manage lots of report files at once
  - Pleasant graphical theme
 
-The latest version is 1.6.8 and is available for download.
+The latest version is 1.6.8 and is available for download here:
+<a href="https://github.com/jakepoz/RepDev-downloads/raw/master/repdev-1.6.8.zip">Download RepDev 1.6.8</a>
