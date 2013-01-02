@@ -137,9 +137,13 @@ public class DirectSymitarSession extends SymitarSession {
 
 			Command current;
 
-			while (!(current = readNextCommand()).getCommand().equals("Input")){
+			while (!(current = readNextCommand()).getCommand().equals("Input") || current.getParameters().get("HelpCode").equals("10025")){
 				log(current);
-				
+				if(current.getCommand().equals("Input") && current.getParameters().get("HelpCode").equals("10025")){
+					write("$WinHostSync$\r");
+					log("HelpCode 10025 found ! ! !\n");
+				}
+
 				if( current.getCommand().equals("SymLogonError") && current.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
 					disconnect();
 					return SessionError.CONSOLE_BLOCKED;
