@@ -1,0 +1,27 @@
+<RepDevStyle>
+  <header>
+    <name>Bright</name>
+    <version>1.0</version>
+    <author>Bruce Chang - HFCU</author>
+    <description><![CDATA[This style mimic some of the standard IDEs]]>
+    </description>
+  </header>
+  
+  <style>
+    <editor bgColor="FFFFFF" fgColor="000000" line="E8F2FE" token="C0C0C0" font="Courier New" fontSize="11" />
+
+    <comments fgColor="#008000" />
+    <variables fgColor="#000000" style="bold" />    
+    <functions fgColor="#000080" style="bold" />    
+    <keywords fgColor="#0000FF" />
+    <task fgColor="#404040" style="bold" />
+    
+    <typeChar fgColor="#008080" />
+    <typeDate fgColor="#008080" style="bold" />
+    
+    <struct1 fgColor="#FF00FF" />
+    <struct1Inv fgColor="#FF00FF" bgColor="#7F0000" />    
+    <struct2 fgColor="#FF7FFF" />
+    <struct2Inv fgColor="#FF7FFF" bgColor="#7F0000" />    
+  </style>
+</RepDevStyle>
