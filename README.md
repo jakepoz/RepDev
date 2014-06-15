@@ -15,7 +15,7 @@ Features:
  - Pleasant graphical theme
 
 The latest version is 1.6.9 and is available for download here:
-<a href="https://github.com/jakepoz/RepDev-downloads/raw/master/repdev-1.6.9.zip">Download RepDev 1.6.9</a>
+<a href="https://github.com/jakepoz/RepDev-downloads/raw/master/RepDev-1.6.9.zip">Download RepDev 1.6.9</a>
 
 Documentation is available for download here:
 <a href="https://github.com/jakepoz/RepDev-downloads/raw/master/RepDev_Guide.pdf">RepDev Guide</a>
