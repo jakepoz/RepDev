@@ -587,7 +587,7 @@ public class SuggestShell {
 							table.setSelection(Math.max(table.getSelectionIndex() - 8, 0));
 							refreshTooltip();
 							e.doit = false;
-						} else if ((e.keyCode == '\r' || e.character == ':') && table.getSelectionIndex() != -1 && table.getItemCount() > 0) {						
+						} else if ((e.keyCode == '\r' || e.character == ':' || e.keyCode == '\t') && table.getSelectionIndex() != -1 && table.getItemCount() > 0) {						
 							String value = (String) table.getSelection()[0].getData("value");
 							
 							
@@ -618,7 +618,7 @@ public class SuggestShell {
 	
 							e.doit = false;
 	
-							if (e.keyCode == '\r')
+							if (e.keyCode == '\r' || e.keyCode == '\t')
 								close();
 						}
 	

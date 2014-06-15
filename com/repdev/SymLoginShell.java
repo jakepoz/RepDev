@@ -227,10 +227,30 @@ public class SymLoginShell {
 			me.result = -1;
 			return;
 		}
-
-		SessionError error = session.connect(Config.getServer(), aixUsername, aixPassword, sym, userID);
 		
+		((DirectSymitarSession)session).enableKeepAlive(Config.getNeverTerminate(), Config.getTerminateHour(),Config.getTerminateMinute());
+		SessionError error = session.connect(Config.getServer(), Config.getPort(), aixUsername, aixPassword, sym, userID);
+		int retry=0;
+		while(error == SessionError.USERID_INVALID){
+			retry++;
+			if(retry==4){
+				MessageBox diag=new MessageBox(new Shell(),SWT.OK | SWT.ICON_WARNING);
+				diag.setText("Password Retry");
+				diag.setMessage("You have one last try before getting locked out ! ! !");
+				diag.open();
+			}
+			String pass = FailedLogonShell.checkPass();
+			//Config.setLastUserID(pass);
+			lastUserID=pass;
+			error = session.loginUser(pass);
+		}
 		if (error == SessionError.NONE){
+			if(session.getSym()!=((DirectSymitarSession)session).getActualSym()){
+				MessageBox diag=new MessageBox(new Shell(),SWT.OK | SWT.ICON_WARNING);
+				diag.setText("SYM Inconsistent");
+				diag.setMessage("WARNING: You specified SYM " + session.getSym() + " during login, but you are actually logged into SYM " + ((DirectSymitarSession)session).getActualSym());
+				diag.open();
+			}
 			me.result = sym;
 			return;
 		}

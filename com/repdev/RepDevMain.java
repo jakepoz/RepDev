@@ -52,20 +52,13 @@ public class RepDevMain {
 	public static final boolean DEVELOPER = false; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
 	public static final int VMAJOR = 1;
 	public static final int VMINOR = 6;
-	public static final int VFIX   = 8;
+	public static final int VFIX   = 9;
 	public static final String VSPECIAL = ""; // "special" string for release names, beta, etc
 
 	public static final String VERSION = VMAJOR + "." + VMINOR + (VFIX>0?"."+VFIX:"") + (DEVELOPER ? "-dev" : "") + (!VSPECIAL.equals("")? " " + VSPECIAL : "");
 	public static final String NAMESTR = "RepDev v" + VERSION;
 	public static boolean FORGET_PASS_ON_EXIT = false; // set in options only please.
 
-	/**
-	 * lastActivity can be updated every time you deem is an activity.  This will be used in the keepAlive
-	 * Thread within DirectSymitarSession to terminate Keep Alive if there has not been any activity
-	 * within a specific number of minutes.
-	 */
-	private static Calendar lastActivity = new GregorianCalendar();
-	
 	public static MainShell mainShell;
 	private static Display display;
 	public static Image smallAddImage, smallErrorsImage, smallFileImage, smallProjectImage, smallRemoveImage, smallRepGenImage, smallSymImage, smallTasksImage, smallActionSaveImage, smallFileAddImage, smallFileRemoveImage,
@@ -86,9 +79,9 @@ public class RepDevMain {
 	public static void main(String[] args) throws Exception {
 		display = new Display();
 
-		System.out.println("RepDev " + VERSION + " Copyright (C) 2008-2011  RepDev.org Team\n"
+		System.out.println("\nRepDev " + VERSION + " Copyright (C) 2008-2014  RepDev.org Team\n"
 				+"This program comes with ABSOLUTELY NO WARRANTY.\n"
-				+"This is free software, and you are welcome to redistribute it\n"
+				+"This is free software, and you are welcome to redistribute it \n"
 				+"under certain conditions.\n");
 		
 		try{
@@ -223,7 +216,7 @@ public class RepDevMain {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(loadFile));
 			Config configObject = (Config) in.readObject();
 			Config.setConfig(configObject);
-
+			in.close();
 		} catch (ClassCastException e) {
 			System.out.println("FILE OUT OF DATE!");
 		} catch (IOException e) {
@@ -293,6 +286,7 @@ public class RepDevMain {
 
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("repdev.conf"));
 			out.writeObject(Config.getConfig());
+			out.close();
 		} catch (Exception e) {
 			System.err.println("Error saving Config data");
 			e.printStackTrace();
@@ -325,21 +319,6 @@ public class RepDevMain {
 		}
 	}
 	
-	/**
-	 * Updates the lastActivity timestamp
-	 * @param cal
-	 */
-	public static void setLastActivity(Calendar cal){
-		lastActivity = cal;
-	}
-	
-	/**
-	 * Returns the lastActivity timestamp
-	 * @return cal
-	 */
-	public static Calendar getLastActivity(){
-		return lastActivity;
-	}
 	private static void createGlobalHotkeys(){
 		Display.getDefault().addFilter(SWT.KeyDown, new Listener() {
 			public void handleEvent(Event e) {

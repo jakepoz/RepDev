@@ -38,12 +38,17 @@ public class TestingSymitarSession extends SymitarSession {
 	int repGenRun = -1;
 
 	@Override
-	public SessionError connect(String server, String aixUsername, String aixPassword, int sym, String userID) {
+	public SessionError connect(String server, int port, String aixUsername, String aixPassword, int sym, String userID) {
 		this.sym = sym;
 		this.aixUsername = aixUsername;
 		this.aixPassword = aixPassword;
 		this.userID = userID;
 		isConnected = true;
+		return SessionError.NONE;
+	}
+	
+	@Override
+	public SessionError loginUser(String userID){
 		return SessionError.NONE;
 	}
 

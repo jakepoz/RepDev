@@ -763,6 +763,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'u':
 						surroundEachLineWith("PRINT \"", "\"\nNEWLINE\n", true);
 						break;
+					case SWT.F4:
 					case 'w':
 					case 'W':
 						RepDevMain.mainShell.closeCurrentTab();

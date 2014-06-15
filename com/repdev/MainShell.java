@@ -1721,6 +1721,32 @@ public class MainShell {
 			}
 		});
 
+		final MenuItem symProp = new MenuItem(treeMenu, SWT.NONE);
+		symProp.setText("Property");
+		//symProp.setImage(RepDevMain.smallRemoveImage);
+		symProp.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int sym;
+				TreeItem currentItem = tree.getSelection()[0];
+				while (!(currentItem.getData() instanceof Integer)) {
+					currentItem = currentItem.getParentItem();
+
+					if (currentItem == null)
+						return;
+				}
+
+				sym = (Integer) currentItem.getData();
+
+				if (RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected()) {
+					String msg = ((DirectSymitarSession) RepDevMain.SYMITAR_SESSIONS.get(sym)).getProperties();
+					MessageBox dialog = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+					dialog.setText("Properties");
+					dialog.setMessage(msg);
+					dialog.open();
+				}
+			}
+		});
+		
 		treeMenu.addMenuListener(new MenuListener() {
 
 			public void menuHidden(MenuEvent e) {
@@ -1744,6 +1770,7 @@ public class MainShell {
 				archiveFile.setEnabled(true);
 
 				symLogoff.setEnabled(false);
+				symProp.setEnabled(false);
 
 				if (tree.getSelectionCount() == 0)
 					return;
@@ -1777,6 +1804,7 @@ public class MainShell {
 
 					renameFile.setEnabled(!(tree.getSelection()[0].getData() instanceof String || tree.getSelection()[0].getData() instanceof Integer));
 					symLogoff.setEnabled(loggedIn && tree.getSelection()[0].getData() instanceof Integer);
+					symProp.setEnabled(loggedIn && tree.getSelection()[0].getData() instanceof Integer);
 
 				}
 
@@ -3512,6 +3540,20 @@ public class MainShell {
 		helpDocs.setText("&Documentation");
 		Menu docsMenu = new Menu(helpMenu);
 		helpDocs.setMenu(docsMenu);
+
+		MenuItem helpDocsItem2 = new MenuItem(docsMenu, SWT.PUSH);
+		helpDocsItem2.setText("RepDev &Wiki");
+		helpDocsItem2.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if( System.getProperty("os.name").startsWith("Windows") ) {
+					try {
+						Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler https://github.com/jakepoz/RepDev/wiki");
+					} catch (IOException e1) {
+						System.out.println("Error opening URL for RepDev Wiki.  Please manually go to: https://github.com/jakepoz/RepDev/wiki");
+					}
+				}
+			}
+		});
 
 		MenuItem helpDocsItem = new MenuItem(docsMenu, SWT.PUSH);
 		helpDocsItem.setText("&RepDev Docs");

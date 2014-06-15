@@ -130,13 +130,7 @@ public class FileDialog {
 					files.add((SymitarFile) (table.getSelection())[0].getData());
 					shell.close();
 				} else if (mode == Mode.SAVE) {
-					
-					if( dir == null)
-						files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
-					else
-						files.add(new SymitarFile(dir,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
-					
-					shell.close();
+					createFile();
 				}
 			}
 		});
@@ -190,12 +184,7 @@ public class FileDialog {
 					files.add((SymitarFile) (table.getItems()[0].getData()));
 					shell.close();
 				} else if (mode == Mode.SAVE && nameText.getText().trim().length() > 0 && !isTemplate()) {
-					if( dir == null)
-						files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
-					else
-						files.add(new SymitarFile(dir,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
-					
-					shell.close();
+					createFile();
 				}
 
 			}
@@ -242,12 +231,7 @@ public class FileDialog {
 					}
 					else
 					{
-						if( dir == null)
-							files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
-						else
-							files.add(new SymitarFile(dir,nameText.getText().trim(),  FileType.valueOf(typeCombo.getText())));
-						
-						shell.close();
+						createFile();
 					}
 				}
 			}
@@ -309,6 +293,22 @@ public class FileDialog {
 	// TODO: Finish up with other template forms
 	private boolean isTemplate() {
 		return nameText.getText().contains("+");
+	}
+	
+	private void createFile(){
+		if (nameText.getText().trim().length() <= 31){
+			if( dir == null)
+				files.add(new SymitarFile(sym,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+			else
+				files.add(new SymitarFile(dir,nameText.getText().trim(), FileType.valueOf(typeCombo.getText())));
+			
+			shell.close();
+		} else {
+			MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+			dialog.setText("File Save");
+			dialog.setMessage("File name too long.  It must be 31 characters or less");
+			dialog.open();
+		}
 	}
 
 	private void createList() {

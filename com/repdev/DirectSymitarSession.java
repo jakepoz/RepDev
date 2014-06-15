@@ -57,7 +57,26 @@ public class DirectSymitarSession extends SymitarSession {
 	BufferedReader in;
 	PrintWriter out;
 	boolean connected = false;
+	boolean loggedInAIX = false;
+	boolean useSSH = false;
+	Process p;
+	int actualSym = -1;
+	int consoleNum = -1;
+	String hostIPA = "";
+	String symRev = "" ;
+	GregorianCalendar symDate = new GregorianCalendar();
+	/**
+	 * lastActivity can be updated every time you deem is an activity.  This will be used in the keepAlive
+	 * Thread within DirectSymitarSession to terminate Keep Alive if there has not been any activity
+	 * within a specific number of minutes.
+	 */
+	private static Calendar lastActivity = new GregorianCalendar();
+	
 	Thread keepAlive;
+	boolean keepAliveEnabled = false;
+	boolean keepAliveNevrTerm = false;
+	int keepAliveHour = 19;
+	int keepAliveMin = 00;
 	private final int NO_ACTIVITY_DELAY = 20;
 	private final int KEEP_ALIVE_WARNING = 30;
 
@@ -74,52 +93,103 @@ public class DirectSymitarSession extends SymitarSession {
 	 * Updates the lastActivity variable in RepDevMain so that the Keep Alive Thread will not terminate
 	 * if there has been activity, from any of the SYMs, within the minutes specified by NO_ACTIVITY_DELAY.
 	 */
-	private void setLastActivity(){
-		RepDevMain.setLastActivity(new GregorianCalendar());		
+	public static void setLastActivity(){
+		lastActivity = new GregorianCalendar();
 	}
 
+	/**
+	 * Returns the lastActivity timestamp
+	 * @return cal
+	 */
+	public static Calendar getLastActivity(){
+		return lastActivity;
+	}
+	
+	boolean keepAliveEnabled(){
+		return keepAliveEnabled;
+	}
+	
+	void enableKeepAlive(boolean neverTerminate, int termHr, int termMin){
+		keepAliveEnabled = true;
+		keepAliveNevrTerm = neverTerminate;
+		keepAliveHour = termHr;
+		keepAliveMin = termMin;
+	}
+	
+	int getTerminateHour(){
+		return keepAliveHour;
+	}
+	
+	int getTerminateMinute(){
+		return keepAliveMin;
+	}
+	
+	boolean getNeverTerminate(){
+		return keepAliveNevrTerm;
+	}
+	
 	@Override
-	public SessionError connect(String server, String aixUsername, String aixPassword, int sym, String userID) {
+	public SessionError connect(String server, int port, String aixUsername, String aixPassword, int sym, String userID) {
 		String line = "";
 		setLastActivity();
-
+		
 		if( connected )
 			return SessionError.ALREADY_CONNECTED;
 		
 		this.sym = sym;
 		this.server = server;
+		this.port = port;
 		this.aixUsername = aixUsername;
 		this.aixPassword = aixPassword;
-		this.userID = userID;
-		final int tmpSym = this.sym;
+		//final int tmpSym = this.sym;
 
+		if(port == 22){
+	    	useSSH = true;
+	    	System.out.println("*** Using SSH ***\nIf this is the last message you see, you may need to cache your SSH Key.\n");
+	    }
 		try {
-			socket = new Socket(server, Config.getPort());
-			socket.setKeepAlive(true);
-		
-			// Constant commands, these are the basic telnet establishment
-			// stuffs, which really don't change, so I just send them directly
-			char init1[] = { 0xff, 0xfb, 0x18 };
-			char init2[] = { 0xff, 0xfa, 0x18, 0x00, 0x61, 0x69, 0x78, 0x74, 0x65, 0x72, 0x6d, 0xff, 0xf0 };
-			char init3[] = { 0xff, 0xfd, 0x01 };
-			char init4[] = { 0xff, 0xfd, 0x03, 0xff, 0xfc, 0x1f, 0xff, 0xfc, 0x01 };
-
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			out = new PrintWriter(socket.getOutputStream());
-
-			out.print(init1);
-			out.print(init2);
-			out.print(init3);
-			out.print(init4);
-			out.print(aixUsername + "\r");
+			if(useSSH){
+				String command = "plink -load aixterm " + server;
+				p = Runtime.getRuntime().exec(command);
+				
+				in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				out = new PrintWriter(p.getOutputStream());
+			} else {
+				socket = new Socket(server, port);
+				socket.setKeepAlive(true);
+			
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				out = new PrintWriter(socket.getOutputStream());
+				
+				// Constant commands, these are the basic telnet establishment
+				// stuffs, which really don't change, so I just send them directly
+				char init1[] = { 0xff, 0xfb, 0x18 };
+				char init2[] = { 0xff, 0xfa, 0x18, 0x00, 0x61, 0x69, 0x78, 0x74, 0x65, 0x72, 0x6d, 0xff, 0xf0 };
+				char init3[] = { 0xff, 0xfd, 0x01 };
+				char init4[] = { 0xff, 0xfd, 0x03, 0xff, 0xfc, 0x1f, 0xff, 0xfc, 0x01 };
+				
+				out.print(init1);
+				out.print(init2);
+				out.print(init3);
+				out.print(init4);
+			}
+			
+			if(useSSH){
+				out.print(aixUsername + " \r");
+			} else {
+				out.print(aixUsername + "\r");
+			}
 			out.flush();
-
-			String temp = readUntil("Password:", "[c");
+			String temp = readUntil("Password:", "password:", "[c");
 		
 			if( temp.indexOf("[c") == -1 ){
-				line = writeLog(aixPassword + "\r", "[c", ":");
+				if(useSSH){
+					line = writeLog(aixPassword + " \r", "[c", "password:");
+				} else {
+					line = writeLog(aixPassword + "\r", "[c", "invalid login name or password");
+				}
 	
-				if (line.indexOf("invalid login") != -1){
+				if (line.indexOf("invalid login") != -1 || line.indexOf("password:") != -1){
 					disconnect();
 					return SessionError.AIX_LOGIN_WRONG;
 				}
@@ -127,150 +197,217 @@ public class DirectSymitarSession extends SymitarSession {
 
 			write("WINDOWSLEVEL=3\n");
 			
-			temp = readUntil( "$ ", "SymStart~Global");
-			
+			temp = readUntil( "$ ", "SymStart~Global", "Selection :", "no longer supported!");
+			if(temp.contains("no longer supported!")){
+				disconnect();
+				System.out.println(temp);
+				return SessionError.NOT_WINDOWSLEVEL_3;
+			}
 			System.out.println(temp);
 			
-			
-			if( temp.contains("$ ") )
-				write("sym " + sym + "\r");
-
-			Command current;
-
-			while (!(current = readNextCommand()).getCommand().equals("Input") || current.getParameters().get("HelpCode").equals("10025")){
-				log(current);
-				if(current.getCommand().equals("Input") && current.getParameters().get("HelpCode").equals("10025")){
-					write("$WinHostSync$\r");
-					log("HelpCode 10025 found ! ! !\n");
-				}
-
-				if( current.getCommand().equals("SymLogonError") && current.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
+			if (temp.contains("Selection :")){ //This is for EASE Menu
+				System.out.println("EASE Menu has been detected");
+				int EASE_Selection = EaseSelection.getEASESelection(temp, sym);
+				System.out.println("EASE Selection = "+EASE_Selection+"\n");
+				if(EASE_Selection == -1)
+				{
 					disconnect();
-					return SessionError.CONSOLE_BLOCKED;
+					System.out.println("EASE Selection was not found for sym " + sym + "\n");
+					return SessionError.SYM_INVALID;
+				} else {
+					System.out.println("Sending EASE Selection: " + EASE_Selection);
+					write(EASE_Selection+"\r");
 				}
+			}else if( temp.contains("$ ") ){
+				write("sym " + sym + "\r");
 			}
-
-			log(current.toString());
-
-			write(userID + "\r");
-
-			current = readNextCommand();
-			log("USER RESPONSE: " + current.getCommand());
 			
-			//TODO: Let you try up to 4 extra times
-			if (current.getCommand().equals("SymLogonInvalidUser")){
-
-				System.out.println("Bad password");
-				
-				String newpass = FailedLogonShell.checkPass();
-
-				write("\r");
-				Command current1;
-				while (!(current1 = readNextCommand()).getCommand().equals("Input")){
-					log(current1);
-					if( current1.getCommand().equals("SymLogonError") && current1.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
+			Command current;
+			
+			// Checks to see if the specified SYM is valid.
+			try{
+				while (!(current = readNextCommand()).getCommand().equals("Input") || current.getParameters().get("HelpCode").equals("10025")){
+					log(current);
+					if(current.getCommand().equals("Input") && current.getParameters().get("HelpCode").equals("10025")){
+						write("$WinHostSync$\r");
+					}
+					// Get the actual SYM logged into.
+					if(current.getCommand().equals("SymLogonDir")){
+						actualSym = Integer.parseInt(current.getParameters().get("Dir").trim());
+						hostIPA = current.getParameters().get("Host").trim();
+					}
+					// Get the Symitar Release Level.
+					if(current.getCommand().equals("SymLogonRev")){
+						symRev = current.getParameters().get("HostRev").trim();
+					}
+					// Checks to see if the Console is already locked out.
+					if( current.getCommand().equals("SymLogonError") && current.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
 						disconnect();
 						return SessionError.CONSOLE_BLOCKED;
 					}
 				}
-				log(current1.toString());
-				write(newpass + "\r");
-				if (current1.getCommand().equals("SymLogonInvalidUser")){
-					System.out.println("Console Blocked");
-					disconnect();
-					return SessionError.CONSOLE_BLOCKED;
-				}else{
-					userID=newpass;
-					Config.setLastUserID(newpass);
-					SymLoginShell.lastUserID = newpass;
-
-					SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
-
-					if (session != null && newpass != null && newpass.length() >= 3){
-						ProjectManager.prefix = newpass.substring(0, 3);
-						session.userID = newpass;
-					}else if(session != null && newpass != null){
-						ProjectManager.prefix = newpass;
-						session.userID = newpass;
-					}
+	
+				log(current.toString());
+			} catch (IOException e) {
+				disconnect();
+				if(e.toString().indexOf("SYM not Found") != -1){
+					System.out.println("SYM not Found");
+					return SessionError.SYM_INVALID;
+				} else{
+					return SessionError.IO_ERROR;
 				}
-				//System.out.println(ProjectManager.prefix);
-
-				Command current2 = readNextCommand(); 
-				write("\r");
-				if (current2.getCommand().equals("SymLogonInvalidUser")){
-					System.out.println("Console Blocked");
-					disconnect();
-					return SessionError.CONSOLE_BLOCKED;
-				}
-
-
 			}
-
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			disconnect();
+			return SessionError.SERVER_NOT_FOUND;
+		} catch (IOException e) {
+			e.printStackTrace();
+			disconnect();
+			if(useSSH){
+				return SessionError.PLINK_NOT_FOUND;
+			} else {
+				return SessionError.IO_ERROR;
+			}
+		}
+		
+		loggedInAIX = true;
+		return loginUser(userID);
+	}
+	
+	@Override
+	public SessionError loginUser(String userID){
+		// First check to see if we are logged into AIX, using the connect method.
+		if (loggedInAIX == false){
+			return SessionError.NOT_CONNECTED;
+		}
+		
+		this.userID = userID;
+		// Attempt to log into the SYM and start the session.
+		try{
+			final int tmpSym = this.sym;
+			if(useSSH){
+				write(userID + " \r");
+			} else {
+				write(userID + "\r");
+			}
+			
+			Command current;
+			current = readNextCommand();
+			log("USER RESPONSE: " + current.getCommand());
+			// Checking for bad Teller ID/Password.
+			if (current.getCommand().equals("SymLogonInvalidUser")){
+				System.out.println("Bad User Password");
+				write("\r");
+				while (!(current = readNextCommand()).getCommand().equals("Input")){
+					log(current);
+				}
+				return SessionError.USERID_INVALID;
+			// Check for frozen console.
+			}else if(current.getCommand().equals("SymLogonFrozen")){
+				System.out.println("Console Frozen");
+				disconnect();
+				return SessionError.CONSOLE_BLOCKED;
+			// Check for Password Change.
+			}else if(current.getCommand().equals("SymLogonChangePassword")){
+				System.out.println("Change Password Required");
+				disconnect();
+				return SessionError.USERID_PASSWORD_CHANGE;
+			}
+			
 			write("\r");
 			readNextCommand();
 			
 			write("\r");
 			log(readNextCommand().toString());
 			
+			// Get SYM Date
+			{
+				Command cmdGetDate=new Command();
+				cmdGetDate.setCommand("Misc");
+				cmdGetDate.getParameters().put("InfoType","BankingDate");
+				write(cmdGetDate.sendStr());
+				String symdate = readNextCommand().getParameters().get("BankingDate");
+				symDate.setTimeInMillis(0);
+				symDate.set(Integer.parseInt(symdate.substring(4,8)), Integer.parseInt(symdate.substring(0,2))-1, Integer.parseInt(symdate.substring(2,4)));
+			}
+			
+			// Get Console Number
+			{
+				Command cmdGetCon=new Command();
+				cmdGetCon.setCommand("Misc");
+				cmdGetCon.getParameters().put("InfoType","ConsoleNumber");
+				write(cmdGetCon.sendStr());
+				consoleNum = Integer.parseInt(readNextCommand().getParameters().get("ConsoleNumber"));
+			}
+			
 			connected = true;
 			log("Connected to Symitar!");
 			
-			//Establish keepalive timer, every 55 seconds send an empty command
-			keepAlive = new Thread(new Runnable(){
-				public void run() {
-					Calendar cal = new GregorianCalendar();
-					int terminateTime;
-					int lastActivityTime = (RepDevMain.getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+RepDevMain.getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
-					int termOptionTime = (Config.getTerminateHour()*60)+Config.getTerminateMinute();
-					int curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
-					boolean neverTerminate;
-					
-					terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
-					neverTerminate = Config.getNeverTerminate();
-					
-					boolean firstRun = true;
-					try{
-						while(terminateTime > curTime || neverTerminate){
-							firstRun = false;
-							Thread.sleep(55000);
-							wakeUp();
-							
-							cal = Calendar.getInstance();
-							curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
-							lastActivityTime = (RepDevMain.getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+RepDevMain.getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
-							terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
-							if (terminateTime-curTime < KEEP_ALIVE_WARNING && !neverTerminate){
-								log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") will terminate in "+(terminateTime-curTime)+" minutes");
-							}
-							else{
-								log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") ");
-							}
-						}
+			// Keep alive needs to be enabled with enableKeepAlive(); Otherwise the session will be terminated
+			//  per the console setting in Symitar.
+			if(keepAliveEnabled){
+				//Establish keepalive timer, every 55 seconds send an empty command
+				keepAlive = new Thread(new Runnable(){
+					public void run() {
+						Calendar cal = new GregorianCalendar();
+						int terminateTime;
+						int lastActivityTime = (getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
+						int termOptionTime = (getTerminateHour()*60)+getTerminateMinute();
+						int curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
+						boolean neverTerminate;
 						
-						log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") Terminated");
-						if (!firstRun){
-							Display.getDefault().syncExec(new Runnable(){
-								public void run(){
-									MessageBox msg = new MessageBox(RepDevMain.mainShell.getShell(), SWT.ICON_WARNING);
-									msg.setText("Keep Alive");
-									msg.setMessage("Keep Alive has terminated for SYM "+tmpSym+".  Please take proper measures to avoid the lost of work.");
-									msg.open();
+						terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
+						neverTerminate = getNeverTerminate();
+						boolean firstRun = true;
+						try{
+							while(terminateTime > curTime || neverTerminate){
+								firstRun = false;
+								Thread.sleep(55000);
+								wakeUp();
+								
+								// Get the current time and convert it to minutes.
+								cal = Calendar.getInstance();
+								curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
+								// Get the last activity time and convert it to minutes and add a delay.
+								lastActivityTime = (getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
+								// Set terminateTime to what ever is larger
+								terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
+								// If terminateTime is within the Warning period, log a Warning.
+								if (terminateTime-curTime < KEEP_ALIVE_WARNING && !neverTerminate){
+									log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") will terminate in "+(terminateTime-curTime)+" minutes");
 								}
-							});
+								else{
+									log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") ");
+								}
+							}
+							
+							log(cal.getTime().toString().substring(11, 19)+" Keep Alive (SYM "+tmpSym+") Terminated");
+							// TODO: If you are running DirectSymitarSession outside of RepDev, you may want to
+							//  comment this part out to eliminate the GUI, or not enable KeepAlive.
+							if (!firstRun){
+								Display.getDefault().syncExec(new Runnable(){
+									public void run(){
+										MessageBox msg = new MessageBox(RepDevMain.mainShell.getShell(), SWT.ICON_WARNING);
+										msg.setText("Keep Alive");
+										msg.setMessage("Keep Alive has terminated for SYM "+tmpSym+".  Please take proper measures to avoid the lost of work.");
+										msg.open();
+									}
+								});
+							}
+						}
+						catch(InterruptedException e){
+							System.out.println("Terminating keepalive thread");
+						}
+						catch(Exception e){
+							e.printStackTrace();
 						}
 					}
-					catch(InterruptedException e){
-						System.out.println("Terminating keepalive thread");
-					}
-					catch(Exception e){
-						e.printStackTrace();
-					}
-				}
+					
+				});
 				
-			});
-			keepAlive.start();
-			
+				keepAlive.start();
+			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 			disconnect();
@@ -283,7 +420,7 @@ public class DirectSymitarSession extends SymitarSession {
 
 		return SessionError.NONE;
 	}
-
+	
 	private static class Command {
 		String command = "";
 		HashMap<String, String> parameters = new HashMap<String, String>();
@@ -407,23 +544,20 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	private Command readNextCommand() throws IOException {
-		readUntil(Character.toString((char) 0x1b) + Character.toString((char) 0xfe));
+		String tmpData=readUntil(Character.toString((char) 0x1b) + Character.toString((char) 0xfe),"No such file or directory");
+		// Not sure if this is the best way to detect an invalid SYM, but here it is anyway.
+		if(tmpData.indexOf("No such file or directory") != -1){
+			throw new IOException("SYM not Found");
+		}
+		
 		String data = readUntil(Character.toString((char) 0xfc));
-
 		Command cmd = Command.parse(data.substring(0, data.length() - 1));
 		
-		//Filter out Messages that come in asychronously and fuck everything up
+		//Filter out Messages that come in asychronously and muck everything up
 		if( cmd.getCommand().equals("MsgDlg") && cmd.getParameters().get("Text").contains("From PID") )
 			return readNextCommand();
 		else
-			//TODO:Fix logons for syms that require password updates,
-			//there is interception here for finding if symitar wants the password changed
-			//but this might not be the ideal place to do it
-			if ( cmd.toString().indexOf("User Password NOT changed") != -1){
-				System.out.println("Please update your password");		//I added in this brief explination to help people
-			}
 			return cmd;
-	
 	}
 
 	private String readUntil(String... strs) throws IOException {
@@ -431,6 +565,7 @@ public class DirectSymitarSession extends SymitarSession {
 
 		while (true) {
 			int cur = in.read();
+			//System.out.print((char)cur);
 			buf += (char) cur;
 			for (String str : strs)
 				if (buf.indexOf(str) != -1)
@@ -452,10 +587,13 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			if( socket != null)
 				socket.close();
+			if( useSSH )
+				p.destroy();
 		} catch (Exception e) {
 			return SessionError.IO_ERROR;
 		}
 		connected = false;
+		loggedInAIX = false;
 		return SessionError.NONE;
 	}
 
@@ -1529,5 +1667,70 @@ public class DirectSymitarSession extends SymitarSession {
 
 		return SessionError.IO_ERROR;
 	}
+	
+	/**
+	 * @return Date of the SYM in GregorianCalendar format.
+	 */
+	public GregorianCalendar getSymDate() {
+		return symDate;
+	}
+
+	/**
+	 * @return Date of the SYM in a string format.
+	 */
+	public String getSymDateString() {
+		return (symDate.get(Calendar.MONTH) + 1) + "/" + symDate.get(Calendar.DATE)+"/" + symDate.get(Calendar.YEAR);
+	}
+
+	/**
+	 * Depending on the AIX Username used, you may be automatically logged into a
+	 * SYM other than the one specified during login.  getAcutalSym() will obtain
+	 * the actual SYM this session is connected to.
+	 * 
+	 * @return the actual SYM this session is logged into.
+	 */
+	public int getActualSym() {
+		return actualSym;
+	}
+
+	/**
+	 * @return Console Number of the Symitar Session.
+	 */
+	public int getConsoleNum() {
+		return consoleNum;
+	}
+
+	/**
+	 * @return Host IPA of this Symitar Session.
+	 */
+	public String getHostIPA() {
+		return hostIPA;
+	}
+
+	/**
+	 * @return the Symitar Release Level.
+	 */
+	public String getSymRev() {
+		return symRev;
+	}
+	
+	/**
+	 * @return a String description of the Session, including the following;
+	 * 
+	 */
+	public String getProperties(){
+		String str =  "Server IPA: " + hostIPA + "\n"+
+	                  "Port: " + port + "\n"+
+	                  "SYM: " + actualSym + "\n"+
+	                  "SYM Date: " + getSymDateString() + "\n"+
+	                  "Release: " + symRev + "\n"+
+	                  "Console: " + consoleNum + "\n"+
+	                  "Username: " + aixUsername + "\n"+
+	                  "TellerID: " + userID.substring(0,3) + "\n";
+		
+		return str;
+	}
+
+	
 
 }

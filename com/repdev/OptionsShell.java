@@ -178,7 +178,7 @@ public class OptionsShell {
 		serverText.setText(Config.getServer());
 		
 		portLabel = new Label(serverGroup, SWT.NONE);
-		portLabel.setText("Port (usually 23)");
+		portLabel.setText("Port (22 - SSH , 23 - Telnet)");
 		
 		portText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
 		portText.setText(""+Config.getPort());

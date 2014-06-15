@@ -32,8 +32,9 @@ import org.eclipse.swt.widgets.Text;
  */
 public abstract class SymitarSession {
 	protected String server, aixUsername, aixPassword, userID;
-	protected int sym;
+	protected int sym, port;
 	protected ArrayList<QueueInfo> queueInfoList;
+	
 
 	/**
 	 * Initiates a connection to the server, if we are not already connected
@@ -45,8 +46,16 @@ public abstract class SymitarSession {
 	 * @param userID
 	 * @return SessionError
 	 */
-	public abstract SessionError connect(String server, String aixUsername, String aixPassword, int sym, String userID);
-
+	public abstract SessionError connect(String server, int port, String aixUsername, String aixPassword, int sym, String userID);
+	
+	/**
+	 * After a failed login, using connect, to the SYM you can retry multiple times.
+	 *
+	 * @param userID
+	 * @return SessionError
+	 */
+	public abstract SessionError loginUser(String userID);
+	
 	/**
 	 * 
 	 * @return SessionError
@@ -340,6 +349,10 @@ public abstract class SymitarSession {
 
 	public String getServer() {
 		return server;
+	}
+
+	public int getPort() {
+		return port;
 	}
 
 	public String getUserID() {
