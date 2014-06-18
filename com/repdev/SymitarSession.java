@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Text;
  *
  */
 public abstract class SymitarSession {
-	protected String server, aixUsername, aixPassword, userID;
+	protected String server, aixUsername, aixPassword, userID ,userNum;
 	protected int sym, port;
 	protected ArrayList<QueueInfo> queueInfoList;
 	
@@ -357,6 +357,19 @@ public abstract class SymitarSession {
 
 	public String getUserID() {
 		return userID;
+	}
+
+	public String getUserNum() {
+		if(userID.indexOf(".")!=-1) {
+			userNum = userID.substring(0,userID.indexOf("."));
+		} else {
+			userNum = userID.substring(0,3);
+		}
+		while (userNum.charAt(0) == '0') {
+			// System.out.println("userNum- " + userNum);
+			userNum=userNum.substring(1,userNum.length());
+		}
+		return userNum;
 	}
 
 	public abstract ErrorCheckResult installRepgen(String f);
