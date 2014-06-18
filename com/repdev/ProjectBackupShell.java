@@ -123,10 +123,11 @@ public class ProjectBackupShell {
 					progress.setSelection(25);
 					
 					SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
-					SymitarFile pf = new SymitarFile(sym,"repdev." + session.getUserID().substring(0,3) + "projects", FileType.REPGEN);
-					
-					status.setText(status.getText() + "Replacing Project file for " + session.getUserID().substring(0,3) +
+					SymitarFile pf = new SymitarFile(sym,"repdev." + session.getUserNum() + "projects", FileType.REPGEN);
+
+					status.setText(status.getText() + "Replacing Project file for " + session.getUserNum() +
 							" on sym " + sym + "...\r\n");					
+					
 					try {
 						progress.setSelection(40);
 						File f = new File(file.getText());
