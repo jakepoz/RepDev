@@ -1310,7 +1310,8 @@ public class DirectSymitarSession extends SymitarSession {
 				log(cur);
 				
 				//Get the Sequence for the latest running one at this point, and return it so we can keep track of it
-				if( cur.getParameters().get("Action").equals("QueueEntry") ){
+				if(cur.getParameters().get("Action").equals("QueueEntry") &&
+				   !cur.getParameters().get("Stat").equals("Scheduled")  ){
 					int curTime = 0;
 					String timeStr = cur.getParameters().get("Time");
 					curTime = Integer.parseInt(timeStr.substring(timeStr.lastIndexOf(":")+1));
