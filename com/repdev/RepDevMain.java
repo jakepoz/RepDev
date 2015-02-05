@@ -40,9 +40,9 @@ import org.eclipse.swt.widgets.MessageBox;
 /**
  * Main run class, runs as first startup
  * Provides many application global functions/variables, as well as intializes all the stuff we need
- * 
+ *
  * TODO: Documentation for RepDev
- * 
+ *
  * @see Awesomeness
  * @author Jake Poznanski, Ryan Schultz, Sean Delaney
  */
@@ -53,7 +53,7 @@ public class RepDevMain {
 	public static final int VMAJOR = 1;
 	public static final int VMINOR = 6;
 	public static final int VFIX   = 10;
-	public static final String VSPECIAL = "Beta"; // "special" string for release names, beta, etc
+	public static final String VSPECIAL = ""; // "special" string for release names, beta, etc
 
 	public static final String VERSION = VMAJOR + "." + VMINOR + (VFIX>0?"."+VFIX:"") + (DEVELOPER ? "-dev" : "") + (!VSPECIAL.equals("")? " " + VSPECIAL : "");
 	public static final String NAMESTR = "RepDev v" + VERSION;
@@ -68,14 +68,14 @@ public class RepDevMain {
 	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage, smallFunctionImage, smallSnippetImage, smallKeywordImage, smallDefineVarImage,
 	smallRepGenDemandImage;
 	public static final String IMAGE_DIR = "repdev-icons/";
-	
+
 	public static SnippetManager snippetManager;
-	
+
 	private enum CONFIGREV{
 		NORMAL, NEW, OUTDATED
 	}
 	private static CONFIGREV configRev = CONFIGREV.NORMAL;
-	
+
 	public static void main(String[] args) throws Exception {
 		display = new Display();
 
@@ -83,12 +83,12 @@ public class RepDevMain {
 				+"This program comes with ABSOLUTELY NO WARRANTY.\n"
 				+"This is free software, and you are welcome to redistribute it \n"
 				+"under certain conditions.\n");
-		
+
 		try{
 			loadSettings();
 			createImages();
 			createGUI();
-		
+
 			while (!mainShell.isDisposed()) {
 				if (!display.readAndDispatch())
 					display.sleep();
@@ -107,7 +107,7 @@ public class RepDevMain {
 				ErrorDialog errorDialog = new ErrorDialog(e);
 				errorDialog.open();
 
-				display.dispose(); 
+				display.dispose();
 			}
 		}
 
@@ -177,18 +177,18 @@ public class RepDevMain {
 		smallCompareImage = new Image(display, IMAGE_DIR + "small-compare.png");
 		smallSurroundImage = new Image(display, IMAGE_DIR + "small-surround.png");
 		smallSurroundPrint = new Image(display, IMAGE_DIR + "small-surround-print.png");
-		
+
 		smallHighlight = new Image(display, IMAGE_DIR + "small-highlight.png");
 		smallHighlightGrey = new Image(display, IMAGE_DIR + "small-highlight-grey.png");
-		
+
 		smallTaskTodo = new Image(display, IMAGE_DIR + "small-task-todo.png");
 		smallTaskFixme = new Image(display, IMAGE_DIR + "small-task-fixme.png");
 		smallTaskBug = new Image(display, IMAGE_DIR + "small-task-bug.png");
 		smallTaskWtf = new Image(display, IMAGE_DIR + "small-task-wtf.png");
-		
+
 		smallFormatCodeImage = new Image(display, IMAGE_DIR + "small-format-code.png");
 		smallInsertSnippetImage = new Image(display, IMAGE_DIR + "small-insert-snippet.png");
-		
+
 		smallFunctionImage = new Image(display, IMAGE_DIR + "small-function.png");
 		smallKeywordImage = new Image(display, IMAGE_DIR + "small-keyword.png");
 		smallSnippetImage = new Image(display, IMAGE_DIR + "small-snippet.png");
@@ -198,20 +198,20 @@ public class RepDevMain {
 	/**
 	 * Loads Config object and settings from a serialized file Also connects to
 	 * all syms in the config file
-	 * 
+	 *
 	 * Also, starts the snippet manager
 	 */
 	public static void loadSettings() {
 		String localFile = "repdev.conf";
 		String userFile = System.getProperty("user.home") + System.getProperty("file.separator") + "repdev.conf";
 		String loadFile = localFile;
-		
+
 		if( new File(userFile).exists() && !new File(localFile).exists() ){
 			System.out.println("The config file is being copied from it's old location in your user folder, to the local Repdev install folder.\nOld Location: " +
 								userFile);
 			loadFile = userFile;
 		}
-		
+
 		try {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(loadFile));
 			Config configObject = (Config) in.readObject();
@@ -239,7 +239,7 @@ public class RepDevMain {
 
 		// Start up data
 		for (int sym : Config.getSyms()) {
-			
+
 			if( Config.getServer().equalsIgnoreCase("testsession")) //Allows for a testing mode when no symitar server's are available
 				session = new TestingSymitarSession();
 			else
@@ -252,7 +252,7 @@ public class RepDevMain {
 			Config.setTerminateMinute(0);
 			saveSettings();
 		}
-		
+
 		if(Config.getRevision()==-1){
 			configRev = CONFIGREV.NEW;
 		}
@@ -306,7 +306,7 @@ public class RepDevMain {
 		if(configRev != CONFIGREV.NORMAL){
 			MessageBox msg = new MessageBox(mainShell.getShell(), SWT.ICON_WARNING);
 			msg.setText("RepDev Options");
-			
+
 			if(configRev == CONFIGREV.NEW){
 				msg.setMessage("Welcome to RepDev. Please take a few moments to configure your Options.");
 			}
@@ -318,7 +318,7 @@ public class RepDevMain {
 			Config.setRevision(Config.REVISION);
 		}
 	}
-	
+
 	private static void createGlobalHotkeys(){
 		Display.getDefault().addFilter(SWT.KeyDown, new Listener() {
 			public void handleEvent(Event e) {
