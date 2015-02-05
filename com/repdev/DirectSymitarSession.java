@@ -294,6 +294,12 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			Command current;
 			current = readNextCommand();
+			// Checks for Password Expiration warning.
+			if(current.getCommand().equals("MsgDlg")){
+				log("USER RESPONSE: " + current.getParameters().get("Text"));
+				write("\r0\r");
+				current = readNextCommand();
+			}
 			log("USER RESPONSE: " + current.getCommand());
 			// Checking for bad Teller ID/Password.
 			if (current.getCommand().equals("SymLogonInvalidUser")){
@@ -323,6 +329,7 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			// Get SYM Date
 			{
+				// [0x07]39[0x0d]Misc~InfoType=BankingDate~MsgId=xxxxxxx
 				Command cmdGetDate=new Command();
 				cmdGetDate.setCommand("Misc");
 				cmdGetDate.getParameters().put("InfoType","BankingDate");
@@ -334,6 +341,7 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			// Get Console Number
 			{
+				// [0x07]41[0x0d]Misc~InfoType=ConsoleNumber~MsgId=xxxxxxx
 				Command cmdGetCon=new Command();
 				cmdGetCon.setCommand("Misc");
 				cmdGetCon.getParameters().put("InfoType","ConsoleNumber");
