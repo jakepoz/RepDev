@@ -140,9 +140,9 @@ public class ProjectManager {
 			
 			SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
 			SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
-			PrintWriter out = new PrintWriter(
-					new FileWriter("backup\\" + session.getUserID().substring(0,3) + "projects_sym" + sym 
-							+ "_" + date.format(new Date())));
+			PrintWriter out = new PrintWriter(new FileWriter("backup\\repdev" + session.getUserNum() + 
+							"projects_sym" + sym + "." + date.format(new Date())));
+
 			out.write(projectFile);
 			out.flush();
 			out.close();
@@ -233,20 +233,12 @@ public class ProjectManager {
 
 		if( session == null || !session.isConnected() )
 			return null;
-		
-		//TODO: possiablly recode so that this code works fine for ID's <3 characters long
-		//ex: if the id number is '35' and the password is 'password' getUserID() will return '35password'
-		//of which we use '35p' for the project id but due to the fact that it is less than 3 digits,
-		//the password partially was used, thus if this user changes their password to 'newpassword' 
-		//the new id will then be '35newpassword' and the new project id will be '35n'
-		//this is a problem, the users projects will all be listed in '35p' but when repdev goes to open '35n'
-		//it will just find a blank file
-		if (session.getUserID() != null && session.getUserID().length() >= 3)
-			prefix = session.userID.substring(0, 3);
-		else if( session.getUserID() != null)
-			prefix = session.getUserID();
+
+		if(session.getUserID() != null)
+			prefix = session.getUserNum(true);
 
 		return new SymitarFile(sym,"repdev." + prefix + "projects", FileType.REPGEN);
+
 	}
 	
 	private static void loadProjects(String dir){
@@ -355,3 +347,4 @@ public class ProjectManager {
 	}
 
 }
+

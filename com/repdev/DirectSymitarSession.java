@@ -1726,7 +1726,7 @@ public class DirectSymitarSession extends SymitarSession {
 	                  "Release: " + symRev + "\n"+
 	                  "Console: " + consoleNum + "\n"+
 	                  "Username: " + aixUsername + "\n"+
-	                  "TellerID: " + userID.substring(0,3) + "\n";
+	                  "TellerID: " + userNum + "\n";
 		
 		return str;
 	}
