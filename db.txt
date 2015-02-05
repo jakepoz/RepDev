@@ -125,6 +125,39 @@
 	CREATEDATBRANCH|Created At Branch|61|5|9999
 	WRTOTALAMOUNT|Wire Received Amount|62|7|null
 	WDTOTALAMOUNT|Wire Disbursed Amount|63|7|null
+	NONREGCCCHECKHOLDBASEAMT|Non-Reg CC Check Hold Base Amt|64|7|null
+	NONREGCCCHECKTOTALAMT|Non-Reg CC Check Dep Total Amt|65|7|null
+	LIMITUSAGEDATE|Limit Usage Date|66|3|null
+	COUNTLIMIT:1|Limit 1 Count Limit|67|5|9999
+	COUNTLIMIT:2|Limit 2 Count Limit|67|5|9999
+	COUNTLIMIT:3|Limit 3 Count Limit|67|5|9999
+	COUNTLIMIT:4|Limit 4 Count Limit|67|5|9999
+	COUNTLIMIT:5|Limit 5 Count Limit|67|5|9999
+	COUNTLIMIT:6|Limit 6 Count Limit|67|5|9999
+	LIMITCOUNT:1|Limit 1 Count|68|5|9999
+	LIMITCOUNT:2|Limit 2 Count|68|5|9999
+	LIMITCOUNT:3|Limit 3 Count|68|5|9999
+	LIMITCOUNT:4|Limit 4 Count|68|5|9999
+	LIMITCOUNT:5|Limit 5 Count|68|5|9999
+	LIMITCOUNT:6|Limit 6 Count|68|5|9999
+	LIMIT:1|Limit 1|69|7|null
+	LIMIT:2|Limit 2|69|7|null
+	LIMIT:3|Limit 3|69|7|null
+	LIMIT:4|Limit 4|69|7|null
+	LIMIT:5|Limit 5|69|7|null
+	LIMIT:6|Limit 6|69|7|null
+	LIMITAMOUNT:1|Limit 1 Amount|70|7|null
+	LIMITAMOUNT:2|Limit 2 Amount|70|7|null
+	LIMITAMOUNT:3|Limit 3 Amount|70|7|null
+	LIMITAMOUNT:4|Limit 4 Amount|70|7|null
+	LIMITAMOUNT:5|Limit 5 Amount|70|7|null
+	LIMITAMOUNT:6|Limit 6 Amount|70|7|null
+	PERITEMLIMIT:1|Limit 1 Per Item Limit|71|7|null
+	PERITEMLIMIT:2|Limit 2 Per Item Limit|71|7|null
+	PERITEMLIMIT:3|Limit 3 Per Item Limit|71|7|null
+	PERITEMLIMIT:4|Limit 4 Per Item Limit|71|7|null
+	PERITEMLIMIT:5|Limit 5 Per Item Limit|71|7|null
+	PERITEMLIMIT:6|Limit 6 Per Item Limit|71|7|null
 	DIVYTDTAX|Dividend This Year Taxable|800|7|null
 	DIVYTDNONTAX|Dividend This Year Non-Tax|801|7|null
 	DIVLASTYEARTAX|Dividend Last Year Taxable|802|7|null
@@ -159,6 +192,12 @@
 	PAYEENAMELOCATOR|Payee Name Record Locator|817|4|null
 	CAPPEDFEESAMTPERIOD|Capped Fees Amount This Period|818|7|null
 	CAPPEDFEESCNTPERIOD|Capped Fees Count This Period|819|4|null
+	LIMITDESCRIPTION:1|Limit 1 Description|820|0|40
+	LIMITDESCRIPTION:2|Limit 2 Description|820|0|40
+	LIMITDESCRIPTION:3|Limit 3 Description|820|0|40
+	LIMITDESCRIPTION:4|Limit 4 Description|820|0|40
+	LIMITDESCRIPTION:5|Limit 5 Description|820|0|40
+	LIMITDESCRIPTION:6|Limit 6 Description|820|0|40
 	***|FMHISTORY|FM History
 		ACCOUNTNUMBER|Account Number|2|0|17
 		IDTYPE|ID Type|3|5|12
@@ -314,6 +353,11 @@
 		DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 		SEX|Sex|109|0|1
 		IRSCOUNTRYCODE|IRS Country Code|110|0|2
+		NRATAXRATE|NRA Tax Rate|111|2|null
+		NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+		FORMW8ONFILE|Form W-8 On File|113|5|1
+		W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+		FOREIGNTIN|Foreign TIN|115|0|22
 		SHORTNAME|Short Name|800|0|16
 		LONGNAME|Long Name|801|1|40
 		LICENSE|License|802|0|20
@@ -451,7 +495,7 @@
 			ENABLEFM|Enable FM|9|5|1
 			QUALIFIER|Qualifier|10|0|3
 			RECORDCHANGEDATE|Record Change Date|11|3|null
-		***|SERVICE CREDENTIAL|Service Credential
+		***|PREFERENCE SERVICECREDENTIAL|Service Credential
 			USERID1|User ID 01|1|0|40
 			USERID2|User ID 02|2|0|40
 			CONSUMERID1|Consumer ID 01|3|0|40
@@ -706,7 +750,7 @@
 		DIVRATE|Dividend Rate|20|2|null
 		DIVACCRUALDATE|Dividend Accrual Date|21|3|null
 		DIVACCRUAL|Dividend Accrual|22|7|null
-		WITHHOLDINGCODE|Fed Withholding Code|23|5|1
+		WITHHOLDINGCODE|Fed Backup Withholding Code|23|5|1
 		WITHHOLDINGYTD|Fed Withheld YTD|24|7|null
 		WITHHOLDINGLASTYEAR|Fed Withheld Lst Yr|25|7|null
 		PENALTYTYPE|Penalty Type|26|5|9
@@ -735,7 +779,7 @@
 		REGECOUNT|Reg E Count|47|5|9999
 		REGDCHECKCOUNT|Reg D Check Count|48|5|9999
 		REGDTRANSFERCOUNT|Reg D Transfer Count|49|5|9999
-		MATURITYPOSTCODE|Maturity Post Code|50|5|3
+		MATURITYPOSTCODE|Maturity Post Code|50|5|4
 		MATURITYDATE|Maturity Date|51|3|null
 		TERMFREQUENCY|Term Frequency|52|5|1
 		TERMPERIOD|Term Period|53|5|9999
@@ -775,7 +819,7 @@
 		FEECOUNT:2|Fee Count 2|67|5|9999
 		FEECOUNT:3|Fee Count 3|67|5|9999
 		FEECOUNT:4|Fee Count 4|67|5|9999
-		STATEWITHHOLDINGCODE|State Withholding Code|68|5|1
+		STATEWITHHOLDINGCODE|State Backup Withholding Code|68|5|1
 		STATEWITHHOLDINGYTD|State Withheld YTD|69|7|null
 		STATEWITHHOLDINGLASTYEAR|State Withheld Lst Yr|70|7|null
 		CUTOTALSUSECODE|CU Totals Code|71|5|1
@@ -1084,6 +1128,11 @@
 			DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 			SEX|Sex|109|0|1
 			IRSCOUNTRYCODE|IRS Country Code|110|0|2
+			NRATAXRATE|NRA Tax Rate|111|2|null
+			NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+			FORMW8ONFILE|Form W-8 On File|113|5|1
+			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+			FOREIGNTIN|Foreign TIN|115|0|22
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -1120,6 +1169,7 @@
 			SWEEPFEEID|Sweep Fee ID|23|0|2
 			RECORDCHANGEDATE|Record Change Date|24|3|null
 			EXTLOANACCOUNT|External Loan Account Number|25|0|20
+			MATURITYCHECK|Maturity Check|26|5|1
 		***|SHARE CHECKORDER|Share Check Order
 			PROCESSOR|Processor|1|5|3
 			STATUS|Status|2|5|6
@@ -1474,6 +1524,8 @@
 			BALSEGPMTCHANGEDATE:1|Bal Seg 001 Pmt Change Date|56|3|null
 			INTEFFECTDATE|Interest Effective Date|57|3|null
 			BALSEGPREVFIRSTPMTDATE:1|Bal Seg 001 Prev First Pmt Dat|58|3|null
+			DRAFTNUMBER|Draft Number|59|0|10
+			TRACERNUMBER|Tracer Number|60|0|15
 			SUBSOURCEDESCR|Sub Source Description|800|1|40
 			TRANAMOUNT|Transaction Amount|801|7|null
 			CONFIRMATIONNUMBER|Confirmation Number|802|0|14
@@ -1921,67 +1973,67 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 13 for 13|2|7|null
-		CONTRLASTYEAR:2|Contr 13 for 12|2|7|null
-		CONTRLASTYEAR:3|Contr 13 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 13 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 13 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 13 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 13 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 13 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 13 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 13 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 13 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 13 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 13 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 13 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 13 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 13 Excess 13|3|7|null
-		DISTRLASTYEAR:9|Distr 13 Excess 12|3|7|null
-		DISTRLASTYEAR:10|Distr 13 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 13 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 13 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 13 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 13 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 13 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 13 Ex Earn 13|3|7|null
-		DISTRLASTYEAR:17|Distr 13 Ex Earn 12|3|7|null
-		CONTRTHISYEAR:1|Contr 14 for 14|4|7|null
-		CONTRTHISYEAR:2|Contr 14 for 13|4|7|null
-		CONTRTHISYEAR:3|Contr 14 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 14 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 14 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 14 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 14 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 14 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 14 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 14 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 14 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 14 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 14 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 14 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 14 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 14 Excess 14|5|7|null
-		DISTRTHISYEAR:9|Distr 14 Excess 13|5|7|null
-		DISTRTHISYEAR:10|Distr 14 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 14 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 14 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 14 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 14 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 14 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 14 Ex Earn 14|5|7|null
-		DISTRTHISYEAR:17|Distr 14 Ex Earn 13|5|7|null
+		CONTRLASTYEAR:1|Contr 14 for 14|2|7|null
+		CONTRLASTYEAR:2|Contr 14 for 13|2|7|null
+		CONTRLASTYEAR:3|Contr 14 Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr 14 Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr 14 Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr 14 Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr 14 Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr 14 Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr 14 No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr 14 Exception|3|7|null
+		DISTRLASTYEAR:3|Distr 14 Disability|3|7|null
+		DISTRLASTYEAR:4|Distr 14 Death|3|7|null
+		DISTRLASTYEAR:5|Distr 14 Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr 14 Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr 14 Normal|3|7|null
+		DISTRLASTYEAR:8|Distr 14 Excess 14|3|7|null
+		DISTRLASTYEAR:9|Distr 14 Excess 13|3|7|null
+		DISTRLASTYEAR:10|Distr 14 Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr 14 Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr 14 Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr 14 Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr 14 Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr 14 Fee|3|7|null
+		DISTRLASTYEAR:16|Distr 14 Ex Earn 14|3|7|null
+		DISTRLASTYEAR:17|Distr 14 Ex Earn 13|3|7|null
+		CONTRTHISYEAR:1|Contr 15 for 15|4|7|null
+		CONTRTHISYEAR:2|Contr 15 for 14|4|7|null
+		CONTRTHISYEAR:3|Contr 15 Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr 15 Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr 15 Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr 15 Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr 15 Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr 15 Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr 15 No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr 15 Exception|5|7|null
+		DISTRTHISYEAR:3|Distr 15 Disability|5|7|null
+		DISTRTHISYEAR:4|Distr 15 Death|5|7|null
+		DISTRTHISYEAR:5|Distr 15 Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr 15 Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr 15 Normal|5|7|null
+		DISTRTHISYEAR:8|Distr 15 Excess 15|5|7|null
+		DISTRTHISYEAR:9|Distr 15 Excess 14|5|7|null
+		DISTRTHISYEAR:10|Distr 15 Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr 15 Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr 15 Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr 15 Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr 15 Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr 15 Fee|5|7|null
+		DISTRTHISYEAR:16|Distr 15 Ex Earn 15|5|7|null
+		DISTRTHISYEAR:17|Distr 15 Ex Earn 14|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 13|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 14|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 14|16|7|null
+		IRARMD|Req Min Distrib 15|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
@@ -2108,6 +2160,11 @@
 			DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 			SEX|Sex|109|0|1
 			IRSCOUNTRYCODE|IRS Country Code|110|0|2
+			NRATAXRATE|NRA Tax Rate|111|2|null
+			NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+			FORMW8ONFILE|Form W-8 On File|113|5|1
+			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+			FOREIGNTIN|Foreign TIN|115|0|22
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -2406,6 +2463,7 @@
 		CREDITREPORTTRANSFERINDICATOR|CR Transfer Indicator|126|5|9
 		CREDITREPORTTRANSFERDATE|CR Transfer Date|127|3|null
 		CREDITREPORTTRANSFERNAME|CR Transfer Name|128|0|30
+		FEESCHARGESPOSTINGOPTION|Fees/Charges Posting Option|129|5|2
 		MINBALANCE|Minimum Balance|130|7|null
 		MINADVANCE|Minimum Advance|131|7|null
 		BALLOONAMOUNT|Balloon Amount|132|7|null
@@ -3003,6 +3061,11 @@
 			DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 			SEX|Sex|109|0|1
 			IRSCOUNTRYCODE|IRS Country Code|110|0|2
+			NRATAXRATE|NRA Tax Rate|111|2|null
+			NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+			FORMW8ONFILE|Form W-8 On File|113|5|1
+			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+			FOREIGNTIN|Foreign TIN|115|0|22
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -3148,6 +3211,11 @@
 				DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 				SEX|Sex|109|0|1
 				IRSCOUNTRYCODE|IRS Country Code|110|0|2
+				NRATAXRATE|NRA Tax Rate|111|2|null
+				NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+				FORMW8ONFILE|Form W-8 On File|113|5|1
+				W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+				FOREIGNTIN|Foreign TIN|115|0|22
 				SHORTNAME|Short Name|800|0|16
 				LONGNAME|Long Name|801|1|40
 				LICENSE|License|802|0|20
@@ -3184,6 +3252,7 @@
 			SWEEPFEEID|Sweep Fee ID|23|0|2
 			RECORDCHANGEDATE|Record Change Date|24|3|null
 			EXTLOANACCOUNT|External Loan Account Number|25|0|20
+			MATURITYCHECK|Maturity Check|26|5|1
 		***|LOAN ESCROWANALYSIS|Loan Escrow Analysis
 			DATEANALYSISCALC|Date Analysis Calculated|1|3|null
 			ANALYSISTHRUDATE|Analysis Through Date|2|3|null
@@ -3728,6 +3797,8 @@
 			BALSEGPMTCHANGEDATE:1|Bal Seg 001 Pmt Change Date|56|3|null
 			INTEFFECTDATE|Interest Effective Date|57|3|null
 			BALSEGPREVFIRSTPMTDATE:1|Bal Seg 001 Prev First Pmt Dat|58|3|null
+			DRAFTNUMBER|Draft Number|59|0|10
+			TRACERNUMBER|Tracer Number|60|0|15
 			SUBSOURCEDESCR|Sub Source Description|800|1|40
 			TRANAMOUNT|Transaction Amount|801|7|null
 			CONFIRMATIONNUMBER|Confirmation Number|802|0|14
@@ -3811,6 +3882,8 @@
 		SERVICE:8|Service 8|27|5|99
 		LOCATOR|Locator|28|4|null
 		STATUS|Status|29|5|1
+		CASHADVANCELIMIT|Cash Advance Limit|30|7|null
+		AVAILABLECASHADVANCE|Available Cash Advance|31|7|null
 		***|EXTERNALLOAN NAME|External Loan Name
 			TYPE|Name Type|1|5|53
 			SUBTYPE|Name SubType|2|5|99
@@ -3932,6 +4005,11 @@
 			DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 			SEX|Sex|109|0|1
 			IRSCOUNTRYCODE|IRS Country Code|110|0|2
+			NRATAXRATE|NRA Tax Rate|111|2|null
+			NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+			FORMW8ONFILE|Form W-8 On File|113|5|1
+			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+			FOREIGNTIN|Foreign TIN|115|0|22
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -3968,6 +4046,7 @@
 			SWEEPFEEID|Sweep Fee ID|23|0|2
 			RECORDCHANGEDATE|Record Change Date|24|3|null
 			EXTLOANACCOUNT|External Loan Account Number|25|0|20
+			MATURITYCHECK|Maturity Check|26|5|1
 		***|EXTERNALLOAN TRACKING|External Loan Tracking
 			TYPE|Tracking Type|1|5|99
 			ID|ID|2|0|2
@@ -4360,6 +4439,11 @@
 			DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 			SEX|Sex|109|0|1
 			IRSCOUNTRYCODE|IRS Country Code|110|0|2
+			NRATAXRATE|NRA Tax Rate|111|2|null
+			NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+			FORMW8ONFILE|Form W-8 On File|113|5|1
+			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+			FOREIGNTIN|Foreign TIN|115|0|22
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4396,6 +4480,7 @@
 			SWEEPFEEID|Sweep Fee ID|23|0|2
 			RECORDCHANGEDATE|Record Change Date|24|3|null
 			EXTLOANACCOUNT|External Loan Account Number|25|0|20
+			MATURITYCHECK|Maturity Check|26|5|1
 		***|EFT ADDENDAINFO|EFT Addenda Info
 			TYPE|Addenda Info Type|1|5|0
 			LOCATOR|Locator|2|4|null
@@ -4664,6 +4749,11 @@
 			DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 			SEX|Sex|109|0|1
 			IRSCOUNTRYCODE|IRS Country Code|110|0|2
+			NRATAXRATE|NRA Tax Rate|111|2|null
+			NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+			FORMW8ONFILE|Form W-8 On File|113|5|1
+			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+			FOREIGNTIN|Foreign TIN|115|0|22
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -5822,10 +5912,10 @@
 		BUREAU|Bureau|12|5|4
 		BIRTHDATE|Birth Date|13|3|null
 		SPOUSEBIRTHDATE|Spouse Birth Date|14|3|null
-		INCOME|Income|15|6|null
+		INCOME|Income|15|7|null
 		MULTIPLEFILE|Multiple File|16|5|1
 		LOANTERMS|Loan Terms|18|5|999
-		LOANAMOUNT|Loan Amount|19|6|null
+		LOANAMOUNT|Loan Amount|19|7|null
 		INQUIRYTYPE|Inquiry Type|20|5|99
 		OPERATORCODE|Operator Code|21|0|2
 		ADDRVERIFYACCT|Addr Verification|22|0|20
@@ -6147,6 +6237,15 @@
 		BUSYEARSCURRADDRESS|Years at Curr Address|238|5|99
 		ACTUALPAYMENTAMT|Actual Payment Amount|239|8|null
 		EXPANDEDHISTORY|Expanded History|240|8|null
+		RESPONSEFORMAT|Response Format|241|5|2
+		STARTEMPDATE|Start Employment Date|242|3|null
+		ENDEMPDATE|End Employment Date|243|3|null
+		SPOUSEOCCUPATION|Spouse Occupation|244|0|20
+		SPOUSESTARTEMPDATE|Spouse Start Employment Date|245|3|null
+		SPOUSEENDEMPDATE|Spouse End Employment Date|246|3|null
+		SPOUSEPAYBASIS|Spouse Pay Basis|247|0|1
+		SPOUSEINCOME|Spouse Income|248|7|null
+		SPOUSESECONDARYNM|Spouse Secondary Name|249|0|25
 		***|CREDREP ITEM|Credit Report Item
 			SEGMENTTYPE|Segment Type|1|0|4
 			SUBSEGMENTTYPE|Sub Segment Type|2|0|2
@@ -6524,7 +6623,7 @@
 	STREET|Street|4|0|30
 	CITY|City|5|0|20
 	STATE|State|6|0|10
-	ZIPCODE|Zipcode|7|0|10
+	ZIPCODE|Zip Code|7|0|10
 	PHONE|Phone|8|0|12
 	CONTACT|Contact Person|9|0|40
 	CREDITYTD|Payments YTD|10|7|null
@@ -6923,7 +7022,7 @@
 	FOREIGNEXCGREF|Foreign Exchange Reference|61|0|15
 	ISODESTCOUNTRY|ISO Destination Country|62|0|2
 	ISOORIGCURRENCY|ISO Originating Currency|63|0|3
-	IOSDESTCURRENCY|ISO Destination Currency|64|0|3
+	ISODESTCURRENCY|ISO Destination Currency|64|0|3
 	MICRACCTNUMBER|MICR Account Number|65|0|20
 	BATCHACHORIGNUM|Batch ACH Origination Number|66|4|null
 	FORCEEXCPDESCR|Force Exception Description|800|1|32
@@ -7146,7 +7245,7 @@
 	CASHBACKAMOUNT|Cash Back Amt|125|7|null
 	IMMEDIATEAMOUNT|Immediate Amt|126|7|null
 	LOCALAMOUNT|Local Amt|127|7|null
-	NONLOCALAMOUNT|Non-Local Amt|128|7|null
+	PAYROLLAMOUNT|Payroll Amt|128|7|null
 	AVAILABLEBALANCE1|Available Balance 1|129|7|null
 	LEDGERBALANCE1|Ledger Balance 1|130|7|null
 	AVAILABLEBALANCE2|Available Balance 2|131|7|null
@@ -8005,7 +8104,7 @@
 	VENDORSTREET|Vendor Street|810|0|30
 	VENDORCITY|Vendor City|811|0|20
 	VENDORSTATE|Vendor State|812|0|10
-	VENDORZIPCODE|Vendor Zipcode|813|0|10
+	VENDORZIPCODE|Vendor Zip Code|813|0|10
 	VENDORCONTACTDESCRIPTION|Vendor Contact Description|814|0|20
 	VENDOREXTRAADDRESS|Vendor Extra Address|815|0|30
 	LOANCOUNT|Number of Loans|816|4|null
@@ -8451,31 +8550,6 @@
 			USERRATE19|User Rate   19|129|2|null
 			USERRATE20|User Rate   20|130|2|null
 			RECORDCHANGEDATE|Record Change Date|131|3|null
-		***|RESERVEPLAN TRANSACTION|Reserve Plan Transaction
-			DEALERNUMBER|Dealer Number|1|0|10
-			COMMENTFLAG|Comment Flag|2|5|1
-			CONSOLENUMBER|Console Number|3|5|9999
-			EFFECTIVEDATE|Effective Date|4|3|null
-			SEQUENCENUMBER|Sequence Number|5|4|null
-			POSTDATE|Post Date|6|3|null
-			POSTTIME|Post Time|7|5|2359
-			USERNUMBER|User Number|8|5|9999
-			USEROVERRIDE|User Override|9|5|9999
-			BATCHSEQUENCE|Batch Sequence|10|4|null
-			BRANCH|Branch|11|5|9999
-			MEMBERBRANCH|Member Branch|12|0|4
-			ACCOUNTNUMBER|Account Number|13|0|10
-			PLANID|Reserve Plan ID|14|0|4
-			ACTIONCODE|Action Code|15|0|1
-			SOURCECODE|Source Code|16|0|1
-			DESCRIPTION|Description|17|0|16
-			ACTIVITYDATE|Activity Date|18|3|null
-			BALANCECHANGE|Balance Change|19|7|null
-			NEWBALANCE|New Balance|20|7|null
-			COMMENT|Comment|21|0|42
-			PARTICIPANTTYPE|Participant Type|22|5|1
-			LOANID|Loan ID|23|0|4
-			ADJUSTMENTCODE|Adjustment Code|24|5|1
 	***|DEALER FMHISTORY|Dealer FM History
 		ACCOUNTNUMBER|Account Number|2|0|17
 		IDTYPE|ID Type|3|5|12
@@ -8509,6 +8583,31 @@
 		CONFIRMATIONSEQ|Confirmation Sequence|31|4|null
 		RECORDNAME|Record Name|800|1|40
 		FIELDNAME|Field Name|801|1|40
+		***|RESERVEPLAN TRANSACTION|Reserve Plan Transaction
+			DEALERNUMBER|Dealer Number|1|0|10
+			COMMENTFLAG|Comment Flag|2|5|1
+			CONSOLENUMBER|Console Number|3|5|9999
+			EFFECTIVEDATE|Effective Date|4|3|null
+			SEQUENCENUMBER|Sequence Number|5|4|null
+			POSTDATE|Post Date|6|3|null
+			POSTTIME|Post Time|7|5|2359
+			USERNUMBER|User Number|8|5|9999
+			USEROVERRIDE|User Override|9|5|9999
+			BATCHSEQUENCE|Batch Sequence|10|4|null
+			BRANCH|Branch|11|5|9999
+			MEMBERBRANCH|Member Branch|12|0|4
+			ACCOUNTNUMBER|Account Number|13|0|10
+			PLANID|Reserve Plan ID|14|0|4
+			ACTIONCODE|Action Code|15|0|1
+			SOURCECODE|Source Code|16|0|1
+			DESCRIPTION|Description|17|0|16
+			ACTIVITYDATE|Activity Date|18|3|null
+			BALANCECHANGE|Balance Change|19|7|null
+			NEWBALANCE|New Balance|20|7|null
+			COMMENT|Comment|21|0|42
+			PARTICIPANTTYPE|Participant Type|22|5|1
+			LOANID|Loan ID|23|0|4
+			ADJUSTMENTCODE|Adjustment Code|24|5|1
 ***|EXCPITEM|Exception Item
 	EXCPTYPE|Exception Type|1|5|9
 	EXCPITEMACCOUNT|Exception Item Account|2|0|10
@@ -8590,12 +8689,13 @@
 	FOREIGNEXCGREF|Foreign Exchange Reference|53|0|15
 	ISODESTCOUNTRY|ISO Destination Country|54|0|2
 	ISOORIGCURRENCY|ISO Originating Currency|55|0|3
-	IOSDESTCURRENCY|ISO Destination Currency|56|0|3
+	ISODESTCURRENCY|ISO Destination Currency|56|0|3
 	BATCHACHORIGNUM|Batch ACH Origination Number|57|4|null
 	OTHERACTION|Other Action|58|5|1
 	OTHERIDTYPE|Other ID Type|59|5|1
 	OTHERID|Other ID|60|0|2
 	ORIGINATORSTATUS|Originator Status|61|0|1
+	DEATHDATE|Death Date|62|3|null
 	POSTEXCPDESCR|Posting Exception Description|800|1|32
 	SUBTRANDESCR|Sub Tran Description|801|1|40
 	***|EXCPADDENDA|Exception Addenda
@@ -9006,9 +9106,6 @@
 		LASTFMDATE|Last FM Date|6|3|null
 		COMMENTONE|Comment 1|7|0|40
 		COMMENTTWO|Comment 2|8|0|40
-		OFFSETNUMBER|Offset GL Number|9|0|6
-		OFFSETSUFFIX|Offset GL Suffix|10|0|4
-		OFFSETBRANCH|Offset GL Branch|11|0|4
 		ACQUISITIONDATE|Acquisition Date|12|3|null
 		MATURITYDATE|Maturity Date|13|3|null
 		TERMFREQUENCY|Term Frequency|14|5|1
@@ -9025,6 +9122,20 @@
 		SALEDATE|Sale Date|25|3|null
 		SALEAMOUNT|Sale Amount|26|7|null
 		RECORDCHANGEDATE|Record Change Date|27|3|null
+		ACCRUALSTARTDATE|Accrual Start Date|28|3|null
+		FIRSTMONTHMETHOD|First Month Accrual Method|29|5|1
+		ACCRUALPOSTDATE|Accrual Post Date|30|3|null
+		ACCRUALEFFECTDATE|Accrual Effective Date|31|3|null
+		ACCRUALPOSTTHRUDATE|Accrual Post Through Date|32|3|null
+		TAXCATEGORY|Tax Category|33|0|4
+		TAXDATE|Tax Date|34|3|null
+		TAXDESCRIPTION|Tax Description|35|0|40
+		TAXLOCATION|Tax Location|36|0|40
+		TAXAMOUNT|Tax Amount|37|7|null
+		INSURANCETYPE|Insurance Type|38|0|4
+		INSTYPEDESCRIPTION|Insurance Type Description|39|0|40
+		INSMATURITYDATE|Insurance Maturity Date|40|3|null
+		GLOFFSET|Offset GL|41|0|16
 	***|GLHISTORY|GL History
 		SEQUENCENUMBER|Sequence Number|2|4|null
 		EFFECTIVEDATE|Effective Date|3|3|null
@@ -9374,6 +9485,11 @@
 	DBAEXTENDEDNAME|DBA Extended Name|61|0|40
 	SEX|Sex|62|0|1
 	IRSCOUNTRYCODE|IRS Country Code|63|0|2
+	NRATAXRATE|NRA Tax Rate|64|2|null
+	NRAEXEMPTIONCODE|NRA Exemption Code|65|0|2
+	FORMW8ONFILE|Form W-8 On File|66|5|1
+	W8EXPIRATIONDATE|W-8 Expiration Date|67|3|null
+	FOREIGNTIN|Foreign TIN|68|0|22
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
@@ -9586,6 +9702,11 @@
 	DBAEXTENDEDNAME|DBA Extended Name|108|0|40
 	SEX|Sex|109|0|1
 	IRSCOUNTRYCODE|IRS Country Code|110|0|2
+	NRATAXRATE|NRA Tax Rate|111|2|null
+	NRAEXEMPTIONCODE|NRA Exemption Code|112|0|2
+	FORMW8ONFILE|Form W-8 On File|113|5|1
+	W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
+	FOREIGNTIN|Foreign TIN|115|0|22
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
@@ -9708,7 +9829,7 @@
 	BONDRECPSTREET|Bond Recp Street|31|0|40
 	BONDRECPCITY|Bond Recp City|32|0|40
 	BONDRECPSTATE|Bond Recp State|33|0|10
-	BONDRECPZIPCODE|Bond Recp Zipcode|34|0|10
+	BONDRECPZIPCODE|Bond Recp Zip Code|34|0|10
 	POSTDATE|Post Date|35|3|null
 	POSTTIME|Post Time|36|5|2359
 	REJECTDATE|Reject Date|37|3|null
@@ -9841,7 +9962,7 @@
 	VENDORSTREET|Vendor Street|810|0|30
 	VENDORCITY|Vendor City|811|0|20
 	VENDORSTATE|Vendor State|812|0|10
-	VENDORZIPCODE|Vendor Zipcode|813|0|10
+	VENDORZIPCODE|Vendor Zip Code|813|0|10
 	VENDORCONTACTDESCRIPTION|Vendor Contact Description|814|0|20
 	VENDOREXTRAADDRESS|Vendor Extra Address|815|0|30
 	LOANCOUNT|Number of Loans|816|4|null
@@ -13935,10 +14056,28 @@
 	SECURITYCODE:1512|CTR Branch Creation|15|5|1
 	SECURITYCODE:1513|CTR Branch Revision|15|5|1
 	SECURITYCODE:1514|CTR Branch Deletion|15|5|1
-	SECURITYCODE:1515|Host WebServices Status|15|5|1
-	SECURITYCODE:1516|Host WebServices Onhost|15|5|1
-	SECURITYCODE:1517|Host WebServices Offhost|15|5|1
-	SECURITYCODE:1518|Host WebServices Refresh|15|5|1
+	SECURITYCODE:1515|Host SymXchange Status|15|5|1
+	SECURITYCODE:1516|Host SymXchange Onhost|15|5|1
+	SECURITYCODE:1517|Host SymXchange Offhost|15|5|1
+	SECURITYCODE:1518|Host SymXchange Refresh|15|5|1
+	SECURITYCODE:1519|Param FM Online SB Add-on|15|5|1
+	SECURITYCODE:1520|Param FM Non-Reg CC Check Hold|15|5|1
+	SECURITYCODE:1521|Param FM Account Limit|15|5|1
+	SECURITYCODE:1522|Card Create Wizard Reissue|15|5|1
+	SECURITYCODE:1523|Card Create Wiz Restrctn Lvl 1|15|5|1
+	SECURITYCODE:1524|Card Create Wiz Restrctn Lvl 2|15|5|1
+	SECURITYCODE:1525|Card Create Wiz Restrctn Lvl 3|15|5|1
+	SECURITYCODE:1526|Card Create Wiz Restrctn Lvl 4|15|5|1
+	SECURITYCODE:1527|Card Create Wiz Restrctn Lvl 5|15|5|1
+	SECURITYCODE:1528|Card Create Wiz Restrctn Lvl 6|15|5|1
+	SECURITYCODE:1529|Card Create Wiz Restrctn Lvl 7|15|5|1
+	SECURITYCODE:1530|Card Create Wiz Restrctn Lvl 8|15|5|1
+	SECURITYCODE:1531|Card Create Wiz Restrctn Lvl 9|15|5|1
+	SECURITYCODE:1532|Purge Miscellaneous - Online|15|5|1
+	SECURITYCODE:1533|GL Post Eff Date to Prev Month|15|5|1
+	SECURITYCODE:1534|Parameter FM SymXchange Client|15|5|1
+	SECURITYCODE:1535|Parameter FM SymXchange Common|15|5|1
+	SECURITYCODE:1536|Param FM Periodic Mtg Criteria|15|5|1
 	SECURITYAMOUNT:1|Check Received Limit|16|7|null
 	SECURITYAMOUNT:2|Disbursal Limit|16|7|null
 	SECURITYAMOUNT:3|General Ledger Limit|16|7|null
@@ -15407,6 +15546,8 @@
 	PREVIOUSPASSWORDHASH4:10|Previous Password Hash 4 (10)|67|0|40
 	PREVIOUSPASSWORDHASH4:11|Previous Password Hash 4 (11)|67|0|40
 	PREVIOUSPASSWORDHASH4:12|Previous Password Hash 4 (12)|67|0|40
+	PREVIOUSLOGONDATE|Previous Logon Date|68|3|null
+	PREVIOUSLOGONTIME|Previous Logon Time|69|5|2359
 	***|ACTIVITY|Activity
 		USERNUMBER|User Number|1|5|9999
 		DATE|Activity Date|2|3|null
