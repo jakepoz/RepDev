@@ -31,67 +31,73 @@ public enum SessionError {
 		MessageBox dialog = new MessageBox(new Shell(),SWT.OK | SWT.ICON_ERROR);
 		dialog.setText("Error in host connection");
 		dialog.setMessage("Error connecting to server, check network connections");
+		dialog.setMessage(getErrorString());
+		dialog.open();
+	}
+
+	public String getErrorString(){
+		String msg = "";
 		
 		switch(this){
-			case AIX_LOGIN_WRONG:
-				dialog.setMessage("AIX Login information is incorrect!");
-				break;
-			case ALREADY_CONNECTED:
-				dialog.setMessage("Symitar Session is already connected.");
-				break;
-			case ARGUMENT_ERROR:
-				dialog.setMessage("Invalid File Argument!");
-				break;
-			case CONSOLE_BLOCKED:
-				dialog.setMessage("This console has been blocked!");
-				break;
-			case FILENAME_TOO_LONG:
-				dialog.setMessage("Filename is too long!");
-				break;
-			case INPUT_ERROR:
-				dialog.setMessage("Input Error was detected.");
-				break;
-			case INVALID_FILE_TYPE:
-				dialog.setMessage("Invalid File Type.");
-				break;
-			case INVALID_QUEUE:
-				dialog.setMessage("Invalid Queue.");
-				break;
-			case IO_ERROR:
-				dialog.setMessage("I/O Error.");
-				break;
-			case NONE:
-				dialog.setMessage("No Session Error");
-				break;
-			case NOT_CONNECTED:
-				dialog.setMessage("Symitar Session is not connected!");
-				break;
-			case NOT_WINDOWSLEVEL_3:
-				dialog.setMessage("WINDOWSLEVEL not set to 3.");
-				break;
-			case NULL_POINTER:
-				dialog.setMessage("Null Pointer.");
-				break;
-			case PLINK_NOT_FOUND:
-				dialog.setMessage("Plink.exe was not found in the startup directory.");
-				break;
-			case SERVER_NOT_FOUND:
-				dialog.setMessage("Server not found, please check network connections");
-				break;
-			case SYM_INVALID:
-				dialog.setMessage("Specified SYM is invalid.");
-				break;
-			case USERID_INVALID:
-				dialog.setMessage("Invalid User ID/Password");
-				break;
-			case USERID_PASSWORD_CHANGE:
-				dialog.setMessage("User Password change required.");
-				break;
-			default:
-				dialog.setMessage("Undefined Session Error!");
-				break;
+		case AIX_LOGIN_WRONG:
+			msg = "AIX Login information is incorrect!";
+			break;
+		case ALREADY_CONNECTED:
+			msg = "Symitar Session is already connected.";
+			break;
+		case ARGUMENT_ERROR:
+			msg = "Invalid File Argument!";
+			break;
+		case CONSOLE_BLOCKED:
+			msg = "This console has been blocked!";
+			break;
+		case FILENAME_TOO_LONG:
+			msg = "Filename is too long!";
+			break;
+		case INPUT_ERROR:
+			msg = "Input Error was detected.";
+			break;
+		case INVALID_FILE_TYPE:
+			msg = "Invalid File Type.";
+			break;
+		case INVALID_QUEUE:
+			msg = "Invalid Queue.";
+			break;
+		case IO_ERROR:
+			msg = "I/O Error.";
+			break;
+		case NONE:
+			msg = "No Session Error";
+			break;
+		case NOT_CONNECTED:
+			msg = "Symitar Session is not connected!";
+			break;
+		case NOT_WINDOWSLEVEL_3:
+			msg = "WINDOWSLEVEL not set to 3.";
+			break;
+		case NULL_POINTER:
+			msg = "Null Pointer.";
+			break;
+		case PLINK_NOT_FOUND:
+			msg = "Plink.exe was not found in the startup directory.";
+			break;
+		case SERVER_NOT_FOUND:
+			msg = "Server not found, please check network connections";
+			break;
+		case SYM_INVALID:
+			msg = "Specified SYM is invalid.";
+			break;
+		case USERID_INVALID:
+			msg = "Invalid User ID/Password";
+			break;
+		case USERID_PASSWORD_CHANGE:
+			msg = "User Password change required.";
+			break;
+		default:
+			msg = "Undefined Session Error!";
+			break;
 		}
 		
-		dialog.open();
+		return msg;
 	}
 }; 
