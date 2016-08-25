@@ -192,20 +192,32 @@ public class DirectSymitarSession extends SymitarSession {
 				if (line.indexOf("invalid login") != -1 || line.indexOf("password:") != -1){
 					disconnect();
 					return SessionError.AIX_LOGIN_WRONG;
+				} else if (line.contains("$ ")) {
+					out.print(line);
+					out.print("It appears we weren't able to bypass text mode.\nYou may have a slow connection.\nOr this console is not setup as a 'Windows PC' in SYMOP.");
+					disconnect();
+					return SessionError.NOT_WINDOWSLEVEL_3;
+				} else if (line.indexOf("[c") == -1) {
+					out.print(line);
+					out.print("Unsure what happened here.  Check logs!");
+					disconnect();
+					return SessionError.IO_ERROR;
 				}
 			}
 
 			write("WINDOWSLEVEL=3\n");
 			
-			temp = readUntil( "$ ", "SymStart~Global", "Selection :", "no longer supported!");
-			if(temp.contains("no longer supported!")){
+			temp = readUntil("$ ", "SymStart~Global", "Selection :", "no longer supported!","Logins not allowed from host: ");
+			System.out.println(temp);
+			if (temp.contains("no longer supported!")) {
 				disconnect();
 				System.out.println(temp);
 				return SessionError.NOT_WINDOWSLEVEL_3;
-			}
-			System.out.println(temp);
-			
-			if (temp.contains("Selection :")){ //This is for EASE Menu
+			} else if (temp.contains("Logins not allowed")) {
+				out.print("You cannot log in from this IP. Verify this PC is setup to use Symitar!");
+				disconnect();
+				return SessionError.NOT_CONNECTED;
+			} else if (temp.contains("Selection :")) { // This is for EASE Menu
 				System.out.println("EASE Menu has been detected");
 				int EASE_Selection = EaseSelection.getEASESelection(temp, sym);
 				System.out.println("EASE Selection = "+EASE_Selection+"\n");
