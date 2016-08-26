@@ -24,10 +24,15 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.Bullet;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
+import org.eclipse.swt.custom.LineStyleEvent;
+import org.eclipse.swt.custom.LineStyleListener;
+import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -49,6 +54,8 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -58,6 +65,7 @@ import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -77,6 +85,7 @@ import com.repdev.parser.BackgroundSectionParser;
 import com.repdev.parser.SectionInfo;
 import com.repdev.parser.Variable;
 import com.repdev.parser.Token.TokenType;
+import org.eclipse.swt.graphics.GlyphMetrics;
 
 /**
  * Main editor for repgen, help, and letter files
@@ -128,6 +137,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	static SuggestShell suggest = new SuggestShell();
 
 	private static Font DEFAULT_FONT;
+	private boolean showLineNumbers = false;
 
 	static {
 		Font cur = null;
@@ -182,6 +192,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		this.file = file;
 		this.tabItem = tabItem;
 		this.sym = file.getSym();
+		this.showLineNumbers = Config.getViewLineNumbers();
 
 		buildGUI();
 	}
@@ -487,6 +498,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public Color getLineColor(){
 		return highlighter.getLineColor();
 	}
+
+	//Calculate and expand the width of numbered "bullet" margin.  Allows the whole number to be displayed as more lines are added to the file.
+	final public int calcWidth(){
+		if (this.showLineNumbers) {
+			int lastLine = txt.getLineCount()+1;
+			return (Integer.toString(lastLine).length() * 12) +6;
+		}
+		return 12; //return a width of 12px for "right click" implementation... eventually.
+	}
 	private void buildGUI() {
 		setLayout(new FormLayout());
 
@@ -617,6 +637,45 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			}
 		});
 
+		// Set the style of numbered bullets (12 pixels wide for each digit)
+		final StyleRange style = new StyleRange();
+		final int bulletStyle; 
+		int bulletWidth = 12;
+		if (showLineNumbers){
+			bulletWidth = calcWidth();
+			bulletStyle = ST.BULLET_NUMBER;
+		} else{
+			bulletStyle = ST.BULLET_TEXT;  //another eventual implementation for "right click" feature
+		}
+		style.foreground = highlighter.getBulletColor();
+		style.start = 1;
+		style.length = txt.getLineCount();
+		style.metrics = new GlyphMetrics(0, 0, bulletWidth);
+		
+		// Add the style (numbered bullets) to the text in file. 
+		txt.addLineStyleListener(new LineStyleListener() {
+			public void lineGetStyle(LineStyleEvent e) {
+				e.bulletIndex = txt.getLineAtOffset(e.lineOffset);
+				if (showLineNumbers){
+					style.metrics.width = calcWidth();
+					e.bullet = new Bullet(bulletStyle, style);
+				}
+			}
+		});
+		
+		// Add paint listener to modify numbered bullets, when lines are being added
+		txt.addPaintListener(new PaintListener (){
+			public void paintControl (PaintEvent e){
+				
+	            Rectangle clientArea = txt.getClientArea();
+	            // To minimize the amount of page being redrawn, trying to limit it to just the numbered bullet margin area
+				int width = calcWidth();
+				Rectangle bgArea = new Rectangle(-2,-2,width,(txt.getLineCount()+1) * txt.getLineHeight());
+				
+				txt.getLineCount();
+			}
+		});
+
 		txt.addExtendedModifyListener(new ExtendedModifyListener() {
 
 			public void modifyText(ExtendedModifyEvent event) {
@@ -706,6 +765,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					updateSnippet();
 				}
 
+				// Redraw numbered bullets area
+				if (showLineNumbers){
+					style.metrics.width = calcWidth();
+					txt.setStyleRange(style);
+					txt.redraw(1,1, 72, txt.getLineHeight()*txt.getLineCount(), true);
+				}
 			}
 
 		});
