@@ -55,7 +55,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	private static String FONT_NAME = ""; // "Courier New"; //Fix Font Behavior
 	private static int FONT_SIZE = 0;// = 11;
 
-	private static RGB BACKGROUND = new RGB(255, 255, 255), FOREGROUND = new RGB(0, 0, 0), BULLETS = new RGB(0,0,0);
+	private static RGB BACKGROUND = new RGB(255, 255, 255), FOREGROUND = new RGB(0, 0, 0);
 	private static EStyle MAIN = new EStyle(null,null), 
 	NORMAL = new EStyle(null, null), 
 	COMMENTS = new EStyle(new RGB(127, 127, 127), null), 
@@ -178,7 +178,6 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			STRUCT1_INVALID = new EStyle(style.getColor("struct1Inv", "fgColor"), style.getColor("struct1Inv", "bgColor"), style.getStyle("struct1Inv")); 
 			STRUCT2_INVALID = new EStyle(style.getColor("struct2Inv", "fgColor"), style.getColor("struct2Inv", "bgColor"), style.getStyle("struct2Inv"));
 			TASK = new EStyle(style.getColor("task", "fgColor"), style.getColor("task", "bgColor"), style.getStyle("task"));
-			BULLETS = style.getColor("editor","bulletColor");
 		}catch(Exception e){
 			//System.out.println(e.getMessage());
 			System.out.println("Invalid theme using default");
@@ -204,7 +203,6 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 			customColor = new Color(Display.getCurrent(), new RGB(232,242,254));
 			tokenColor = new Color(Display.getCurrent(), new RGB(192,192,192));
-			BULLETS = new RGB(0,0,0);
 		}
 	}
 
