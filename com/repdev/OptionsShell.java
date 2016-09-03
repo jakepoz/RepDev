@@ -50,9 +50,9 @@ public class OptionsShell {
 	// Controls
 	private Spinner tabSpinner;
 	private Combo styleCombo, hour, minute;
-	private Label varsLabel, serverLabel, portLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel;
+	private Label varsLabel, serverLabel, portLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel;
 	private Text  serverText, portText, errCheckPrefix, errCheckSuffix;
-	private Button varsButton, neverTerm, devForgetBox, backupEnable, fileNameInTitle, hostInTitle;
+	private Button varsButton, neverTerm, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers;
 	
 	public static void show(Shell parent) {
 		me.create(parent);		
@@ -100,6 +100,7 @@ public class OptionsShell {
 				Config.setNoErrorCheckSuffix(errCheckSuffix.getText());
 				Config.setFileNameInTitle(fileNameInTitle.getSelection());
 				Config.setHostNameInTitle(hostInTitle.getSelection());
+				Config.setViewLineNumbers(viewLineNumbers.getSelection());
 
 				/*if (testRadio.getSelection())
 					Config.setServer("test");
@@ -368,6 +369,11 @@ public class OptionsShell {
 		hostInTitle = new Button(editorGroup, SWT.CHECK);
 		hostInTitle.setSelection((Config.getHostNameInTitle()));
 
+		viewLineNumbersLabel = new Label(editorGroup, SWT.NONE);
+		viewLineNumbersLabel.setText("Display line numbers");
+		viewLineNumbers = new Button(editorGroup, SWT.CHECK);
+		viewLineNumbers.setSelection((Config.getViewLineNumbers()));
+
 		Group noErrorCheckGroup = new Group(editorOptions,SWT.NONE);
 		noErrorCheckGroup.setText("No Error Check for these Files");
 		layout = new FormLayout();
@@ -398,6 +404,7 @@ public class OptionsShell {
 			Config.setHostNameInTitle(true);
 			fileNameInTitle.setSelection(true);
 			hostInTitle.setSelection(true);
+			viewLineNumbers.setSelection(true);
 			RepDevMain.saveSettings();
 		}
 		FormData data = new FormData();
@@ -466,6 +473,18 @@ public class OptionsShell {
 		data.top = new FormAttachment(fileNameInTitle);
 		data.right = new FormAttachment(100);
 		hostInTitle.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(hostInTitle);
+		data.width = 160;
+		viewLineNumbersLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(viewLineNumbersLabel);
+		data.top = new FormAttachment(hostInTitle);
+		data.right = new FormAttachment(100);
+		viewLineNumbers.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(0);

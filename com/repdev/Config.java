@@ -62,6 +62,7 @@ public class Config implements Serializable {
 	private String noErrorCheckPrefix = "INC.";
 	private boolean fileNameInWinTitle = true;
 	private boolean hostInTitle = true;
+	private boolean viewLineNumbers = true;
 	
 	@SuppressWarnings("unused")
 	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.
@@ -458,5 +459,13 @@ public class Config implements Serializable {
 
 	public static boolean getHostNameInTitle(){
 		return me.hostInTitle;
+	}
+
+	public static void setViewLineNumbers(boolean lineNumbers){
+		me.viewLineNumbers = lineNumbers;
+	}
+
+	public static boolean getViewLineNumbers(){
+		return me.viewLineNumbers;
 	}
 }

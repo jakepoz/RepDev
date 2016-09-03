@@ -1,4 +1,6 @@
 *.class
+helpmenu.conf
+repdev.conf
 
 
 #ignore thumbnails created by windows
