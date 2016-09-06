@@ -12,6 +12,8 @@
     <!-- General -->
     <editor bgColor="#3F3F3F" fgColor="#F7E29F" line="#373737" token="#020000" font="Consolas" fontSize="11" />
     
+    <linenumber fgColor="#C0C0C0" />
+    
     <!-- Comments -->
     <comments fgColor="#7F9F7F" style="italic"/>
     

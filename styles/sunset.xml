@@ -11,6 +11,7 @@
     <editor bgColor="060404" fgColor="B5380B" line="301C1A" token="672609" font="Courier New" fontSize="11" />
     
 	<comments fgColor="#7F0000" />
+    <linenumber fgColor="#C0C0C0" />
     <variables fgColor="#DEA46B" style="bold" />    
     <functions fgColor="#E20000" style="bold" />    
     <keywords fgColor="#E20000" />

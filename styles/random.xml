@@ -10,6 +10,7 @@
   <style>
     <editor bgColor="$rand" fgColor="$rand" line="$rand" token="$rand" font="Courier New" fontSize="11" />
 
+    <linenumber fgColor="#C0C0C0" />
     <comments fgColor="$rand" />
     <variables fgColor="$rand" style="bold" />    
     <functions fgColor="$rand" style="bold" />    

@@ -182,7 +182,11 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			STRUCT1_INVALID = new EStyle(style.getColor("struct1Inv", "fgColor"), style.getColor("struct1Inv", "bgColor"), style.getStyle("struct1Inv")); 
 			STRUCT2_INVALID = new EStyle(style.getColor("struct2Inv", "fgColor"), style.getColor("struct2Inv", "bgColor"), style.getStyle("struct2Inv"));
 			TASK = new EStyle(style.getColor("task", "fgColor"), style.getColor("task", "bgColor"), style.getStyle("task"));
-			BULLETS = new Color(Display.getCurrent(),style.getColor("comments","fgColor"));
+			try{
+				BULLETS = new Color(Display.getCurrent(),style.getColor("linenumber","fgColor"));
+			}catch(Exception e){
+				BULLETS = new Color(Display.getCurrent(),new RGB(127, 127, 127));
+			}
 		}catch(Exception e){
 			//System.out.println(e.getMessage());
 			System.out.println("Invalid theme using default");

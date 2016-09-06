@@ -10,6 +10,7 @@
   <style>
     <editor bgColor="#220044" fgColor="#ffffff" line="#444499" token="#FFDD00" font="Courier New" fontSize="10" />
 
+    <linenumber fgColor="#C0C0C0" />
     <comments fgColor="#7F7F7F" />
     <variables fgColor="#CCCC00" style="bold" />    
     <functions fgColor="#CCCC00" style="bold" />    
