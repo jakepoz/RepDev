@@ -580,7 +580,7 @@ public class MainShell {
 			if (!exists) {
 				TreeItem item = new TreeItem(tree, SWT.NONE);
 				item.setText("Sym " + sym);
-				item.setImage(RepDevMain.smallSymImage);
+				item.setImage(RepDevMain.smallSymOnImage);
 				item.setData(sym);
 				new TreeItem(item, SWT.NONE).setText("Loading...");
 			}
@@ -1710,6 +1710,7 @@ public class MainShell {
 					if (RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected()) {
 						ProjectManager.saveProjects(sym);
 						RepDevMain.SYMITAR_SESSIONS.get(sym).disconnect();
+						currentItem.setImage(RepDevMain.smallSymImage);
 						currentItem.setExpanded(false);
 						currentItem.removeAll();
 
@@ -1881,7 +1882,7 @@ public class MainShell {
 								});
 
 								return;
-							}
+							} else { root.setImage(RepDevMain.smallSymOnImage); }
 						}
 					}
 					ArrayList<Project> projects = new ArrayList<Project>();
