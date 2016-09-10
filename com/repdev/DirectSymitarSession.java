@@ -216,7 +216,7 @@ public class DirectSymitarSession extends SymitarSession {
 			} else if (temp.contains("Logins not allowed")) {
 				out.print("You cannot log in from this IP. Verify this PC is setup to use Symitar!");
 				disconnect();
-				return SessionError.NOT_CONNECTED;
+				return SessionError.IP_NOT_ALLOWED;
 			} else if (temp.contains("Selection :")) { // This is for EASE Menu
 				System.out.println("EASE Menu has been detected");
 				int EASE_Selection = EaseSelection.getEASESelection(temp, sym);
