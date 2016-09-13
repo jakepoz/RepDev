@@ -145,7 +145,8 @@ public class DirectSymitarSession extends SymitarSession {
 
 		if(port == 22){
 	    	useSSH = true;
-	    	System.out.println("*** Using SSH ***\nIf this is the last message you see, you may need to cache your SSH Key.\n");
+		System.out.println("*** Using SSH ***\nIf this is the last message you see, you may need to cache your SSH Key.");
+		System.out.println("For help, see the Wiki Page at https://github.com/jakepoz/RepDev/wiki/Using-SSH\n");
 	    }
 		try {
 			if(useSSH){
