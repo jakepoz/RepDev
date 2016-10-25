@@ -254,9 +254,17 @@ public class DirectSymitarSession extends SymitarSession {
 						symRev = current.getParameters().get("HostRev").trim();
 					}
 					// Checks to see if the Console is already locked out.
-					if( current.getCommand().equals("SymLogonError") && current.getParameters().get("Text").contains("Too Many Invalid Password Attempts") ){
-						disconnect();
-						return SessionError.CONSOLE_BLOCKED;
+					if( current.getCommand().equals("SymLogonError")){
+						if(current.getParameters().get("Text").contains("Too Many Invalid Password Attempts")){
+							disconnect();
+							return SessionError.CONSOLE_BLOCKED;
+						} else if(current.getParameters().get("Text").contains("Revision Incompatibility")){
+							disconnect();
+							return SessionError.INCOMPATIBLE_REVISION;
+						} else {
+							disconnect();
+							return SessionError.UNDEFINED_ERROR;
+						}
 					}
 				}
 	
