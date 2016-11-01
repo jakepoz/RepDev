@@ -358,6 +358,14 @@
 		FORMW8ONFILE|Form W-8 On File|113|5|1
 		W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 		FOREIGNTIN|Foreign TIN|115|0|22
+		GIIN|GIIN|116|0|19
+		SUBSTANTIALOWNER|Substantial Owner|117|5|1
+		CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+		PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+		ACTIVEDUTY|Active Duty|120|5|2
+		ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+		ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+		ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 		SHORTNAME|Short Name|800|0|16
 		LONGNAME|Long Name|801|1|40
 		LICENSE|License|802|0|20
@@ -368,6 +376,7 @@
 		CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 		DBASHORTNAME|DBA Short Name|808|0|16
 		DBALONGNAME|DBA Long Name|809|1|40
+		PREFERREDCONTACT|Preferred Contact|810|1|40
 	***|LOOKUP|Lookup
 		TYPE|Lookup Type|1|5|99
 		NUMBER|Lookup|2|0|20
@@ -393,7 +402,7 @@
 		HOMEFAX|Home Fax|3|0|12
 		BUSINESSFAX|Business Fax|4|0|12
 		TRANCODES|Tran Codes|5|0|18
-		AUDIOACCESS|Audio Access Code|6|0|16
+		AUDIOACCESS|Audio Access Code|6|0|40
 		AUDIOENABLE|Audio Enable Code|7|5|2
 		AUDIOCALLCOUNT|Audio Call Count|8|5|9999
 		AUDIOCALLMINUTES|Audio Call Minutes|9|5|9999
@@ -408,7 +417,7 @@
 		LASTLOGONTIME|Last Logon Time|18|5|2359
 		REFERENCE|Reference|19|0|40
 		USERCODE|User Code|20|5|999
-		HBPASSWORD|HB Password|21|0|20
+		HBPASSWORD|HB Password|21|0|40
 		LASTHBPWCHANGEDATE|Last HB Password Change|22|3|null
 		LASTTRANDATE|Last Transaction Date|23|3|null
 		WDCASHMAX|Maximum Cash W/D|24|7|null
@@ -455,38 +464,66 @@
 		PWDRESETRQSTNOTICE|Password Reset Notice|65|5|1
 		PWDRESETPROBATION|Pw Reset Probation|66|5|1
 		HBUSERNAME|HB Username|67|0|20
-		HBPASSWORD2|Second HB Password|68|0|20
-		AUDIOACCESS2|Second Audio Access Code|69|0|16
-		PREVHBPASSWORD:1|Previous HB Password 01|70|0|20
-		PREVHBPASSWORD:2|Previous HB Password 02|70|0|20
-		PREVHBPASSWORD:3|Previous HB Password 03|70|0|20
-		PREVHBPASSWORD:4|Previous HB Password 04|70|0|20
-		PREVHBPASSWORD:5|Previous HB Password 05|70|0|20
-		PREVHBPASSWORD:6|Previous HB Password 06|70|0|20
-		PREVHBPASSWORD:7|Previous HB Password 07|70|0|20
-		PREVHBPASSWORD:8|Previous HB Password 08|70|0|20
-		PREVHBPASSWORD:9|Previous HB Password 09|70|0|20
-		PREVHBPASSWORD:10|Previous HB Password 10|70|0|20
-		PREVHBPASSWORD:11|Previous HB Password 11|70|0|20
-		PREVHBPASSWORD:12|Previous HB Password 12|70|0|20
-		PREVHBPASSWORD:13|Previous HB Password 13|70|0|20
-		PREVHBPASSWORD:14|Previous HB Password 14|70|0|20
-		PREVHBPASSWORD:15|Previous HB Password 15|70|0|20
-		PREVHBPASSWORD:16|Previous HB Password 16|70|0|20
-		PREVHBPASSWORD:17|Previous HB Password 17|70|0|20
-		PREVHBPASSWORD:18|Previous HB Password 18|70|0|20
-		PREVHBPASSWORD:19|Previous HB Password 19|70|0|20
-		PREVHBPASSWORD:20|Previous HB Password 20|70|0|20
-		PREVHBPASSWORD:21|Previous HB Password 21|70|0|20
-		PREVHBPASSWORD:22|Previous HB Password 22|70|0|20
-		PREVHBPASSWORD:23|Previous HB Password 23|70|0|20
-		PREVHBPASSWORD:24|Previous HB Password 24|70|0|20
+		HBPASSWORD2|Second HB Password|68|0|40
+		AUDIOACCESS2|Second Audio Access Code|69|0|40
+		PREVHBPASSWORD:1|Previous HB Password 01|70|0|40
+		PREVHBPASSWORD:2|Previous HB Password 02|70|0|40
+		PREVHBPASSWORD:3|Previous HB Password 03|70|0|40
+		PREVHBPASSWORD:4|Previous HB Password 04|70|0|40
+		PREVHBPASSWORD:5|Previous HB Password 05|70|0|40
+		PREVHBPASSWORD:6|Previous HB Password 06|70|0|40
+		PREVHBPASSWORD:7|Previous HB Password 07|70|0|40
+		PREVHBPASSWORD:8|Previous HB Password 08|70|0|40
+		PREVHBPASSWORD:9|Previous HB Password 09|70|0|40
+		PREVHBPASSWORD:10|Previous HB Password 10|70|0|40
+		PREVHBPASSWORD:11|Previous HB Password 11|70|0|40
+		PREVHBPASSWORD:12|Previous HB Password 12|70|0|40
+		PREVHBPASSWORD:13|Previous HB Password 13|70|0|40
+		PREVHBPASSWORD:14|Previous HB Password 14|70|0|40
+		PREVHBPASSWORD:15|Previous HB Password 15|70|0|40
+		PREVHBPASSWORD:16|Previous HB Password 16|70|0|40
+		PREVHBPASSWORD:17|Previous HB Password 17|70|0|40
+		PREVHBPASSWORD:18|Previous HB Password 18|70|0|40
+		PREVHBPASSWORD:19|Previous HB Password 19|70|0|40
+		PREVHBPASSWORD:20|Previous HB Password 20|70|0|40
+		PREVHBPASSWORD:21|Previous HB Password 21|70|0|40
+		PREVHBPASSWORD:22|Previous HB Password 22|70|0|40
+		PREVHBPASSWORD:23|Previous HB Password 23|70|0|40
+		PREVHBPASSWORD:24|Previous HB Password 24|70|0|40
 		INVALIDPWDATTMPTS|Invalid Password Attempts|71|5|9999
 		RECORDCHANGEDATE|Record Change Date|72|3|null
+		HBPASSWORDMODE|HB Password Mode|73|5|2
+		HBPASSWORDMODE2|Second HB Password Mode|74|5|2
+		AUDIOACCESSMODE|Audio Access Code Mode|75|5|2
+		AUDIOACCESSMODE2|Second Audio Access Code Mode|76|5|2
+		PREVHBPASSWORDMODE:1|HB Previous Password Mode 01|77|5|2
+		PREVHBPASSWORDMODE:2|HB Previous Password Mode 02|77|5|2
+		PREVHBPASSWORDMODE:3|HB Previous Password Mode 03|77|5|2
+		PREVHBPASSWORDMODE:4|HB Previous Password Mode 04|77|5|2
+		PREVHBPASSWORDMODE:5|HB Previous Password Mode 05|77|5|2
+		PREVHBPASSWORDMODE:6|HB Previous Password Mode 06|77|5|2
+		PREVHBPASSWORDMODE:7|HB Previous Password Mode 07|77|5|2
+		PREVHBPASSWORDMODE:8|HB Previous Password Mode 08|77|5|2
+		PREVHBPASSWORDMODE:9|HB Previous Password Mode 09|77|5|2
+		PREVHBPASSWORDMODE:10|HB Previous Password Mode 10|77|5|2
+		PREVHBPASSWORDMODE:11|HB Previous Password Mode 11|77|5|2
+		PREVHBPASSWORDMODE:12|HB Previous Password Mode 12|77|5|2
+		PREVHBPASSWORDMODE:13|HB Previous Password Mode 13|77|5|2
+		PREVHBPASSWORDMODE:14|HB Previous Password Mode 14|77|5|2
+		PREVHBPASSWORDMODE:15|HB Previous Password Mode 15|77|5|2
+		PREVHBPASSWORDMODE:16|HB Previous Password Mode 16|77|5|2
+		PREVHBPASSWORDMODE:17|HB Previous Password Mode 17|77|5|2
+		PREVHBPASSWORDMODE:18|HB Previous Password Mode 18|77|5|2
+		PREVHBPASSWORDMODE:19|HB Previous Password Mode 19|77|5|2
+		PREVHBPASSWORDMODE:20|HB Previous Password Mode 20|77|5|2
+		PREVHBPASSWORDMODE:21|HB Previous Password Mode 21|77|5|2
+		PREVHBPASSWORDMODE:22|HB Previous Password Mode 22|77|5|2
+		PREVHBPASSWORDMODE:23|HB Previous Password Mode 23|77|5|2
+		PREVHBPASSWORDMODE:24|HB Previous Password Mode 24|77|5|2
 		***|PREFERENCE ACCESS|Preference Access
 			ACCESSTYPE|Access Type|1|5|3
 			ACCOUNTNUMBER|Account Number|2|0|10
-			IDTYPE|ID Type|3|5|2
+			IDTYPE|ID Type|3|5|3
 			ID|ID|4|0|2
 			ENABLEWITHDRAWAL|Enable Withdrawals|5|5|1
 			ENABLEDEPOSIT|Enable Deposits|6|5|1
@@ -495,6 +532,7 @@
 			ENABLEFM|Enable FM|9|5|1
 			QUALIFIER|Qualifier|10|0|3
 			RECORDCHANGEDATE|Record Change Date|11|3|null
+			EXTLOANACCOUNT|External Loan Account Number|12|0|20
 		***|PREFERENCE SERVICECREDENTIAL|Service Credential
 			USERID1|User ID 01|1|0|40
 			USERID2|User ID 02|2|0|40
@@ -962,6 +1000,10 @@
 		NEGATIVEBALANCENOTICEDATE|Negative Balance Notice Date|186|3|null
 		ESCROWYTD|Escrow YTD|187|7|null
 		ESCROWLASTYEAR|Escrow Last Year|188|7|null
+		CHAPTER4WITHHOLDINGCODE|Fed Chapter 4 Withholding Code|189|5|1
+		CHAPTER4WITHHELDYTD|Fed Chapter 4 Withheld YTD|190|7|null
+		CHAPTER4WITHHELDLSTYR|Fed Chapter 4 Withheld Lst Yr|191|7|null
+		YEARENDBALANCE|Year-End Balance|192|7|null
 		AVAILABLEBALANCE|Available Balance|800|7|null
 		PAYEELINE:1|Payee Line 1|801|0|40
 		PAYEELINE:2|Payee Line 2|801|0|40
@@ -1133,6 +1175,14 @@
 			FORMW8ONFILE|Form W-8 On File|113|5|1
 			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 			FOREIGNTIN|Foreign TIN|115|0|22
+			GIIN|GIIN|116|0|19
+			SUBSTANTIALOWNER|Substantial Owner|117|5|1
+			CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+			PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+			ACTIVEDUTY|Active Duty|120|5|2
+			ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -1143,6 +1193,7 @@
 			CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 			DBASHORTNAME|DBA Short Name|808|0|16
 			DBALONGNAME|DBA Long Name|809|1|40
+			PREFERREDCONTACT|Preferred Contact|810|1|40
 		***|SHARE TRANSFER|Share Transfer
 			TYPE|Transfer Type|1|5|9
 			ACCOUNTNUMBER|Account|2|0|10
@@ -1973,67 +2024,67 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 14 for 14|2|7|null
-		CONTRLASTYEAR:2|Contr 14 for 13|2|7|null
-		CONTRLASTYEAR:3|Contr 14 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 14 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 14 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 14 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 14 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 14 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 14 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 14 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 14 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 14 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 14 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 14 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 14 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 14 Excess 14|3|7|null
-		DISTRLASTYEAR:9|Distr 14 Excess 13|3|7|null
-		DISTRLASTYEAR:10|Distr 14 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 14 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 14 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 14 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 14 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 14 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 14 Ex Earn 14|3|7|null
-		DISTRLASTYEAR:17|Distr 14 Ex Earn 13|3|7|null
-		CONTRTHISYEAR:1|Contr 15 for 15|4|7|null
-		CONTRTHISYEAR:2|Contr 15 for 14|4|7|null
-		CONTRTHISYEAR:3|Contr 15 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 15 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 15 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 15 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 15 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 15 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 15 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 15 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 15 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 15 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 15 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 15 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 15 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 15 Excess 15|5|7|null
-		DISTRTHISYEAR:9|Distr 15 Excess 14|5|7|null
-		DISTRTHISYEAR:10|Distr 15 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 15 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 15 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 15 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 15 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 15 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 15 Ex Earn 15|5|7|null
-		DISTRTHISYEAR:17|Distr 15 Ex Earn 14|5|7|null
+		CONTRLASTYEAR:1|Contr 15 for 15|2|7|null
+		CONTRLASTYEAR:2|Contr 15 for 14|2|7|null
+		CONTRLASTYEAR:3|Contr 15 Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr 15 Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr 15 Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr 15 Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr 15 Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr 15 Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr 15 No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr 15 Exception|3|7|null
+		DISTRLASTYEAR:3|Distr 15 Disability|3|7|null
+		DISTRLASTYEAR:4|Distr 15 Death|3|7|null
+		DISTRLASTYEAR:5|Distr 15 Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr 15 Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr 15 Normal|3|7|null
+		DISTRLASTYEAR:8|Distr 15 Excess 15|3|7|null
+		DISTRLASTYEAR:9|Distr 15 Excess 14|3|7|null
+		DISTRLASTYEAR:10|Distr 15 Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr 15 Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr 15 Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr 15 Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr 15 Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr 15 Fee|3|7|null
+		DISTRLASTYEAR:16|Distr 15 Ex Earn 15|3|7|null
+		DISTRLASTYEAR:17|Distr 15 Ex Earn 14|3|7|null
+		CONTRTHISYEAR:1|Contr 16 for 16|4|7|null
+		CONTRTHISYEAR:2|Contr 16 for 15|4|7|null
+		CONTRTHISYEAR:3|Contr 16 Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr 16 Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr 16 Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr 16 Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr 16 Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr 16 Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr 16 No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr 16 Exception|5|7|null
+		DISTRTHISYEAR:3|Distr 16 Disability|5|7|null
+		DISTRTHISYEAR:4|Distr 16 Death|5|7|null
+		DISTRTHISYEAR:5|Distr 16 Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr 16 Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr 16 Normal|5|7|null
+		DISTRTHISYEAR:8|Distr 16 Excess 16|5|7|null
+		DISTRTHISYEAR:9|Distr 16 Excess 15|5|7|null
+		DISTRTHISYEAR:10|Distr 16 Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr 16 Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr 16 Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr 16 Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr 16 Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr 16 Fee|5|7|null
+		DISTRTHISYEAR:16|Distr 16 Ex Earn 16|5|7|null
+		DISTRTHISYEAR:17|Distr 16 Ex Earn 15|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 14|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 15|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 15|16|7|null
+		IRARMD|Req Min Distrib 16|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
@@ -2165,6 +2216,14 @@
 			FORMW8ONFILE|Form W-8 On File|113|5|1
 			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 			FOREIGNTIN|Foreign TIN|115|0|22
+			GIIN|GIIN|116|0|19
+			SUBSTANTIALOWNER|Substantial Owner|117|5|1
+			CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+			PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+			ACTIVEDUTY|Active Duty|120|5|2
+			ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -2175,6 +2234,7 @@
 			CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 			DBASHORTNAME|DBA Short Name|808|0|16
 			DBALONGNAME|DBA Long Name|809|1|40
+			PREFERREDCONTACT|Preferred Contact|810|1|40
 		***|IRS DISTRIBUTION|IRS Distribution
 			TYPE|IRS Distribution Type|1|5|3
 			EFFECTIVEDATE|Effective Date|2|3|null
@@ -2729,6 +2789,7 @@
 		STMTCCINTBILLEDYTD|Stmt CC Interest Billed YTD|312|7|null
 		STMTMAXLATEFEE|Stmt Max Late Fee|313|7|null
 		VARIABLERATEINDICATOR|Variable Rate Indicator|314|5|1
+		LASTACCRUALREVERSAL|Last Accrual Reversal|315|7|null
 		MFOELID|MFOEL ID|316|5|99
 		LATECHGPDFROMOPEN|Late Charge Paid From Open|317|7|null
 		STMTLTCHGPDFRMOPN|Stmt Late Charge Pd From Open|318|7|null
@@ -2846,6 +2907,27 @@
 		PREPAYMENTPENALTY|Prepayment Penalty|373|5|1
 		NEXTRATECHANGEDATE|Next Rate Change Date|374|3|null
 		RATECHANGECYCLEMONTHS|Rate Change Cycle Months|375|5|999
+		TOTALACCRUALREVERSAL|Total Accrual Reversal|376|7|null
+		LASTACCRREVERSALDATE|Last Accrual Reversal Date|377|3|null
+		ACCRREINSTATEMENTDATE|Accr Reinstatement Date|378|3|null
+		ACCRUALSTATUS|Accrual Status|379|5|1
+		ARMNOTICE|ARM Notice|380|5|2
+		INITIALARMNOTICE|Initial ARM Notice|381|5|3
+		INITARMNOTICECREATIONDATE|Init ARM Notice Creation Date|382|3|null
+		LASTARMNOTICECREATIONDATE|Last ARM Notice Creation Date|383|3|null
+		OCCUPANCYTYPE|Occupancy Type|384|5|4
+		AMORTIZATIONTERM|Amortization Term|385|5|600
+		PREPAYMENTPENALTYEXPDATE|Prepayment Penalty Exp Date|386|3|null
+		RATEROUNDINGMETHOD|Rate Rounding Method|387|5|2
+		ROUNDRATETO|Round Rate To|388|2|null
+		PROPERTYADDRESSTYPE|Property Address Type|389|5|2
+		PROPERTYJURISDICTION|Property Jurisdiction|390|0|40
+		ASSESSORPARCELNUMBER|Assessor Parcel Number|391|0|40
+		BEGINNINGYEARBALANCE|Beginning Year Balance|392|7|null
+		PREVBEGINNINGYEARBALANCE|Prev Beginning Year Balance|393|7|null
+		MILITARYAPRLOAN|Military APR Loan|394|5|1
+		SEG0CURRSTMTINTACCRD|Seg 0 Current Stmt Int Accr|395|7|null
+		SEG0PREVSTMTINTACCRD|Seg 0 Previous Stmt Int Accr|396|7|null
 		AVAILABLECREDIT|Available Credit|800|7|null
 		INTERESTDUE|Interest Due|801|7|null
 		LATECHARGEDUE|Late Charge Due|802|7|null
@@ -2919,6 +3001,7 @@
 		STATEMENTOLDBALANCE|Statement Old Balance|849|7|null
 		BEGINNINGCYCLEDATE|Beginning Cycle Date|850|3|null
 		MAXLOANDUEDATE|Max Loan Due Date|851|3|null
+		NEXTSTMTDATE|Next Statement Date|852|3|null
 		***|LOAN HOLD|Loan Hold
 			TYPE|Hold Type|1|5|21
 			EFFECTIVEDATE|Effective Date|2|3|null
@@ -3066,6 +3149,14 @@
 			FORMW8ONFILE|Form W-8 On File|113|5|1
 			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 			FOREIGNTIN|Foreign TIN|115|0|22
+			GIIN|GIIN|116|0|19
+			SUBSTANTIALOWNER|Substantial Owner|117|5|1
+			CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+			PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+			ACTIVEDUTY|Active Duty|120|5|2
+			ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -3076,6 +3167,7 @@
 			CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 			DBASHORTNAME|DBA Short Name|808|0|16
 			DBALONGNAME|DBA Long Name|809|1|40
+			PREFERREDCONTACT|Preferred Contact|810|1|40
 		***|LOAN PLEDGE|Loan Pledge
 			TYPE|Pledge Type|1|5|5
 			ACCOUNTNUMBER|Account Number|2|0|10
@@ -3216,6 +3308,14 @@
 				FORMW8ONFILE|Form W-8 On File|113|5|1
 				W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 				FOREIGNTIN|Foreign TIN|115|0|22
+				GIIN|GIIN|116|0|19
+				SUBSTANTIALOWNER|Substantial Owner|117|5|1
+				CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+				PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+				ACTIVEDUTY|Active Duty|120|5|2
+				ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+				ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+				ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 				SHORTNAME|Short Name|800|0|16
 				LONGNAME|Long Name|801|1|40
 				LICENSE|License|802|0|20
@@ -3226,6 +3326,7 @@
 				CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 				DBASHORTNAME|DBA Short Name|808|0|16
 				DBALONGNAME|DBA Long Name|809|1|40
+				PREFERREDCONTACT|Preferred Contact|810|1|40
 		***|LOAN TRANSFER|Loan Transfer
 			TYPE|Transfer Type|1|5|9
 			ACCOUNTNUMBER|Account|2|0|10
@@ -3318,6 +3419,11 @@
 			PRIORANALYSISSOURCE|Prior Analysis Source|58|5|2
 			FINALANALYSISDATE|Final Analysis Date|59|3|null
 			LASTANALYSISPROCESSED|Last Analysis Processed|60|5|6
+			CLOSINGREQUEST|Escrow Closing Request|61|5|2
+			REMAINOPENOPTION|Escrow Remain Open Option|62|5|1
+			NOTICEDATE|Escrow Notice Date|63|3|null
+			NOTICECLOSINGDATE|Escrow Notice Closing Date|64|3|null
+			NOTICECLOSINGFEE|Escrow Notice Closing Fee|65|7|null
 		***|LOAN ESCROW|Loan Escrow
 			ESCROWTYPE|Escrow Type|1|5|99
 			NEXTDISTRIBDATE|Next Distribution Date|2|3|null
@@ -3390,7 +3496,20 @@
 			DUEDAY1|Due Day 1|10|5|31
 			DUEDAY2|Due Day 2|11|5|31
 			RECORDCHANGEDATE|Record Change Date|12|3|null
+			USERATECHANGEPROCESSING|Use Rate Change Processing?|23|5|1
 			PAYMENTDESCRIPTION|Payment Description|800|0|30
+		***|LOAN RATECHANGE|Loan Rate Change
+			RATECHANGEDATE|Rate Change Date|1|3|null
+			ID|ID|2|0|4
+			LOCATOR|Locator|3|4|null
+			CREATIONDATE|Creation Date|4|3|null
+			RECORDCHANGEDATE|Record Change Date|5|3|null
+			PAYMENTCHANGEDATE|Payment Change Date|6|3|null
+			INTERESTRATE|Interest Rate|7|2|null
+			INDEXRATE|Index Rate|8|2|null
+			REAMORTIZEDPAYMENT|Reamortized Payment|9|7|null
+			PERIODICSTARTRATE|Periodic Cap Start Rate|10|2|null
+			PERIODICSTARTDATE|Periodic Cap Start Date|11|3|null
 		***|LOAN LNSEGMENT|Loan Segment
 			ID|Segment ID|1|0|4
 			DESCRIPTION|Description|2|0|30
@@ -4010,6 +4129,14 @@
 			FORMW8ONFILE|Form W-8 On File|113|5|1
 			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 			FOREIGNTIN|Foreign TIN|115|0|22
+			GIIN|GIIN|116|0|19
+			SUBSTANTIALOWNER|Substantial Owner|117|5|1
+			CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+			PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+			ACTIVEDUTY|Active Duty|120|5|2
+			ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4020,6 +4147,7 @@
 			CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 			DBASHORTNAME|DBA Short Name|808|0|16
 			DBALONGNAME|DBA Long Name|809|1|40
+			PREFERREDCONTACT|Preferred Contact|810|1|40
 		***|EXTERNALLOAN TRANSFER|External Loan Transfer
 			TYPE|Transfer Type|1|5|9
 			ACCOUNTNUMBER|Account|2|0|10
@@ -4444,6 +4572,14 @@
 			FORMW8ONFILE|Form W-8 On File|113|5|1
 			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 			FOREIGNTIN|Foreign TIN|115|0|22
+			GIIN|GIIN|116|0|19
+			SUBSTANTIALOWNER|Substantial Owner|117|5|1
+			CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+			PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+			ACTIVEDUTY|Active Duty|120|5|2
+			ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4454,6 +4590,7 @@
 			CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 			DBASHORTNAME|DBA Short Name|808|0|16
 			DBALONGNAME|DBA Long Name|809|1|40
+			PREFERREDCONTACT|Preferred Contact|810|1|40
 		***|EFT TRANSFER|EFT Transfer
 			TYPE|Transfer Type|1|5|9
 			ACCOUNTNUMBER|Account|2|0|10
@@ -4754,6 +4891,14 @@
 			FORMW8ONFILE|Form W-8 On File|113|5|1
 			W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 			FOREIGNTIN|Foreign TIN|115|0|22
+			GIIN|GIIN|116|0|19
+			SUBSTANTIALOWNER|Substantial Owner|117|5|1
+			CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+			PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+			ACTIVEDUTY|Active Duty|120|5|2
+			ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4764,6 +4909,7 @@
 			CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 			DBASHORTNAME|DBA Short Name|808|0|16
 			DBALONGNAME|DBA Long Name|809|1|40
+			PREFERREDCONTACT|Preferred Contact|810|1|40
 		***|CARD NOTE|Card Note
 			ID|ID|1|0|2
 			IDTYPE|ID Type|2|5|4
@@ -4839,6 +4985,7 @@
 			ENABLEFM|Enable FM|9|5|1
 			QUALIFIER|Qualifier|10|0|3
 			RECORDCHANGEDATE|Record Change Date|11|3|null
+			EXTLOANACCOUNT|External Loan Account Number|12|0|20
 	***|LOANAPP|Application
 		ID|Application ID|1|0|2
 		TYPE|Application Type|2|5|14
@@ -5112,12 +5259,15 @@
 		COMBINEDCABTLIMITMAX|Combined CA/BT Limit Max|207|7|null
 		MAXDUEDATEADVANCEPERIOD|Max Due Date Advance Period|208|5|9999
 		INITIALBCDSETTINGOPTION|Initial BCD Setting Option|209|5|1
+		PROPERTYADDRESSTYPE|Property Address Type|210|5|2
+		PROPERTYJURISDICTION|Property Jurisdiction|211|0|40
+		ASSESSORPARCELNUMBER|Assessor Parcel Number|212|0|40
 		LOANTOVALUERATIO|Loan To Value|800|2|null
 		PMILTVRATIO|PMI Loan To Value Ratio|801|2|null
 		QUEUE|Queue|802|4|null
 		SEG0PAYMENT|Seg 0 Payment|803|7|null
 		***|LOANAPP PERSON|Application Person
-			PERSONCODE|Person Code|1|5|12
+			PERSONCODE|Person Code|1|5|13
 			ACCOUNTNUMBER|Member Account Number|2|0|10
 			BIRTHDATE|Birthdate|3|3|null
 			MARITALSTATUS|Marital Status|4|5|8
@@ -5249,10 +5399,12 @@
 			EXTRAINFO|Extra Information|104|0|40
 			RECORDCHANGEDATE|Record Change Date|105|3|null
 			PHONETYPE|Phone Type|106|5|1
+			PREFERREDCONTACTMETHOD|Preferred Contact Method|107|5|9
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			DRIVERSLIC|Drivers License No|802|0|20
 			DRIVERSLICSTATE|Drivers License State|803|0|2
+			PREFERREDCONTACT|Preferred Contact|804|1|40
 		***|LOANAPP FINANCE|Application Finance
 			OWNERCODE|Owner Code|1|5|2
 			ITEMTYPE|Item Type|2|0|2
@@ -5285,6 +5437,7 @@
 			DUEDAY1|Due Day 1|10|5|31
 			DUEDAY2|Due Day 2|11|5|31
 			RECORDCHANGEDATE|Record Change Date|12|3|null
+			USERATECHANGEPROCESSING|Use Rate Change Processing?|23|5|1
 			PAYMENTDESCRIPTION|Payment Description|800|0|30
 		***|LOANAPP LNSEGMENT|Application Segment
 			ID|Segment ID|1|0|4
@@ -5403,6 +5556,11 @@
 			PRIORANALYSISSOURCE|Prior Analysis Source|58|5|2
 			FINALANALYSISDATE|Final Analysis Date|59|3|null
 			LASTANALYSISPROCESSED|Last Analysis Processed|60|5|6
+			CLOSINGREQUEST|Escrow Closing Request|61|5|2
+			REMAINOPENOPTION|Escrow Remain Open Option|62|5|1
+			NOTICEDATE|Escrow Notice Date|63|3|null
+			NOTICECLOSINGDATE|Escrow Notice Closing Date|64|3|null
+			NOTICECLOSINGFEE|Escrow Notice Closing Fee|65|7|null
 		***|LOANAPP ESCROW|Application Escrow
 			ESCROWTYPE|Escrow Type|1|5|99
 			NEXTDISTRIBDATE|Next Distribution Date|2|3|null
@@ -6879,6 +7037,13 @@
 		ACHACKNOWLEDGE|ACH Acknowledgement|37|5|1
 		ADDITIONALDESC|Additional Description|38|0|40
 		RECORDCHANGEDATE|Record Change Date|39|3|null
+		INVOICEFREQUENCY|Invoice Frequency|40|5|13
+		RECURRENCEENDDATE|Recurrence End Date|41|3|null
+		ORIGINATINGINVOICENUMBER|Originating Invoice Number|42|0|20
+		TOTALINVOICEAMTDUE|Total Invoice Amount Due|43|7|null
+		APPAYMENTTERMSTYPE|AP Payment Terms Type|44|5|999
+		RECURRENCEDAY1|Recurrence Day 1|45|5|31
+		RECURRENCEDAY2|Recurrence Day 2|46|5|31
 		UNPAIDBALANCE|Unpaid Balance|800|7|null
 		GLNAMEACCTSPAY|GL Name Accts Payable|801|1|40
 		GLNAMEDISCOUNT|GL Name Discount|802|1|40
@@ -6896,6 +7061,8 @@
 		GLNAMEEXPENSE:12|GL Name Expense 12|803|1|40
 		TOTALEXPENSES|Total Expenses|804|7|null
 		TOTALPAYMENTS|Total Payments|805|7|null
+		REMAININGRECURRINGINVOICES|Remaining Recurring Invoices|806|5|9999
+		NEXTRECURINVOICEDATE|Next Recurring Invoice Date|807|3|null
 		***|INVOICE NOTE|AP Invoice Note
 			ID|ID|1|0|2
 			IDTYPE|ID Type|2|5|4
@@ -6978,7 +7145,7 @@
 	TRANPOSTDATE|Transmission Date|17|3|null
 	SETTLEMENTDATE|Settlement Date|18|3|null
 	EFFECTIVEDATE|Effective Date|19|3|null
-	GLCODE|GL Code|20|5|1099
+	GLCODE|GL Code|20|5|1999
 	GLCATEGORY|GL Category|21|4|null
 	GLCODE1|GL Code 1|22|4|null
 	PROCESSORACCOUNT|Processor Account|23|0|20
@@ -7180,7 +7347,7 @@
 	ORIGINALAMOUNT|Original Amount|60|6|null
 	TRANSUBTYPE|Transaction SubType|61|5|99
 	OURPREAUTHCODE|Our PreAuth Code|62|5|3
-	OURTRANCODE|Our Transaction Code|63|5|7
+	OURTRANCODE|Our Transaction Code|63|5|16
 	OURACCOUNT|Our Account Number|64|0|10
 	OURACCTCODE1|Our Account Code 1|65|5|10
 	OURACCTCODE2|Our Account Code 2|66|5|4
@@ -7296,13 +7463,13 @@
 	CVV2RESULT|CVV2 Result|176|0|1
 	CAVVRESULT|CAVV Result|177|0|1
 	NAMERESULT|Name Result|178|0|1
-	NETWORKGLCODE|Network GL Code|179|5|999
-	OURFEEGLCODE|Our Fee GL Code|180|5|999
-	ISAFEEGLCODE|VISA ISA Fee GL Code|181|5|999
-	CCAFEEGLCODE|MasterCard CCA Fee GL Code|182|5|999
-	ICAFEEGLCODE|MasterCard ICA Fee GL Code|183|5|999
-	TERMINALGLCODE|Terminal GL Code|184|5|999
-	TERMSURCHARGEGLCODE|Terminal Surcharge GL Code|185|5|999
+	NETWORKGLCODE|Network GL Code|179|5|1999
+	OURFEEGLCODE|Our Fee GL Code|180|5|1999
+	ISAFEEGLCODE|VISA ISA Fee GL Code|181|5|1999
+	CCAFEEGLCODE|MasterCard CCA Fee GL Code|182|5|1999
+	ICAFEEGLCODE|MasterCard ICA Fee GL Code|183|5|1999
+	TERMINALGLCODE|Terminal GL Code|184|5|1999
+	TERMSURCHARGEGLCODE|Terminal Surcharge GL Code|185|5|1999
 	DEPOSITTYPE|Deposit Type|186|5|5
 	HOLDACTION|Hold Action|187|5|5
 	HOLDLOCATOR|Hold Locator|188|4|null
@@ -7419,6 +7586,7 @@
 	FILEUPDATEERROR|File Update Error|269|0|80
 	HOLDMATCHINGDETAILS|Hold Matching Details|270|0|40
 	AMLTYPE|AML Type|271|5|2
+	SINGLECURRENCYFLAG|Single Currency?|272|5|1
 ***|CDMDIALOG|Cash Dispense Dialog
 	TRANSMISSIONDATE|Transmission Date|1|3|null
 	TRANSMISSIONTIME|Transmission Time|2|5|1259
@@ -8675,7 +8843,7 @@
 	GLREFERENCE|GL Reference|36|0|10
 	GLREFERENCE1|GL Reference 1|37|0|10
 	GLCOMMENT|GL Comment|38|0|40
-	GLCODE|GL Code|39|5|1099
+	GLCODE|GL Code|39|5|1999
 	GLCODE1|GL Code 1|40|4|null
 	GLCATEGORY|GL Category|41|4|null
 	COMMENTCODE|Comment Code|43|5|9999
@@ -8787,23 +8955,30 @@
 	VERIFYDATE|Verified Status Date|15|3|null
 	VERIFYAMENDBYUSER|Verified Amendment Status By|16|0|20
 	VERIFYAMENDDATE|Verified Amendment Status Date|17|3|null
+	TCC|Transmitter Control Code|18|0|8
+	FITYPE|Type of Financial Institution|19|0|1
 	APPROVEBYUSER|Approved Status By|20|0|20
 	APPROVEDATE|Approved Status Date|21|3|null
 	APPROVEAMENDBYUSER|Approved Amendment Status By|22|0|20
 	APPROVEAMENDDATE|Approved Amendment Status Date|23|3|null
+	FIOTHERTYPE|Type of Financial Inst Other|24|0|40
+	FIIDNUMBERTYPE|Financial Inst ID Number Type|25|0|1
 	SUBMITBYUSER|Submitted Status By|26|0|20
 	SUBMITDATE|Submitted Status Date|27|3|null
 	RESUBAMENDBYUSER|Resub Amendment Status By|28|0|20
 	RESUBAMENDDATE|Resub Amendment Status Date|29|3|null
+	FIIDNUMBER|Financial Inst ID Number|30|0|10
+	FILINGTYPE|Type of Filing|31|0|1
 	ACKBYUSER|Acknowledged Status By|32|0|20
 	ACKDATE|Acknowledged Status Date|33|3|null
 	ACKERRORBYUSER|Ack w/Errors Status By|34|0|20
 	ACKERRORDATE|Ack w/Errors Status Date|35|3|null
+	FILINGDATE|Date Filed|36|3|null
 	CASHINTOTAL|Total Cash In|44|7|null
 	CASHOUTTOTAL|Total Cash Out|45|7|null
 	RSNARMCARFLAG|Armored Car Service Rsn?|49|5|1
 	RSNMAILSHIPFLAG|Mail Dep or Shipment Rsn?|50|5|1
-	RSNMULTITRANSFLAG|Multiple Trans Rsn?|52|5|1
+	RSNAGGREGATEFLAG|Aggregated Trans Rsn?|52|5|1
 	BACKFILEFLAG|Backfile?|55|5|1
 	DCNUMBER|Document Control Number|56|0|14
 	PREPARER|Preparer Name|57|0|35
@@ -8943,6 +9118,8 @@
 		LOCATOR|Locator|8|4|null
 		LASTFMDATE|Last FM Date|9|3|null
 		RECORDCHANGEDATE|Record Change Date|10|3|null
+		TYPE|Branch Type|11|5|3
+		COUNTRYCODE|Country Code|12|0|2
 	***|CTR NOTE|CTR Note
 		ID|ID|1|0|2
 		IDTYPE|ID Type|2|5|4
@@ -9490,11 +9667,20 @@
 	FORMW8ONFILE|Form W-8 On File|66|5|1
 	W8EXPIRATIONDATE|W-8 Expiration Date|67|3|null
 	FOREIGNTIN|Foreign TIN|68|0|22
+	GIIN|GIIN|69|0|19
+	SUBSTANTIALOWNER|Substantial Owner|70|5|1
+	CHAPTER4STATUSCODE|Chapter 4 Status Code|71|0|2
+	PREFERREDCONTACTMETHOD|Preferred Contact Method|72|5|9
+	ACTIVEDUTY|Active Duty|73|5|2
+	ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|74|3|null
+	ACTIVEDUTYSTARTDATE|Active Duty Start Date|75|3|null
+	ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|76|3|null
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
 	DBASHORTNAME|DBA Short Name|803|0|16
 	DBALONGNAME|DBA Long Name|804|1|40
+	PREFERREDCONTACT|Preferred Contact|805|1|40
 	***|MEMBERREC FMHISTORY|Member FM History
 		ACCOUNTNUMBER|Account Number|2|0|17
 		IDTYPE|ID Type|3|5|12
@@ -9707,6 +9893,14 @@
 	FORMW8ONFILE|Form W-8 On File|113|5|1
 	W8EXPIRATIONDATE|W-8 Expiration Date|114|3|null
 	FOREIGNTIN|Foreign TIN|115|0|22
+	GIIN|GIIN|116|0|19
+	SUBSTANTIALOWNER|Substantial Owner|117|5|1
+	CHAPTER4STATUSCODE|Chapter 4 Status Code|118|0|2
+	PREFERREDCONTACTMETHOD|Preferred Contact Method|119|5|9
+	ACTIVEDUTY|Active Duty|120|5|2
+	ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|121|3|null
+	ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
+	ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
@@ -9717,6 +9911,7 @@
 	CURRMONTHPAYCHGDATE|Curr Mo Pay Last Updated|807|3|null
 	DBASHORTNAME|DBA Short Name|808|0|16
 	DBALONGNAME|DBA Long Name|809|1|40
+	PREFERREDCONTACT|Preferred Contact|810|1|40
 	***|NONACCTNAME FMHISTORY|Non Account Name FM History
 		ACCOUNTNUMBER|Account Number|2|0|17
 		IDTYPE|ID Type|3|5|12
@@ -14078,6 +14273,27 @@
 	SECURITYCODE:1534|Parameter FM SymXchange Client|15|5|1
 	SECURITYCODE:1535|Parameter FM SymXchange Common|15|5|1
 	SECURITYCODE:1536|Param FM Periodic Mtg Criteria|15|5|1
+	SECURITYCODE:1537|Purge Collateral - Online|15|5|1
+	SECURITYCODE:1538|Purge Transactions - Online|15|5|1
+	SECURITYCODE:1539|Param FM AP Pmt Terms Tables|15|5|1
+	SECURITYCODE:1540|Loan Rate Change Creation|15|5|1
+	SECURITYCODE:1541|Loan Rate Change Revision|15|5|1
+	SECURITYCODE:1542|Loan Rate Change Deletion|15|5|1
+	SECURITYCODE:1543|Host SymXchange Clear Totals|15|5|1
+	SECURITYCODE:1544|Host SymXchange Balancing|15|5|1
+	SECURITYCODE:1545|Host SymXchange Bal Report|15|5|1
+	SECURITYCODE:1546|Host SymXchange Bal Reset|15|5|1
+	SECURITYCODE:1547|Host SymXchange Bal Adjustment|15|5|1
+	SECURITYCODE:1548|Launch Item Configuration|15|5|1
+	SECURITYCODE:1549|CDM Open/Close Device|15|5|1
+	SECURITYCODE:1550|CDM Inventory Update|15|5|1
+	SECURITYCODE:1551|CDM Clear Totals|15|5|1
+	SECURITYCODE:1552|Card Create Wizard Activate|15|5|1
+	SECURITYCODE:1553|Configure Custom Screens|15|5|1
+	SECURITYCODE:1554|Host UX Services Status|15|5|1
+	SECURITYCODE:1555|Host UX Services Onhost|15|5|1
+	SECURITYCODE:1556|Host UX Services Offhost|15|5|1
+	SECURITYCODE:1557|Host UX Services Refresh|15|5|1
 	SECURITYAMOUNT:1|Check Received Limit|16|7|null
 	SECURITYAMOUNT:2|Disbursal Limit|16|7|null
 	SECURITYAMOUNT:3|General Ledger Limit|16|7|null
@@ -15548,6 +15764,11 @@
 	PREVIOUSPASSWORDHASH4:12|Previous Password Hash 4 (12)|67|0|40
 	PREVIOUSLOGONDATE|Previous Logon Date|68|3|null
 	PREVIOUSLOGONTIME|Previous Logon Time|69|5|2359
+	SSODOMAINUSERSUB1|SSO Domain User Sub 1|70|0|40
+	SSODOMAINUSERSUB2|SSO Domain User Sub 2|71|0|40
+	SSODOMAINUSERSUB3|SSO Domain User Sub 3|72|0|40
+	SSODOMAINUSERSUB4|SSO Domain User Sub 4|73|0|12
+	CONFIGURATIONGROUP|Configuration Group|74|5|100
 	***|ACTIVITY|Activity
 		USERNUMBER|User Number|1|5|9999
 		DATE|Activity Date|2|3|null
