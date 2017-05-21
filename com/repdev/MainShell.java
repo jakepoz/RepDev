@@ -3556,6 +3556,7 @@ public class MainShell {
 			}
 		});
 
+		/*
 		MenuItem helpDocsItem = new MenuItem(docsMenu, SWT.PUSH);
 		helpDocsItem.setText("&RepDev Docs");
 		helpDocsItem.addSelectionListener(new SelectionAdapter() {
@@ -3569,7 +3570,7 @@ public class MainShell {
 				}				
 			}			
 		});
-
+		*/
 		new MenuItem(docsMenu, SWT.SEPARATOR);
 
 		// Populate Docs Menu:
