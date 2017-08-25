@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class PrintItem implements Comparable{
+public class PrintItem implements Comparable<PrintItem>{
 		String title;
 		int seq, size, pages, batchSeq;
 		Date date;
@@ -85,7 +85,7 @@ public class PrintItem implements Comparable{
 			this.title = title;
 		}
 
-		public int compareTo(Object arg0) {
+		public int compareTo(PrintItem arg0) {
 			if( !(arg0 instanceof PrintItem))
 				return 0;
 			
