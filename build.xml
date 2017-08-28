@@ -6,7 +6,15 @@
 	<property name="src" location="./" />
 	<property name="build" location="bin" />
 	<property name="dist" location="dist" />
+	<property name="swt-win" location="swt-win" />
+	<property name="swt-lin" location="swt-lin" />
 
+	<path id="project-classpath">
+		<fileset dir="${src}" includes="*.jar" />
+		<fileset dir="${swt-win}" includes="*.jar" />
+		<fileset dir="${swt-lin}" includes="*.jar" />
+	</path>
+	
 	<target name="init">
 		<!-- Create the time stamp -->
 		<tstamp />
@@ -18,7 +26,7 @@
 
 	<target name="compile" depends="init" description="compile the source ">
 		<!-- Compile the java code from ${src} into ${build} -->
-		<javac srcdir="${src}" destdir="${build}" />
+		<javac srcdir="${src}" destdir="${build}" classpathref="project-classpath" includeantruntime="false"/>
 	</target>
 	
 	<target name="dist" description="generate the distribution">
