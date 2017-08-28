@@ -464,16 +464,6 @@ public class DirectSymitarSession extends SymitarSession {
 			this.command = command;
 		}
 
-		public Command(String command, HashMap<String, String> parameters, String data) {
-			super();
-			this.command = command;
-			this.parameters = parameters;
-			this.data = data;
-
-			parameters.put("MsgId", String.valueOf(currentMessageId));
-			currentMessageId++;
-		}
-
 		public Command() {
 			parameters.put("MsgId", String.valueOf(currentMessageId));
 			currentMessageId++;
@@ -541,20 +531,12 @@ public class DirectSymitarSession extends SymitarSession {
 			this.command = command;
 		}
 
-		public String getData() {
-			return data;
-		}
-
 		public void setData(String data) {
 			this.data = data;
 		}
 
 		public HashMap<String, String> getParameters() {
 			return parameters;
-		}
-
-		public void setParameters(HashMap<String, String> parameters) {
-			this.parameters = parameters;
 		}
 	}
 
@@ -642,16 +624,18 @@ public class DirectSymitarSession extends SymitarSession {
 		try{
 			write("mm3" + (char)27); //Managment menu #3- repgen, of course!!
 			
-			log(readNextCommand().toString());
-
+			while ( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+			
 			write("7\r");
+			
 			log(readNextCommand().toString());
 			log(readNextCommand().toString());
 			
 			write(filename+"\r");
 			
-			cur = readNextCommand();
-			log(cur.toString());
+			while (!(cur = readNextCommand()).getCommand().equals("SpecfileErr"))
+				log(cur.toString());
 			
 			if( cur.getParameters().get("Warning") != null || cur.getParameters().get("Error") != null){
 				readNextCommand();
@@ -1045,8 +1029,6 @@ public class DirectSymitarSession extends SymitarSession {
 					String line = cur.getParameters().get("Text");				
 					String[] tempQueues = line.substring(line.indexOf(":") + 1).split(",");
 					
-					int i = 0;
-					
 					for( String temp : tempQueues){
 						temp = temp.trim();
 						
@@ -1065,8 +1047,6 @@ public class DirectSymitarSession extends SymitarSession {
 						{
 							queueAvailable[Integer.parseInt(temp)] = true;
 						}
-						
-						i++;
 					}
 				}
 			}
@@ -1262,8 +1242,6 @@ public class DirectSymitarSession extends SymitarSession {
 					String line = cur.getParameters().get("Text");				
 					String[] tempQueues = line.substring(line.indexOf(":") + 1).split(",");
 					
-					int i = 0;
-					
 					for( String temp : tempQueues){
 						temp = temp.trim();
 						
@@ -1282,8 +1260,6 @@ public class DirectSymitarSession extends SymitarSession {
 						{
 							queueAvailable[Integer.parseInt(temp)] = true;
 						}
-						
-						i++;
 					}
 				}
 			}
@@ -1478,9 +1454,11 @@ public class DirectSymitarSession extends SymitarSession {
 
 			write("mm3" + (char)27); //Managment menu #3- repgen, of course!!
 			
-			log(readNextCommand().toString());
+			while ( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
 
 			write("8\r");
+			
 			log(readNextCommand().toString());
 			log(readNextCommand().toString());
 			
@@ -1603,6 +1581,8 @@ public class DirectSymitarSession extends SymitarSession {
 					}
 				}
 			}
+			
+			if (in.ready()) { cur = readNextCommand(); log(cur); }
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1651,7 +1631,8 @@ public class DirectSymitarSession extends SymitarSession {
 				}
 					
 			}
-					
+			
+			if (in.ready()) { cur = readNextCommand(); log(cur); }					
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
