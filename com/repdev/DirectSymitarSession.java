@@ -624,8 +624,9 @@ public class DirectSymitarSession extends SymitarSession {
 		try{
 			write("mm3" + (char)27); //Managment menu #3- repgen, of course!!
 			
-			log(readNextCommand().toString());
-
+			while ( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
+			
 			write("7\r");
 			
 			log(readNextCommand().toString());
@@ -1453,9 +1454,11 @@ public class DirectSymitarSession extends SymitarSession {
 
 			write("mm3" + (char)27); //Managment menu #3- repgen, of course!!
 			
-			log(readNextCommand().toString());
+			while ( !(cur = readNextCommand()).getCommand().equals("Input"))
+				log(cur);
 
 			write("8\r");
+			
 			log(readNextCommand().toString());
 			log(readNextCommand().toString());
 			
@@ -1578,6 +1581,8 @@ public class DirectSymitarSession extends SymitarSession {
 					}
 				}
 			}
+			
+			if (in.ready()) { cur = readNextCommand(); log(cur); }
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1626,7 +1631,8 @@ public class DirectSymitarSession extends SymitarSession {
 				}
 					
 			}
-					
+			
+			if (in.ready()) { cur = readNextCommand(); log(cur); }					
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
