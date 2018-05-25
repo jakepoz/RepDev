@@ -7469,11 +7469,15 @@
 	LOCALTRANDATE|Local Transaction Date|20|3|null
 	LOCALTRANTIME|Local Transaction Time|21|0|6
 	CAPTUREDATE|Capture Date|22|3|null
+	CARDNOTPRESENTFLAG|Card Not Present?|23|5|1
 	CONVERSIONDATE|Conversion Date|24|3|null
 	TRANSMISSIONDATE|Transmission Date|25|3|null
 	TRANSMISSIONTIME|Transmission Time|26|0|6
 	CARDEXPIRATIONDATE|Card Expiration Date|27|3|null
+	PERSON2PERSONFLAG|Person To Person Payment?|28|5|1
+	EMVFALLBACKFLAG|EMV Fallback?|29|5|1
 	OURSYSTEMDATE|Our System Date|30|3|null
+	PINLESSPINFLAG|PINless PIN Transaction?|31|5|1
 	TERMINALID|Terminal ID|34|0|16
 	NETWORKID|Network ID|35|0|15
 	DESTINATIONINSTID|Destination Institution ID|36|0|15
