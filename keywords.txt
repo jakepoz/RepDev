@@ -129,6 +129,7 @@ SETUP|The Report Generator™ performs the SETUP division once at the beginning of
 SETWARNING|SETWARNING is a special function used in the CHANGE command in Report Generator Batch File Maintenance to set the value and/or expiration date of an available Warning Code slot in an ACCOUNT Record Type, LOAN Record Type, SHARE Record Type or CARD Type|CHANGE SETWARNING 9
 SHARE|SHARE designates the Share record in the Account file|SHARE:TYPE
 SORT|The SORT division of a specfile contains the sort instructions, referred to as sort keys|SORT NAME:LAST END
+STATELESS|This keyword identifies a PowerOn specfile as having re-initialized defined variables. Must be the last specfile type keyword defined before the TARGET|SUBROUTINE DEMAND WINDOWS STATELESS
 STOPBLINK|The STOPBLINK keyword is a print control statement that cancels the BLINK statement|BLINK PRINT "BOB" STOPBLINK
 SUBROUTINE|The SUBROUTINE keyword identifies a specfile that can be called from another specfile using the INITSUBROUTINE keyword|SUBROUTINE DEMAND WINDOWS
 SUBTOTAL|SUBTOTAL is a sort key option used to identify where you want the report to create subtotals|SHARE:TYPE SUBTOTAL "SHARE TYPE"
