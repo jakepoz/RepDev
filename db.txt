@@ -367,6 +367,10 @@
 		ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 		ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 		LOB|LOB Code|124|0|2
+		LEI|Legal Entity Identifier|125|0|20
+		BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+		BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+		IRS1042SAMENDNUM|Amendment Number|128|5|9
 		SHORTNAME|Short Name|800|0|16
 		LONGNAME|Long Name|801|1|40
 		LICENSE|License|802|0|20
@@ -994,6 +998,8 @@
 		CHAPTER4WITHHELDYTD|Fed Chapter 4 Withheld YTD|190|7|null
 		CHAPTER4WITHHELDLSTYR|Fed Chapter 4 Withheld Lst Yr|191|7|null
 		YEARENDBALANCE|Year-End Balance|192|7|null
+		IRS1042SUFID|1042-S Unique Form ID|193|4|null
+		POSITIVEPAYDRAFT|Positive Pay Draft|194|5|99
 		AVAILABLEBALANCE|Available Balance|800|7|null
 		PAYEELINE:1|Payee Line 1|801|0|40
 		PAYEELINE:2|Payee Line 2|801|0|40
@@ -1178,6 +1184,10 @@
 			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			LOB|LOB Code|124|0|2
+			LEI|Legal Entity Identifier|125|0|20
+			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -1572,6 +1582,8 @@
 			BALSEGPREVFIRSTPMTDATE:1|Bal Seg 001 Prev First Pmt Dat|58|3|null
 			DRAFTNUMBER|Draft Number|59|0|10
 			TRACERNUMBER|Tracer Number|60|0|15
+			DISPOSITIONFEE|Disposition Fee|61|7|null
+			TERMINATIONFEE|Termination Fee|62|7|null
 			SUBSOURCEDESCR|Sub Source Description|800|1|40
 			TRANAMOUNT|Transaction Amount|801|7|null
 			CONFIRMATIONNUMBER|Confirmation Number|802|0|14
@@ -2019,67 +2031,69 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 16 for 16|2|7|null
-		CONTRLASTYEAR:2|Contr 16 for 15|2|7|null
-		CONTRLASTYEAR:3|Contr 16 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 16 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 16 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 16 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 16 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 16 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 16 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 16 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 16 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 16 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 16 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 16 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 16 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 16 Excess 16|3|7|null
-		DISTRLASTYEAR:9|Distr 16 Excess 15|3|7|null
-		DISTRLASTYEAR:10|Distr 16 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 16 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 16 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 16 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 16 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 16 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 16 Ex Earn 16|3|7|null
-		DISTRLASTYEAR:17|Distr 16 Ex Earn 15|3|7|null
-		CONTRTHISYEAR:1|Contr 17 for 17|4|7|null
-		CONTRTHISYEAR:2|Contr 17 for 16|4|7|null
-		CONTRTHISYEAR:3|Contr 17 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 17 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 17 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 17 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 17 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 17 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 17 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 17 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 17 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 17 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 17 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 17 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 17 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 17 Excess 17|5|7|null
-		DISTRTHISYEAR:9|Distr 17 Excess 16|5|7|null
-		DISTRTHISYEAR:10|Distr 17 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 17 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 17 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 17 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 17 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 17 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 17 Ex Earn 17|5|7|null
-		DISTRTHISYEAR:17|Distr 17 Ex Earn 16|5|7|null
+		CONTRLASTYEAR:1|Contr 17 for 17|2|7|null
+		CONTRLASTYEAR:2|Contr 17 for 16|2|7|null
+		CONTRLASTYEAR:3|Contr 17 Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr 17 Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr 17 Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr 17 Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr 17 Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr 17 Unspecif|2|7|null
+		CONTRLASTYEAR:9|Contr 17 Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr 17 No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr 17 Exception|3|7|null
+		DISTRLASTYEAR:3|Distr 17 Disability|3|7|null
+		DISTRLASTYEAR:4|Distr 17 Death|3|7|null
+		DISTRLASTYEAR:5|Distr 17 Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr 17 Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr 17 Normal|3|7|null
+		DISTRLASTYEAR:8|Distr 17 Excess 17|3|7|null
+		DISTRLASTYEAR:9|Distr 17 Excess 16|3|7|null
+		DISTRLASTYEAR:10|Distr 17 Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr 17 Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr 17 Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr 17 Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr 17 Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr 17 Fee|3|7|null
+		DISTRLASTYEAR:16|Distr 17 Ex Earn 17|3|7|null
+		DISTRLASTYEAR:17|Distr 17 Ex Earn 16|3|7|null
+		CONTRTHISYEAR:1|Contr 18 for 18|4|7|null
+		CONTRTHISYEAR:2|Contr 18 for 17|4|7|null
+		CONTRTHISYEAR:3|Contr 18 Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr 18 Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr 18 Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr 18 Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr 18 Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr 18 Unspecif|4|7|null
+		CONTRTHISYEAR:9|Contr 18 Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr 18 No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr 18 Exception|5|7|null
+		DISTRTHISYEAR:3|Distr 18 Disability|5|7|null
+		DISTRTHISYEAR:4|Distr 18 Death|5|7|null
+		DISTRTHISYEAR:5|Distr 18 Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr 18 Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr 18 Normal|5|7|null
+		DISTRTHISYEAR:8|Distr 18 Excess 18|5|7|null
+		DISTRTHISYEAR:9|Distr 18 Excess 17|5|7|null
+		DISTRTHISYEAR:10|Distr 18 Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr 18 Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr 18 Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr 18 Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr 18 Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr 18 Fee|5|7|null
+		DISTRTHISYEAR:16|Distr 18 Ex Earn 18|5|7|null
+		DISTRTHISYEAR:17|Distr 18 Ex Earn 17|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 16|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 17|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 17|16|7|null
+		IRARMD|Req Min Distrib 18|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
@@ -2220,6 +2234,10 @@
 			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			LOB|LOB Code|124|0|2
+			LEI|Legal Entity Identifier|125|0|20
+			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -2571,9 +2589,9 @@
 		DEALERSTATE|Dealer State|167|0|2
 		DEALERCOUNTY|Dealer County|168|0|32
 		DEALERCITY|Dealer City|169|0|32
-		SALESTAXSTATEINDICATOR|Sales Tax State Indicator|170|5|2
-		SALESTAXCOUNTYINDICATOR|Sales Tax County Indicator|171|5|2
-		SALESTAXCITYINDICATOR|Sales Tax City Indicator|172|5|2
+		SALESTAXSTATEINDICATOR|Sales Tax State Indicator|170|5|4
+		SALESTAXCOUNTYINDICATOR|Sales Tax County Indicator|171|5|4
+		SALESTAXCITYINDICATOR|Sales Tax City Indicator|172|5|4
 		LEASETERMINATEDATE|Lease Termination Date|173|3|null
 		LEASETERMINATEFEE|Lease Termination Fee|174|7|null
 		DEALERRESERVE|Dealer Reserve|175|7|null
@@ -2950,6 +2968,19 @@
 		REINSTATEMENTSTMTMSGCODE|Reinstatement Stmt Msg Code|423|5|9999
 		CURRSTMTLOSSMITAMTDUE|Curr Stmt Temp LossMit AmtDue|424|7|null
 		PREVSTMTLOSSMITAMTDUE|Prev Stmt Temp LossMit AmtDue|425|7|null
+		MTGNUMPROP|Number of Mortgaged Properties|426|5|9999
+		BKCHAPTERREPORTED|Bankruptcy Chapter Reported|427|5|4
+		HMDAUNIVERSALLOANIDENTIFIER1|Universal Loan Identifier 1|428|0|40
+		HMDAUNIVERSALLOANIDENTIFIER2|Universal Loan Identifier 2|429|0|5
+		LEASEDISPOSITIONDATE|Lease Disposition Date|430|3|null
+		LEASEDISPOSITIONFEE|Lease Disposition Fee|431|7|null
+		FIXEDLESSEESTATETAXRATE|Fixed Lessee State Tax Rate|432|2|null
+		FIXEDLESSEECOUNTYTAXRATE|Fixed Lessee County Tax Rate|433|2|null
+		FIXEDLESSEECITYTAXRATE|Fixed Lessee City Tax Rate|434|2|null
+		FIXEDDEALERSTATETAXRATE|Fixed Dealer State Tax Rate|435|2|null
+		FIXEDDEALERCOUNTYTAXRATE|Fixed Dealer County Tax Rate|436|2|null
+		FIXEDDEALERCITYTAXRATE|Fixed Dealer City Tax Rate|437|2|null
+		POSITIVEPAYDRAFT|Positive Pay Draft|438|5|99
 		AVAILABLECREDIT|Available Credit|800|7|null
 		INTERESTDUE|Interest Due|801|7|null
 		LATECHARGEDUE|Late Charge Due|802|7|null
@@ -3184,6 +3215,10 @@
 			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			LOB|LOB Code|124|0|2
+			LEI|Legal Entity Identifier|125|0|20
+			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -3344,6 +3379,10 @@
 				ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 				ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 				LOB|LOB Code|124|0|2
+				LEI|Legal Entity Identifier|125|0|20
+				BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+				BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+				IRS1042SAMENDNUM|Amendment Number|128|5|9
 				SHORTNAME|Short Name|800|0|16
 				LONGNAME|Long Name|801|1|40
 				LICENSE|License|802|0|20
@@ -3946,6 +3985,8 @@
 			BALSEGPREVFIRSTPMTDATE:1|Bal Seg 001 Prev First Pmt Dat|58|3|null
 			DRAFTNUMBER|Draft Number|59|0|10
 			TRACERNUMBER|Tracer Number|60|0|15
+			DISPOSITIONFEE|Disposition Fee|61|7|null
+			TERMINATIONFEE|Termination Fee|62|7|null
 			SUBSOURCEDESCR|Sub Source Description|800|1|40
 			TRANAMOUNT|Transaction Amount|801|7|null
 			CONFIRMATIONNUMBER|Confirmation Number|802|0|14
@@ -4181,6 +4222,10 @@
 			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			LOB|LOB Code|124|0|2
+			LEI|Legal Entity Identifier|125|0|20
+			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4627,6 +4672,10 @@
 			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			LOB|LOB Code|124|0|2
+			LEI|Legal Entity Identifier|125|0|20
+			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4815,6 +4864,42 @@
 		EMVCHIPPROFILE|EMV Chip Profile|91|0|20
 		PINENCRYPTED|PIN Encrypted|92|0|8
 		FILEUPDATEMANAGEREXCEPTION|File Update Manager Exception|93|5|16
+		COUNTLIMIT:1|Limit 1 Count Limit|94|5|9999
+		COUNTLIMIT:2|Limit 2 Count Limit|94|5|9999
+		COUNTLIMIT:3|Limit 3 Count Limit|94|5|9999
+		COUNTLIMIT:4|Limit 4 Count Limit|94|5|9999
+		COUNTLIMIT:5|Limit 5 Count Limit|94|5|9999
+		COUNTLIMIT:6|Limit 6 Count Limit|94|5|9999
+		LIMITCOUNT:1|Limit 1 Count|95|5|9999
+		LIMITCOUNT:2|Limit 2 Count|95|5|9999
+		LIMITCOUNT:3|Limit 3 Count|95|5|9999
+		LIMITCOUNT:4|Limit 4 Count|95|5|9999
+		LIMITCOUNT:5|Limit 5 Count|95|5|9999
+		LIMITCOUNT:6|Limit 6 Count|95|5|9999
+		LIMIT:1|Limit 1|96|7|null
+		LIMIT:2|Limit 2|96|7|null
+		LIMIT:3|Limit 3|96|7|null
+		LIMIT:4|Limit 4|96|7|null
+		LIMIT:5|Limit 5|96|7|null
+		LIMIT:6|Limit 6|96|7|null
+		LIMITUSAGEAMOUNT:1|Limit 1 Usage Amount|97|7|null
+		LIMITUSAGEAMOUNT:2|Limit 2 Usage Amount|97|7|null
+		LIMITUSAGEAMOUNT:3|Limit 3 Usage Amount|97|7|null
+		LIMITUSAGEAMOUNT:4|Limit 4 Usage Amount|97|7|null
+		LIMITUSAGEAMOUNT:5|Limit 5 Usage Amount|97|7|null
+		LIMITUSAGEAMOUNT:6|Limit 6 Usage Amount|97|7|null
+		PERITEMLIMIT:1|Limit 1 Per Item Limit|98|7|null
+		PERITEMLIMIT:2|Limit 2 Per Item Limit|98|7|null
+		PERITEMLIMIT:3|Limit 3 Per Item Limit|98|7|null
+		PERITEMLIMIT:4|Limit 4 Per Item Limit|98|7|null
+		PERITEMLIMIT:5|Limit 5 Per Item Limit|98|7|null
+		PERITEMLIMIT:6|Limit 6 Per Item Limit|98|7|null
+		LIMITDESCRIPTION:1|Limit 1 Description|800|0|40
+		LIMITDESCRIPTION:2|Limit 2 Description|800|0|40
+		LIMITDESCRIPTION:3|Limit 3 Description|800|0|40
+		LIMITDESCRIPTION:4|Limit 4 Description|800|0|40
+		LIMITDESCRIPTION:5|Limit 5 Description|800|0|40
+		LIMITDESCRIPTION:6|Limit 6 Description|800|0|40
 		***|CARD NAME|Card Name
 			TYPE|Name Type|1|5|53
 			SUBTYPE|Name SubType|2|5|99
@@ -4950,6 +5035,10 @@
 			ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 			LOB|LOB Code|124|0|2
+			LEI|Legal Entity Identifier|125|0|20
+			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -5361,8 +5450,13 @@
 		HMDAAUTOUNDERWRITINGSYS:3|Auto Underwriting System 3|256|5|6
 		HMDAAUTOUNDERWRITINGSYS:4|Auto Underwriting System 4|256|5|6
 		HMDAAUTOUNDERWRITINGSYS:5|Auto Underwriting System 5|256|5|6
-		HMDAAUTOUNDERWRITINGSYSOTHER:1|Auto Underwriting Sys Other1|257|0|40
-		HMDAAUTOUNDERWRITINGSYSOTHER:2|Auto Underwriting Sys Other2|257|0|40
+		HMDAAUTOUNDERWRITINGSYSOTHER:1|Auto Underwriting Sys Other 1|257|0|40
+		HMDAAUTOUNDERWRITINGSYSOTHER:2|Auto Underwriting Sys Other 2|257|0|40
+		HMDAAUTOUNDERWRITINGSYSOTHER:3|Auto Underwriting Sys Other 3|257|0|40
+		HMDAAUTOUNDERWRITINGSYSOTHER:4|Auto Underwriting Sys Other 4|257|0|40
+		HMDAAUTOUNDERWRITINGSYSOTHER:5|Auto Underwriting Sys Other 5|257|0|40
+		HMDAAUTOUNDERWRITINGSYSOTHER:6|Auto Underwriting Sys Other 6|257|0|40
+		HMDAAUTOUNDERWRITINGSYSOTHER:7|Auto Underwriting Sys Other 7|257|0|15
 		HMDAAUTOUNDERWRITINGRESULT:1|Auto Underwriting Result 1|258|5|17
 		HMDAAUTOUNDERWRITINGRESULT:2|Auto Underwriting Result 2|258|5|17
 		HMDAAUTOUNDERWRITINGRESULT:3|Auto Underwriting Result 3|258|5|17
@@ -5370,6 +5464,11 @@
 		HMDAAUTOUNDERWRITINGRESULT:5|Auto Underwriting Result 5|258|5|17
 		HMDAAUTOUNDERWRITINGRESOTHER:1|Auto Underwriting Res. Other 1|259|0|40
 		HMDAAUTOUNDERWRITINGRESOTHER:2|Auto Underwriting Res. Other 2|259|0|40
+		HMDAAUTOUNDERWRITINGRESOTHER:3|Auto Underwriting Res. Other 3|259|0|40
+		HMDAAUTOUNDERWRITINGRESOTHER:4|Auto Underwriting Res. Other 4|259|0|40
+		HMDAAUTOUNDERWRITINGRESOTHER:5|Auto Underwriting Res. Other 5|259|0|40
+		HMDAAUTOUNDERWRITINGRESOTHER:6|Auto Underwriting Res. Other 6|259|0|40
+		HMDAAUTOUNDERWRITINGRESOTHER:7|Auto Underwriting Res. Other 7|259|0|15
 		HMDAINTERESTRATENA|Interest Rate N/A|260|5|1
 		HMDADEBTRATIONA|Debt Ratio N/A|261|5|1
 		HMDALOANTOVALUENA|Loan To Value N/A|262|5|1
@@ -5391,12 +5490,45 @@
 		HMDALIENSTATUS|Lien Status|278|5|2
 		HMDAUNIVERSALLOANIDENTIFIER1|Universal Loan Identifier 1|279|0|40
 		HMDAUNIVERSALLOANIDENTIFIER2|Universal Loan Identifier 2|280|0|5
-		HMDADENIALREASONOTHER|Reason for Denial Other|281|0|40
+		HMDADENIALREASONOTHER:1|Reason for Denial Other 1|281|0|40
+		HMDADENIALREASONOTHER:2|Reason for Denial Other 2|281|0|40
+		HMDADENIALREASONOTHER:3|Reason for Denial Other 3|281|0|40
+		HMDADENIALREASONOTHER:4|Reason for Denial Other 4|281|0|40
+		HMDADENIALREASONOTHER:5|Reason for Denial Other 5|281|0|40
+		HMDADENIALREASONOTHER:6|Reason for Denial Other 6|281|0|40
+		HMDADENIALREASONOTHER:7|Reason for Denial Other 7|281|0|15
 		MILITARYAPRLOAN|Military APR Loan|282|5|1
+		MTGNUMPROP|Number of Mortgaged Properties|283|5|9999
+		LESSEESTATE|Lessee State|284|0|2
+		LESSEECOUNTY|Lessee County|285|0|32
+		LESSEECITY|Lessee City|286|0|32
+		DEALERSTATE|Dealer State|287|0|2
+		DEALERCOUNTY|Dealer County|288|0|32
+		DEALERCITY|Dealer City|289|0|32
+		DEALERCODE|Dealer Code|290|0|10
+		DEALERRESERVE|Dealer Reserve|291|7|null
+		FIXEDLESSEESTATETAXRATE|Fixed Lessee State Tax Rate|292|2|null
+		FIXEDLESSEECOUNTYTAXRATE|Fixed Lessee County Tax Rate|293|2|null
+		FIXEDLESSEECITYTAXRATE|Fixed Lessee City Tax Rate|294|2|null
+		FIXEDDEALERSTATETAXRATE|Fixed Dealer State Tax Rate|295|2|null
+		FIXEDDEALERCOUNTYTAXRATE|Fixed Dealer County Tax Rate|296|2|null
+		FIXEDDEALERCITYTAXRATE|Fixed Dealer City Tax Rate|297|2|null
+		LEASETERMINATEFEE|Lease Termination Fee|298|7|null
+		LEASEDISPOSITIONFEE|Lease Disposition Fee|299|7|null
+		LEASETERMINATEDATE|Lease Termination Date|300|3|null
+		LEASEDISPOSITIONDATE|Lease Disposition Date|301|3|null
+		SALESTAXSTATEINDICATOR|Sales Tax State Indicator|302|5|4
+		SALESTAXCOUNTYINDICATOR|Sales Tax County Indicator|303|5|4
+		SALESTAXCITYINDICATOR|Sales Tax City Indicator|304|5|4
+		HMDARATESPREADSIGN|Rate Spread Sign|305|5|1
 		LOANTOVALUERATIO|Loan To Value|800|2|null
 		PMILTVRATIO|PMI Loan To Value Ratio|801|2|null
 		QUEUE|Queue|802|4|null
 		SEG0PAYMENT|Seg 0 Payment|803|7|null
+		SALESTAXRATE|Sales Tax Rate|804|2|null
+		STATESALESTAXRATE|State Sales Tax Rate|805|2|null
+		CNTYSALESTAXRATE|County Sales Tax Rate|806|2|null
+		CITYSALESTAXRATE|City Sales Tax Rate|807|2|null
 		***|LOANAPP PERSON|Application Person
 			PERSONCODE|Person Code|1|5|13
 			ACCOUNTNUMBER|Member Account Number|2|0|10
@@ -5536,27 +5668,40 @@
 			HMDAETHNICITY:3|Ethnicity of Applicant 3|108|5|14
 			HMDAETHNICITY:4|Ethnicity of Applicant 4|108|5|14
 			HMDAETHNICITY:5|Ethnicity of Applicant 5|108|5|14
-			HMDAETHNICITYOTHER|Ethnicity of Applicant Other|109|0|40
+			HMDAETHNICITYOTHER:1|Ethnicity of Applicant Other 1|109|0|40
+			HMDAETHNICITYOTHER:2|Ethnicity of Applicant Other 2|109|0|40
+			HMDAETHNICITYOTHER:3|Ethnicity of Applicant Other 3|109|0|20
 			HMDAETHNICITYVISIND|Ethnicity Visual Indicator|110|5|3
 			HMDARACE:1|Race of Applicant 1|111|5|44
 			HMDARACE:2|Race of Applicant 2|111|5|44
 			HMDARACE:3|Race of Applicant 3|111|5|44
 			HMDARACE:4|Race of Applicant 4|111|5|44
 			HMDARACE:5|Race of Applicant 5|111|5|44
-			HMDARACEOTHER1|Race of Applicant Other 1|112|0|40
-			HMDARACEOTHER27|Race of Applicant Other 27|113|0|40
-			HMDARACEOTHER44|Race of Applicant Other 44|114|0|40
+			HMDARACEOTHER1:1|Race of Applicant 1 Other 1|112|0|40
+			HMDARACEOTHER1:2|Race of Applicant 1 Other 2|112|0|40
+			HMDARACEOTHER1:3|Race of Applicant 1 Other 3|112|0|20
+			HMDARACEOTHER27:1|Race of Applicant 27 Other 1|113|0|40
+			HMDARACEOTHER27:2|Race of Applicant 27 Other 2|113|0|40
+			HMDARACEOTHER27:3|Race of Applicant 27 Other 3|113|0|20
+			HMDARACEOTHER44:1|Race of Applicant 44 Other 1|114|0|40
+			HMDARACEOTHER44:2|Race of Applicant 44 Other 2|114|0|40
+			HMDARACEOTHER44:3|Race of Applicant 44 Other 3|114|0|20
 			HMDARACEVISIND|Race Visual Indicator|115|5|3
 			HMDASEXIND|Sex of Applicant|116|5|6
 			HMDASEXVISIND|Sex of Applicant Visual|117|5|3
 			HMDAAGE|Age of Applicant|118|5|8888
 			HMDACREDITSCORE|Credit Score of Applicant|119|5|8888
 			HMDAAPPSCORINGMODEL|Applicant Scoring Model|120|5|9
-			HMDAAPPSCORINGMODELOTHER|Applicant Scoring Model Other|121|0|40
+			HMDAAPPSCORINGMODELOTHER:1|Applicant Scoring Mod Other 1|121|0|40
+			HMDAAPPSCORINGMODELOTHER:2|Applicant Scoring Mod Other 2|121|0|40
+			HMDAAPPSCORINGMODELOTHER:3|Applicant Scoring Mod Other 3|121|0|20
 			ACTIVEDUTY|Active Duty|122|5|2
 			ACTIVEDUTYVERIFICATIONDATE|Active Duty Verification Date|123|3|null
 			ACTIVEDUTYSTARTDATE|Active Duty Start Date|124|3|null
 			ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|125|3|null
+			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+			LEI|Legal Entity Identifier|128|0|20
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			DRIVERSLIC|Drivers License No|802|0|20
@@ -7420,6 +7565,7 @@
 		CORRECTEDDATAIAT|Corrected Data IAT|57|0|35
 		ORIGENTRYPMTIAT|Original Entry Payment IAT|58|0|10
 		IATRETADDENDAINFO|IAT Return Addenda Information|59|0|34
+		DATEOFBIRTH|Originator Date of Birth|60|0|8
 	***|ACHEDIT|ACH Edit
 		TYPE|Type|1|5|4
 		LOCATOR|Locator|2|4|null
@@ -7534,7 +7680,7 @@
 	OURTRANSMISSIONTIME|Our Transmission Time|98|0|6
 	TURNAROUNDTIME|Turn Around Time|99|5|99
 	OURRESPONSECODE|Our Response Code|100|5|9999
-	SUBSTATE|SubState|101|5|3
+	SETTLETYPE|Settle Type|101|5|2
 	CURRENCYINDEX|Currency Rate Index|102|5|3
 	CURRENCYAMOUNT|Currency Amount|103|6|null
 	APPROVEDLESSERCODE|Approved For Lesser Amt Code|104|0|1
@@ -7770,6 +7916,8 @@
 	RECEIVECASSETTE:4|Receive Cassette 4|14|5|32767
 	RECEIVECASSETTE:5|Receive Cassette 5|14|5|32767
 	RECEIVECASSETTE:6|Receive Cassette 6|14|5|32767
+	REQUESTDEVICENUMBER|Request Device Number|15|5|999
+	REMOTE|Remote|16|5|1
 ***|CASHLETTER|Cash Letter
 	GLOBALSEQUENCE|Global Sequence|1|4|null
 	GLOBALSEQUENCEDATE|Global Seq Date|2|3|null
@@ -9086,6 +9234,7 @@
 		CORRECTEDDATAIAT|Corrected Data IAT|57|0|35
 		ORIGENTRYPMTIAT|Original Entry Payment IAT|58|0|10
 		IATRETADDENDAINFO|IAT Return Addenda Information|59|0|34
+		DATEOFBIRTH|Originator Date of Birth|60|0|8
 	***|EXCPADDINFO|Exception Additional Info
 		NUMBER|Number|1|5|4
 		LOCATOR|Locator|2|4|null
@@ -9134,6 +9283,7 @@
 	CASHOUTTOTAL|Total Cash Out|45|7|null
 	RSNARMCARFLAG|Armored Car Service Rsn?|49|5|1
 	RSNMAILSHIPFLAG|Mail Dep or Shipment Rsn?|50|5|1
+	RSNSHBRFLAG|Shared Branching Rsn?|51|5|1
 	RSNAGGREGATEFLAG|Aggregated Trans Rsn?|52|5|1
 	BACKFILEFLAG|Backfile?|55|5|1
 	DCNUMBER|Document Control Number|56|0|14
@@ -9276,6 +9426,8 @@
 		RECORDCHANGEDATE|Record Change Date|10|3|null
 		TYPE|Branch Type|11|5|3
 		COUNTRYCODE|Country Code|12|0|2
+		CASHINLOCATION|Cash-In for Location|13|7|null
+		CASHOUTLOCATION|Cash-Out for Location|14|7|null
 	***|CTR NOTE|CTR Note
 		ID|ID|1|0|2
 		IDTYPE|ID Type|2|5|4
@@ -9832,6 +9984,7 @@
 	ACTIVEDUTYSTARTDATE|Active Duty Start Date|75|3|null
 	ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|76|3|null
 	LOB|LOB Code|77|0|2
+	LEI|Legal Entity Identifier|78|0|20
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
@@ -10059,6 +10212,10 @@
 	ACTIVEDUTYSTARTDATE|Active Duty Start Date|122|3|null
 	ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|123|3|null
 	LOB|LOB Code|124|0|2
+	LEI|Legal Entity Identifier|125|0|20
+	BENEFICIALOWNER|Beneficial Owner Type|126|5|3
+	BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
+	IRS1042SAMENDNUM|Amendment Number|128|5|9
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
@@ -13323,7 +13480,7 @@
 	SECURITYCODE:396|Parameter FM Credit Report|15|5|1
 	SECURITYCODE:397|Parameter FM MemberConnect|15|5|1
 	SECURITYCODE:398|Parameter FM Disclosure|15|5|1
-	SECURITYCODE:399|Parameter FM Teller Gen Fee|15|5|1
+	SECURITYCODE:399|Parameter FM Teller Fee|15|5|1
 	SECURITYCODE:400|Parameter FM ATM|15|5|1
 	SECURITYCODE:401|Parameter FM Reg CC|15|5|1
 	SECURITYCODE:402|Parameter FM Interest Type|15|5|1
@@ -13634,7 +13791,7 @@
 	SECURITYCODE:707|Update AP Invoice|15|5|1
 	SECURITYCODE:708|Display AP Invoice Queue|15|5|1
 	SECURITYCODE:709|AP Scan Invoice|15|5|1
-	SECURITYCODE:710|AP Image Retrieval|15|5|1
+	SECURITYCODE:710|AP OTG Viewer|15|5|1
 	SECURITYCODE:711|AP View Invoice|15|5|1
 	SECURITYCODE:712|AP Revise Invoice|15|5|1
 	SECURITYCODE:713|AP Run Anticipated AP Reports|15|5|1
@@ -13671,7 +13828,7 @@
 	SECURITYCODE:744|Teller Tran Dispute Loan|15|5|1
 	SECURITYCODE:745|Teller Tran Dispute Share|15|5|1
 	SECURITYCODE:746|Parameter FM Int Rate Index|15|5|1
-	SECURITYCODE:747|Parameter FM App Work Flow SFs|15|5|1
+	SECURITYCODE:747|Parameter FM App Work Flow Rep|15|5|1
 	SECURITYCODE:748|App Work Flow Specfile 0|15|5|1
 	SECURITYCODE:749|App Work Flow Specfile 1|15|5|1
 	SECURITYCODE:750|App Work Flow Specfile 2|15|5|1
@@ -14478,12 +14635,23 @@
 	SECURITYCODE:1555|Host UX Services Onhost|15|5|1
 	SECURITYCODE:1556|Host UX Services Offhost|15|5|1
 	SECURITYCODE:1557|Host UX Services Refresh|15|5|1
-	SECURITYCODE:1558|Batch Purge Particptn - Online|15|5|1
+	SECURITYCODE:1558|Purge Participation - Online|15|5|1
 	SECURITYCODE:1559|Host Ext Loan Processg Onhost|15|5|1
 	SECURITYCODE:1560|Host Ext Loan Processg Offhost|15|5|1
 	SECURITYCODE:1561|Host Ext Loan Processg Status|15|5|1
 	SECURITYCODE:1562|Param FM Statement Messages|15|5|1
-	SECURITYCODE:1563|Batch Purge Member - Online|15|5|1
+	SECURITYCODE:1563|Purge Member - Online|15|5|1
+	SECURITYCODE:1564|Loan Term Creation|15|5|1
+	SECURITYCODE:1565|Loan Term Revision|15|5|1
+	SECURITYCODE:1566|Loan Term Balance Creation|15|5|1
+	SECURITYCODE:1567|Loan Term Balance Revision|15|5|1
+	SECURITYCODE:1568|Teller Tran Bal Transfr|15|5|1
+	SECURITYCODE:1569|Teller Tran Bal Xfr Adj|15|5|1
+	SECURITYCODE:1570|Teller Tran Bal Payment|15|5|1
+	SECURITYCODE:1571|Teller Tran Bal Pmt Adj|15|5|1
+	SECURITYCODE:1572|Purge Accounts - Online|15|5|1
+	SECURITYCODE:1573|Param FM Positive Pay|15|5|1
+	SECURITYCODE:1574|Teller Tran Positive Pay Draft|15|5|1
 	SECURITYAMOUNT:1|Check Received Limit|16|7|null
 	SECURITYAMOUNT:2|Disbursal Limit|16|7|null
 	SECURITYAMOUNT:3|General Ledger Limit|16|7|null
@@ -16669,7 +16837,7 @@
 	EDITTYPE|Edit Type|3|5|99
 	RECORDFMTYPE|Record FM Type|4|5|2
 	STATUS|Status|5|5|3
-	FMFILENUMBER|File Number|6|5|46
+	FMFILENUMBER|File Number|6|5|52
 	LVLCOUNT|Level Count|7|5|3
 	RECTYPE:1|Level 1 Record Type|8|5|9999
 	RECTYPE:2|Level 2 Record Type|8|5|9999
