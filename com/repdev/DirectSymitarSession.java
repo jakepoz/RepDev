@@ -1606,7 +1606,7 @@ public class DirectSymitarSession extends SymitarSession {
 		
 		Command getItems = new Command("File");
 		getItems.getParameters().put("Action", "List");
-		getItems.getParameters().put("MaxCount", "150");
+		getItems.getParameters().put("MaxCount", "300");
 		getItems.getParameters().put("Query", "BATCH " + seq.getSeq());
 		getItems.getParameters().put("Type", "Report");
 		
