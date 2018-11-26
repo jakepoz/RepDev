@@ -208,7 +208,7 @@ public class DirectSymitarSession extends SymitarSession {
 
 			write("WINDOWSLEVEL=3\n");
 			
-			temp = readUntil("$ ", "SymStart~Global", "Selection :", "no longer supported!","Logins not allowed from host: ");
+			temp = readUntil("$ ", "SymStart~Global", "Selection :", "no longer supported!","Logins not allowed from host: ","Your password will expire:");
 			System.out.println(temp);
 			if (temp.contains("no longer supported!")) {
 				disconnect();
@@ -218,6 +218,10 @@ public class DirectSymitarSession extends SymitarSession {
 				out.print("You cannot log in from this IP. Verify this PC is setup to use Symitar!");
 				disconnect();
 				return SessionError.IP_NOT_ALLOWED;
+			} else if (temp.contains("Your password will expire:")) {
+				out.print("Your AIX password is due to expire.  Please Change it now.");
+				disconnect();
+				return SessionError.AIX_PASSWORD_TO_EXPIRE;
 			} else if (temp.contains("Selection :")) { // This is for EASE Menu
 				System.out.println("EASE Menu has been detected");
 				int EASE_Selection = EaseSelection.getEASESelection(temp, sym);

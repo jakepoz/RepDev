@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 public enum SessionError {
 	NONE, SERVER_NOT_FOUND, AIX_LOGIN_WRONG, SYM_INVALID, USERID_INVALID, USERID_PASSWORD_CHANGE, ALREADY_CONNECTED, NOT_CONNECTED, IO_ERROR, CONSOLE_BLOCKED,
 	INVALID_FILE_TYPE, INVALID_QUEUE, INPUT_ERROR, IP_NOT_ALLOWED, FILENAME_TOO_LONG, ARGUMENT_ERROR, NULL_POINTER, PLINK_NOT_FOUND, NOT_WINDOWSLEVEL_3,
-	INCOMPATIBLE_REVISION, UNDEFINED_ERROR;
+	INCOMPATIBLE_REVISION, UNDEFINED_ERROR, AIX_PASSWORD_TO_EXPIRE;
 	
 	public void showError(){
 		MessageBox dialog = new MessageBox(new Shell(),SWT.OK | SWT.ICON_ERROR);
@@ -42,6 +42,9 @@ public enum SessionError {
 		switch(this){
 		case AIX_LOGIN_WRONG:
 			msg = "AIX Login information is incorrect!";
+			break;
+		case AIX_PASSWORD_TO_EXPIRE:
+			msg = "AIX password due to expire.";
 			break;
 		case ALREADY_CONNECTED:
 			msg = "Symitar Session is already connected.";
