@@ -911,6 +911,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				else{
 					if( e.keyCode == SWT.F3 )
 						RepDevMain.mainShell.findNext();
+					if( e.keyCode == SWT.F5 )
+						RepDevMain.mainShell.reopenCurrentTab();
 					if( e.keyCode == SWT.F8 )
 						installRepgen(true);
 				}

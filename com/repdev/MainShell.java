@@ -3678,6 +3678,12 @@ public class MainShell {
 		}
 	}
 
+	public void reopenCurrentTab() {
+		SymitarFile File = (SymitarFile) mainfolder.getSelection().getData("file");
+		closeCurrentTab();
+		openFile(File);
+	}
+	
 	public void closeCurrentTab() {
 //		System.out.println(mainfolder.getSelection());
 //		if(mainfolder.getSelection() != null)
