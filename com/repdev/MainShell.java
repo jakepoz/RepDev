@@ -3001,8 +3001,10 @@ public class MainShell {
 				currNavLine = line;
 				currHistoryStep = navHistory.size();
 			}
-		if(navHistory.size() > NAVIGATE_HISTORY_LIMIT)
+		if(navHistory.size() > NAVIGATE_HISTORY_LIMIT){
 			navHistory.remove(0); // Keep limit to NAVIGATE_HISTORY_LIMIT
+			currHistoryStep = navHistory.size();
+		}
 	}
 	private boolean SuspendNavRecording = false;
 	private int currHistoryStep = 0;
