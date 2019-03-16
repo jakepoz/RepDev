@@ -1741,7 +1741,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					endOffset = txt.getOffsetAtLine(i + 1);
 
 				if( endOffset - 1 <= startOffset)
-					line = "";
+					line = "\n";
 				else
 					line = txt.getText(startOffset, endOffset - 1);            
 
