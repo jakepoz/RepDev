@@ -21,6 +21,7 @@ package com.repdev;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.eclipse.swt.graphics.Point;
 /**
@@ -118,7 +119,7 @@ public class Config implements Serializable {
 
 	public static void setConfig(Config config) {
 		me = config;
-		
+		Collections.sort(me.syms);
 		/**
 		 * Note, this is where we should set any init stuff to un-null any objects
 		 */
