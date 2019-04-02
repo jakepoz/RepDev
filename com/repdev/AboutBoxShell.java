@@ -56,7 +56,7 @@ public class AboutBoxShell {
 		  +"support@repdev.org\n"
 		  +"\nSWT Version: " + SWT.getVersion() + "\n\n"
 		  +"RepDev is a community based free IDE for use writing\n"
-		  +"RepGens for Symitar systems.  It is ment to be an\n"
+		  +"RepGens for Symitar systems.  It is meant to be an\n"
 		  +"alternative to using Episys's built in RepGen tools.\n"
 		  +"\n\n"
 		  +"Most icons are from the Silk icon set\n"
