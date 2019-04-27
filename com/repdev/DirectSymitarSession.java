@@ -74,6 +74,7 @@ public class DirectSymitarSession extends SymitarSession {
 	
 	Thread keepAlive;
 	boolean keepAliveEnabled = false;
+	boolean keepAliveActive = false;
 	boolean keepAliveNevrTerm = false;
 	int keepAliveHour = 19;
 	int keepAliveMin = 00;
@@ -107,6 +108,10 @@ public class DirectSymitarSession extends SymitarSession {
 	
 	boolean keepAliveEnabled(){
 		return keepAliveEnabled;
+	}
+	
+	boolean keepAliveActive(){
+		return keepAliveActive;
 	}
 	
 	void enableKeepAlive(boolean neverTerminate, int termHr, int termMin){
@@ -388,6 +393,7 @@ public class DirectSymitarSession extends SymitarSession {
 						int lastActivityTime = (getLastActivity().get(Calendar.HOUR_OF_DAY)*60)+getLastActivity().get(Calendar.MINUTE)+NO_ACTIVITY_DELAY;
 						int termOptionTime = (getTerminateHour()*60)+getTerminateMinute();
 						int curTime = (cal.get(Calendar.HOUR_OF_DAY)*60)+cal.get(Calendar.MINUTE);
+						keepAliveActive = true;
 						boolean neverTerminate;
 						
 						terminateTime = (lastActivityTime > termOptionTime ? lastActivityTime : termOptionTime);
@@ -421,6 +427,7 @@ public class DirectSymitarSession extends SymitarSession {
 							if (!firstRun){
 								Display.getDefault().syncExec(new Runnable(){
 									public void run(){
+										keepAliveActive = false;
 										MessageBox msg = new MessageBox(RepDevMain.mainShell.getShell(), SWT.ICON_WARNING);
 										msg.setText("Keep Alive");
 										msg.setMessage("Keep Alive has terminated for SYM "+tmpSym+".  Please take proper measures to avoid the lost of work.");

@@ -1708,7 +1708,7 @@ public class MainShell {
 					}
 
 					if (RepDevMain.SYMITAR_SESSIONS.get(sym).isConnected()) {
-						ProjectManager.saveProjects(sym);
+						if(((DirectSymitarSession)RepDevMain.SYMITAR_SESSIONS.get(sym)).keepAliveActive()) ProjectManager.saveProjects(sym);
 						RepDevMain.SYMITAR_SESSIONS.get(sym).disconnect();
 						currentItem.setImage(RepDevMain.smallSymImage);
 						currentItem.setExpanded(false);
