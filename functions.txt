@@ -171,6 +171,33 @@ FLOOR|Returns a number value that is less than or equal to the specified mathema
 FORMAT|Converts a numeric value to a specified pattern of characters|CHARACTER,NUMBER,MONEY,DATE,RATE,CODE
 	CharacterExpression|Character expression that defines the desired pattern of characters|CHARACTER
 	ArithmeticExpression|Expression or value to be formated|NUMBER,MONEY,DATE,RATE,CODE
+FTPCLOSE|This function closes an FTP session.|NULL
+	Handle|Handle number of the session|NUMBER
+FTPCMD|This function sends a command directly to the FTP server and receives the response.|NULL
+	Handle|Handle number of the session|NUMBER
+	Command|Limited to the following: ascii, passive off, passive on, binary|CHARACTER
+	ErrorText|A defined character variable; if an error occurs while processing the command, the variable is updated with a short error message; If there are no errors, the variable is blank|CHARACTER
+FTPGET|This function retrieves a file from the FTP server.|NULL
+	Handle|Handle number of the session|NUMBER
+	SourceFileName|Specifies the name of file to copy. You cannot use wildcard characters.|CHARACTER
+	DestFileType|Specifies the file type of the file to use on the local computer|CHARACTER
+	DestFileName|Specifies the name of the file to use on the local computer|CHARACTER
+	ErrorText|A defined character variable; if an error occurs while processing the command, the variable is updated with a short error message; If there are no errors, the variable is blank|CHARACTER
+FTPLOGIN|This function logs a user into the FTP server.|NULL
+	Handle|Handle number of the session|NUMBER
+	UserName|Specifies a user name to use to log on to the remote computer|CHARACTER
+	Password|Specifies the password for User name|CHARACTER
+	ErrorText|A defined character variable; if an error occurs while processing the command, the variable is updated with a short error message; If there are no errors, the variable is blank|CHARACTER
+FTPOPEN|This function opens a connection to a remote FTP server.|NULL
+	RemoteHost|Specifies the remote computer you want to connect to|CHARACTER
+	Handle|Handle number of the session|NUMBER
+	ErrorText|A defined character variable; if an error occurs while processing the command, the variable is updated with a short error message; If there are no errors, the variable is blank|CHARACTER
+FTPPUT|This function moves a file to the FTP server.|NULL
+	Handle|Handle number of the session|NUMBER
+	SourceFileType|Specifies the file type of the remote file to copy|CHARACTER
+	SourceFileName|Specifies the name of the file you want to move|CHARACTER
+	DestFileName|Specifies the name of the file to use on the local computer|CHARACTER
+	ErrorText|A defined character variable; if an error occurs while processing the command, the variable is updated with a short error message; If there are no errors, the variable is blank|CHARACTER
 FULLYEAR|Returns a numerical value that is equivalent to the four-digit year in a date expression|NUMBER
 	Date|Date expression where the four-digit year is desired|DATE
 GETDATACHAR|Retrieves the current value of a character field in Parameter or Console files|CHARACTER
@@ -356,7 +383,7 @@ OUTPUTOPEN|Opens an output destination|NULL
 	PrintNumber|The printer number (if OUTPUTDEVLINEPRINT)|NUMBER
 	ReportTitle|The report title|CHARACTER
 	ReportCategory|A 10 character output identifier|CHARACTER
-    OutputChannel|The channel number to open|NUMBER
+	OutputChannel|The channel number to open|NUMBER
 	ErrorText|Error message returned if error occurred; blank otherwise|CHARACTER
 DIALOGINTROTEXT|Produces interactive, dynamic dialog box|Null
 	TextLine|Line of text to display (in double quotes)|CHARACTER
@@ -431,6 +458,11 @@ WINDDEPOKEDATA|This command inserts Dynamic Data Exchange (DDE) data into a conn
 WINDOWSSEND|Allows interaction between your specfile and the Windows environment.|NULL
 	Wincode|The RD.WINDOWS.DEF #INCLUDE file in the Report Generator Library contains the valid entries for WinCode. This file should be placed in the DEFINE division of your specfile.|NUMBER
 	Wintext|Text that is potentially used by the wincode for display.|CHARACTER
+WINMESSAGEFIELD|This function adds field information to your Windows message.|NULL
+	FieldName|Name of the field|CHARACTER
+	FieldData|Data of the field|CHARACTER
+WINMESSAGESTART|This function begins the building of the information for a Windows message.|NULL
+	MessageTag|WINMESSAGESTART(<message tag>)|CHARACTER
 SYSUSERNAME|User name of current user|CHARACTER
 	User Number|The usernumber of the user, typically SYSUSERNUMBER|NUMBER
 	
