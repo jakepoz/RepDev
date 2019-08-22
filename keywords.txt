@@ -11,7 +11,7 @@ APPEND|When you use the FILEOPEN statement, you can open the file you want to ac
 ARRAY|Instructs the repGen to create an array of type and size indicated|BEARSKIN=CHARACTER(69) ARRAY(99)
 ASCII|Used with DATAFILE keyword to instruct data type for output of data|DATAFILE ASCII
 ATMDIALOG|Defines ATM Diaolog the target file|TARGET=ATMDIALOG
-AUDIO|Indicates that the repGen can be run by the Audio Response System
+AUDIO|Indicates that the repGen can be run by the Audio Response System|AUDIO
 BEFOREFIRST|Locator Keyword|LOC BEFOREFIRST
 BELL|Print control statement that makes the CRT beep once|PRINT "There's a BEAR!" BELL
 BILL|Designates an EFT Bill Payment Record as the target|TARGET=BILL
@@ -75,28 +75,35 @@ INVENTORY|INVENTORY designates the Inventory record in the Inventory file|TARGET
 INVOICE|INVOICE designates the Invoice record in the Accounts Payable file|TARGET=INVOICE
 LABELS|The LABELS print option instructs the Report Generator™ to create four-up labels, sometimes referred to as Cheshire labels|PRINT TITLE="" LABELS
 LANDSCAPE|LANDSCAPE is one of the available printer orientation options when using the HP Laser Control HPSETUP command|LANDSCAPE
+LASTACCOUNT|References the account most recently used.|ACCOUNT LASTACCOUNT <rest of statement>
 LASTCREATE|LASTCREATE is a special keyword you can use in batch specfile file maintenance to specify the Locator assigned to the last record created of the specified record type, or in the case of creating a new Account record, the last Account number created|ACCOUNT LASTCREATE
+LASTSEQUENCE|This predefined keyword is used in batch file maintenance specfiles to specify the last wire sequence number that was file maintained.|WIRE LASTSEQUENCE <record path>
 LEFT|The LEFT print statement option instructs the Report Generator™ to align a value in the left-most position starting at the specified column number|COL=10 LEFT NUMBERVALUE
 LETTER|The LETTER division of a specfile contains the print instructions for a form letter or standard form|LETTER TITLE="Ken's Report"
 LOAN|LOAN designates the Loan record in the Account file|LOAN:TYPE
 LOANAPP|LOANAPP designates the Application record in the Account file|TARGET=LOANAPP
 LOANPROJECTCALC|The LOANPROJECTCALC statement allows you to use the Report Generator™ to perform loan projection calculations equivalent to those produced using the Loan Projections function of the Projections work area and also produce the Loan Payoff inquiry equivalent to that produced from the Inquiries Into Member Accounts function of the Account Manager work area|LOANPROJECTCALC
 LOCATOR|The Locator field value is a positive number greater than zero and up to about two billion|TRACKING:LOCATOR
+LOC|Specifies the Locator identifier.|<record type> <record ID> <record type> LOC <locator value>
 LOOKUP|LOOKUP designates the Lookup record in the Account file|TARGET=LOOKUP
 MCW|The MCW keyword identifies the specfile as a MemberConnect™ WEB interactive specfile|MCW TARGET=ACCOUNT
 MCWINTERACTIVE|The MCWINTERACTIVE keyword identifies the specfile as a NetTeller® MemberConnect™ interactive SymConnect™ specfile|MCWINTERACTIVE TARGET=ACCOUNT
+MICRACCOUNTNUMBER|Searches all Share or Loan records and lists the account number of each Share or Loan record containing a specified MICR number.|FOR ACCOUNT WITH MICRACCOUNTNUMBER MICRLINE  
 MODIFY|There is an option in Miscellaneous Processing to perform file maintenance on a number of files in the Episys database using Report Generator specfile output as input|"ACCOUNT "+ACCOUNT:NUMBER+" MODIFY "
 MONEY|MONEY is a type of data that represents dollar amounts|BENJAMINS=MONEY
 NAME|NAME designates the Account Name record in the Account file. NAME in conjunction with SHARE, LOAN, LOAN PLEDGE, EFT, or CARD designates the Share Name, Loan Name, Loan Pledge Name, EFT Name, or Card Name record in the Account file|SHARE NAME:SHORTNAME
 NEWLINE|The NEWLINE print control statement instructs the Report Generator™ to move back to the left side of the print area and then move down one line|PRINT "CODE MONKEY " NEWLINE
 NEWPAGE|The NEWPAGE print control statement causes a page break. On a PC monitor's screen, NEWPAGE clears the screen and positions the cursor at the top left-most position on the screen|PRINT "CAVEMANE" NEWPAGE
 NEXTACCOUNT|NEXTACCOUNT is a special keyword you can use in batch specfile file maintenance when you are using the CREATE command to create a new Account record|ACCOUNT NEXTACCOUNT
+NEXTULI|This PowerOn keyword allows for the generation of a Universal Loan Identifier (ULI) value and populates the Universal Loan Identifier 1 field in the Application record or the Loan record. The NEXTULI keyword is only available to batch PowerOn specfiles.|SET <field name> TO NEXTULI
 NONANSISTANDARD|The NONANSISTANDARD control statement notifies the Report Generator™ that your output device (printer or terminal) is not an ANSI-standard device|NONANSISTANDARD CALL PRINTBOX
 NONE|NONE is a select expression that prevents the Report Generator™ from reading any TARGET records|SELECT NONE END
 NOT|NOT is a Boolean operator used to express the opposite of a Boolean expression|NOT ANY LOAN
 NOTE|NOTE designates a Note record for a number of record types in the Account file|NOTE:VOIDFLAG
 NUMBER|A number is a type of data that is numeric (a whole number), but is not a dollar amount or a rate|BEARSKINS=NUMBER
 OR|OR is a Boolean operator that connects two expressions|SHARE:TYPE=5 OR SHARE:TYPE=9
+OVERDRAWAVAILABLECALC|Calculates overdraw protection. After calculating the overdraw protection, you can print the results.|OVERDRAWAVAILABLECALC
+OVERDRAWAVAILABLEINIT|Initializes the special setup variables required to access overdraw calculations to return Overdraw Protection (ODP) and Overdraft Tolerance (ODT) on a share.|OVERDRAWAVAILABLEINIT
 PAYEE|PAYEE designates the Payee record in the Payee file|TARGET=PAYEE
 PAYROLL|PAYROLL designates an EFT payroll record in the Account file|TARGET=PAYROLL
 PLEDGE|PLEDGE in conjunction with a LOAN record type designates the Loan Pledge record in the Account file|TARGET=PLEDGE
@@ -116,6 +123,7 @@ READWRITE|When using the FILEOPEN statement, the file you want to access can be 
 RECEIVEDITEM|RECEIVEDITEM designates the Received Item record in the Received Item file|TARGET=RECEIVEDITEM
 RECORDSIZE|RECORDSIZE is an optional print specification used in the PRINT division to specify the default record size of the data file this specfile produces|RECORDSIZE=500 BLOCKSIZE=200
 REMOVE|In specfiles that use FMPERFORM, you can remove selected applications from an Application Processing queue|REMOVE FROM QUEUE
+REPORTCATEGORY|Classifies and groups standard and custom reports for long term storage and retrieval (used by the Synergy imaging system).|PRINT TITLE=<expression> REPORTCATEGORY=<report category>
 RETURNITEM|EXCPITEM designates the Exception Item record in the Exception Item file|TARGET=RETURNITEM
 REVISE|There is an option in Miscellaneous Processing to perform file maintenance on a number of files in the Episys database using Report Generator specfile output as input|REVISE
 REVLANDSCAPE|REVLANDSCSAPE is one of the available printer orientation options when using the HPSETUP HP Laser Control command|REVLANDSCAPE
@@ -130,6 +138,7 @@ SETWARNING|SETWARNING is a special function used in the CHANGE command in Report
 SHARE|SHARE designates the Share record in the Account file|SHARE:TYPE
 SORT|The SORT division of a specfile contains the sort instructions, referred to as sort keys|SORT NAME:LAST END
 STATELESS|This keyword identifies a PowerOn specfile as having re-initialized defined variables. Must be the last specfile type keyword defined before the TARGET|SUBROUTINE DEMAND WINDOWS STATELESS
+STARTING|Specifies the first target record used in the selection process.|STARTING WITH 15; EVERY 10 STARTING WITH 5
 STOPBLINK|The STOPBLINK keyword is a print control statement that cancels the BLINK statement|BLINK PRINT "BOB" STOPBLINK
 SUBROUTINE|The SUBROUTINE keyword identifies a specfile that can be called from another specfile using the INITSUBROUTINE keyword|SUBROUTINE DEMAND WINDOWS
 SUBTOTAL|SUBTOTAL is a sort key option used to identify where you want the report to create subtotals|SHARE:TYPE SUBTOTAL "SHARE TYPE"
@@ -141,19 +150,22 @@ TERMINATE|The TERMINATE statement stops the Report Generator™ from processing th
 THEN|Used after a condition to start commands|IF FOUND= TRUE THEN CALL BANGROCKS
 PRINT TITLE|The TITLE print specification instructs Episys to use the value of the character expression that follows TITLE= as the title of the report|PRINT TITLE = "KEN'S REPORT"
 TO|Used to indicate a stepping range|FOR I = 1 TO 15 BY 3
-TOTAL|The TOTAL division of a specfile contains a custom format for additional grand totals|
+TOTAL|The TOTAL division of a specfile contains a custom format for additional grand totals|TOTAL
 TRACKING|TRACKING designates the Tracking record in the Account file|TARGET=TRACKING
 TRAILERS|The TRAILERS keyword precedes print statements that create a trailer the Report Generator™ prints at the end of each subsection of output|TRAILERS PRINT REPEATCHR("-",130) END
 TRANSACTION|TRANSACTION in conjunction with SHARE or LOAN designates the Share Transaction or Loan Transaction records in the Account file|FOR EACH SHARE TRANSACTION
 TRANSFER|TRANSFER in conjunction with SHARE, LOAN, or EFT designates the Share Transfer, Loan Transfer, or EFT Transfer records in the Account file|FOR EACH SHARE TRANSFER
+UNTIL|Executes one or more statements for each record identified; stops looping through all the records once the UNTIL expression equals true.|UNTIL <Boolean expression>
 USER|You can now use repGen (Report Generator™) specfiles to access user fields. Previously, the only way to access these fields was with the repGen® (Report Generator) GETDATA function|TARGET = USER
 VALIDATION|The VALIDATION keyword identifies the specfile as a record-validation specfile|VALIDATE TARGET=ACCOUNT
 VENDOR|VENDOR designates the Vendor record in the Accounts Payable file|TARGET=VENDOR
+VIN|Identifies accounts that contain a Vehicle Identification Number (VIN) in the Loan record.|FOR <record type> WITH VIN <"vin number">
 WHILE|The WHILE...DO...END statement instructs the Report Generator™ to execute one or more statements as long as a specified condition is true|WHILE SHARECOUNTER<10 DO
 WHILELIMIT|You can use the WHILELIMIT statement to set a limit to the number of WHILE loops executed for any WHILE statements or FOR...DO...END statements that come after it|WHILELIMIT=10000
 WIDTH|WIDTH is an optional label specification used with the LABELS print option to designate how many characters to print across each label|WIDTH=30
 WINDOWS|The WINDOWS keyword identifies specfiles intended to be used only in a Windows environment where Symitar host printing is not required|WINDOWS TARGET=ACCOUNT
 WINDOWSPRINT|WINDOWSPRINT keyword identifies specfiles designed for a Windows environment if you need to print information through your Symitar host environment (as opposed to printing with the Windows controls through Windows)|WINDOWSPRINT TARGET=ACCOUNT
+WINMESSAGESEND|Sends a Windows message.|WINMESSAGESEND
 WINMODETEXT|WINMODETEXT is a stand-alone Windows Report Generator command that brings up a terminal window and allows you to interact with it|WINMODETEXT
 WINMODEWINDOWS|WINMODEWINDOWS is a stand-alone Windows Report Generator command that resets you to full windows support after a WINMODETEXT command|WINMODEWINDOWS
 WITH|Used with ANY to list attributes|ANY ACCOUNT WITH (ACCOUNT:CLOSEDATE=SYSTEMDATE)
@@ -186,3 +198,4 @@ MONEY
 NUMBER
 RATE
 
+UNTIL
