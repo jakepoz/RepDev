@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>TEMPLATE.INCLUDE</Title>
+      <Author>Bruce Chang</Author>
+      <Shortcut></Shortcut>
+      <Description></Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <SnippetType>SurroundsWith</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>RepGenName</ID>
+          <ToolTip>Name of the RepGen</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>Author</ID>
+          <ToolTip>The Creator of the RepGen</ToolTip>
+          <Default>Chialin Bruce Chang</Default>
+        </Literal>
+        <Literal>
+          <ID>ReleaseDate</ID>
+          <ToolTip>The Date that this repgen is released</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>Requestor</ID>
+          <ToolTip>The person/department that made the initial request</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>Frequency</ID>
+          <ToolTip>The frequence that this RepGen will run</ToolTip>
+          <Default>&lt;INCLUDE&gt;</Default>
+        </Literal>
+        <Literal>
+          <ID>Description</ID>
+          <ToolTip>A description of what this RepGen does and what it is for</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>UsedBy</ID>
+          <ToolTip></ToolTip>
+          <Default></Default>
+        </Literal>
+      </Declarations>
+      <Code Language="RepGen">
+        <![CDATA[[
+      REPGEN NAME:     $RepGenName$
+       CREATED BY:     $Author$
+ ORIGINAL RELEASE:     $ReleaseDate$
+        REQUESTOR:     $Requestor$
+        FREQUENCY:     $Frequency$
+
+      DESCRIPTION: $Description$
+                   
+
+          USED BY: $UsedBy$
+
+     LAST REVISED:     00/00/00
+       REVISED BY:     
+     REQUESTED BY:     
+   REVISION NOTES: 
+]
+
+
+
+]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

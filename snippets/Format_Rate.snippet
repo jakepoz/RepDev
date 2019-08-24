@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>FORMAT_RATE</Title>
+      <Author>Bruce Chang</Author>
+      <Shortcut>frt</Shortcut>
+      <Description>Formats YOURVAR to a character string</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <SnippetType>SurroundsWith</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>rate</ID>
+          <ToolTip>Variable containing the rate</ToolTip>
+          <Default>RATE_VAR</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="RepGen">
+        <![CDATA[FORMAT("###9.999",$rate$)]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

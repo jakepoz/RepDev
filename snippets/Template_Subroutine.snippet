@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>TEMPLATE.SUBROUTINE</Title>
+      <Author>Bruce Chang</Author>
+      <Shortcut></Shortcut>
+      <Description></Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <SnippetType>SurroundsWith</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>RepGenName</ID>
+          <ToolTip>Name of the RepGen</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>Author</ID>
+          <ToolTip>The Creator of the RepGen</ToolTip>
+          <Default>Chialin Bruce Chang</Default>
+        </Literal>
+        <Literal>
+          <ID>ReleaseDate</ID>
+          <ToolTip>The Date that this repgen is released</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>Requestor</ID>
+          <ToolTip>The person/department that made the initial request</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>Frequency</ID>
+          <ToolTip>The frequence that this RepGen will run</ToolTip>
+          <Default>&lt;SUBROUTINE&gt;</Default>
+        </Literal>
+        <Literal>
+          <ID>Description</ID>
+          <ToolTip>A description of what this RepGen does and what it is for</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>CalledBy</ID>
+          <ToolTip>List of all the RepGens that calls this Subroutine</ToolTip>
+          <Default></Default>
+        </Literal>
+        <Literal>
+          <ID>LRDRepGenName</ID>
+          <ToolTip>Name of the RepGen</ToolTip>
+          <Default>"RepGen_Name_Here"</Default>
+        </Literal>
+        <Literal>
+          <ID>ReportTitle</ID>
+          <ToolTip>The title of the report.  Add RPT to the tile to exclude it from going to CoWWW</ToolTip>
+          <Default>"RG..TEST"</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="RepGen">
+        <![CDATA[[
+      REPGEN NAME:     $RepGenName$
+       CREATED BY:     $Author$
+ ORIGINAL RELEASE:     $ReleaseDate$
+        REQUESTOR:     $Requestor$
+        FREQUENCY:     $Frequency$
+
+      DESCRIPTION: $Description$
+                   
+
+        CALLED BY: $CalledBy$
+
+     LAST REVISED:     00/00/00
+       REVISED BY:     
+   REVISION NOTES: 
+     REQUESTED BY:     
+]
+
+[SUBROUTINE DEMAND WINDOWS]
+
+TARGET=ACCOUNT
+
+
+DEFINE
+ 
+END [DEFINE...]
+
+
+SETUP
+ 
+END [SETUP...]
+
+
+SELECT
+ NONE
+END [SELECT...]
+
+
+SORT
+ 
+END [SORT...]
+
+
+PRINT TITLE=$ReportTitle$
+ SUPPRESSNEWLINE
+END [PRINT...]
+
+
+TOTAL
+ 
+END [TOTAL...]
+]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
