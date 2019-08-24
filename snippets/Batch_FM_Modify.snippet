@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Batch FM MODIFY</Title>
+      <Author>Bruce Chang</Author>
+      <Shortcut>bfm</Shortcut>
+      <Description>A block of code for Batch FM'ing account records.</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <SnippetType>SurroundsWith</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>acctNum</ID>
+          <ToolTip>Account Number</ToolTip>
+          <Default>9999999999</Default>
+        </Literal>
+        <Literal>
+          <ID>record</ID>
+          <ToolTip>Primary Record</ToolTip>
+          <Default>SHARE/LOAN</Default>
+        </Literal>
+        <Literal>
+          <ID>recordID</ID>
+          <ToolTip>Record ID</ToolTip>
+          <Default>99</Default>
+        </Literal>
+        <Literal>
+          <ID>subRecord</ID>
+          <ToolTip>Sub Record, i.e. Tracking, Notes, Hold, Name etc</ToolTip>
+          <Default>TRACKING/HOLD/NOTE</Default>
+        </Literal>
+        <Literal>
+          <ID>locator</ID>
+          <ToolTip>Locator of the Sub Record</ToolTip>
+          <Default>999</Default>
+        </Literal>
+        <Literal>
+          <ID>field</ID>
+          <ToolTip>Field to change</ToolTip>
+          <Default>FIELD</Default>
+        </Literal>
+        <Literal>
+          <ID>From_Value</ID>
+          <ToolTip>Original value of the field</ToolTip>
+          <Default>XXXXX</Default>
+        </Literal>
+        <Literal>
+          <ID>To_Value</ID>
+          <ToolTip>New value for the field</ToolTip>
+          <Default>XXXXX</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="RepGen">
+        <![CDATA[COL=01 "ACCOUNT $acctNum$ MODIFY $record$ $recordID$ $subRecord$ LOC $locator$"
+NEWLINE
+COL=03 "CHANGE $field$ FROM"
+COL=49 "$From_Value$"
+COL=90 "TO"
+COL=93 "$To_Value$"
+NEWLINE
+]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
