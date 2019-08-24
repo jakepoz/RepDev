@@ -9,6 +9,146 @@ SYSMEMOMODE|Memo Mode|NUMBER|
 SYSUSERNUMBER|User number of current user|NUMBER|
 SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 
+@ACCTCHGDOCUMENTNUMBER|This variable contains the unique form identification number for the change|Number|
+@ACCTCHGNEWACCOUNTNUMBER|This variable contains the new account number to which the account is being changed|Number|
+@ACCTCHGOLDACCOUNTNUMBER|This variable contains the old account number from which the account was changed|Number|
+@ACSACTIONID1|When your action is to create a record that requires an ID, these variables contain the required ID. Reference these variables in the FINISH state.|CHARACTER|
+@ACSACTIONID2|When your action is to create a record that requires an ID, these variables contain the required ID. Reference these variables in the FINISH state.|CHARACTER|
+@ACSACTIONID3|When your action is to create a record that requires an ID, these variables contain the required ID. Reference these variables in the FINISH state.|CHARACTER|
+@ACSACTIONID4|When your action is to create a record that requires an ID, these variables contain the required ID. Reference these variables in the FINISH state.|CHARACTER|
+@ACSACTIONID5|When your action is to create a record that requires an ID, these variables contain the required ID. Reference these variables in the FINISH state.|CHARACTER|
+@ACSACTIONORDINAL1|When your action is to create a record that requires an ordinal number, these variables contain the required ordinal number. Reference these variables in the FINISH state.|NUMBER|
+@ACSACTIONORDINAL2|When your action is to create a record that requires an ordinal number, these variables contain the required ordinal number. Reference these variables in the FINISH state.|NUMBER|
+@ACSACTIONORDINAL3|When your action is to create a record that requires an ordinal number, these variables contain the required ordinal number. Reference these variables in the FINISH state.|NUMBER|
+@ACSACTIONORDINAL4|When your action is to create a record that requires an ordinal number, these variables contain the required ordinal number. Reference these variables in the FINISH state.|NUMBER|
+@ACSACTIONORDINAL5|When your action is to create a record that requires an ordinal number, these variables contain the required ordinal number. Reference these variables in the FINISH state.|NUMBER|
+@ACSCONSOLIDATEMAX|This variable contains the maximum loan amount the member is allowed to consolidate. Reference this variable in either the APPROVE or the FINISH states.|MONEY|
+@ACSCRITERIARESULT1|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT2|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT3|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT4|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT5|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT6|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT7|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT8|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT9|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT10|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT11|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCRITERIARESULT12|These variables are true/false flags that return 1 for each entry of the Criteria # criterion that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSCUSTOMACTION01|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION02|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION03|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION04|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION05|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION06|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION07|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION08|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION09|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION10|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION11|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION12|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION13|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION14|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION15|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION16|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION17|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION18|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION19|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION20|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION21|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION22|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION23|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION24|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION25|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION26|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION27|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION28|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION29|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION30|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION31|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION32|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION33|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION34|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION35|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION36|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION37|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION38|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION39|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION40|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION41|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION42|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION43|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION44|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION45|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION46|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION47|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION48|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION49|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSCUSTOMACTION50|These variables are true/false flags that return 1 when a chosen menu item has an action code specified from 31 through 50. Use these variables to trigger custom PowerOn specfile code. Reference these variables in the FINISH state.|NUMBER|
+@ACSDECISION|This variable is a true/false flag to determine if a member qualifies for a specific service. Reference this variable in the APPROVE state.|NUMBER|
+@ACSDESCRIPTION|This variable returns the value of the Description field from a specific service parameter. Reference this variable in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSLOANAMOUNT|This variable contains the loan balance of an item acquired from the credit report. Reference this variable in either the APPROVE or the FINISH states.|MONEY|
+@ACSLOANPAYMENT|This variable contains the loan payment amount of an item acquired from the credit report. Reference this variable in either the APPROVE or the FINISH states.|MONEY|
+@ACSLOANRATE|This variable contains the rate of a loan acquired from the credit report. Reference this variable in either the APPROVE or the FINISH states. This information is not always available.|RATE|
+@ACSLOANTERM|This variable contains the term of an item acquired from the credit report. Reference this variable in either the APPROVE or the FINISH states. This information is not always available.|NUMBER|
+@ACSMATCHREASON1|With these variables, you enter a text description of why an ACS Services Parameters Service Match # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSMATCHREASON2|With these variables, you enter a text description of why an ACS Services Parameters Service Match # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSMATCHREASON3|With these variables, you enter a text description of why an ACS Services Parameters Service Match # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSMENUCHOSEN|This variable returns the number of the user's Menu Option # selection, which is used to determine other file maintenance to be performed. Reference this variable in the FINISH state.|NUMBER|
+@ACSPOINTS|This variable contains the number of points a specific service is worth when determining relationship codes for relationship pricing. Reference this variable in any state.|NUMBER|
+@ACSPROJECTPAYMENT|If you decide to accept a loan service with the payment agreed upon while performing loan projections, this variable contains the specified payment amount. Reference this variable in the FINISH state.|MONEY|
+@ACSPROJECTRATE|If you decide to accept a loan service at the rate agreed upon while performing loan projections, this variable contains the specified rate. Reference this variable in the FINISH state.|RATE|
+@ACSPROJECTTERM|If you decide to accept a loan service for the term agreed upon while performing loan projections, this variable contains the specified term. Reference this variable in the FINISH state.|NUMBER|
+@ACSREASON1|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON2|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON3|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON4|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON5|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON6|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON7|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON8|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON9|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON10|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON11|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREASON12|With these variables, you enter a text description of why an ACS Services Parameters Criteria # field criterion succeeded or failed. Reference these variables in the APPROVE state.|CHARACTER|
+@ACSREFERENCE1|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE2|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE3|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE4|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE5|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE6|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE7|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE8|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE9|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE10|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE11|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE12|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE13|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE14|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE15|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE16|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE17|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE18|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE19|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE20|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE21|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE22|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE23|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE24|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSREFERENCE25|When acquiring a loan or loans from the credit report, these variables store the name of the financial institution for a specific item. Reference these variables in either the SFW or the SALESHISTORY states.|CHARACTER|
+@ACSSERVICE|This variable contains the number of the service defined in ACS Service Parameters. Reference this variable in the APPROVE state.|NUMBER|
+@ACSSERVICEMATCH1|These variables are true/false flags that return 1 for each entry of the ACS Services Parameters Service Match # field criteria that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSSERVICEMATCH2|These variables are true/false flags that return 1 for each entry of the ACS Services Parameters Service Match # field criteria that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSSERVICEMATCH3|These variables are true/false flags that return 1 for each entry of the ACS Services Parameters Service Match # field criteria that is determined to be true and 0 for unused or non-matching criteria. Reference these variables in the APPROVE state.|NUMBER|
+@ACSSTATE|This variable stores the current run state of the ACS specfile. Reference this variable in any state.|CHARACTER|
+@ACSTHEIRRATE|The ACS program passes the interest rate of a loan you acquired from a credit report to the ACS specfile, assuming the reporting institution supplies it. Reference this variable in either the APPROVE or the FINISH states. This information is not always available.|RATE|
+@ACSWINDOWSFLAG|This variable is a true/false flag to specify if ACS is being run in Windows® and could be used to determine whether to run the SFW state or the SALESHISTORY state. Reference this variable in any state.|NUMBER|
+@APPID|This variable identifies the Application record on which the specfile is running|Character|
+@APPQADDINFO1|These variables add up to three custom columns in the start box when in the application queue by assigning the desired fields to the variables|Character|
+@APPQADDINFO2|These variables add up to three custom columns in the start box when in the application queue by assigning the desired fields to the variables|Character|
+@APPQADDINFO3|These variables add up to three custom columns in the start box when in the application queue by assigning the desired fields to the variables|Character|
+@ATMDIALOGFROMDATE|This variable prompts you for the oldest date of the ATM Dialog files that your specfile reads. If you set it to --/--/-- (Date Null), your specfile starts with the oldest ATM Dialog file available. The default value of this variable is --/--/--.|Date|
+@ATMDIALOGTODATE|This variable prompts you for the newest date of the ATM Dialog files that your specfile reads. If you set it to --/--/-- (Date Null), your specfile ends with the newest ATM Dialog file available. The default value of this variable is --/--/--.|Date|
 @AUDIODATATYPE|Determines the type of data to be input. See RD.AUDIO.DEF.|NUMBER|
 @AUDIOLINENUMBER|Contains the line number within the audio poster where the current session is running. Currently the audio poster supports up to 128 lines|NUMBER|128
 @AUDIOMESSAGEINFO1|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
@@ -23,25 +163,59 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @AUDIOMESSAGEINFO10|Contains the information for the Audio Response unit to play to the caller.|CHARACTER|
 @AUDIOSTATE|Contains the step the specfile is at during its execution. @AUDIOSTATE always begins with the character value START as the first state.|CHARACTER|
 @AUDIOUSERINPUT|Replaces the old variable @AUDIOINPUT. At the beginning of each state, this variable contains the caller's input from the previous prompt. This variable is a character string|CHARACTER|
-
+@CARDLOC1|This variable provides the locator ID for the first Card record created by the Card Creation Wizard|Character|
+@CARDLOC2|This variable provides the locator ID for the second Card record (if applicable) created by the Card Creation Wizard|Character|
 @CARDORDINAL|When a card number is used to identify an account and the Card record is verified while looking up the account, the Card ordinal is passed to this variable|NUMBER|
-
 @CERTIFICATEEFFECTIVEDATE|Episys sets this variable to the effective date of the certificate agreement.|DATE|
 @CERTIFICATEID|Episys sets this variable to the Share ID of the certificate. This information is also available by referencing SHARE:ID|CHARACTER|
 @CERTIFICATERENEWAL|Information passed to the spec file ; (0) the specfile is printing a new certificate agreement during Teller Transactions ; (1) the specfile is printing a renewing certificate during Daily Posting.|CODE|1
-
+@CHECKACCOUNTCODE|This variable provides the checking account code of the current disbursed check in the Corporate Check Wizard.|Code|
+@CHECKAMOUNT|This variable provides the amount of the current disbursed check in the Corporate Check Wizard.|Money|
+@CHECKMATCHCATEGORY|This variable provides the category of the match of the current disbursed check in the Corporate Check Wizard.|Code|
+@CHECKPAYEELINE1|This variable provides the Payee Line 1 field value of the current disbursed check|Character|
+@CHECKPAYEELINE2|This variable provides the Payee Line 2 field value of the current disbursed check|Character|
+@CHECKPAYEELINE3|This variable provides the Payee Line 3 field value of the current disbursed check|Character|
+@CHECKPAYEELINE4|This variable provides the Payee Line 4 field value of the current disbursed check|Character|
+@CHECKPAYEELINE5|This variable provides the Payee Line 5 field value of the current disbursed check|Character|
+@CHECKTRANCODE|This variable provides the current transaction code responsible for initiating the Corporate Check Wizard. It allows the specfile to use different logic for different check transaction codes.  For example, in the case of performing a Checks Suppressed (KS) transaction, the check has already been disbursed to the member. An OFAC verification may have been performed at the time of the original disbursal.|Character|
+@CLIENTNUMBER|This variable returns the SymConnect client number that the device type and device number map to. The PowerOn specfile run is initiated through a SymConnect request from this client number.|Code to 9999|
+@CPADDITIONALINFO1|This variable looks at the field and record specified in the custom specfile for the first custom column. Episys displays the field returned from the specfile with the rest of the collection queue information.|Character|
+@CPADDITIONALINFO2|This variable looks at the field and record specified in the custom specfile for the second custom column. Episys displays the field returned from the specfile with the rest of the collection queue information.|Character|
+@CPADDITIONALINFO3|This variable looks at the field and record specified in the custom specfile for the third custom column. Episys displays the field returned from the specfile with the rest of the collection queue information.|Character|
 @CPPRIORITY|Priority|CHARACTER|
 @CPWORKCARDLOC|CP Work Card Locator|NUMBER|
-
+@CREDITREPORTACCESSPIN|This variable cannot be blank or set to 0.  0,2,3: <Blank> 1: CREDREP:ACCESSPIN  |Character|
+@CREDITREPORTACTIONTEXT|0,2,3: <Blank> 1: CREDREP:ACTIONTEXT  |Character   |
+@CREDITREPORTADDRANALYSISOID|0,2,3: <Blank> 1: CREDREP:ADDRANALYSISOID  |Character   |
 @CREDITREPORTADDRVERIFYACCT|0,2,3: Blank ; 1: CREDREP:ADDRVERIFYACCT |CHARACTER|
 @CREDITREPORTALIAS1|0,2,3: Blank ; 1: CREDREP:ALIAS:1 |CHARACTER|
 @CREDITREPORTALIAS2|0,2,3: Blank ; 1: CREDREP:ALIAS:2 |CHARACTER|
 @CREDITREPORTALIAS3|0,2,3: Blank ; 1: CREDREP:ALIAS:3 |CHARACTER|
+@CREDITREPORTAPPALTEREDFORGED|0,2,3: 0 1: CREDREP:REDFLAGALERT.APPALTEREDFORGED  |Yes/No|
+@CREDITREPORTAPPEARINCONSISTENT|0,2,3: 0 1: CREDREP:REDFLAGALERT.APPEARINCONSIST  |Yes/No|
+@CREDITREPORTARMALERT|0,2,3: <Blank> 1: CREDREP:ARMALERT |Code|
 @CREDITREPORTASSOCIATIONCODE|0,2,3: Blank ; 1: CREDREP:ASSOCIATIONCODE |CHARACTER|
 @CREDITREPORTBIRTHDATE|0: --/--/-- ; 1: CREDREP:BIRTHDATE ; 2: NAME:BIRTHDATE ; 3: LOANAPP PERSON:BIRTHDATE |DATE|
 @CREDITREPORTBULLSEYEACCT|0,2,3: Blank ; 1: CREDREP:BULLSEYEACCT |CHARACTER|
 @CREDITREPORTBUREAU|0,2,3: 0 ; 1: CREDREP:BUREAU |CODE|3
 @CREDITREPORTBUREAUINFO|0,2,3: Blank ; 1: CREDREP:BUREAUINFO |CHARACTER|
+@CREDITREPORTBUSINESSCITY|0,2,3: <Blank> 1: CREDREP:BUSINESS.CURRADDRESS.CITY |Character|
+@CREDITREPORTBUSINESSNAME|Episys returns an error in @CREDITREPORTERROR if PULLCREDITREPORT runs when this variable is blank.  0,2,3: <Blank> 1: CREDREP:BUSINESS.BUSINESSNAME |Character|
+@CREDITREPORTBUSINESSPHONE|0,2,3: <Blank> 1: CREDREP:BUSINESS.PHONENUMBER |Character|
+@CREDITREPORTBUSINESSPREVCITY|0,2,3: <Blank> 1: CREDREP:BUSINESS.PREVADDRESS.CITY |Character|
+@CREDITREPORTBUSINESSPREVSTATE|0,2,3: <Blank> 1: CREDREP:BUSINESS.PREVADDRESS.STATE |Character|
+@CREDITREPORTBUSINESSPREVSTREET|0,2,3: <Blank> 1: CREDREP:BUSINESS.PREVADDRESS.STREET |Character|
+@CREDITREPORTBUSINESSPREVZIPCODE|0,2,3: <Blank> 1: CREDREP:BUSINESS.PREVADDRESS.ZIPCODE |Character|
+@CREDITREPORTBUSINESSSTATE|0,2,3: <Blank> 1: CREDREP:BUSINESS.CURRADDRESS.STATE |Character|
+@CREDITREPORTBUSINESSSTREET|0,2,3: <Blank> 1: CREDREP:BUSINESS.CURRADDRESS.STREET |Character|
+@CREDITREPORTBUSINESSTYPECODE|0,2,3: 0|Code|
+@CREDITREPORTBUSINESSZIPCODE|0,2,3: <Blank> 1: CREDREP:BUSINESS.CURRADDRESS.ZIPCODE |Character|
+@CREDITREPORTBUSMONTHSCURRADDR|0,2,3: 0 1: CREDREP:BUSINESS.MONTHSATADDRESS |Code|
+@CREDITREPORTBUSYEARSCURRADDR|0,2,3: 0 1: CREDREP:BUSINESS.YEARSATADDRESS |Code|
+@CREDITREPORTCHEXACCTNUMBER|0,2,3: <Blank> 1: CREDREP:ACCTNUMBER |Character|
+@CREDITREPORTCHEXTRANSACTIONID1|0,2,3: <Blank> 1: CREDREP:CHEXTRANSID1 |Character|
+@CREDITREPORTCHEXTRANSACTIONID2|0,2,3: <Blank> 1: CREDREP:CHEXTRANSID2 |Character|
+@CREDITREPORTCHEXTRANSACTIONID3|0,2,3: <Blank> 1: CREDREP:CHEXTRANSID3 |Character|
 @CREDITREPORTCOMMERCIALCODE|0,2,3: 0 ; 1: CREDREP:COMMERCIALCODE |CODE|1
 @CREDITREPORTCURRADDRCITY|0: Blank ; 1: CREDREP:CURRADDRCITY ; 2: NAME:CITY ; 3: LOANAPP PERSON:CITY |CHARACTER|
 @CREDITREPORTCURRADDRDIRECTIONAL|0: Blank ; 1: CREDREP:CURRADDRDIRECTIONAL ; 2: NAME:STREET ; 3: LOANAPP PERSON:STREET |CHARACTER|
@@ -74,6 +248,9 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @CREDITREPORTDECODE14|0,2,3: Blank ; 1: CREDREP:DECODE:14 |CHARACTER|
 @CREDITREPORTDECODE15|0,2,3: Blank ; 1: CREDREP:DECODE:15 |CHARACTER|
 @CREDITREPORTDECODE16|0,2,3: Blank ; 1: CREDREP:DECODE:16 |CHARACTER|
+@CREDITREPORTDEPOSITAMNT|0,2,3: $0.00 1: CREDREP:DEPOSITAMT |Money|
+@CREDITREPORTDEPOSITAMT|0,2,3: $0.00 1: CREDREP:BUREAU.CBIBUREAUCHEX.REPWREXPTYPEMONEY |Money|
+@CREDITREPORTDOCALTEREDFORGED|0,2,3: <Blank> 1: CREDREP:REDFLAGALERT.DOCALTEREDFORGED |Yes/No|
 @CREDITREPORTDPOWER1|0,2,3: Blank ; 1: CREDREP:DPOWER:1 |CHARACTER|
 @CREDITREPORTDPOWER2|0,2,3: Blank ; 1: CREDREP:DPOWER:2 |CHARACTER|
 @CREDITREPORTDPOWER3|0,2,3: Blank ; 1: CREDREP:DPOWER:3 |CHARACTER|
@@ -85,6 +262,7 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @CREDITREPORTEMPSTATE|0,2: Blank ; 1: CREDREP:EMPSTATE ; 3: LOANAPP PERSON:CURREMPADDRESS |CHARACTER|
 @CREDITREPORTEMPSTREET|0,2: Blank ; 1: CREDREP:EMPSTREET ; 3: LOANAPP PERSON:CURREMPADDRESS |CHARACTER|
 @CREDITREPORTEMPZIPCODE|0,2: Blank ; 1: CREDREP:EMPZIPCODE ; 3: LOANAPP PERSON:CURREMPADDRESS |CHARACTER|
+@CREDITREPORTENDEMPDATE|0,2: --/--/-- 1:CREDREP:STARTEMPDATE 3:LOANAPP PERSON:CURREMPSTARTDATE |Date|
 @CREDITREPORTEQDECODE1|0,2,3: Blank ; 1: CREDREP:EQDECODE:1 |CHARACTER|
 @CREDITREPORTEQDECODE2|0,2,3: Blank ; 1: CREDREP:EQDECODE:2 |CHARACTER|
 @CREDITREPORTEQDECODE3|0,2,3: Blank ; 1: CREDREP:EQDECODE:3 |CHARACTER|
@@ -95,13 +273,24 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @CREDITREPORTFILENAME|0-3: Blank |CHARACTER|
 @CREDITREPORTFIRSTNAME|0: Blank ; 1: CREDREP:FIRSTNAME ; 2: NAME:FIRST ; 3: LOANAPP PERSON:FIRST |CHARACTER|
 @CREDITREPORTHAWKINDICATOR|0,2,3: Blank ; 1: CREDREP:HAWKINDICATOR |CHARACTER|
-@CREDITREPORTIDNUMBER2|No info found|CHARACTER|
 @CREDITREPORTIDNUMBER|0: Blank ; 1: CREDREP:IDNUMBER ; 2,3: NAME:IDENTIDNUMBER:n where n is the subfield of the first NAME:IDENTIDNUMBER that has a corresponding ID Type of (2) Driver’s License, (3) State ID, or (6) Military ID. |CHARACTER|
+@CREDITREPORTIDNUMBER2|No info found|CHARACTER|
+@CREDITREPORTIDSTATE|0: Blank ; 1: CREDREP:IDSTATE ; 2,3: NAME:IDENTIDNUMBER:n where n is the subfield of the first NAME:IDENTIDNUMBER that has a corresponding ID Type of (2) Driver’s License, (3) State ID, or (6) Military ID. If IDENTIDDESCRIPTION is not||
 @CREDITREPORTIDSTATE2|No info found|CHARACTER|
-@CREDITREPORTIDSTATE|0: Blank ; 1: CREDREP:IDSTATE ; 2,3: NAME:IDENTIDNUMBER:n where n is the subfield of the first NAME:IDENTIDNUMBER that has a corresponding ID Type of (2) Driver’s License, (3) State ID, or (6) Military ID. If IDENTIDDESCRIPTION is not exactly two characters, this field is set Blank for Source 2 and Source 3. |CHARACTER|
+@CREDITREPORTIDVERIFICATIONOID|0,2,3: <Blank> 1: CREDREP:IDVERIFICATIONID  |Character   |
+@CREDITREPORTINCLUDEIDV|0,2,3: <Blank> 1: CREDREP:INCIDVERIFY  |Yes/No   |
+@CREDITREPORTINCLUDENEWACCTCHEX|0,2,3: <Blank> 1: CREDREP:INCNEWACCTCHEX  |Yes/No   |
+@CREDITREPORTINCLUDEOFAC|0,2,3: <Blank> 1: CREDREP:INCOFACWATCH  |Yes/No   |
+@CREDITREPORTINCLUDEQUALIFILE|0,2,3: <Blank> 1: CREDREP:INCQUALIFILE  |Yes/No   |
 @CREDITREPORTINCOME|0,2,3: $0.00 ; 1: CREDREP:INCOME |MONEY|
+@CREDITREPORTINFOINCONSISTENT|0,2,3: <Blank> 1: CREDREP:REDFLAGALERT.INFOINCONSISTENT  |Yes/No   |
+@CREDITREPORTINQUIRYID|0,2,3: <Blank> 1: CREDREP:INQUIRYIDENTIFIER  |Character   |
 @CREDITREPORTINQUIRYTYPE|0,2,3: 0 ; 1: CREDREP:INQUIRYTYPE |CODE|99
 @CREDITREPORTINSTANTUPDATEACCT|0,2,3: Blank ; 1: CREDREP:INSTANTUPDATEACCT |CHARACTER|
+@CREDITREPORTINTERNETID|Do not use any record; all data are filled in by the specfile.|0|
+@CREDITREPORTINTERNETPASSWD|0,2,3: <Blank> 1: CREDREP:CREDREPINTERNETPASSWD  |Character   |
+@CREDITREPORTINTERNETUSERID|Do not use any record; all data are filled in by the specfile.|0|
+@CREDITREPORTIPADDRESS|0,2,3: <Blank> 1: CREDREP:IPADDRESS  |Character   |
 @CREDITREPORTJOINTFILEACCESS|0,2,3: Blank ; 1: CREDREP:JOINTFILEACCESS |CHARACTER|
 @CREDITREPORTLASTNAME|0: Blank ; 1: CREDREP:LASTNAME ; 2: NAME:LAST ; 3: LOANAPP PERSON:LAST |CHARACTER|
 @CREDITREPORTLOANAMOUNT|0,2,3: $0.00 ; 1: CREDREP:LOANAMOUNT |MONEY|
@@ -120,9 +309,11 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @CREDITREPORTMULTIPLEFILE|0,2,3: 0 ; 1: CREDREP:MULTIPLEFILE |CODE|
 @CREDITREPORTNAMESUFFIX|0: Blank ; 1: CREDREP:NAMESUFFIX ; 2: NAME:SUFFIX ; 3: LOANAPP PERSON:SUFFIX |CHARACTER|
 @CREDITREPORTOCCUPATION|0,2: Blank ; 1: CREDREP:OCCUPATION ; 3: LOANAPP PERSON:CURREMPOCCUPATION |CHARACTER|
+@CREDITREPORTOFACINQUIRY|CREDREP:OFACINQUIRY Important: This variable is set to the value in the OFAC Inquiry field 0 (no), 1 (yes) of the Credit Report record for Experian and enables the Experian OFAC Name Matching product. You can query the OFAC OID Credit Report record field from Credit Report Item records of a previously pulled ChexSystems report, but you need a specfile to perform the appropriate lookup. |Code  |
+@CREDITREPORTOFACOID|From the Credit Report Item records of a previously pulled ChexSystems report, you can query the Credit Report record OFAC OID field; however, you need a specfile to perform the appropriate lookup.  0,2,3: <Blank> 1: CREDREP:OFACOID  |Character     |
 @CREDITREPORTOPERATORCODE|0,2,3: Blank ; 1: CREDREP:OPERATORCODE |CHARACTER|
-@CREDITREPORTOPTFEATURECODE|0,2,3: Blank ; 1: CREDREP:OPTFEATURECODE |CHARACTER|
 @CREDITREPORTORIGINALCREDITOR|0,2,3: Blank ; 1: CREDREP:ORIGINALCREDITOR |CHARACTER|
+@CREDITREPORTOVERRIDETEXT|0,2,3: <Blank> 1: CREDREP:OVERRIDETEXT  |Character   |
 @CREDITREPORTPASSWORD|0,2,3: Blank ; 1: CREDREP:PASSWORD |CHARACTER|
 @CREDITREPORTPAYBASIS|0,2,3: Blank ; 1: CREDREP:PAYBASIS |CHARACTER|
 @CREDITREPORTPREVADDR1CITY|0,2,3: Blank ; 1: CREDREP:PREVADDR1CITY |CHARACTER|
@@ -148,35 +339,73 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @CREDITREPORTQUEUEAFTERDATE|0-3: --/--/-- |DATE|
 @CREDITREPORTQUEUEAFTERTIME|0-3: 0 |CODE|2359
 @CREDITREPORTQUEUECODE|0-3: 0 |CODE|1
+@CREDITREPORTRECORDTEXT|0,2,3: <Blank> 1: CREDREP:RECORDTEXT  |Character   |
+@CREDITREPORTREDFLAGACTIONTYPEID|0,2,3: <Blank> 1: CREDREP:REDFLAGALERT.ACTIONTYPEID  |Character   |
+@CREDITREPORTREDFLAGALERTLOGID|0,2,3: <Blank> 1: CREDREP:REDFLAGALERT.LOGID  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS01|0,2,3: <Blank> 1: CREDREP:REDLFAGALERT.COMMENTS1  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS02|0,2,3: <Blank> 1: CREDREP: REDLFAGALERT.COMMENTS2  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS03|0,2,3: <Blank> 1: CREDREP: REDLFAGALERT.COMMENTS3  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS04|0,2,3: <Blank> 1: CREDREP: REDLFAGALERT.COMMENTS4  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS05|0,2,3: <Blank> 1: CREDREP: REDLFAGALERT.COMMENTS5  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS06|0,2,3: <Blank> 1: CREDREP: REDLFAGALERT.COMMENTS6  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS07|0,2,3: <Blank> 1: CREDREP: REDLFAGALERT.COMMENTS7  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS08|0,2,3: <Blank> 1: CREDREP: REDLFAGALERT.COMMENTS8  |Character   |
+@CREDITREPORTREDFLAGCOMMENTS09|0,2,3: <Blank> 1: CREDREP: REDLFAGALERT.COMMENTS9  |Character   |
+@CREDITREPORTREDFLAGFACTID|0,2,3: <Blank> 1: CREDREP:REDFLAGALERT.FACTID  |Character   |
+@CREDITREPORTREDFLAGRECACTIONID|0,2,3: <Blank> 1: CREDREP:REDFLAGALERT.RECACTIONTYPEID  |Character   |
+@CREDITREPORTREDFLAGSTATUS|0,2,3: <Blank> 1: CREDREP:REFLAGALERT.STATUS  |Character   |
 @CREDITREPORTRISKMODEL1|0,2,3: Blank ; 1: CREDREP:RISKMODEL:1 |CHARACTER|
 @CREDITREPORTRISKMODEL2|0,2,3: Blank ; 1: CREDREP:RISKMODEL:2 |CHARACTER|
 @CREDITREPORTRISKMODEL3|0,2,3: Blank ; 1: CREDREP:RISKMODEL:3 |CHARACTER|
 @CREDITREPORTRISKMODEL4|0,2,3: Blank ; 1: CREDREP:RISKMODEL:4 |CHARACTER|
 @CREDITREPORTRISKMODEL5|0,2,3: Blank ; 1: CREDREP:RISKMODEL:5 |CHARACTER|
+@CREDITREPORTRTNUMBER|0,2,3: <Blank> 1: CREDREP:RTNUMBER  |Character   |
+@CREDITREPORTSCOREMODEL01|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:1  |Character   |
+@CREDITREPORTSCOREMODEL02|0,2,3: <Blank> 1:CREDREP:SCOREMODEL:2  |Character   |
+@CREDITREPORTSCOREMODEL03|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:3  |Character   |
+@CREDITREPORTSCOREMODEL04|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:4  |Character   |
+@CREDITREPORTSCOREMODEL05|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:5  |Character   |
+@CREDITREPORTSCOREMODEL06|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:6  |Character   |
+@CREDITREPORTSCOREMODEL07|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:7  |Character   |
+@CREDITREPORTSCOREMODEL08|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:8  |Character   |
+@CREDITREPORTSCOREMODEL09|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:9  |Character   |
+@CREDITREPORTSCOREMODEL10|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:10  |Character   |
+@CREDITREPORTSCOREMODEL11|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:11  |Character   |
+@CREDITREPORTSCOREMODEL12|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:12  |Character   |
 @CREDITREPORTSECONDARYNAME|0,2,3: Blank ; 1: CREDREP:SECONDARYNAME |CHARACTER|
 @CREDITREPORTSELECTCHECKCODE|0,2,3: Blank ; 1: CREDREP:SELECTCHECKCODE |CHARACTER|
+@CREDITREPORTSIGINCONSISTENT|0,2,3: <Blank> 1: CREDREP:REDFLAGALERT.SIGINCONSISTENT  |Yes/No   |
 @CREDITREPORTSOURCE|0-3: 0 |CODE|99
 @CREDITREPORTSPECIALCOMMENT|0,2,3: Blank ; 1: CREDREP:SPECIALCOMMENT |CHARACTER|
+@CREDITREPORTSPOUSEACCESSPIN|0,2,3: <Blank> 1: CREDREP:SPOUSEACCESSPIN  |Character   |
 @CREDITREPORTSPOUSEBIRTHDATE|0,2,3: --/--/-- ; 1: CREDREP:SPOUSEBIRTHDATE |DATE|
 @CREDITREPORTSPOUSEEMPCITY|0,2,3: Blank ; 1: CREDREP:SPOUSEEMPCITY |CHARACTER|
 @CREDITREPORTSPOUSEEMPNAME|0,2,3: Blank ; 1: CREDREP:SPOUSEEMPNAME |CHARACTER|
 @CREDITREPORTSPOUSEEMPSTATE|0,2,3: Blank ; 1: CREDREP:SPOUSEEMPSTATE |CHARACTER|
 @CREDITREPORTSPOUSEEMPSTREET|0,2,3: Blank ; 1: CREDREP:SPOUSEEMPSTREET |CHARACTER|
 @CREDITREPORTSPOUSEEMPZIPCODE|0,2,3: Blank ; 1: CREDREP:SPOUSEEMPZIPCODE |CHARACTER|
+@CREDITREPORTSPOUSEENDEMPDATE|0,2,3: --/--/-- 1: CREDREP:SPOUSEENDEMPDATE  |Date   |
 @CREDITREPORTSPOUSEFIRST|0,2,3: Blank ; 1: CREDREP:SPOUSEFIRST |CHARACTER|
+@CREDITREPORTSPOUSEINCOME|0,2,3: 0 1: CREDREP:SPOUSEINCOME  |Money   |
 @CREDITREPORTSPOUSELAST|0,2,3: Blank ; 1: CREDREP:SPOUSELAST |CHARACTER|
 @CREDITREPORTSPOUSEMIDDLE|0,2,3: Blank ; 1: CREDREP:SPOUSEMIDDLE |CHARACTER|
-@CREDITREPORTSPOUSESSN|0,2,3: Blank ; 1: CREDREP:SPOUSESSN |CHARACTER|
+@CREDITREPORTSPOUSEOCCUPATION|0,2,3: <Blank> 1: CREDREP:SPOUSEOCCUPATION  |Character   |
+@CREDITREPORTSPOUSEPAYBASIS|0,2,3: <Blank> 1: CREDREP:SPOUSEPAYBASIS  |Character   |
+@CREDITREPORTSPOUSESECONDARYNM|0,2,3: <Blank> 1: CREDREP:SPOUSESECONDARYNM  |Character   |
+@CREDITREPORTSPOUSESTARTEMPDATE|0,2,3: --/--/-- 1: CREDREP:SPOUSESTARTEMPDATE  |Date   |
 @CREDITREPORTSPOUSESUFFIX|0,2,3: Blank ; 1: CREDREP:SPOUSESUFFIX |CHARACTER|
 @CREDITREPORTSSN|0: Blank ; 1: CREDREP:SSN ; 2: NAME:SSN ; 3: LOANAPP PERSON:SSN |CHARACTER|
 @CREDITREPORTSSNSEARCH1|0,2,3: Blank ; 1: CREDREP:SSNSEARCH:1 |CHARACTER|
 @CREDITREPORTSSNSEARCH2|0,2,3: Blank ; 1: CREDREP:SSNSEARCH:2 |CHARACTER|
 @CREDITREPORTSSNSEARCH3|0,2,3: Blank ; 1: CREDREP:SSNSEARCH:3 |CHARACTER|
 @CREDITREPORTSSNSEARCHFACS|0,2,3: Blank ; 1: CREDREP:SSNSEARCHFACS |CHARACTER|
+@CREDITREPORTSTARTEMPDATE|0,2: --/--/-- 1: CREDREP:STARTEMPDATE 3:LOANAPP PERSON:CURREMPSTARTDATE  |Date    |
 @CREDITREPORTSTATUSCODE|0,2,3: 0 ; 1: CREDREP:STATUSCODE |CODE|99
 @CREDITREPORTSTRATEGYTYPE|0,2,3: Blank ; 1: CREDREP:STRATEGYTYPE |CHARACTER|
 @CREDITREPORTSUBSCRIBERCODE|0,2,3: Blank ; 1: CREDREP:SUBSCRIBERCODE |CHARACTER|
-
+@CREDITREPORTTESTENVIRONMENT|0,2,3: <Blank>, custom-coded default or CRS parameter 1: CREDREP:TESTENVIRONMENT  |Code   |
+@CREDITREPORTUSERID|0,2,3: <Blank>, custom-coded default or CRS parameter 1: CREDREP:USERID  |Character   |
+@CREDITREPORTUSETYPE|0,2,3: <Blank> 1: CREDREP:USERTYPE  |Character   |
 @DIVPROJECTAPY|APY|RATE|
 @DIVPROJECTCALCULATIONTYPE|(0) Calculate a dividend projection ; (1) Calculate an APY|CODE|1
 @DIVPROJECTDEPAMOUNT|Deposit Amount|MONEY|
@@ -186,24 +415,21 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @DIVPROJECTDEPSTARTDATE|Deposit Start Date|DATE|
 @DIVPROJECTDIVPOSTCODE|Dividend Post Code ; (0) Deposit to Share ; (1) Withdraw by Check or Transfer if dividend calculation, Dividends Required to be Withdrawn or Transferred if APY|CODE|1
 @DIVPROJECTDIVRATE|Dividend Rate|RATE|
-@DIVPROJECTDIVRATEMARGIN|Dividend Rate Margin|RATE|
-@DIVPROJECTDIVRATEMARGINSIGN|Dividend Rate Margin Sign|NUMBER|
 @DIVPROJECTDIVTYPE|Dividend Type|CODE|99
 @DIVPROJECTENDDATE|End Date|DATE|
 @DIVPROJECTERROR|Projection Error|CHARACTER|80
+@DIVPROJECTTOTALMATURITYCOUNT|Total Number of Maturity Count|NUMBER|
+@DIVPROJECTTOTALAPYDAYCOUNT|Number of days in the APY Count|NUMBER|
 @DIVPROJECTMATURITYDATE|Maturity Date|DATE|
 @DIVPROJECTOPENBALANCE|Open Balance|MONEY|
 @DIVPROJECTOPENDATE|Open Date|DATE|
 @DIVPROJECTTERMFREQUENCY|Term Frequency ; (0) Months ; (1) Days|CODE|1
 @DIVPROJECTTERMPERIOD|Term Period|CODE|9999
-@DIVPROJECTTOTALAPYDAYCOUNT|Number of days in the APY Count|NUMBER|
 @DIVPROJECTTOTALBALANCE|Total Balance After All Deposits and Withdraws|MONEY|
 @DIVPROJECTTOTALDEPOSITS|Total Deposits|MONEY|
 @DIVPROJECTTOTALDIVIDENDS|Total Dividends|MONEY|
 @DIVPROJECTTOTALENDDATE|End Date|DATE|
-@DIVPROJECTTOTALMATURITYCOUNT|Total Number of Maturity Count|NUMBER|
 @DIVPROJECTTOTALWITHDRAWALS|Total Dividend Withdraws|MONEY|
-
 @ENVARGCHAR1|Character Value passed to a subroutine|CHARACTER|132
 @ENVARGCHAR2|Character Value passed to a subroutine|CHARACTER|132
 @ENVARGCHAR3|Character Value passed to a subroutine|CHARACTER|132
@@ -264,17 +490,6 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @ENVARGRATE8|Rate Value passed to a subroutine|RATE|
 @ENVARGRATE9|Rate Value passed to a subroutine|RATE|
 @ENVARGRATE10|Rate Value passed to a subroutine|RATE|
-
-@ENVPARAMCHAR1|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR2|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR3|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR4|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR5|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR6|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR7|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR8|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR9|Character Value passed into this subroutine|CHARACTER|132
-@ENVPARAMCHAR10|Character Value passed into this subroutine|CHARACTER|132
 @ENVPARAMCODE1|Code Value passed into this subroutine|CODE|9999
 @ENVPARAMCODE2|Code Value passed into this subroutine|CODE|9999
 @ENVPARAMCODE3|Code Value passed into this subroutine|CODE|9999
@@ -326,7 +541,6 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @ENVPARAMRATE8|Rate Value passed into this subroutine|RATE|
 @ENVPARAMRATE9|Rate Value passed into this subroutine|RATE|
 @ENVPARAMRATE10|Rate Value passed into this subroutine|RATE|
-
 @EXCPITEMACCOUNT|Corresponds to the EXCPITEM:EXCPITEMACCOUNT field in the current exception item|CHARACTER|
 @EXCPITEMACHEXCPREASON|Corresponds to the EXCPITEM:ACHEXCPREASON field in the current exception item|CHARACTER|
 @EXCPITEMAMOUNT|Corresponds to the EXCPITEM:AMOUNT:1 field in the current exception item|MONEY|
@@ -338,9 +552,8 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @EXCPITEMREASONCODE|Corresponds to the EXCPITEM:REASONCODE field in the current exception item|CODE|
 @EXCPITEMSLID|Corresponds to the EXCPITEM:ID field in the current exception item|CHARACTER|
 @EXCPITEMSLIDTYPE|Corresponds to the EXCPITEM:IDTYPE field in the current exception item|NUMBER|
-@EXCPITEMTOTALNSF|A special variable that indicates the total of the @EXCPITEMAMOUNT for each exception item processed thus far (in the current Exception Item Repeat FM session) that has the same @EXCPITEMACCOUNT, @EXCPITEMSLIDTYPE, and @EXCPITEMSLID as the current exception item and has been coded as a force pay item|MONEY|
-@EXCPITEMTYPE|This field can have the following values, based on the type of exception ; 0 - Draft Exception ; 1 - ACH Exception ; 2 - ATM™ Exception ; 3 - Credit/Debit Card Exception ; 4 - Fee Exception ; 5 - Insurance Exception ; 6 - Misc Post Exception ; 7 - Payroll Exception ; 8 - Distribution Exception ; 9 - Memo Exception|CODE|9
-
+@EXCPITEMTOTALNSF|A special variable that indicates the total of the @EXCPITEMAMOUNT for each exception item processed thus far (in the current Exception Item Repeat FM session) that has the same @EXCPITEMACCOUNT, @EXCPITEMSLIDTYPE, and @EXCPITEMSLID as t||
+@EXCPITEMTYPE|This field can have the following values, based on the type of exception ; 0 - Draft Exception ; 1 - ACH Exception ; 2 - ATM™ Exception ; 3 - Credit/Debit Card Exception ; 4 - Fee Exception ; 5 - Insurance Exception ; 6 - Misc Post Exception||
 @HBANSWERAMOUNT|Answer Amount|MONEY|
 @HBANSWERDATE|Answer Date|DATE|
 @HBANSWERNUM|Answer Number|NUMBER|
@@ -358,16 +571,20 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @HBPROMPT|Prompt|CHARACTER|
 @HBSCREENCLEAR|Clear Screen|NUMBER|
 @HBSTATE|Hombanking State|CHARACTER|
-
+@LOANPROJECTAMORTIZESCHDTYPE|Data source 1, 3 = Loan record Amortize Schedule Type Data source 2, 4 = Initialized from the loan type defaults specified by the Amortize Schedule Type field in the application when you initialize from an existing application or from an application default. Data source 5, 7 = Loan (LOC) Segment record Amortize Schedule Type Data source 6, 8 = Application (LOC) Segment record Amortize Schedule Type Otherwise = 0  |Code|
+@LOANPROJECTAMORTIZESCHEDULE|Data source 1, 3 = Loan record Amortize Schedule Data source 2, 4 = Initialized from the loan type defaults specified by the Amortize Schedule field in the application when you initialize from an existing application or from an application default. Data source 5, 7 = Loan (LOC) Segment record Amortize Schedule  |Code   |
 @LOANPROJECTAMOUNTPASTDUE|Amount Past Due|MONEY|
 @LOANPROJECTAMOUNTPAYOFF|Payoff Amount|MONEY|
 @LOANPROJECTAPR|APR|RATE|
 @LOANPROJECTBALLOONAMOUNT|Balloon Amount|MONEY|
 @LOANPROJECTBALLOONDATE|Balloon Date|DATE|
+@LOANPROJECTBALXFRPRINCIPAL|The balance transfer principal balance at the time of the payoff calculation  |Money  |
 @LOANPROJECTBILLEDFEEPAYOFF|The amount due on a non-interest-accruing periodic fee a member must pay for having available certain types of credit|MONEY|
 @LOANPROJECTCALCULATIONTYPE|Calculation Type|CODE|3
 @LOANPROJECTCASHADVPRINCIPAL|Cash Advance Principal|MONEY|
 @LOANPROJECTCOUNTPASTDUE|Number Of Payments Past Due|NUMBER|
+@LOANPROJECTCUTOFFBALXFRINT|The finance charge due on balance transfers from the day after the last Statement Date through the specified Payoff Date  |Money  |
+@LOANPROJECTCUTOFFBTTRANSINT|The total balance transfer transaction finance charge due on balance transfers from the day after the last Statement Date through the specified Payoff Date  |Money  |
 @LOANPROJECTCUTOFFCASHADVINT|Cash Adv Interest|MONEY|
 @LOANPROJECTCUTOFFCATRANSINT|Cash Adv Trans Interest|MONEY|
 @LOANPROJECTCUTOFFPURCHASEINT|Purchase Interest|MONEY|
@@ -381,17 +598,22 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @LOANPROJECTFINALDUEDATE|Final Due Date|DATE|
 @LOANPROJECTFINALPAYMENT|Final Payment|MONEY|
 @LOANPROJECTFIRSTDUEDATE|First Due Date|DATE|
+@LOANPROJECTFIRSTINSBIRTHDATE|Data source 1, 3 = Loan record First Insured Birth Date Data source 2, 4 = Application record First Insured Birth Date Data source 7 = Loan (LOC) Segment record First Insured Birth Date Data source 8 = Application (LOC) Segment record First Insured Birth Date Otherwise = --/--/--  |Date      |
 @LOANPROJECTINSURANCEPAYOFF|The amount of remaining insurance the member must pay at the time of payoff|MONEY|
 @LOANPROJECTINSURANCETYPE|Insurance Type|CODE|99
+@LOANPROJECTINTERESTPAYOFF|The amount of the loan balance due to accrued interest |Money |
 @LOANPROJECTINTERESTPAYOFF1|The amount of the loan balance due to accrued interest|MONEY|
 @LOANPROJECTINTERESTPAYOFF2|The amount of the loan balance due to accrued interest|MONEY|
 @LOANPROJECTINTERESTRATE|Interest Rate|RATE|
 @LOANPROJECTINTERESTTYPE|Interest Type|CODE|99
+@LOANPROJECTLATECHGDUE|The total amount of any late charges due on the loan |Money |
 @LOANPROJECTLIFE|Life Insurance Total Premium|MONEY|
 @LOANPROJECTLIFEERROR|Error Msg From LIFE Projection|CHARACTER|80
 @LOANPROJECTLOANAMOUNT|Loan Amount|MONEY|
+@LOANPROJECTLOANAMOUNT|Loan Amount|MONEY|
 @LOANPROJECTLOANDATE|Loan Date|DATE|
 @LOANPROJECTMATURITYDATE|Maturity Date|DATE|
+@LOANPROJECTPAYMENT|Payment Amount|MONEY|
 @LOANPROJECTPAYMENT|Payment Amount|MONEY|
 @LOANPROJECTPAYMENTCOUNT|Payment Count|NUMBER|
 @LOANPROJECTPAYMENTFREQUENCY|Payment Frequency|CODE|14
@@ -401,20 +623,23 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @LOANPROJECTPAYOFFDATE|Payoff Date|DATE|
 @LOANPROJECTPREPAIDFINANCECHG|Prepaid Finance Charge|MONEY|
 @LOANPROJECTPROMO1BALANCE|Promo 1 Balance|MONEY|
-@LOANPROJECTPROMO1RATE|Promo 1 Rate|RATE|
 @LOANPROJECTPROMO2BALANCE|Promo 2 Balance|MONEY|
+@LOANPROJECTPROMO1RATE|Promo 1 Rate|RATE|
 @LOANPROJECTPROMO2RATE|Promo 2 Rate|RATE|
 @LOANPROJECTPURCHASEPRINCIPAL|Purchase Principal|MONEY|
 @LOANPROJECTSALESTAXPAYOFF|The amount of remaining sales tax the member must pay to the state at the time of payoff|MONEY|
+@LOANPROJECTSECONDINSBIRTHDATE|Data source 1, 3 = Loan record Second Insured Birth Date Data source 2, 4 = Application record Second Insured Birth Date Data source 7 = Loan (LOC) Segment record Second Insured Birth Date Data source 8 = Application (LOC) Segment record Second Insured Birth Date Otherwise = --/--/--  |Date      |
+@LOANPROJECTSECONDINSBIRTHDATE|Data source 1, 3 = Loan record Second Insured Birth Date Data source 2, 4 = Application record Second Insured Birth Date Data source 7 = Loan (LOC) Segment record Second Insured Birth Date Data source 8 = Application (LOC) Segment record Second Insured Birth Date Otherwise = --/--/--  |Date      |
 @LOANPROJECTSINGLEPREMIUM|Single Premium|CODE|2
+@LOANPROJECTPAYMENTSKIPSTARTDAY|Payment Skip Day|CODE|1231
 @LOANPROJECTTERMINATEFEEPAYOFF|The optional fee charged for a lease loan payoff before the Balloon Date|MONEY|
 @LOANPROJECTTOTALESCROW|Total Escrow|MONEY|
 @LOANPROJECTTOTALINTEREST|Total Interest|MONEY|
 @LOANPROJECTTOTALPAYMENTS|Total Payments|MONEY|
+@LOANPROJECTUNPAIDBALXFRINT|The unpaid finance charges on balance transfers from previous statement cycles  |Money  |
 @LOANPROJECTUNPAIDCASHADVINT|Unpaid Cash Adv Interest|MONEY|
 @LOANPROJECTUNPAIDINTEREST|Unpaid Interest|MONEY|
 @LOANPROJECTUNPAIDPURCHASEINT|Unpaid Purchase Interest|MONEY|
-
 @MCWCHRDATA1|Character variable for Symitar internal use|CHARACTER|
 @MCWCHRDATA2|Character variable for Symitar internal use|CHARACTER|
 @MCWCHRDATA3|Character variable for Symitar internal use|CHARACTER|
@@ -425,7 +650,7 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @MCWCHRDATA8|Character variable for Symitar internal use|CHARACTER|
 @MCWCHRDATA9|Character variable for Symitar internal use|CHARACTER|
 @MCWCHRDATA10|Character variable for Symitar internal use|CHARACTER|
-@MCWDATATYPE|A numeric variable with valid values of 0, 1, and 2. ; (0) indicates that the specfile has only one state. The specfile runs once, produces output, and is done. ; (1) indicates that the specfile has multiple states, and that the current state requires some user input to advance to the next state. ; (2) indicates that the specfile has multiple states, and this is the final state.|CODE|2
+@MCWDATATYPE|A numeric variable with valid values of 0, 1, and 2. ; (0) indicates that the specfile has only one state. The specfile runs once, produces output, and is done. ; (1) indicates that the specfile has multiple states, and that the current state||
 @MCWDATEDATA1|Date variable for Symitar internal use|DATE|
 @MCWDATEDATA2|Date variable for Symitar internal use|DATE|
 @MCWDATEDATA3|Date variable for Symitar internal use|DATE|
@@ -452,14 +677,14 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @MCWNUMDATA8|Number variable for Symitar internal use|NUMBER|
 @MCWNUMDATA9|Number variable for Symitar internal use|NUMBER|
 @MCWNUMDATA10|Number variable for Symitar internal use|NUMBER|
-@MCWPREFLOCATOR|you access items in the Preference record, such as a member's preferred language, thereby allowing a script author to match the language used elsewhere in NTMC. This enables you to easily determine language preferences and access rights in custom scripts.|NUMBER|
+@MCWPREFLOCATOR|you access items in the Preference record, such as a member's preferred language, thereby allowing a script author to match the language used elsewhere in NTMC. This enables you to easily determine language preferences and access rights in||
 @MCWRATEDATA1|Rate variable for Symitar internal use|RATE|
 @MCWRATEDATA2|Rate variable for Symitar internal use|RATE|
 @MCWRATEDATA3|Rate variable for Symitar internal use|RATE|
 @MCWRATEDATA4|Rate variable for Symitar internal use|RATE|
 @MCWRATEDATA5|Rate variable for Symitar internal use|RATE|
 @MCWSESSIONNUMBER|A numeric variable passed into the specfile each time the specfile is invoked through the MemberConnect program. It contains a number from 1 to 100. This allows up to 100 concurrent users to run an interactive specfile.|NUMBER|
-@MCWSTATE|An alphanumeric variable used to control program flow within the Report Generator PRINT section. Valid values are any alphanumeric text string up to 20 characters in length. The initial state passed into the PRINT section when the specfile is invoked through MemberConnect must be START. The final @MCWSTATE must be set to END to enable the specfile to terminate properly.|CHARACTER|
+@MCWSTATE|An alphanumeric variable used to control program flow within the Report Generator PRINT section. Valid values are any alphanumeric text string up to 20 characters in length. The initial state passed into the PRINT section when the specfile is in||
 @MCWUSERAMOUNT1|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
 @MCWUSERAMOUNT2|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
 @MCWUSERAMOUNT3|Money variable used to pass information to and from, within an MCW Specfile|MONEY|
@@ -600,15 +825,63 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @MCWUSERRATE13|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
 @MCWUSERRATE14|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
 @MCWUSERRATE15|Rate variable used to pass information to and from, within an MCW Specfile|RATE|
-
+@OVERDRAWADDONDQGRACEDAYS|Add-on delinquency grace days|Code|
+@OVERDRAWADDONINCREMENT|Add-on increment amount|Money|
+@OVERDRAWADDONMAXOVERLOC|Add-on maximum increment amount|Money|
+@OVERDRAWADDONPCTOVERLOC|Add-on percentage increment|Rate|
+@OVERDRAWINCREMENTOVERRIDE|Specifies the overdraw increment override method Episys uses|Code|
+@OVERDRAWPROTECTION|Indicates the source of overdraw protection and tolerance allowed|Code|
+@OVERDRAWREGDLIMITING|Indicates if Reg D limiting applies|Code|
+@OVERDRAWSOURCEACCOUNT01|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT02|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT03|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT04|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT05|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT06|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT07|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT08|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT09|Returns ODP source account number |Character|
+@OVERDRAWSOURCEACCOUNT10|Returns ODP source account number |Character|
+@OVERDRAWSOURCEAMOUNTAVAILABLE01|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE02|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE03|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE04|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE05|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE06|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE07|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE08|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE09|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEAMOUNTAVAILABLE10|Returns ODP available balance amount |Money|
+@OVERDRAWSOURCEID01|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID02|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID03|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID04|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID05|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID06|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID07|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID08|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID09|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCEID10|Returns ODP source ID (0000-9999) |Character|
+@OVERDRAWSOURCETYPE01|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE02|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE03|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE04|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE05|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE06|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE07|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE08|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE09|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWSOURCETYPE10|Returns ODP source type (0=S or 1=L) |Code|
+@OVERDRAWTOLERANCEAMOUNT|Returns ODT amount used |Money|
+@OVERDRAWUSETOLERANCE|Indicates if overdraw tolerance applies|Code|
+@OVERDRAWWITHDRAWALINCREMENT|Withdrawal increment amount|Money|
 @PREFORDINAL|This variable passes the zero-based ordinal of the Preference record through which access to the member's account data was authorized. If the member used a card to access the account|NUMBER|
-
 @RGANSAMOUNT|This variables pass the answer back before the next step of the specfile is executed|MONEY|
 @RGANSDATE|This variables pass the answer back before the next step of the specfile is executed|DATE|
 @RGANSNUM|This variables pass the answer back before the next step of the specfile is executed|NUMBER|
 @RGANSRATE|This variables pass the answer back before the next step of the specfile is executed|RATE|
 @RGANSTEXT|This variables pass the answer back before the next step of the specfile is executed|CHARACTER|
-@RGDATATYPE|This variable specifies the data type requested or the completion of the last step of the specfile ; 0 = no input required ; 1 = character ; 2 = rate ; 3 = date ; 4 = number ; 5 = code ; 6 = money to $999,999,999,999.99 ; 7 = money to 16 digits ; 8 = yes/no ; 9 = end Report Generator specfile |NUMBER|
+@RGDATATYPE|This variable specifies the data type requested or the completion of the last step of the specfile ; 0 = no input required ; 1 = character ; 2 = rate ; 3 = date ; 4 = number ; 5 = code ; 6 = money to $999,999,999,999.99 ; 7 = money to 16 digit||
 @RGDEFAMOUNT|This variables is used to pass information, a prompt, and a default value|MONEY|
 @RGDEFDATE|This variables is used to pass information, a prompt, and a default value|DATE|
 @RGDEFNUM|This variables is used to pass information, a prompt, and a default value|NUMBER|
@@ -629,8 +902,6 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @RGUSERNUM3|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
 @RGUSERNUM4|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
 @RGUSERNUM5|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
-
-@VALIDATECDAMOUNT|Cash dispersed amount|MONEY|
 @VALIDATECHARACTERINPUT|Value entered by user|CHARACTER|
 @VALIDATECODEINPUT|Value entered by user|CODE|
 @VALIDATECOMMENTTEXT|Comment Text|CHARACTER|
@@ -656,8 +927,6 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @VALIDATEONACCOUNT|YES/NO Value ; A value of 0 means that you are not in a valid account. A value of 1 indicates that you have accessed a valid account.|YES/NO|
 @VALIDATERATEINPUT|Value entered by user|RATE|
 @VALIDATERELATIONSHIPCODE|Relationship code|CODE|
-@VALIDATESDAMOUNT|Total deposits of share amount|MONEY|
-@VALIDATESDCOUNT|Total number of share deposits within the transaction string|NUMBER|
 @VALIDATESECURITYCODE|Security Code Required|NUMBER|
 @VALIDATESLID|Share Loan ID|CHARACTER|
 @VALIDATESPHOLDTYPE|Stop Payment Hold Type [SP TRANSACTION]|NUMBER|
