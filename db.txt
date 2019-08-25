@@ -1025,7 +1025,7 @@
 		PAYEENAMELOCATOR|Payee Name Record Locator|808|4|null
 		DIVIDENDDUE|Dividend Due|809|7|null
 		***|SHARE HOLD|Share Hold
-			TYPE|Hold Type|1|5|21
+			TYPE|Hold Type|1|5|23
 			EFFECTIVEDATE|Effective Date|2|3|null
 			EXPIRATIONDATE|Expiration Date|3|3|null
 			REFERENCE1|Reference 1|4|0|10
@@ -1584,6 +1584,7 @@
 			TRACERNUMBER|Tracer Number|60|0|15
 			DISPOSITIONFEE|Disposition Fee|61|7|null
 			TERMINATIONFEE|Termination Fee|62|7|null
+			MISCEXPENSEAMOUNT|Misc Expense Amount|63|7|null
 			SUBSOURCEDESCR|Sub Source Description|800|1|40
 			TRANAMOUNT|Transaction Amount|801|7|null
 			CONFIRMATIONNUMBER|Confirmation Number|802|0|14
@@ -2031,69 +2032,69 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 17 for 17|2|7|null
-		CONTRLASTYEAR:2|Contr 17 for 16|2|7|null
-		CONTRLASTYEAR:3|Contr 17 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 17 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 17 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 17 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 17 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 17 Unspecif|2|7|null
-		CONTRLASTYEAR:9|Contr 17 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 17 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 17 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 17 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 17 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 17 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 17 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 17 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 17 Excess 17|3|7|null
-		DISTRLASTYEAR:9|Distr 17 Excess 16|3|7|null
-		DISTRLASTYEAR:10|Distr 17 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 17 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 17 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 17 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 17 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 17 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 17 Ex Earn 17|3|7|null
-		DISTRLASTYEAR:17|Distr 17 Ex Earn 16|3|7|null
-		CONTRTHISYEAR:1|Contr 18 for 18|4|7|null
-		CONTRTHISYEAR:2|Contr 18 for 17|4|7|null
-		CONTRTHISYEAR:3|Contr 18 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 18 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 18 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 18 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 18 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 18 Unspecif|4|7|null
-		CONTRTHISYEAR:9|Contr 18 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 18 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 18 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 18 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 18 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 18 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 18 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 18 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 18 Excess 18|5|7|null
-		DISTRTHISYEAR:9|Distr 18 Excess 17|5|7|null
-		DISTRTHISYEAR:10|Distr 18 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 18 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 18 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 18 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 18 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 18 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 18 Ex Earn 18|5|7|null
-		DISTRTHISYEAR:17|Distr 18 Ex Earn 17|5|7|null
+		CONTRLASTYEAR:1|Contr 18 for 18|2|7|null
+		CONTRLASTYEAR:2|Contr 18 for 17|2|7|null
+		CONTRLASTYEAR:3|Contr 18 Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr 18 Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr 18 Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr 18 Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr 18 Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr 18 Unspecif|2|7|null
+		CONTRLASTYEAR:9|Contr 18 Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr 18 No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr 18 Exception|3|7|null
+		DISTRLASTYEAR:3|Distr 18 Disability|3|7|null
+		DISTRLASTYEAR:4|Distr 18 Death|3|7|null
+		DISTRLASTYEAR:5|Distr 18 Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr 18 Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr 18 Normal|3|7|null
+		DISTRLASTYEAR:8|Distr 18 Excess 18|3|7|null
+		DISTRLASTYEAR:9|Distr 18 Excess 17|3|7|null
+		DISTRLASTYEAR:10|Distr 18 Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr 18 Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr 18 Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr 18 Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr 18 Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr 18 Fee|3|7|null
+		DISTRLASTYEAR:16|Distr 18 Ex Earn 18|3|7|null
+		DISTRLASTYEAR:17|Distr 18 Ex Earn 17|3|7|null
+		CONTRTHISYEAR:1|Contr 19 for 19|4|7|null
+		CONTRTHISYEAR:2|Contr 19 for 18|4|7|null
+		CONTRTHISYEAR:3|Contr 19 Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr 19 Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr 19 Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr 19 Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr 19 Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr 19 Unspecif|4|7|null
+		CONTRTHISYEAR:9|Contr 19 Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr 19 No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr 19 Exception|5|7|null
+		DISTRTHISYEAR:3|Distr 19 Disability|5|7|null
+		DISTRTHISYEAR:4|Distr 19 Death|5|7|null
+		DISTRTHISYEAR:5|Distr 19 Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr 19 Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr 19 Normal|5|7|null
+		DISTRTHISYEAR:8|Distr 19 Excess 19|5|7|null
+		DISTRTHISYEAR:9|Distr 19 Excess 18|5|7|null
+		DISTRTHISYEAR:10|Distr 19 Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr 19 Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr 19 Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr 19 Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr 19 Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr 19 Fee|5|7|null
+		DISTRTHISYEAR:16|Distr 19 Ex Earn 19|5|7|null
+		DISTRTHISYEAR:17|Distr 19 Ex Earn 18|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 17|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 18|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 18|16|7|null
+		IRARMD|Req Min Distrib 19|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
@@ -2302,7 +2303,7 @@
 		LASTTRANDATE|Last Transaction Date|6|3|null
 		ORIGINALDATE|Original Loan Date|7|3|null
 		OPENDATE|Open Date|8|3|null
-		CHARGEOFFDATE|Charge Off Date|9|3|null
+		CHARGEOFFDATE|Charge-off Date|9|3|null
 		CLOSEDATE|Close Date|10|3|null
 		REFERENCE|Reference|11|0|20
 		WARNINGCODE:1|Warning 01 Code|12|5|999
@@ -3056,7 +3057,7 @@
 		MAXLOANDUEDATE|Max Loan Due Date|851|3|null
 		NEXTSTMTDATE|Next Statement Date|852|3|null
 		***|LOAN HOLD|Loan Hold
-			TYPE|Hold Type|1|5|21
+			TYPE|Hold Type|1|5|23
 			EFFECTIVEDATE|Effective Date|2|3|null
 			EXPIRATIONDATE|Expiration Date|3|3|null
 			REFERENCE1|Reference 1|4|0|10
@@ -3987,6 +3988,7 @@
 			TRACERNUMBER|Tracer Number|60|0|15
 			DISPOSITIONFEE|Disposition Fee|61|7|null
 			TERMINATIONFEE|Termination Fee|62|7|null
+			MISCEXPENSEAMOUNT|Misc Expense Amount|63|7|null
 			SUBSOURCEDESCR|Sub Source Description|800|1|40
 			TRANAMOUNT|Transaction Amount|801|7|null
 			CONFIRMATIONNUMBER|Confirmation Number|802|0|14
@@ -6763,7 +6765,7 @@
 		BALANCE|Balance|800|7|null
 		AVAILABLEBALANCE|Available Balance|801|7|null
 		***|PORTFOLIO HOLD|Portfolio Hold
-			TYPE|Hold Type|1|5|21
+			TYPE|Hold Type|1|5|23
 			EFFECTIVEDATE|Effective Date|2|3|null
 			EXPIRATIONDATE|Expiration Date|3|3|null
 			REFERENCE1|Reference 1|4|0|10
@@ -9105,6 +9107,7 @@
 	CODE:2|Code 2|16|5|9999
 	CODE:3|Code 3|16|5|9999
 	CODE:4|Code 4|16|5|9999
+	CODE:5|Code 5|16|5|9999
 	AMOUNT:1|Amount|17|7|null
 	AMOUNT:2|Amount 2|17|7|null
 	CH1:1|Ch1 1|18|0|1
@@ -10980,7 +10983,7 @@
 			LATECHRG|Late Charge Chg|31|7|null
 			SUBACTIONCODE|Sub Action Code|32|0|1
 ***|USER|User
-	LASTCONSOLE|Last Console|1|5|9130
+	LASTCONSOLE|Last Console|1|5|9190
 	NUMBER|User Number|2|5|9999
 	NAME|Name|3|0|20
 	PRIVILEGE:1|Privilege Group 0001|5|8|null
@@ -14641,10 +14644,10 @@
 	SECURITYCODE:1561|Host Ext Loan Processg Status|15|5|1
 	SECURITYCODE:1562|Param FM Statement Messages|15|5|1
 	SECURITYCODE:1563|Purge Member - Online|15|5|1
-	SECURITYCODE:1564|Loan Term Creation|15|5|1
-	SECURITYCODE:1565|Loan Term Revision|15|5|1
-	SECURITYCODE:1566|Loan Term Balance Creation|15|5|1
-	SECURITYCODE:1567|Loan Term Balance Revision|15|5|1
+	SECURITYCODE:1564|Loan Bankruptcy Creation|15|5|1
+	SECURITYCODE:1565|Loan Bankruptcy Revision|15|5|1
+	SECURITYCODE:1566|Ln BK PrePetition Bal Creation|15|5|1
+	SECURITYCODE:1567|Ln BK PrePetition Bal Revision|15|5|1
 	SECURITYCODE:1568|Teller Tran Bal Transfr|15|5|1
 	SECURITYCODE:1569|Teller Tran Bal Xfr Adj|15|5|1
 	SECURITYCODE:1570|Teller Tran Bal Payment|15|5|1
