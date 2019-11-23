@@ -490,6 +490,16 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @ENVARGRATE8|Rate Value passed to a subroutine|RATE|
 @ENVARGRATE9|Rate Value passed to a subroutine|RATE|
 @ENVARGRATE10|Rate Value passed to a subroutine|RATE|
+@ENVPARAMCHAR1|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR2|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR3|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR4|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR5|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR6|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR7|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR8|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR9|Character Value passed into this subroutine|CHARACTER|132
+@ENVPARAMCHAR10|Character Value passed into this subroutine|CHARACTER|132
 @ENVPARAMCODE1|Code Value passed into this subroutine|CODE|9999
 @ENVPARAMCODE2|Code Value passed into this subroutine|CODE|9999
 @ENVPARAMCODE3|Code Value passed into this subroutine|CODE|9999
