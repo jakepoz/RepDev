@@ -155,7 +155,7 @@ public class DirectSymitarSession extends SymitarSession {
 	    }
 		try {
 			if(useSSH){
-				String command = "plink -load aixterm " + server;
+				String command = "plink -load aixterm " + aixUsername + "@" + server;
 				p = Runtime.getRuntime().exec(command);
 				
 				in = new BufferedReader(new InputStreamReader(p.getInputStream()));
