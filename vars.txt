@@ -8,6 +8,7 @@ SYSTEMDATE|Current banking date|DATE|
 SYSMEMOMODE|Memo Mode|NUMBER|
 SYSUSERNUMBER|User number of current user|NUMBER|
 SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
+LIVEINSTCHECK|Returns 1 if the specfile is running in a live SYM institution|NUMBER|
 
 @ACCTCHGDOCUMENTNUMBER|This variable contains the unique form identification number for the change|Number|
 @ACCTCHGNEWACCOUNTNUMBER|This variable contains the new account number to which the account is being changed|Number|
@@ -312,6 +313,7 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @CREDITREPORTOFACINQUIRY|CREDREP:OFACINQUIRY Important: This variable is set to the value in the OFAC Inquiry field 0 (no), 1 (yes) of the Credit Report record for Experian and enables the Experian OFAC Name Matching product. You can query the OFAC OID Credit Report record field from Credit Report Item records of a previously pulled ChexSystems report, but you need a specfile to perform the appropriate lookup. |Code  |
 @CREDITREPORTOFACOID|From the Credit Report Item records of a previously pulled ChexSystems report, you can query the Credit Report record OFAC OID field; however, you need a specfile to perform the appropriate lookup.  0,2,3: <Blank> 1: CREDREP:OFACOID  |Character     |
 @CREDITREPORTOPERATORCODE|0,2,3: Blank ; 1: CREDREP:OPERATORCODE |CHARACTER|
+@CREDITREPORTOPTFEATURECODE|0,2,3: Blank ; 1: CREDREP:OPTFEATURECODE |CHARACTER|
 @CREDITREPORTORIGINALCREDITOR|0,2,3: Blank ; 1: CREDREP:ORIGINALCREDITOR |CHARACTER|
 @CREDITREPORTOVERRIDETEXT|0,2,3: <Blank> 1: CREDREP:OVERRIDETEXT  |Character   |
 @CREDITREPORTPASSWORD|0,2,3: Blank ; 1: CREDREP:PASSWORD |CHARACTER|
@@ -389,6 +391,7 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @CREDITREPORTSPOUSEINCOME|0,2,3: 0 1: CREDREP:SPOUSEINCOME  |Money   |
 @CREDITREPORTSPOUSELAST|0,2,3: Blank ; 1: CREDREP:SPOUSELAST |CHARACTER|
 @CREDITREPORTSPOUSEMIDDLE|0,2,3: Blank ; 1: CREDREP:SPOUSEMIDDLE |CHARACTER|
+@CREDITREPORTSPOUSESSN|0,2,3: Blank ; 1: CREDREP:SPOUSESSN |CHARACTER|
 @CREDITREPORTSPOUSEOCCUPATION|0,2,3: <Blank> 1: CREDREP:SPOUSEOCCUPATION  |Character   |
 @CREDITREPORTSPOUSEPAYBASIS|0,2,3: <Blank> 1: CREDREP:SPOUSEPAYBASIS  |Character   |
 @CREDITREPORTSPOUSESECONDARYNM|0,2,3: <Blank> 1: CREDREP:SPOUSESECONDARYNM  |Character   |
@@ -415,6 +418,8 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @DIVPROJECTDEPSTARTDATE|Deposit Start Date|DATE|
 @DIVPROJECTDIVPOSTCODE|Dividend Post Code ; (0) Deposit to Share ; (1) Withdraw by Check or Transfer if dividend calculation, Dividends Required to be Withdrawn or Transferred if APY|CODE|1
 @DIVPROJECTDIVRATE|Dividend Rate|RATE|
+@DIVPROJECTDIVRATEMARGIN|Dividend Rate Margin|RATE|
+@DIVPROJECTDIVRATEMARGINSIGN|Dividend Rate Margin Sign|NUMBER|
 @DIVPROJECTDIVTYPE|Dividend Type|CODE|99
 @DIVPROJECTENDDATE|End Date|DATE|
 @DIVPROJECTERROR|Projection Error|CHARACTER|80
@@ -912,6 +917,7 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @RGUSERNUM3|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
 @RGUSERNUM4|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
 @RGUSERNUM5|This variable pass numeric data to and from the specfile at each step of execution|NUMBER|
+@VALIDATECDAMOUNT|Cash dispersed amount|MONEY|
 @VALIDATECHARACTERINPUT|Value entered by user|CHARACTER|
 @VALIDATECODEINPUT|Value entered by user|CODE|
 @VALIDATECOMMENTTEXT|Comment Text|CHARACTER|
@@ -937,6 +943,8 @@ SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 @VALIDATEONACCOUNT|YES/NO Value ; A value of 0 means that you are not in a valid account. A value of 1 indicates that you have accessed a valid account.|YES/NO|
 @VALIDATERATEINPUT|Value entered by user|RATE|
 @VALIDATERELATIONSHIPCODE|Relationship code|CODE|
+@VALIDATESDAMOUNT|Total deposits of share amount|MONEY|
+@VALIDATESDCOUNT|Total number of share deposits within the transaction string|NUMBER|
 @VALIDATESECURITYCODE|Security Code Required|NUMBER|
 @VALIDATESLID|Share Loan ID|CHARACTER|
 @VALIDATESPHOLDTYPE|Stop Payment Hold Type [SP TRANSACTION]|NUMBER|
