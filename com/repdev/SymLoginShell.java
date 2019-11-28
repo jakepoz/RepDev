@@ -47,7 +47,8 @@ public class SymLoginShell {
 	private int LABEL_WIDTH = 80;
 	private int result = -1;
 	private int sym;
-	private String aixUsername, aixPassword, userID;
+	private String aixUsername, aixPassword, userID, server;
+	public static String lastServer = Config.getServer() == null ? "" : Config.getServer();
 	public static String lastUsername = Config.getLastUsername() == null ? "" : Config.getLastUsername();
 	public static String lastPassword = (RepDevMain.DEVELOPER && Config.getLastPassword() != null) ? Config.getLastPassword() : "";
 	public static String lastUserID = (RepDevMain.DEVELOPER && Config.getLastUserID() != null) ? Config.getLastUserID() : "";
@@ -67,6 +68,9 @@ public class SymLoginShell {
 		shell.setLayout(layout);
 		shell.setImage(RepDevMain.smallSymAddImage);
 
+		Label serverLabel = new Label(shell, SWT.NONE);
+		serverLabel.setText("Server:");
+
 		Label symLabel = new Label(shell, SWT.NONE);
 		symLabel.setText("Sym:");
 
@@ -78,6 +82,9 @@ public class SymLoginShell {
 
 		Label userIDLabel = new Label(shell, SWT.NONE);
 		userIDLabel.setText("UserID:");
+
+		final Text serverText = new Text(shell, SWT.BORDER);
+		serverText.setText(lastServer);
 
 		final Text symText = new Text(shell, SWT.BORDER | (inSym != -1 ? SWT.READ_ONLY : SWT.NONE));
 
@@ -109,6 +116,7 @@ public class SymLoginShell {
 					return;
 				}
 
+				server = serverText.getText().trim();
 				aixUsername = aixUserText.getText().trim();
 				aixPassword = aixPasswordText.getText().trim();
 				userID = userIDText.getText().trim();
@@ -151,13 +159,25 @@ public class SymLoginShell {
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
 		data.width = LABEL_WIDTH;
+		serverLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(serverLabel);
+		data.top = new FormAttachment(0);
+		data.right = new FormAttachment(100);
+		data.width = 160;
+		serverText.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(serverText);
+		data.width = LABEL_WIDTH;
 		symLabel.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(symLabel);
-		data.top = new FormAttachment(0);
+		data.top = new FormAttachment(serverText);
 		data.right = new FormAttachment(100);
-		data.width = 160;
 		symText.setLayoutData(data);
 
 		data = new FormData();
@@ -229,7 +249,7 @@ public class SymLoginShell {
 		}
 		
 		((DirectSymitarSession)session).enableKeepAlive(Config.getNeverTerminate(), Config.getTerminateHour(),Config.getTerminateMinute());
-		SessionError error = session.connect(Config.getServer(), Config.getPort(), aixUsername, aixPassword, sym, userID);
+		SessionError error = session.connect(server, Config.getPort(), aixUsername, aixPassword, sym, userID);
 		int retry=0;
 		while(error == SessionError.USERID_INVALID){
 			retry++;
