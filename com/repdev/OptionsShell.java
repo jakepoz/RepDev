@@ -50,8 +50,8 @@ public class OptionsShell {
 	// Controls
 	private Spinner tabSpinner;
 	private Combo styleCombo, hour, minute;
-	private Label varsLabel, serverLabel, portLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel;
-	private Text  serverText, portText, errCheckPrefix, errCheckSuffix;
+	private Label varsLabel, serverLabel, portLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, liveSYMLabel, liveSYMColorLabel;
+	private Text  serverText, portText, errCheckPrefix, errCheckSuffix, liveSYMText, liveSYMColorText;
 	private Button varsButton, neverTerm, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers;
 	
 	public static void show(Shell parent) {
@@ -101,6 +101,8 @@ public class OptionsShell {
 				Config.setFileNameInTitle(fileNameInTitle.getSelection());
 				Config.setHostNameInTitle(hostInTitle.getSelection());
 				Config.setViewLineNumbers(viewLineNumbers.getSelection());
+				Config.setLiveSym(Integer.parseInt(liveSYMText.getText()));
+				Config.setLiveSymColor(liveSYMColorText.getText());
 
 				/*if (testRadio.getSelection())
 					Config.setServer("test");
@@ -352,6 +354,25 @@ public class OptionsShell {
 		if( Config.getStyle() != null ) 
 		    styleCombo.setText(Config.getStyle());
 		
+		liveSYMLabel = new Label(editorGroup, SWT.NONE);
+		liveSYMLabel.setText("Live SYM Number");
+
+		liveSYMText = new Text(editorGroup, SWT.SINGLE | SWT.BORDER);
+		try{
+			liveSYMText.setText(Integer.toString(Config.getLiveSym()));
+		} catch (IllegalArgumentException e) {
+			liveSYMText.setText("1999");
+		}
+		liveSYMColorLabel = new Label(editorGroup, SWT.NONE);
+		liveSYMColorLabel.setText("Live SYM background Color");
+
+		liveSYMColorText = new Text(editorGroup, SWT.SINGLE | SWT.BORDER);
+		try{
+			liveSYMColorText.setText(Config.getLiveSymColor());
+		} catch (IllegalArgumentException e){
+			liveSYMColorText.setText("FFD7E4");
+			liveSYMText.setText("1999");
+		}
 		varsLabel = new Label(editorGroup, SWT.NONE);
 		varsLabel.setText("List unused variables");
 		
@@ -417,7 +438,7 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(0);
-		data.width = 160;
+		data.width = 163;
 		tabLabel.setLayoutData(data);
 
 		data = new FormData();
@@ -429,7 +450,7 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(tabSpinner);
-		data.width = 160;
+		data.width = 163;
 		styleLabel.setLayoutData(data);
 		
 		data = new FormData();
@@ -437,23 +458,47 @@ public class OptionsShell {
 		data.top = new FormAttachment(tabSpinner);
 		data.right = new FormAttachment(100);
 		styleCombo.setLayoutData(data);
-		
+
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(styleCombo);
-		data.width = 160;
+		data.width = 163;
+		liveSYMLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(liveSYMLabel);
+		data.top = new FormAttachment(styleCombo);
+		data.right = new FormAttachment(100);
+		liveSYMText.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(liveSYMText);
+		data.width = 163;
+		liveSYMColorLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(liveSYMColorLabel);
+		data.top = new FormAttachment(liveSYMText);
+		data.right = new FormAttachment(100);
+		liveSYMColorText.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(liveSYMColorText);
+		data.width = 163;
 		varsLabel.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(varsLabel);
-		data.top = new FormAttachment(styleCombo);
+		data.top = new FormAttachment(liveSYMColorText);
 		data.right = new FormAttachment(100);
 		varsButton.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(varsButton);
-		data.width = 160;
+		data.width = 163;
 		nameInTitleLabel.setLayoutData(data);
 
 		data = new FormData();
@@ -465,7 +510,7 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(fileNameInTitle);
-		data.width = 160;
+		data.width = 163;
 		hostInTitleLabel.setLayoutData(data);
 
 		data = new FormData();
@@ -477,7 +522,7 @@ public class OptionsShell {
 		data = new FormData();
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(hostInTitle);
-		data.width = 160;
+		data.width = 163;
 		viewLineNumbersLabel.setLayoutData(data);
 
 		data = new FormData();

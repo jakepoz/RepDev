@@ -105,6 +105,8 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 		txt.setForeground(FORECOLOR);
 		txt.setBackground(BACKCOLOR);
+		if(parser.getSym()==Config.getLiveSym())
+			txt.setBackground(new Color(Display.getCurrent(), getRGB(Config.getLiveSymColor())));
 		txt.addExtendedModifyListener(this);
 		txt.addLineStyleListener(this);
 		
@@ -344,4 +346,13 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		}
 	}
 
+	private RGB getRGB(String rgbHex) {
+		int[] rgb = {0,0,0};
+
+		rgb[0] = Integer.parseInt(rgbHex.substring(0,2), 16);
+		rgb[1] = Integer.parseInt(rgbHex.substring(2,4), 16);
+		rgb[2] = Integer.parseInt(rgbHex.substring(4), 16);
+
+		return new RGB(rgb[0],rgb[1],rgb[2]);
+	}
 }
