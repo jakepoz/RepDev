@@ -2956,6 +2956,8 @@
 		FINALCHGOFFSTMTDATE|Final Charge Off Stmt Date|407|3|null
 		FINALCHGOFFSTMTMSGCODE|Final Chg Off Stmt Msg Code|408|5|9999
 		EARLYINTERVNTNNOTICEDATE|Early Intervention Notice Date|410|3|null
+		ACQUISITIONDATE|Acquisition Date|411|3|null
+		ACQUISITIONBALANCE|Acquisition Balance|412|7|null
 		STMTNOTESTARTDATE|Statement Note Start Date|413|3|null
 		MAPRCURRSTMTINTACCRD|MAPR Current Stmt Int Accrued|414|7|null
 		LOSSMITPAYMENT|Temp Loss Mit Payment|415|7|null
@@ -14655,6 +14657,16 @@
 	SECURITYCODE:1572|Purge Accounts - Online|15|5|1
 	SECURITYCODE:1573|Param FM Positive Pay|15|5|1
 	SECURITYCODE:1574|Teller Tran Positive Pay Draft|15|5|1
+	SECURITYCODE:1575|Loan CC Balance Creation|15|5|1
+	SECURITYCODE:1576|Loan CC Balance Revision|15|5|1
+	SECURITYCODE:1577|Loan CC Offer Creation|15|5|1
+	SECURITYCODE:1578|Loan CC Offer Revision|15|5|1
+	SECURITYCODE:1579|Loan CC Offer Deletion|15|5|1
+	SECURITYCODE:1580|CC Promo Creation|15|5|1
+	SECURITYCODE:1581|CC Promo Revision|15|5|1
+	SECURITYCODE:1582|CC Promo Deletion|15|5|1
+	SECURITYCODE:1583|Param FM IRS Backup Withholdng|15|5|1
+	SECURITYCODE:1584|Param FM IRS Contrib Limit|15|5|1
 	SECURITYAMOUNT:1|Check Received Limit|16|7|null
 	SECURITYAMOUNT:2|Disbursal Limit|16|7|null
 	SECURITYAMOUNT:3|General Ledger Limit|16|7|null
