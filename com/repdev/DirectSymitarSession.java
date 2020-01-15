@@ -20,6 +20,9 @@
 package com.repdev;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -73,6 +76,9 @@ public class DirectSymitarSession extends SymitarSession {
 	 */
 	private static Calendar lastActivity = new GregorianCalendar();
 	
+	boolean bFullTrace = false;
+	boolean bSensitiveData = false;
+	FileOutputStream trace;
 	Thread keepAlive;
 	boolean keepAliveEnabled = false;
 	boolean keepAliveActive = false;
@@ -136,6 +142,26 @@ public class DirectSymitarSession extends SymitarSession {
 	
 	@Override
 	public SessionError connect(String server, int port, String aixUsername, String aixPassword, int sym, String userID) {
+		File traceFile = new File("fulltrace." + Integer.toString(sym) + ".txt");
+		if(traceFile.exists()){
+			bFullTrace = true;
+			traceFile.delete();
+			try {
+				traceFile.createNewFile();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+			try {
+				trace = new FileOutputStream(traceFile);
+				System.out.println("opening fulltrace file...");
+				traceLog("Starting the trace for Host:" + server + " Port:" + Integer.toString(port) + " SYM:" + Integer.toString(sym)+ " AIX:" + aixUsername);
+				traceLog("   ***   MAKE SURE TO DELETE THIS FILE WHEN DONE, OR IT MAY SLOW DOWN YOUR CONNECTION ! ! !   ***\n\n");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		String line = "";
 		setLastActivity();
 		
@@ -183,7 +209,13 @@ public class DirectSymitarSession extends SymitarSession {
 				out.print(init2);
 				out.print(init3);
 				out.print(init4);
+				traceLog(init1.toString());
+				traceLog(init2.toString());
+				traceLog(init3.toString());
+				traceLog(init4.toString());
 			}
+
+			traceLog(aixUsername);
 			
 			if(useSSH){
 				out.print(aixUsername + " \r");
@@ -194,23 +226,25 @@ public class DirectSymitarSession extends SymitarSession {
 			String temp = readUntil("Password:", "password:", "[c");
 		
 			if( temp.indexOf("[c") == -1 ){
+				bSensitiveData = true;
 				if(useSSH){
 					line = writeLog(aixPassword + " \r", "[c", "password:");
 				} else {
 					line = writeLog(aixPassword + "\r", "[c", "invalid login name or password");
 				}
+				bSensitiveData = false;
 	
 				if (line.indexOf("invalid login") != -1 || line.indexOf("password:") != -1){
 					disconnect();
 					return SessionError.AIX_LOGIN_WRONG;
 				} else if (line.contains("$ ")) {
-					out.print(line);
-					out.print("It appears we weren't able to bypass text mode.\nYou may have a slow connection.\nOr this console is not setup as a 'Windows PC' in SYMOP.");
+					System.out.print(line);
+					System.out.print("It appears we weren't able to bypass text mode.\nYou may have a slow connection.\nOr this console is not setup as a 'Windows PC' in SYMOP.");
 					disconnect();
 					return SessionError.NOT_WINDOWSLEVEL_3;
 				} else if (line.indexOf("[c") == -1) {
-					out.print(line);
-					out.print("Unsure what happened here.  Check logs!");
+					System.out.print(line);
+					System.out.print("Unsure what happened here.  Check logs!");
 					disconnect();
 					return SessionError.IO_ERROR;
 				}
@@ -225,11 +259,11 @@ public class DirectSymitarSession extends SymitarSession {
 				System.out.println(temp);
 				return SessionError.NOT_WINDOWSLEVEL_3;
 			} else if (temp.contains("Logins not allowed")) {
-				out.print("You cannot log in from this IP. Verify this PC is setup to use Symitar!");
+				System.out.print("You cannot log in from this IP. Verify this PC is setup to use Symitar!");
 				disconnect();
 				return SessionError.IP_NOT_ALLOWED;
 			} else if (temp.contains("Your password will expire:")) {
-				out.print("Your AIX password is due to expire.  Please Change it now.");
+				System.out.print("Your AIX password is due to expire.  Please Change it now.");
 				disconnect();
 				return SessionError.AIX_PASSWORD_TO_EXPIRE;
 			} else if (temp.contains("Selection :")) { // This is for EASE Menu
@@ -321,11 +355,13 @@ public class DirectSymitarSession extends SymitarSession {
 		// Attempt to log into the SYM and start the session.
 		try{
 			final int tmpSym = this.sym;
+			bSensitiveData = true;
 			if(useSSH){
 				write(userID + " \r");
 			} else {
 				write(userID + "\r");
 			}
+			bSensitiveData = false;
 			
 			Command current;
 			current = readNextCommand();
@@ -557,6 +593,8 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 	private void write(String str) {
+		traceLog(str);
+		
 		out.write(str);
 		out.flush();
 	}
@@ -589,14 +627,33 @@ public class DirectSymitarSession extends SymitarSession {
 
 	private String readUntil(String... strs) throws IOException {
 		String buf = "";
-
-		while (true) {
-			int cur = in.read();
-			//System.out.print((char)cur);
-			buf += (char) cur;
-			for (String str : strs)
-				if (buf.indexOf(str) != -1)
-					return buf;
+		if(bFullTrace){
+			try {
+				while (true) {
+					int cur = in.read();
+					trace.write((byte)cur);
+					trace.flush();
+					
+					//System.out.print((char)cur);
+					buf += (char) cur;
+					for (String str : strs)
+						if (buf.indexOf(str) != -1)
+							return buf;
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return buf;
+			}
+		} else{
+			while (true) {
+				int cur = in.read();
+				//System.out.print((char)cur);
+				buf += (char) cur;
+				for (String str : strs)
+					if (buf.indexOf(str) != -1)
+						return buf;
+			}
 		}
 	}
 
@@ -616,6 +673,12 @@ public class DirectSymitarSession extends SymitarSession {
 				socket.close();
 			if( useSSH )
 				p.destroy();
+			if( trace != null){
+				System.out.println("Closing Full Trace");
+				trace.flush();
+				trace.close();
+				bFullTrace = false;
+			}
 		} catch (Exception e) {
 			return SessionError.IO_ERROR;
 		}
@@ -1443,6 +1506,7 @@ public class DirectSymitarSession extends SymitarSession {
 					write("PROT" + f3.format(curPart) + "DATA" + f5.format(toSend.length()));
 					write(toSend);
 					in.read(buf, 0, 16);
+					if(bFullTrace) trace.write(String.valueOf(buf).getBytes());
 				} while (buf[7] == 'N'); // Resend if we get a NAK message
 
 				curPart++;
@@ -1451,6 +1515,7 @@ public class DirectSymitarSession extends SymitarSession {
 
 			write("PROT" + f3.format(curPart) + "EOF" + pad20);
 			in.read(buf, 0, 16);
+			if(bFullTrace) trace.write(String.valueOf(buf).getBytes());
 
 			current = readNextCommand();
 			write(unpause);
@@ -1760,6 +1825,30 @@ public class DirectSymitarSession extends SymitarSession {
 		
 		return str;
 	}
+
+	private void traceLog(String str){
+		if(bFullTrace){
+			try {
+				trace.write(10);
+				
+				if(!bSensitiveData){
+					trace.write("~~>".getBytes());
+					trace.write(str.getBytes());
+					trace.write("<~~".getBytes());
+				} else {
+					trace.write("~~>XXXXXXXX<~~".getBytes());
+				}
+				
+				trace.write(10);
+				
+				trace.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	private void cacheSSHKey() {
 		int iData = 0;
