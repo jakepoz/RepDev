@@ -56,6 +56,7 @@ public class DirectSymitarSession extends SymitarSession {
 	Socket socket;
 	BufferedReader in;
 	PrintWriter out;
+	BufferedReader err;
 	boolean connected = false;
 	boolean loggedInAIX = false;
 	boolean useSSH = false;
@@ -160,6 +161,10 @@ public class DirectSymitarSession extends SymitarSession {
 				
 				in = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				out = new PrintWriter(p.getOutputStream());
+				err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+				
+				pause(700); // This delay is to give time for the Error Stream to capture the data.
+				cacheSSHKey();
 			} else {
 				socket = new Socket(server, port);
 				socket.setKeepAlive(true);
@@ -1756,6 +1761,34 @@ public class DirectSymitarSession extends SymitarSession {
 		return str;
 	}
 
+	private void cacheSSHKey() {
+		int iData = 0;
+		String sData = "";
+		
+		try {
+			while(err.ready()) {
+				iData = err.read();
+				sData += (char)iData;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if(sData.indexOf("host key is not cached")>-1) {
+			System.out.println("\r\n" + sData + "\r\n");
+			System.out.println("Caching the SSH Key...");
+			out.print("y\r");
+			out.flush();
+		}
+	}
+
 	
+	private void pause(int msec) {
+		try {
+			Thread.sleep(msec);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
 }
