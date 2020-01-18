@@ -713,9 +713,13 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			write(filename+"\r");
 			
-			while (!(cur = readNextCommand()).getCommand().equals("SpecfileErr"))
+			while (!(cur = readNextCommand()).getCommand().equals("SpecfileErr") && !cur.getCommand().equals("MsgDlg"))
 				log(cur.toString());
 			
+			if( cur.getParameters().get("Type") != null){
+				return new ErrorCheckResult(filename,"File does not exist on server!",-1,-1,ErrorCheckResult.Type.ERROR);
+			}
+
 			if( cur.getParameters().get("Warning") != null || cur.getParameters().get("Error") != null){
 				readNextCommand();
 				return new ErrorCheckResult(filename,"File does not exist on server!",-1,-1,ErrorCheckResult.Type.ERROR);
