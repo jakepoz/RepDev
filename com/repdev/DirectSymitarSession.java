@@ -190,7 +190,9 @@ public class DirectSymitarSession extends SymitarSession {
 				err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 				
 				pause(700); // This delay is to give time for the Error Stream to capture the data.
-				cacheSSHKey();
+				if(cacheSSHKey() == SessionError.SSH_KEY_CHANGED) {
+					return SessionError.SSH_KEY_CHANGED;
+				}
 			} else {
 				socket = new Socket(server, port);
 				socket.setKeepAlive(true);
@@ -1854,7 +1856,7 @@ public class DirectSymitarSession extends SymitarSession {
 	}
 
 
-	private void cacheSSHKey() {
+	private SessionError cacheSSHKey() {
 		int iData = 0;
 		String sData = "";
 		
@@ -1872,7 +1874,13 @@ public class DirectSymitarSession extends SymitarSession {
 			System.out.println("Caching the SSH Key...");
 			out.print("y\r");
 			out.flush();
+		} else if(sData.indexOf("host key does not match")>-1) {
+			System.out.println("\n   *** HOST KEY HAS CHANGED ! ! ! ***\n       RepDev TERMINATED");
+			disconnect();
+			return SessionError.SSH_KEY_CHANGED;
 		}
+		
+		return SessionError.NONE;
 	}
 
 	

@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 public enum SessionError {
 	NONE, SERVER_NOT_FOUND, AIX_LOGIN_WRONG, SYM_INVALID, USERID_INVALID, USERID_PASSWORD_CHANGE, ALREADY_CONNECTED, NOT_CONNECTED, IO_ERROR, CONSOLE_BLOCKED,
 	INVALID_FILE_TYPE, INVALID_QUEUE, INPUT_ERROR, IP_NOT_ALLOWED, FILENAME_TOO_LONG, ARGUMENT_ERROR, NULL_POINTER, PLINK_NOT_FOUND, NOT_WINDOWSLEVEL_3,
-	INCOMPATIBLE_REVISION, UNDEFINED_ERROR, AIX_PASSWORD_TO_EXPIRE;
+	INCOMPATIBLE_REVISION, UNDEFINED_ERROR, AIX_PASSWORD_TO_EXPIRE, SSH_KEY_CHANGED;
 	
 	public void showError(){
 		MessageBox dialog = new MessageBox(new Shell(),SWT.OK | SWT.ICON_ERROR);
@@ -102,6 +102,9 @@ public enum SessionError {
 			break;
 		case INCOMPATIBLE_REVISION:
 			msg = "Incompatible Revison";
+			break;
+		case SSH_KEY_CHANGED:
+			msg = "The SSH Key on the host has changed.  Please ensure this is a valid change, then delete the key from the Registry and try again;\n\nHKEY_CURRENT_USER\\Software\\SimonTatham\\PuTTY\\SshHostKeys\\rsa2@22:YOURHOSTNAME";
 			break;
 		case UNDEFINED_ERROR:
 			msg = "Undefined Error";
