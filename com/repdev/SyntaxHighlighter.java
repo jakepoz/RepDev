@@ -105,7 +105,7 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 
 		txt.setForeground(FORECOLOR);
 		txt.setBackground(BACKCOLOR);
-		if(parser.getSym()==Config.getLiveSym())
+		if(parser.getSym()==Config.getLiveSym() && !this.file.isLocal())
 			txt.setBackground(new Color(Display.getCurrent(), getRGB(Config.getLiveSymColor())));
 		txt.addExtendedModifyListener(this);
 		txt.addLineStyleListener(this);
