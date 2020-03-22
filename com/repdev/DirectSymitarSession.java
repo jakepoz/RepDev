@@ -230,13 +230,13 @@ public class DirectSymitarSession extends SymitarSession {
 			if( temp.indexOf("[c") == -1 ){
 				bSensitiveData = true;
 				if(useSSH){
-					line = writeLog(aixPassword + " \r", "[c", "password:");
+					line = writeLog(aixPassword + " \r", "[c", "password:", "Password:");
 				} else {
 					line = writeLog(aixPassword + "\r", "[c", "invalid login name or password");
 				}
 				bSensitiveData = false;
 	
-				if (line.indexOf("invalid login") != -1 || line.indexOf("password:") != -1){
+				if (line.indexOf("invalid login") != -1 || line.indexOf("password:") != -1 || line.indexOf("Password:") != -1){
 					disconnect();
 					return SessionError.AIX_LOGIN_WRONG;
 				} else if (line.contains("$ ")) {
