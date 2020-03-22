@@ -573,8 +573,10 @@ public class MainShell {
 			boolean exists = false;
 
 			for (TreeItem current : tree.getItems()) {
-				if (current.getData() instanceof Integer && ((Integer) current.getData()) == sym)
+				if (current.getData() instanceof Integer && ((Integer) current.getData()) == sym) {
+					current.setImage(RepDevMain.smallSymOnImage);
 					exists = true;
+				}
 			}
 
 			if (!exists) {
