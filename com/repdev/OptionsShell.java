@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.IllegalArgumentException;
+import java.util.regex.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabFolder;
@@ -123,8 +125,12 @@ public class OptionsShell {
 
 				if( RepDevMain.DEVELOPER )
 					Config.setBackupProjectFile( backupEnable.getSelection() );				
-				
-				shell.close();
+
+				if(validateData("[a-fA-F0-9]{6}", liveSYMColorText.getText(), "Incorrect value entered for the Live SYM background color. Please specify 6 hexadecimal only.  Example FFD7E4")) {
+					shell.close();
+				} else {
+					Config.setLiveSymColor("FFD7E4");
+				}
 			}
 		});
 		
@@ -800,4 +806,22 @@ public class OptionsShell {
 		
 	}
 	
+	private boolean validateData(String regExp, String compare, String msg) {
+		boolean isMatch = Pattern.matches(regExp, compare);
+		
+		if(!isMatch){
+			if(msg.length()!=0) {
+				MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+				dialog.setMessage(msg);
+				dialog.setText("Input Error");
+				dialog.open();
+			}
+			
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+
 }
