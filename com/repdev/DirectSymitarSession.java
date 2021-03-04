@@ -1279,8 +1279,10 @@ public class DirectSymitarSession extends SymitarSession {
 						
 						return new RunRepgenResult(-1,0);
 					}
-					else
-						write( result.trim() + "\r");
+					else {
+						setProgress(null, 0, text, text.getText().replace("\r", "") + "\n" + cur.getParameters().get("Prompt") + ": " + result.trim() + "\n");
+ 						write( result.trim() + "\r");
+					}
 				}
 				else if( cur.getCommand().equals("Bell") ){
 					setProgress(progress, 15, text, "That prompt input is invalid, please reenter");
@@ -1308,7 +1310,8 @@ public class DirectSymitarSession extends SymitarSession {
 					return new RunRepgenResult(-1,0);
 				}
 				else if( cur.getCommand().equals("Batch") && cur.getParameters().get("Action").equals("DisplayLine")){
-					setProgress(null, 0, text, text.getText() + "\n" + cur.getParameters().get("Text"));
+					setProgress(null, 0, text, text.getText().replace("\r", "") + "\n" + cur.getParameters().get("Text"));
+
 				}
 			}
 			
