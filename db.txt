@@ -672,7 +672,7 @@
 		RECORDCHANGEDATE|Record Change Date|131|3|null
 	***|NOTE|Note
 		ID|ID|1|0|2
-		IDTYPE|ID Type|2|5|4
+		IDTYPE|ID Type|2|5|9999
 		CODE|Note Code|3|5|9999
 		TEXT:1|Text Line 01|4|0|40
 		TEXT:2|Text Line 02|4|0|40
@@ -1460,7 +1460,7 @@
 			RECORDCHANGEDATE|Record Change Date|131|3|null
 		***|SHARE NOTE|Share Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -2032,69 +2032,71 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 18 for 18|2|7|null
-		CONTRLASTYEAR:2|Contr 18 for 17|2|7|null
-		CONTRLASTYEAR:3|Contr 18 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 18 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 18 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 18 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 18 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 18 Unspecif|2|7|null
-		CONTRLASTYEAR:9|Contr 18 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 18 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 18 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 18 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 18 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 18 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 18 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 18 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 18 Excess 18|3|7|null
-		DISTRLASTYEAR:9|Distr 18 Excess 17|3|7|null
-		DISTRLASTYEAR:10|Distr 18 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 18 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 18 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 18 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 18 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 18 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 18 Ex Earn 18|3|7|null
-		DISTRLASTYEAR:17|Distr 18 Ex Earn 17|3|7|null
-		CONTRTHISYEAR:1|Contr 19 for 19|4|7|null
-		CONTRTHISYEAR:2|Contr 19 for 18|4|7|null
-		CONTRTHISYEAR:3|Contr 19 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 19 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 19 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 19 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 19 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 19 Unspecif|4|7|null
-		CONTRTHISYEAR:9|Contr 19 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 19 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 19 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 19 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 19 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 19 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 19 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 19 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 19 Excess 19|5|7|null
-		DISTRTHISYEAR:9|Distr 19 Excess 18|5|7|null
-		DISTRTHISYEAR:10|Distr 19 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 19 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 19 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 19 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 19 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 19 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 19 Ex Earn 19|5|7|null
-		DISTRTHISYEAR:17|Distr 19 Ex Earn 18|5|7|null
+		CONTRLASTYEAR:1|Contr 20 for 20|2|7|null
+		CONTRLASTYEAR:2|Contr 20 for 19|2|7|null
+		CONTRLASTYEAR:3|Contr 20 Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr 20 Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr 20 Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr 20 Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr 20 Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr 20 Unspecif|2|7|null
+		CONTRLASTYEAR:9|Contr 20 Unspecif|2|7|null
+		CONTRLASTYEAR:10|Contr 20 Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr 20 No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr 20 Exception|3|7|null
+		DISTRLASTYEAR:3|Distr 20 Disability|3|7|null
+		DISTRLASTYEAR:4|Distr 20 Death|3|7|null
+		DISTRLASTYEAR:5|Distr 20 Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr 20 Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr 20 Normal|3|7|null
+		DISTRLASTYEAR:8|Distr 20 Excess 20|3|7|null
+		DISTRLASTYEAR:9|Distr 20 Excess 19|3|7|null
+		DISTRLASTYEAR:10|Distr 20 Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr 20 Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr 20 Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr 20 Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr 20 Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr 20 Fee|3|7|null
+		DISTRLASTYEAR:16|Distr 20 Ex Earn 20|3|7|null
+		DISTRLASTYEAR:17|Distr 20 Ex Earn 19|3|7|null
+		CONTRTHISYEAR:1|Contr 21 for 21|4|7|null
+		CONTRTHISYEAR:2|Contr 21 for 20|4|7|null
+		CONTRTHISYEAR:3|Contr 21 Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr 21 Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr 21 Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr 21 Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr 21 Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr 21 Unspecif|4|7|null
+		CONTRTHISYEAR:9|Contr 21 Unspecif|4|7|null
+		CONTRTHISYEAR:10|Contr 21 Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr 21 No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr 21 Exception|5|7|null
+		DISTRTHISYEAR:3|Distr 21 Disability|5|7|null
+		DISTRTHISYEAR:4|Distr 21 Death|5|7|null
+		DISTRTHISYEAR:5|Distr 21 Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr 21 Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr 21 Normal|5|7|null
+		DISTRTHISYEAR:8|Distr 21 Excess 21|5|7|null
+		DISTRTHISYEAR:9|Distr 21 Excess 20|5|7|null
+		DISTRTHISYEAR:10|Distr 21 Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr 21 Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr 21 Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr 21 Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr 21 Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr 21 Fee|5|7|null
+		DISTRTHISYEAR:16|Distr 21 Ex Earn 21|5|7|null
+		DISTRTHISYEAR:17|Distr 21 Ex Earn 20|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 18|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 20|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 19|16|7|null
+		IRARMD|Req Min Distrib 21|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
@@ -2943,7 +2945,7 @@
 		MILITARYAPRLOAN|Military APR Loan|394|5|1
 		SEG0CURRSTMTINTACCRD|Seg 0 Current Stmt Int Accr|395|7|null
 		SEG0PREVSTMTINTACCRD|Seg 0 Previous Stmt Int Accr|396|7|null
-		AGENCYIDENTIFIER|Agency Identifer|397|5|2
+		AGENCYIDENTIFIER|Agency Identifier|397|5|2
 		AGENCYACCTNUMBER|Agency Account Number|398|0|18
 		MORTGAGEIDNUMBER|Mortgage Identification Number|399|0|18
 		LOSSMITEFFECTDATE|Temp Loss Mit Effective Date|400|3|null
@@ -2955,6 +2957,7 @@
 		SENDFINALCHGOFFSTMT|Send Final Charge Off Stmt|406|5|1
 		FINALCHGOFFSTMTDATE|Final Charge Off Stmt Date|407|3|null
 		FINALCHGOFFSTMTMSGCODE|Final Chg Off Stmt Msg Code|408|5|9999
+		ORIGINATIONBALANCE|Origination Balance|409|7|null
 		EARLYINTERVNTNNOTICEDATE|Early Intervention Notice Date|410|3|null
 		ACQUISITIONDATE|Acquisition Date|411|3|null
 		ACQUISITIONBALANCE|Acquisition Balance|412|7|null
@@ -3866,7 +3869,7 @@
 			RECORDCHANGEDATE|Record Change Date|131|3|null
 		***|LOAN NOTE|Loan Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -4404,7 +4407,7 @@
 			NRTEXTERNALSTATUS|External Status **|801|1|40
 		***|EXTERNALLOAN NOTE|External Loan Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -5056,7 +5059,7 @@
 			PREFERREDCONTACT|Preferred Contact|810|1|40
 		***|CARD NOTE|Card Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -6075,7 +6078,7 @@
 			TRACKINGDESCRIPTION|Tracking Code Description|800|0|30
 		***|LOANAPP NOTE|Application Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -6925,7 +6928,7 @@
 			RECORDCHANGEDATE|Record Change Date|131|3|null
 		***|PORTFOLIO NOTE|Portfolio Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -7106,7 +7109,7 @@
 	ADDRESSTYPE|Address Type|19|5|2
 	CREDITLASTYEAR|Payments Last Year|20|7|null
 	DEBITLASTYEAR|Expensed Last Year|21|7|null
-	IRSREPORTING|IRS Reporting|22|5|2
+	IRSREPORTING|IRS Reporting|22|5|4
 	IRSCORRECTION|IRS Correction|23|5|2
 	IRSAMOUNTCODE|IRS Amount Code|24|5|12
 	SSNTYPE|SSN/TIN Type|25|5|9
@@ -7375,7 +7378,7 @@
 		NEXTRECURINVOICEDATE|Next Recurring Invoice Date|807|3|null
 		***|INVOICE NOTE|AP Invoice Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -7682,7 +7685,7 @@
 	AMOUNT10OUT|Amount 10 Out|96|6|null
 	OURTRANSMISSIONDATE|Our Transmission Date|97|3|null
 	OURTRANSMISSIONTIME|Our Transmission Time|98|0|6
-	TURNAROUNDTIME|Turn Around Time|99|5|99
+	TURNAROUNDTIME|Turn Around Time|99|5|32767
 	OURRESPONSECODE|Our Response Code|100|5|9999
 	SETTLETYPE|Settle Type|101|5|2
 	CURRENCYINDEX|Currency Rate Index|102|5|3
@@ -7877,8 +7880,8 @@
 	HOLDMATCHINGDETAILS|Hold Matching Details|270|0|40
 	AMLTYPE|AML Type|271|5|2
 	SINGLECURRENCYFLAG|Single Currency?|272|5|1
-	CARDHOLDERVERIFICATIONMETHOD|Cardholder Verification Method|273|0|3
-	APPLICATIONTRANSACTIONCOUNTER|Application Transaction Counte|274|0|2
+	CARDHOLDERVERIFICATIONMETHOD|Cardholder Verification Method|273|0|6
+	APPLICATIONTRANSACTIONCOUNTER|Application Transaction Counte|274|0|5
 	SERVICECODE|Service Code|275|0|3
 	FORMFACTORINDICATOR|Form Factor Indicator|276|0|8
 	CHIPCONDITIONCODE|Chip Condition Code|277|0|1
@@ -8743,7 +8746,7 @@
 		RECORDCHANGEDATE|Record Change Date|6|3|null
 	***|DEALER NOTE|Dealer Note
 		ID|ID|1|0|2
-		IDTYPE|ID Type|2|5|4
+		IDTYPE|ID Type|2|5|9999
 		CODE|Note Code|3|5|9999
 		TEXT:1|Text Line 01|4|0|40
 		TEXT:2|Text Line 02|4|0|40
@@ -9411,6 +9414,15 @@
 		LONGNAME|Long Name|801|1|40
 		DBASHORTNAME|DBA Short Name|803|0|16
 		DBALONGNAME|DBA Long Name|804|1|40
+		***|CTRPERSON CTRTRANINFO|CTR Person Tran Info
+			ACCOUNTNUMBER|Episys Account Number|1|0|10
+			SLIDTYPE|S/L ID Type|2|5|1
+			SLID|S/L ID|3|0|2
+			SOURCE|Source|4|5|2
+			AMOUNT|Amount|5|7|null
+			LASTFMDATE|Last FM Date|6|3|null
+			RECORDCHANGEDATE|Record Change Date|7|3|null
+			LOCATOR|Locator|8|4|null
 	***|CTRFOREIGN|CTR Foreign
 		CASHIN|Cash-In|1|7|null
 		CASHOUT|Cash-Out|2|7|null
@@ -9435,7 +9447,7 @@
 		CASHOUTLOCATION|Cash-Out for Location|14|7|null
 	***|CTR NOTE|CTR Note
 		ID|ID|1|0|2
-		IDTYPE|ID Type|2|5|4
+		IDTYPE|ID Type|2|5|9999
 		CODE|Note Code|3|5|9999
 		TEXT:1|Text Line 01|4|0|40
 		TEXT:2|Text Line 02|4|0|40
@@ -10593,7 +10605,7 @@
 		SUBACTIONCODE|Sub Action Code|25|0|1
 	***|PARTICIPANT NOTE|Participant Note
 		ID|ID|1|0|2
-		IDTYPE|ID Type|2|5|4
+		IDTYPE|ID Type|2|5|9999
 		CODE|Note Code|3|5|9999
 		TEXT:1|Text Line 01|4|0|40
 		TEXT:2|Text Line 02|4|0|40
@@ -10710,7 +10722,7 @@
 		FIELDNAME|Field Name|801|1|40
 	***|PARTICIPATION NOTE|Participation Note
 		ID|ID|1|0|2
-		IDTYPE|ID Type|2|5|4
+		IDTYPE|ID Type|2|5|9999
 		CODE|Note Code|3|5|9999
 		TEXT:1|Text Line 01|4|0|40
 		TEXT:2|Text Line 02|4|0|40
@@ -10787,7 +10799,7 @@
 		NAME|Name|800|0|16
 		***|PARTICIPATIONLOAN NOTE|Participation Loan Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -10890,7 +10902,7 @@
 		PARTICIPANTCONTACTEMAIL|Participant Contact Email|804|0|40
 		***|AGREEMENT NOTE|Agreement Note
 			ID|ID|1|0|2
-			IDTYPE|ID Type|2|5|4
+			IDTYPE|ID Type|2|5|9999
 			CODE|Note Code|3|5|9999
 			TEXT:1|Text Line 01|4|0|40
 			TEXT:2|Text Line 02|4|0|40
@@ -14667,6 +14679,9 @@
 	SECURITYCODE:1582|CC Promo Deletion|15|5|1
 	SECURITYCODE:1583|Param FM IRS Backup Withholdng|15|5|1
 	SECURITYCODE:1584|Param FM IRS Contrib Limit|15|5|1
+	SECURITYCODE:1585|CTR Person Tran Info Creation|15|5|1
+	SECURITYCODE:1586|CTR Person Tran Info Revision|15|5|1
+	SECURITYCODE:1587|CTR Person Tran Info Deletion|15|5|1
 	SECURITYAMOUNT:1|Check Received Limit|16|7|null
 	SECURITYAMOUNT:2|Disbursal Limit|16|7|null
 	SECURITYAMOUNT:3|General Ledger Limit|16|7|null
