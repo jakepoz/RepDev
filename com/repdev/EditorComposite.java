@@ -1305,27 +1305,29 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 		// Go through open files which include this file. Search for Variables/Procedures and goto. 
 		for(CTabItem tf : mainfolder.getItems()){
-			EditorComposite ec = ((EditorComposite) tf.getControl());
-			incTokenCache = ec.parser.getIncludeTokenChache();
-			for( String key : incTokenCache.keySet()){
-				if(key.equalsIgnoreCase(file.getName())){
-					
-					if( ec.parser.needRefreshIncludes() )
-						ec.parser.parseIncludes();
-					
-					if(ec.sec.exist(selString)){
-						gotoSection(selString);
-						return;
-					}
-					for( String key2 : incTokenCache.keySet()){
-						for(Token token : incTokenCache.get(key2)){
-							if(matchTokenAndGoto(token, key2, selString))
+			if(tf.getControl().toString().equals("EditorComposite {}")) {
+				EditorComposite ec = ((EditorComposite) tf.getControl());
+				incTokenCache = ec.parser.getIncludeTokenChache();
+				for( String key : incTokenCache.keySet()){
+					if(key.equalsIgnoreCase(file.getName())){
+						
+						if( ec.parser.needRefreshIncludes() )
+							ec.parser.parseIncludes();
+						
+						if(ec.sec.exist(selString)){
+							gotoSection(selString);
+							return;
+						}
+						for( String key2 : incTokenCache.keySet()){
+							for(Token token : incTokenCache.get(key2)){
+								if(matchTokenAndGoto(token, key2, selString))
+									return;
+							}
+						}
+						for(Variable var : ec.parser.getLvars()){
+							if(matchVarAndGoto(var, selString))
 								return;
 						}
-					}
-					for(Variable var : ec.parser.getLvars()){
-						if(matchVarAndGoto(var, selString))
-							return;
 					}
 				}
 			}
