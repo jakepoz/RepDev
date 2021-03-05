@@ -1305,7 +1305,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 		// Go through open files which include this file. Search for Variables/Procedures and goto. 
 		for(CTabItem tf : mainfolder.getItems()){
-			if(tf.getControl().toString().equals("EditorComposite {}")) {
+			if(tf.getControl() instanceof EditorComposite) {
 				EditorComposite ec = ((EditorComposite) tf.getControl());
 				incTokenCache = ec.parser.getIncludeTokenChache();
 				for( String key : incTokenCache.keySet()){
