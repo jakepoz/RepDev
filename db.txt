@@ -371,6 +371,7 @@
 		BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 		BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 		IRS1042SAMENDNUM|Amendment Number|128|5|9
+		HEADQUARTERS|Headquarters|129|5|1
 		SHORTNAME|Short Name|800|0|16
 		LONGNAME|Long Name|801|1|40
 		LICENSE|License|802|0|20
@@ -1188,6 +1189,7 @@
 			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
+			HEADQUARTERS|Headquarters|129|5|1
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -2241,6 +2243,7 @@
 			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
+			HEADQUARTERS|Headquarters|129|5|1
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -3225,6 +3228,7 @@
 			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
+			HEADQUARTERS|Headquarters|129|5|1
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -3389,6 +3393,7 @@
 				BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 				BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 				IRS1042SAMENDNUM|Amendment Number|128|5|9
+				HEADQUARTERS|Headquarters|129|5|1
 				SHORTNAME|Short Name|800|0|16
 				LONGNAME|Long Name|801|1|40
 				LICENSE|License|802|0|20
@@ -3497,6 +3502,7 @@
 			NOTICEDATE|Escrow Notice Date|63|3|null
 			NOTICECLOSINGDATE|Escrow Notice Closing Date|64|3|null
 			NOTICECLOSINGFEE|Escrow Notice Closing Fee|65|7|null
+			ANALYSISGROUP|Escrow Analysis Group|66|5|99
 		***|LOAN ESCROW|Loan Escrow
 			ESCROWTYPE|Escrow Type|1|5|99
 			NEXTDISTRIBDATE|Next Distribution Date|2|3|null
@@ -4233,6 +4239,7 @@
 			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
+			HEADQUARTERS|Headquarters|129|5|1
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4683,6 +4690,7 @@
 			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
+			HEADQUARTERS|Headquarters|129|5|1
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4901,6 +4909,8 @@
 		PERITEMLIMIT:4|Limit 4 Per Item Limit|98|7|null
 		PERITEMLIMIT:5|Limit 5 Per Item Limit|98|7|null
 		PERITEMLIMIT:6|Limit 6 Per Item Limit|98|7|null
+		DIGITALISSUESTATUS|Digital Issue Status|99|5|6
+		DIGITALISSUEEXCEPT|Digital Issue Exception|100|0|40
 		LIMITDESCRIPTION:1|Limit 1 Description|800|0|40
 		LIMITDESCRIPTION:2|Limit 2 Description|800|0|40
 		LIMITDESCRIPTION:3|Limit 3 Description|800|0|40
@@ -5046,6 +5056,7 @@
 			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
+			HEADQUARTERS|Headquarters|129|5|1
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -5709,6 +5720,7 @@
 			BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			LEI|Legal Entity Identifier|128|0|20
+			HEADQUARTERS|Headquarters|129|5|1
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			DRIVERSLIC|Drivers License No|802|0|20
@@ -5870,6 +5882,7 @@
 			NOTICEDATE|Escrow Notice Date|63|3|null
 			NOTICECLOSINGDATE|Escrow Notice Closing Date|64|3|null
 			NOTICECLOSINGFEE|Escrow Notice Closing Fee|65|7|null
+			ANALYSISGROUP|Escrow Analysis Group|66|5|99
 		***|LOANAPP ESCROW|Application Escrow
 			ESCROWTYPE|Escrow Type|1|5|99
 			NEXTDISTRIBDATE|Next Distribution Date|2|3|null
@@ -6713,6 +6726,7 @@
 		SPOUSEPAYBASIS|Spouse Pay Basis|247|0|1
 		SPOUSEINCOME|Spouse Income|248|7|null
 		SPOUSESECONDARYNM|Spouse Secondary Name|249|0|25
+		ORIGINATINGSYM|Originating SYM|250|0|3
 		***|CREDREP ITEM|Credit Report Item
 			SEGMENTTYPE|Segment Type|1|0|4
 			SUBSEGMENTTYPE|Sub Segment Type|2|0|2
@@ -7631,11 +7645,14 @@
 	EMVFALLBACKFLAG|EMV Fallback?|29|5|1
 	OURSYSTEMDATE|Our System Date|30|3|null
 	PINLESSPINFLAG|PINless PIN Transaction?|31|5|1
+	PROCESSINGFLAGS|Processing Flags|32|0|5
+	TOKENID|Token ID|33|0|9
 	TERMINALID|Terminal ID|34|0|16
 	NETWORKID|Network ID|35|0|15
 	DESTINATIONINSTID|Destination Institution ID|36|0|15
 	SETTLEMENTINSTID|Settlement Institution ID|37|0|15
 	POSENTRYMODE|Point of Sale Entry Mode|38|5|999
+	DIGISSUEFLAG|Dig Issue?|39|5|1
 	SETTLECONVERSIONRATE|Settlement Conversion Rate|40|0|8
 	ISSUERCONVERSIONRATE|Card Issuer Conversion Rate|41|0|8
 	MISCDATA1|Misc Data 1|42|0|80
@@ -9410,6 +9427,7 @@
 		IDISSUEBYCOUNTRY|ID Issued By Country|33|0|2
 		CASHIN|Cash-In|34|7|null
 		CASHOUT|Cash-Out|35|7|null
+		HEADQUARTERS|Headquarters|36|5|1
 		SHORTNAME|Short Name|800|0|16
 		LONGNAME|Long Name|801|1|40
 		DBASHORTNAME|DBA Short Name|803|0|16
@@ -10060,6 +10078,7 @@
 	COUNTRYCODE|Country Code|15|0|2
 	ADDRFMLASTPURGEDATE|ADDR FM History Purge Date|16|3|null
 	MBRADDRFILETYPE|ADDR File Type|17|5|1
+	HEADQUARTERS|Headquarters|18|5|1
 	***|MBRADDRESS FMHISTORY|Member Address FM History
 		ACCOUNTNUMBER|Account Number|2|0|17
 		IDTYPE|ID Type|3|5|12
@@ -10233,6 +10252,7 @@
 	BENEFICIALOWNER|Beneficial Owner Type|126|5|3
 	BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 	IRS1042SAMENDNUM|Amendment Number|128|5|9
+	HEADQUARTERS|Headquarters|129|5|1
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
