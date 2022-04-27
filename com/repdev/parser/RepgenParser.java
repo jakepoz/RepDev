@@ -408,14 +408,16 @@ public class RepgenParser {
 									 * Taken from my #include "" double click code.
 									 */
 									int startOffset = tok.getStart();
-									int endOffset = txt.getOffsetAtLine(Math.min(txt.getLineCount() - 1, line + 1));
+									int pos1 = txt.getText().toString().indexOf("\n",startOffset+tok.getStr().length()) - 1;
+									int pos2 = txt.getText().toString().indexOf("]",startOffset+tok.getStr().length()) - 1;
+									int endOffset = (pos1<pos2 ? pos1 : pos2);
 	
 	
 									if( endOffset - 1 <= startOffset)
 										desc = "";
 									else
 										desc = txt.getText(startOffset, endOffset);
-									desc = desc.trim().substring(0, desc.trim().length()-1);
+									desc = desc.trim();
 	
 									Task task = new Task(file.getName(), desc, line, col, type);
 									taskList.add( task );
