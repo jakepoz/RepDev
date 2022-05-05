@@ -2364,10 +2364,10 @@ public class MainShell {
 
 		if (sym < 100) {
 			gc.setFont(new Font(Display.getCurrent(), "Courier New", 8, SWT.BOLD));
-			gc.drawString(String.valueOf(sym), 16 - 7 * String.valueOf(sym).length(), 5, true);
+			gc.drawString(String.valueOf(sym), 16 - 7 * String.valueOf(sym).length(), 0, true);
 		} else {
 			gc.setFont(new Font(Display.getCurrent(), "Courier New", 7, SWT.BOLD));
-			gc.drawString(String.valueOf(sym), 0, 5, true);
+			gc.drawString(String.valueOf(sym), 0, 0, true);
 		}
 		gc.dispose();
 
