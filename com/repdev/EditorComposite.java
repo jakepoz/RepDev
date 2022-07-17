@@ -1036,8 +1036,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					String fileStr = line.substring(line.indexOf("\"")+1, line.lastIndexOf("\""));
 					if( file.isLocal() )
 						RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), fileStr, file.getType()));
-					else	
-						RepDevMain.mainShell.openFile(new SymitarFile(sym, fileStr, FileType.REPGEN));
+					else {
+						SymitarFile sf = new SymitarFile(sym, fileStr, FileType.REPGEN);
+						sf.disableSourceControl(true);
+						RepDevMain.mainShell.openFile(sf);
+					}
 				}
 				else if(txt.getSelectionText().equalsIgnoreCase("CALL")) {
 					txt.setCaretOffset(txt.getCaretOffset()+1);
@@ -1237,7 +1240,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		txt.setMenu(contextMenu);
 
-		String str = file.getData();
+		String str = file.getData(true);
+		if(file.syncRepGen())
+			tabItem.setText(">"+file.getName());
 
 		if (str == null){
 			tabItem.dispose();
@@ -1338,9 +1343,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if(var.getName().equals(varToMatch)){
 			if( file.isLocal() )
 				o = RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), var.getFilename(), file.getType()));
-			else	
-				o = RepDevMain.mainShell.openFile(new SymitarFile(sym, var.getFilename(), FileType.REPGEN));
-			
+			else {
+				SymitarFile sf=new SymitarFile(sym, var.getFilename(), FileType.REPGEN);
+				sf.disableSourceControl(true);
+				o = RepDevMain.mainShell.openFile(sf);
+			}
 			EditorComposite editor = null;
 
 			if (o instanceof EditorComposite)
@@ -1378,8 +1385,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			token.getStr().equalsIgnoreCase(nameToMAtch)){
 			if( file.isLocal() )
 				o = RepDevMain.mainShell.openFile(new SymitarFile(file.getDir(), key, file.getType()));
-			else	
-				o = RepDevMain.mainShell.openFile(new SymitarFile(sym, key, FileType.REPGEN));
+			else {
+				SymitarFile sf=new SymitarFile(sym, key, FileType.REPGEN);
+				sf.disableSourceControl(true);
+				o = RepDevMain.mainShell.openFile(sf);
+			}
 			
 			EditorComposite editor = null;
 

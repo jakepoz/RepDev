@@ -768,6 +768,18 @@ public class DirectSymitarSession extends SymitarSession {
 	
 	@Override
 	public synchronized String getFile(SymitarFile file) {
+/*		if(RepDevMain.useSourceSafe && !file.isLocal() && file instanceof SymitarFile && file.getType()==FileType.REPGEN) {
+			log("Source Control");
+			SourceControl sc = new SourceControl();
+			
+			return sc.getFile(file);
+		}else {
+			log("Not Source Control");
+			return getSymitarFile(file);
+		}
+	}
+
+	public synchronized String getSymitarFile(SymitarFile file) {*/
 		StringBuilder data = new StringBuilder();
 		final long maxSize = 2097152; //Don't download more than 2MB, otherwise things get ugly
 		boolean wroteSizeWarning = false;

@@ -47,13 +47,15 @@ public class Config implements Serializable {
 	
 	private int liveSym = 1999;
 	private String liveSymColor = "FFD7E4";
+	private boolean useSourceControl = false;
+	private String sourceControlDir = "";
 	/**
 	 * REVISION is a constant.  This constant should be incrmented everytime there is a new
 	 * feature added.  RepDevMain will compare REVISION with getRevision() and if they are
 	 * different, then a popup will notify the user and will launch the OptionsShell so that
 	 * the users can config the new options.
 	 */
-	public final static int REVISION = 4; // Modify this everytime we add new options to prompt the user.
+	public final static int REVISION = 5; // Modify this everytime we add new options to prompt the user.
 	private int revision=-1;
 	private boolean windowMaximized;
 	private Point windowSize;
@@ -244,6 +246,22 @@ public class Config implements Serializable {
 
 	public static String getLiveSymColor() {
 		return me.liveSymColor;
+	}
+	
+	public static boolean getUseSourceControl() {
+		return me.useSourceControl;
+	}
+	
+	public static void setUseSourceControl(boolean b) {
+		me.useSourceControl = b;
+	}
+	
+	public static String getSourceControlDir() {
+		return me.sourceControlDir;
+	}
+	
+	public static void setSourceControlDir(String dir) {
+		me.sourceControlDir = dir;
 	}
 
 	/**

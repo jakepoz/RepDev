@@ -41,7 +41,7 @@ public class SymitarFile implements Serializable {
 	private FileType type;
 	private Date modified = new Date(0), installed = new Date(0);
 	private long size = -1;
-	private boolean local = false, onDemand=false;
+	private boolean local = false, onDemand=false, syncRepGen=false, disableSourceControl=false, compareMode=false;
 	private int sym;
 	
 	/**
@@ -95,8 +95,20 @@ public class SymitarFile implements Serializable {
 	}
 	
 	public String getData(){
+		return getData(false);
+	}
+	
+	public String getData(boolean sourceControl){
 		if( !local )
-			return RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(this);
+			if (sourceControl) {
+				//System.out.println("Using Source Control");
+				SourceControl sc = new SourceControl();
+
+				return sc.getFile(this);
+			} else {
+				//System.out.println("Not Using Source Control");
+				return RepDevMain.SYMITAR_SESSIONS.get(sym).getFile(this);
+			}
 		else{
 			StringBuilder sb= new  StringBuilder();
 			try {
@@ -105,7 +117,7 @@ public class SymitarFile implements Serializable {
 				
 				while( (line=in.readLine()) != null)
 					sb.append(line + "\n");
-				
+				in.close();
 				return sb.toString();
 			} catch (FileNotFoundException e) {
 				return null;
@@ -131,6 +143,11 @@ public class SymitarFile implements Serializable {
 				
 				if( error != SessionError.NONE)
 					error.showError();
+				if(this.syncRepGen()) {
+					SourceControl sc=new SourceControl();
+					SymitarFile sourceControl = sc.getSourceControlFile(this);
+					sourceControl.saveFile(data);
+				}
 			}
 			catch(Exception e){
 				error = SessionError.NULL_POINTER;
@@ -141,14 +158,16 @@ public class SymitarFile implements Serializable {
 		else{
 			try {
 				File file = new File(getPath());
-				if(file.exists() && !file.canWrite())
+				if (file.exists() && !file.canWrite())
 					file.setWritable(true);
 				PrintWriter out = new PrintWriter(new FileWriter(getPath()));
-				
-				if( data != null)
+
+				if (data != null)
 					out.write(data);
-				
+
 				out.close();
+				out = null;
+				file = null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -242,7 +261,31 @@ public class SymitarFile implements Serializable {
 		return dir + "\\" + name;
 	}
 	
-	public boolean getOnDemand(){
+	public boolean getOnDemand() {
 		return onDemand;
+	}
+
+	public boolean syncRepGen() {
+		return syncRepGen;
+	}
+
+	public void syncRepGen(boolean syncRepGen) {
+		this.syncRepGen = syncRepGen;
+	}
+	
+	public boolean disableSourceControl() {
+		return disableSourceControl;
+	}
+
+	public void disableSourceControl(boolean disableSourceControl) {
+		this.disableSourceControl = disableSourceControl;
+	}
+	
+	public boolean isCompareMode() {
+		return compareMode;
+	}
+
+	public void compareMode(boolean compareMode) {
+		this.compareMode=compareMode;
 	}
 }

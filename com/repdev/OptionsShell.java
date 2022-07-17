@@ -52,9 +52,9 @@ public class OptionsShell {
 	// Controls
 	private Spinner tabSpinner;
 	private Combo styleCombo, hour, minute;
-	private Label varsLabel, serverLabel, portLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, liveSYMLabel, liveSYMColorLabel;
-	private Text  serverText, portText, errCheckPrefix, errCheckSuffix, liveSYMText, liveSYMColorText;
-	private Button varsButton, neverTerm, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers;
+	private Label varsLabel, serverLabel, portLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, liveSYMLabel, liveSYMColorLabel, useSourceControlLabel, sourceControlDirLabel;
+	private Text  serverText, portText, errCheckPrefix, errCheckSuffix, liveSYMText, liveSYMColorText, sourceControlDir;
+	private Button varsButton, neverTerm, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers, useSourceControl;
 	
 	public static void show(Shell parent) {
 		me.create(parent);		
@@ -105,6 +105,8 @@ public class OptionsShell {
 				Config.setViewLineNumbers(viewLineNumbers.getSelection());
 				Config.setLiveSym(Integer.parseInt(liveSYMText.getText()));
 				Config.setLiveSymColor(liveSYMColorText.getText());
+				Config.setUseSourceControl(useSourceControl.getSelection());
+				Config.setSourceControlDir(sourceControlDir.getText());
 
 				/*if (testRadio.getSelection())
 					Config.setServer("test");
@@ -379,6 +381,26 @@ public class OptionsShell {
 			liveSYMColorText.setText("FFD7E4");
 			liveSYMText.setText("1999");
 		}
+		
+		useSourceControlLabel = new Label(editorGroup, SWT.NONE);
+		useSourceControlLabel.setText("Use Source Control");
+		
+		useSourceControl = new Button(editorGroup, SWT.CHECK);
+		useSourceControl.setSelection(Config.getUseSourceControl());
+
+		
+		sourceControlDirLabel = new Label(editorGroup, SWT.NONE);
+		sourceControlDirLabel.setText("Repository Dir");
+
+		sourceControlDir = new Text(editorGroup, SWT.SINGLE | SWT.BORDER);
+		try{
+			sourceControlDir.setText(Config.getSourceControlDir());
+		} catch (IllegalArgumentException e){
+			sourceControlDir.setText("");
+		}
+
+		
+		
 		varsLabel = new Label(editorGroup, SWT.NONE);
 		varsLabel.setText("List unused variables");
 		
@@ -493,11 +515,36 @@ public class OptionsShell {
 		data.left = new FormAttachment(0);
 		data.top = new FormAttachment(liveSYMColorText);
 		data.width = 163;
+		useSourceControlLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(useSourceControlLabel);
+		data.top = new FormAttachment(liveSYMColorText);
+		data.right = new FormAttachment(100);
+		useSourceControl.setLayoutData(data);
+
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(useSourceControl);
+		data.width = 163;
+		sourceControlDirLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(sourceControlDirLabel);
+		data.top = new FormAttachment(useSourceControl);
+		data.right = new FormAttachment(100);
+		sourceControlDir.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(sourceControlDir);
+		data.width = 163;
 		varsLabel.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(varsLabel);
-		data.top = new FormAttachment(liveSYMColorText);
+		data.top = new FormAttachment(sourceControlDir);
 		data.right = new FormAttachment(100);
 		varsButton.setLayoutData(data);
 

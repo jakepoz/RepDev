@@ -474,15 +474,19 @@ public class MainShell {
 
 			// If anything goes wrong creating the Editor, we want to fail here
 			// It will dispose of the item to indicate this fault.
-			if (item.isDisposed()) {
-				MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-				dialog.setMessage("There has been an error loading this file, the filename is probably too long");
-				dialog.setText("Error");
-				dialog.open();
-
+			if (file.isCompareMode()) {
+				file.compareMode(false);
 				return null;
-			}
+			} else {
+				if (item.isDisposed()) {
+					MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+					dialog.setMessage("There has been an error loading this file, the filename is probably too long");
+					dialog.setText("Error");
+					dialog.open();
 
+					return null;
+				}
+			}
 			mainfolder.setSelection(item);
 			item.setControl(editor);
 			setMainFolderSelection(item);
@@ -767,6 +771,22 @@ public class MainShell {
 
 		if (files.size() > 0) {
 			SymitarFile file = files.get(0);
+			SourceControl sc = new SourceControl();
+			
+			if(sc.useSourceControl && file.getType() == FileType.REPGEN && !file.isLocal() && file.getSym() != Config.getLiveSym()) {
+				SymitarFile scFile = sc.getSourceControlFile(file);
+				if(!sc.fileExist(scFile)) {
+					MessageBox mdialog = new MessageBox(shell,
+							SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+					mdialog.setText("Source Control");
+					mdialog.setMessage(
+							"The RepGen ("+scFile.getName()+") does not exist in the repository.  Would you like to create a copy and Sync the RepGens?");
+					if (mdialog.open() == SWT.YES) {
+						// Sync the File
+						file.syncRepGen(true);
+					}
+				}
+			}
 
 			TreeItem[] selection = tree.getSelection();
 			if (selection.length != 1)
@@ -1641,6 +1661,33 @@ public class MainShell {
 
 		});
 
+		final MenuItem compareToProduction = new MenuItem(treeMenu, SWT.NONE);
+		compareToProduction.setText("Compare to Production");
+		compareToProduction.setImage(RepDevMain.smallCompareImage);
+		compareToProduction.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				SourceControl sc = new SourceControl();
+				sc.compareToProduction((SymitarFile) tree.getSelection()[0].getData());
+			}
+
+		});
+
+		/*
+		final MenuItem copyFromSourceControl = new MenuItem(treeMenu, SWT.NONE);
+		copyFromSourceControl.setText("Copy from the repository");
+		copyFromSourceControl.setImage(RepDevMain.smallCopyImage);
+		copyFromSourceControl.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				SymitarFile file = (SymitarFile) tree.getSelection()[0].getData();
+				
+				SourceControl sc = new SourceControl();
+				sc.copyFromSourceControl(file);
+			}
+
+		});
+*/
 		new MenuItem(treeMenu, SWT.SEPARATOR);
 
 		final MenuItem openFile = new MenuItem(treeMenu, SWT.NONE);
@@ -1774,6 +1821,8 @@ public class MainShell {
 
 				symLogoff.setEnabled(false);
 				symProp.setEnabled(false);
+				//copyFromSourceControl.setEnabled(false);
+				compareToProduction.setEnabled(false);
 
 				if (tree.getSelectionCount() == 0)
 					return;
@@ -1830,7 +1879,14 @@ public class MainShell {
 					runMenuItem.setEnabled(true);
 					installFile.setEnabled(true);
 				}
-
+				
+				if (tree.getSelectionCount() == 1 && tree.getSelection()[0].getData() instanceof SymitarFile
+						&& !((SymitarFile) tree.getSelection()[0].getData()).isLocal()){
+					if (((SymitarFile) tree.getSelection()[0].getData()).getSym() != Config.getLiveSym()) {
+						if (RepDevMain.SYMITAR_SESSIONS.get(Config.getLiveSym())!=null && RepDevMain.SYMITAR_SESSIONS.get(Config.getLiveSym()).isConnected())
+							compareToProduction.setEnabled(true);
+					}
+				}
 			}
 
 		});
@@ -2152,15 +2208,25 @@ public class MainShell {
 		if (!(tree.getSelection()[1].getData() instanceof SymitarFile))
 			return;
 
-		Color bgcolor = new Color(Display.getCurrent(),200,200,200);
+		compareFiles((SymitarFile)tree.getSelection()[0].getData(), (SymitarFile)tree.getSelection()[1].getData());
+	}
 
-
+	protected void compareFiles(SymitarFile f1, SymitarFile f2) {
+		Color bgcolor;
+		
+		try {
+			Style style = new Style(new File("styles\\" + Config.getStyle() + ".xml"));
+			bgcolor = new Color(Display.getCurrent(), style.getColor("editor", "line"));
+		} catch (Exception e) {
+			bgcolor = new Color(Display.getCurrent(), 220, 220, 220);
+		}
 		//This code gets the correct color to highlight the lines of the compare shell.
 		//The only drawback is that it is a bit on the slow side (usually takes about 1 second).
 		//In my opinion it is fine to take this bit of time, because the compare shell looks
 		//hideous with a custom style without this code. Hopefully we can find a faster way to do
 		//this, but for the time being it should work.
-		EditorComposite temp = (EditorComposite)openFile((SymitarFile)tree.getSelection()[1].getData());
+		
+		/*EditorComposite temp = (EditorComposite)openFile(f1);
 		for (CTabItem tab : mainfolder.getItems()){
 			if (tab.getControl() != null && tab.getControl() instanceof EditorComposite){
 				bgcolor =((EditorComposite)mainfolder.getSelection().getControl()).getLineColor();
@@ -2169,6 +2235,8 @@ public class MainShell {
 				tab.dispose();
 			}
 		}
+		*/
+		
 		//TODO:Rewrite the above section so that it runs faster, or determines the color in another way
 
 
@@ -2180,7 +2248,7 @@ public class MainShell {
 		// item.setData("file", file);
 		// item.setData("loc", loc);
 
-		item.setControl(new CompareComposite(mainfolder, item, (SymitarFile) tree.getSelection()[0].getData(), (SymitarFile) tree.getSelection()[1].getData(), bgcolor));
+		item.setControl(new CompareComposite(mainfolder, item, f1, f2, bgcolor));
 
 		item.addDisposeListener(new DisposeListener(){
 
@@ -2191,6 +2259,8 @@ public class MainShell {
 
 		});
 		setMainFolderSelection(item);
+		f1.compareMode(false);
+		f2.compareMode(false);
 	}
 
 	private void removeDir(TreeItem currentItem) {
