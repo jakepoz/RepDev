@@ -2034,71 +2034,71 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 20 for 20|2|7|null
-		CONTRLASTYEAR:2|Contr 20 for 19|2|7|null
-		CONTRLASTYEAR:3|Contr 20 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 20 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 20 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 20 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 20 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 20 Unspecif|2|7|null
-		CONTRLASTYEAR:9|Contr 20 Unspecif|2|7|null
-		CONTRLASTYEAR:10|Contr 20 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 20 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 20 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 20 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 20 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 20 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 20 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 20 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 20 Excess 20|3|7|null
-		DISTRLASTYEAR:9|Distr 20 Excess 19|3|7|null
-		DISTRLASTYEAR:10|Distr 20 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 20 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 20 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 20 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 20 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 20 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 20 Ex Earn 20|3|7|null
-		DISTRLASTYEAR:17|Distr 20 Ex Earn 19|3|7|null
-		CONTRTHISYEAR:1|Contr 21 for 21|4|7|null
-		CONTRTHISYEAR:2|Contr 21 for 20|4|7|null
-		CONTRTHISYEAR:3|Contr 21 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 21 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 21 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 21 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 21 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 21 Unspecif|4|7|null
-		CONTRTHISYEAR:9|Contr 21 Unspecif|4|7|null
-		CONTRTHISYEAR:10|Contr 21 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 21 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 21 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 21 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 21 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 21 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 21 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 21 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 21 Excess 21|5|7|null
-		DISTRTHISYEAR:9|Distr 21 Excess 20|5|7|null
-		DISTRTHISYEAR:10|Distr 21 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 21 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 21 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 21 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 21 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 21 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 21 Ex Earn 21|5|7|null
-		DISTRTHISYEAR:17|Distr 21 Ex Earn 20|5|7|null
+		CONTRLASTYEAR:1|Contr 21 for 21|2|7|null
+		CONTRLASTYEAR:2|Contr 21 for 20|2|7|null
+		CONTRLASTYEAR:3|Contr 21 Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr 21 Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr 21 Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr 21 Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr 21 Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr 21 Unspecif|2|7|null
+		CONTRLASTYEAR:9|Contr 21 Unspecif|2|7|null
+		CONTRLASTYEAR:10|Contr 21 Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr 21 No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr 21 Exception|3|7|null
+		DISTRLASTYEAR:3|Distr 21 Disability|3|7|null
+		DISTRLASTYEAR:4|Distr 21 Death|3|7|null
+		DISTRLASTYEAR:5|Distr 21 Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr 21 Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr 21 Normal|3|7|null
+		DISTRLASTYEAR:8|Distr 21 Excess 21|3|7|null
+		DISTRLASTYEAR:9|Distr 21 Excess 20|3|7|null
+		DISTRLASTYEAR:10|Distr 21 Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr 21 Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr 21 Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr 21 Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr 21 Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr 21 Fee|3|7|null
+		DISTRLASTYEAR:16|Distr 21 Ex Earn 21|3|7|null
+		DISTRLASTYEAR:17|Distr 21 Ex Earn 20|3|7|null
+		CONTRTHISYEAR:1|Contr 22 for 22|4|7|null
+		CONTRTHISYEAR:2|Contr 22 for 21|4|7|null
+		CONTRTHISYEAR:3|Contr 22 Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr 22 Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr 22 Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr 22 Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr 22 Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr 22 Unspecif|4|7|null
+		CONTRTHISYEAR:9|Contr 22 Unspecif|4|7|null
+		CONTRTHISYEAR:10|Contr 22 Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr 22 No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr 22 Exception|5|7|null
+		DISTRTHISYEAR:3|Distr 22 Disability|5|7|null
+		DISTRTHISYEAR:4|Distr 22 Death|5|7|null
+		DISTRTHISYEAR:5|Distr 22 Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr 22 Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr 22 Normal|5|7|null
+		DISTRTHISYEAR:8|Distr 22 Excess 22|5|7|null
+		DISTRTHISYEAR:9|Distr 22 Excess 21|5|7|null
+		DISTRTHISYEAR:10|Distr 22 Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr 22 Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr 22 Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr 22 Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr 22 Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr 22 Fee|5|7|null
+		DISTRTHISYEAR:16|Distr 22 Ex Earn 22|5|7|null
+		DISTRTHISYEAR:17|Distr 22 Ex Earn 21|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 20|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 21|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 21|16|7|null
+		IRARMD|Req Min Distrib 22|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
@@ -2990,6 +2990,7 @@
 		FIXEDDEALERCOUNTYTAXRATE|Fixed Dealer County Tax Rate|436|2|null
 		FIXEDDEALERCITYTAXRATE|Fixed Dealer City Tax Rate|437|2|null
 		POSITIVEPAYDRAFT|Positive Pay Draft|438|5|99
+		CANCELABLE|Cancelable|439|5|1
 		AVAILABLECREDIT|Available Credit|800|7|null
 		INTERESTDUE|Interest Due|801|7|null
 		LATECHARGEDUE|Late Charge Due|802|7|null
@@ -4878,7 +4879,7 @@
 		IMAGEREFISSUECOUNT|Image Reference Issue Count|90|5|99
 		EMVCHIPPROFILE|EMV Chip Profile|91|0|20
 		PINENCRYPTED|PIN Encrypted|92|0|8
-		FILEUPDATEMANAGEREXCEPTION|File Update Manager Exception|93|5|16
+		FILEUPDATEMANAGEREXCEPTION|File Update Manager Exception|93|5|17
 		COUNTLIMIT:1|Limit 1 Count Limit|94|5|9999
 		COUNTLIMIT:2|Limit 2 Count Limit|94|5|9999
 		COUNTLIMIT:3|Limit 3 Count Limit|94|5|9999
@@ -4911,6 +4912,11 @@
 		PERITEMLIMIT:6|Limit 6 Per Item Limit|98|7|null
 		DIGITALISSUESTATUS|Digital Issue Status|99|5|6
 		DIGITALISSUEEXCEPT|Digital Issue Exception|100|0|40
+		TEMPLIMITSTARTDATE|Temporary Limit Start Date|101|3|null
+		TEMPLIMITENDDATE|Temporary Limit End Date|102|3|null
+		ATMTEMPLIMIT|ATM Temp Usage Limit|103|7|null
+		POSTEMPLIMIT|POS Temp Limit|104|7|null
+		AUTHTEMPLIMIT|Auth Temp Limit|105|7|null
 		LIMITDESCRIPTION:1|Limit 1 Description|800|0|40
 		LIMITDESCRIPTION:2|Limit 2 Description|800|0|40
 		LIMITDESCRIPTION:3|Limit 3 Description|800|0|40
@@ -7704,7 +7710,6 @@
 	OURTRANSMISSIONTIME|Our Transmission Time|98|0|6
 	TURNAROUNDTIME|Turn Around Time|99|5|32767
 	OURRESPONSECODE|Our Response Code|100|5|9999
-	SETTLETYPE|Settle Type|101|5|2
 	CURRENCYINDEX|Currency Rate Index|102|5|3
 	CURRENCYAMOUNT|Currency Amount|103|6|null
 	APPROVEDLESSERCODE|Approved For Lesser Amt Code|104|0|1
@@ -7790,7 +7795,7 @@
 	TERMINALGLCODE|Terminal GL Code|184|5|1999
 	TERMSURCHARGEGLCODE|Terminal Surcharge GL Code|185|5|1999
 	DEPOSITTYPE|Deposit Type|186|5|5
-	HOLDACTION|Hold Action|187|5|5
+	HOLDACTION|Hold Action|187|5|8
 	HOLDLOCATOR|Hold Locator|188|4|null
 	INCREMENTALFLAG|Incremental?|189|5|1
 	NETWORKHOLDTIME|Network Hold Time|190|0|3
