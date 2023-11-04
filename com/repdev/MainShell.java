@@ -1881,7 +1881,7 @@ public class MainShell {
 				}
 				
 				if (tree.getSelectionCount() == 1 && tree.getSelection()[0].getData() instanceof SymitarFile
-						&& !((SymitarFile) tree.getSelection()[0].getData()).isLocal()){
+						/*  && !((SymitarFile) tree.getSelection()[0].getData()).isLocal()  */){
 					if (((SymitarFile) tree.getSelection()[0].getData()).getSym() != Config.getLiveSym()) {
 						if (RepDevMain.SYMITAR_SESSIONS.get(Config.getLiveSym())!=null && RepDevMain.SYMITAR_SESSIONS.get(Config.getLiveSym()).isConnected())
 							compareToProduction.setEnabled(true);
