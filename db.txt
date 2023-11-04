@@ -2034,71 +2034,71 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 21 for 21|2|7|null
-		CONTRLASTYEAR:2|Contr 21 for 20|2|7|null
-		CONTRLASTYEAR:3|Contr 21 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 21 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 21 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 21 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 21 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 21 Unspecif|2|7|null
-		CONTRLASTYEAR:9|Contr 21 Unspecif|2|7|null
-		CONTRLASTYEAR:10|Contr 21 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 21 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 21 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 21 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 21 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 21 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 21 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 21 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 21 Excess 21|3|7|null
-		DISTRLASTYEAR:9|Distr 21 Excess 20|3|7|null
-		DISTRLASTYEAR:10|Distr 21 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 21 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 21 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 21 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 21 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 21 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 21 Ex Earn 21|3|7|null
-		DISTRLASTYEAR:17|Distr 21 Ex Earn 20|3|7|null
-		CONTRTHISYEAR:1|Contr 22 for 22|4|7|null
-		CONTRTHISYEAR:2|Contr 22 for 21|4|7|null
-		CONTRTHISYEAR:3|Contr 22 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 22 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 22 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 22 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 22 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 22 Unspecif|4|7|null
-		CONTRTHISYEAR:9|Contr 22 Unspecif|4|7|null
-		CONTRTHISYEAR:10|Contr 22 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 22 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 22 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 22 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 22 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 22 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 22 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 22 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 22 Excess 22|5|7|null
-		DISTRTHISYEAR:9|Distr 22 Excess 21|5|7|null
-		DISTRTHISYEAR:10|Distr 22 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 22 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 22 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 22 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 22 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 22 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 22 Ex Earn 22|5|7|null
-		DISTRTHISYEAR:17|Distr 22 Ex Earn 21|5|7|null
+		CONTRLASTYEAR:1|Contr 22 for 22|2|7|null
+		CONTRLASTYEAR:2|Contr 22 for 21|2|7|null
+		CONTRLASTYEAR:3|Contr 22 Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr 22 Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr 22 Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr 22 Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr 22 Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr 22 Unspecif|2|7|null
+		CONTRLASTYEAR:9|Contr 22 Unspecif|2|7|null
+		CONTRLASTYEAR:10|Contr 22 Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr 22 No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr 22 Exception|3|7|null
+		DISTRLASTYEAR:3|Distr 22 Disability|3|7|null
+		DISTRLASTYEAR:4|Distr 22 Death|3|7|null
+		DISTRLASTYEAR:5|Distr 22 Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr 22 Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr 22 Normal|3|7|null
+		DISTRLASTYEAR:8|Distr 22 Excess 22|3|7|null
+		DISTRLASTYEAR:9|Distr 22 Excess 21|3|7|null
+		DISTRLASTYEAR:10|Distr 22 Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr 22 Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr 22 Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr 22 Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr 22 Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr 22 Fee|3|7|null
+		DISTRLASTYEAR:16|Distr 22 Ex Earn 22|3|7|null
+		DISTRLASTYEAR:17|Distr 22 Ex Earn 21|3|7|null
+		CONTRTHISYEAR:1|Contr 23 for 23|4|7|null
+		CONTRTHISYEAR:2|Contr 23 for 22|4|7|null
+		CONTRTHISYEAR:3|Contr 23 Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr 23 Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr 23 Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr 23 Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr 23 Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr 23 Unspecif|4|7|null
+		CONTRTHISYEAR:9|Contr 23 Unspecif|4|7|null
+		CONTRTHISYEAR:10|Contr 23 Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr 23 No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr 23 Exception|5|7|null
+		DISTRTHISYEAR:3|Distr 23 Disability|5|7|null
+		DISTRTHISYEAR:4|Distr 23 Death|5|7|null
+		DISTRTHISYEAR:5|Distr 23 Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr 23 Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr 23 Normal|5|7|null
+		DISTRTHISYEAR:8|Distr 23 Excess 23|5|7|null
+		DISTRTHISYEAR:9|Distr 23 Excess 22|5|7|null
+		DISTRTHISYEAR:10|Distr 23 Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr 23 Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr 23 Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr 23 Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr 23 Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr 23 Fee|5|7|null
+		DISTRTHISYEAR:16|Distr 23 Ex Earn 23|5|7|null
+		DISTRTHISYEAR:17|Distr 23 Ex Earn 22|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 21|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 22|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 22|16|7|null
+		IRARMD|Req Min Distrib 23|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
@@ -4917,6 +4917,8 @@
 		ATMTEMPLIMIT|ATM Temp Usage Limit|103|7|null
 		POSTEMPLIMIT|POS Temp Limit|104|7|null
 		AUTHTEMPLIMIT|Auth Temp Limit|105|7|null
+		ONLINECARDISSUE|Online Card Issue|106|5|3
+		ONLINERUSHISSUE|Online Rush Card Issue|107|5|16
 		LIMITDESCRIPTION:1|Limit 1 Description|800|0|40
 		LIMITDESCRIPTION:2|Limit 2 Description|800|0|40
 		LIMITDESCRIPTION:3|Limit 3 Description|800|0|40
@@ -7669,6 +7671,7 @@
 	SETTLECURRENCYCODE|Settlement Currency Code|47|5|999
 	ISSUERCURRENCYCODE|Card Issuer Currency Code|48|5|999
 	MERCHANTTYPE|Merchant Type|49|5|9999
+	OURTRANSMISSIONTIMEMS|Our Transmission Time MS|50|0|3
 	DEVICETYPE|Device Type|53|5|1
 	MESSAGEFORMAT|Message Format|54|0|10
 	ROUTINGCODE|Routing Code|55|5|2
@@ -7796,7 +7799,7 @@
 	TERMSURCHARGEGLCODE|Terminal Surcharge GL Code|185|5|1999
 	DEPOSITTYPE|Deposit Type|186|5|5
 	HOLDACTION|Hold Action|187|5|8
-	HOLDLOCATOR|Hold Locator|188|4|null
+	MATCHEDHOLDLOCATOR|Matched Hold Locator|188|4|null
 	INCREMENTALFLAG|Incremental?|189|5|1
 	NETWORKHOLDTIME|Network Hold Time|190|0|3
 	ACTUALHOLDTIME|Actual Hold Time|191|0|3
@@ -7807,6 +7810,7 @@
 	QUEUEDFLAG|Queued?|196|5|1
 	CARDSTATUS|Card Status|197|0|2
 	AUTHORIZEDBY|Authorized By|198|5|2
+	CREATEDHOLDLOCATOR|Created Hold Locator|199|4|null
 	SWITCHCODE|Switch Code|204|0|5
 	D91XINCOMPLETETRAN|D91X Incomplete Transaction?|207|5|1
 	D91XOPERATIONKEYS|D91X Operation Keys|208|0|8
@@ -9389,7 +9393,7 @@
 		RECORDNAME|Record Name|800|1|40
 		FIELDNAME|Field Name|801|1|40
 	***|CTRACCOUNT|CTR Account
-		ACCOUNTNUMBER|Episys Account Number|1|0|10
+		ACCOUNTNUMBER|Symitar Account Number|1|0|10
 		SLIDTYPE|S/L ID Type|2|5|1
 		SLID|S/L ID|3|0|2
 		LASTFMDATE|Last FM Date|4|3|null
@@ -9438,7 +9442,7 @@
 		DBASHORTNAME|DBA Short Name|803|0|16
 		DBALONGNAME|DBA Long Name|804|1|40
 		***|CTRPERSON CTRTRANINFO|CTR Person Tran Info
-			ACCOUNTNUMBER|Episys Account Number|1|0|10
+			ACCOUNTNUMBER|Symitar Account Number|1|0|10
 			SLIDTYPE|S/L ID Type|2|5|1
 			SLID|S/L ID|3|0|2
 			SOURCE|Source|4|5|2
@@ -13103,28 +13107,37 @@
 	TAPETOTAL:5|Fives|14|7|null
 	TAPETOTAL:6|Twos|14|7|null
 	TAPETOTAL:7|Ones|14|7|null
-	TAPETOTAL:8|Strapped Crrncy|14|7|null
-	TAPETOTAL:9|Loose Currency|14|7|null
-	TAPETOTAL:10|Dollar Coins|14|7|null
-	TAPETOTAL:11|Halves|14|7|null
-	TAPETOTAL:12|Quarters|14|7|null
-	TAPETOTAL:13|Dimes|14|7|null
-	TAPETOTAL:14|Nickels|14|7|null
-	TAPETOTAL:15|Pennies|14|7|null
-	TAPETOTAL:16|Rolled Coin|14|7|null
-	TAPETOTAL:17|Loose Coin|14|7|null
-	TAPETOTAL:18|Mutilated|14|7|null
-	TAPETOTAL:19|Bait|14|7|null
-	TAPETOTAL:20|Other|14|7|null
-	TAPETOTAL:21|Ending Cash|14|7|null
-	TAPETOTAL:22|Check Received|14|7|null
-	TAPETOTAL:23|Money Order|14|7|null
-	TAPETOTAL:24|Travelers Check|14|7|null
-	TAPETOTAL:25|Check Disbursed|14|7|null
-	TAPETOTAL:26|Secondary Check|14|7|null
-	TAPETOTAL:27|Bond Clearing|14|7|null
-	TAPETOTAL:28|Beginning Frgn|14|7|null
-	TAPETOTAL:29|Ending Frgn|14|7|null
+	TAPETOTAL:8|Dollar Coins|14|7|null
+	TAPETOTAL:9|Halves|14|7|null
+	TAPETOTAL:10|Quarters|14|7|null
+	TAPETOTAL:11|Dimes|14|7|null
+	TAPETOTAL:12|Nickels|14|7|null
+	TAPETOTAL:13|Pennies|14|7|null
+	TAPETOTAL:14|Hundreds Straps|14|7|null
+	TAPETOTAL:15|Fifties Straps|14|7|null
+	TAPETOTAL:16|Twenties Straps|14|7|null
+	TAPETOTAL:17|Tens Straps|14|7|null
+	TAPETOTAL:18|Fives Straps|14|7|null
+	TAPETOTAL:19|Twos Straps|14|7|null
+	TAPETOTAL:20|Ones Straps|14|7|null
+	TAPETOTAL:21|Dollar Rolls|14|7|null
+	TAPETOTAL:22|Halves Rolls|14|7|null
+	TAPETOTAL:23|Quarters Rolls|14|7|null
+	TAPETOTAL:24|Dimes Rolls|14|7|null
+	TAPETOTAL:25|Nickels Rolls|14|7|null
+	TAPETOTAL:26|Pennies Rolls|14|7|null
+	TAPETOTAL:27|Bagged Coins|14|7|null
+	TAPETOTAL:28|Mutilated|14|7|null
+	TAPETOTAL:29|Bait|14|7|null
+	TAPETOTAL:30|Ending Cash|14|7|null
+	TAPETOTAL:31|Check Received|14|7|null
+	TAPETOTAL:32|Money Order|14|7|null
+	TAPETOTAL:33|Travelers Check|14|7|null
+	TAPETOTAL:34|Check Disbursed|14|7|null
+	TAPETOTAL:35|Secondary Check|14|7|null
+	TAPETOTAL:36|Bond Clearing|14|7|null
+	TAPETOTAL:37|Beginning Frgn|14|7|null
+	TAPETOTAL:38|Ending Frgn|14|7|null
 	SECURITYCODE:1|Parameter File Maintenance|15|5|1
 	SECURITYCODE:2|User File Maintenance|15|5|1
 	SECURITYCODE:3|Console File Maintenance|15|5|1
@@ -16087,28 +16100,37 @@
 	PRIORDAYTAPETOTAL:5|Prior Day Fives|56|7|null
 	PRIORDAYTAPETOTAL:6|Prior Day Twos|56|7|null
 	PRIORDAYTAPETOTAL:7|Prior Day Ones|56|7|null
-	PRIORDAYTAPETOTAL:8|Prior Day Strapped Crrncy|56|7|null
-	PRIORDAYTAPETOTAL:9|Prior Day Loose Currency|56|7|null
-	PRIORDAYTAPETOTAL:10|Prior Day Dollar Coins|56|7|null
-	PRIORDAYTAPETOTAL:11|Prior Day Halves|56|7|null
-	PRIORDAYTAPETOTAL:12|Prior Day Quarters|56|7|null
-	PRIORDAYTAPETOTAL:13|Prior Day Dimes|56|7|null
-	PRIORDAYTAPETOTAL:14|Prior Day Nickels|56|7|null
-	PRIORDAYTAPETOTAL:15|Prior Day Pennies|56|7|null
-	PRIORDAYTAPETOTAL:16|Prior Day Rolled Coin|56|7|null
-	PRIORDAYTAPETOTAL:17|Prior Day Loose Coin|56|7|null
-	PRIORDAYTAPETOTAL:18|Prior Day Mutilated|56|7|null
-	PRIORDAYTAPETOTAL:19|Prior Day Bait|56|7|null
-	PRIORDAYTAPETOTAL:20|Prior Day Other|56|7|null
-	PRIORDAYTAPETOTAL:21|Prior Day Ending Cash|56|7|null
-	PRIORDAYTAPETOTAL:22|Prior Day Check Received|56|7|null
-	PRIORDAYTAPETOTAL:23|Prior Day Money Order|56|7|null
-	PRIORDAYTAPETOTAL:24|Prior Day Travelers Check|56|7|null
-	PRIORDAYTAPETOTAL:25|Prior Day Check Disbursed|56|7|null
-	PRIORDAYTAPETOTAL:26|Prior Day Secondary Check|56|7|null
-	PRIORDAYTAPETOTAL:27|Prior Day Bond Clearing|56|7|null
-	PRIORDAYTAPETOTAL:28|Prior Day Beginning Frgn|56|7|null
-	PRIORDAYTAPETOTAL:29|Prior Day Ending Frgn|56|7|null
+	PRIORDAYTAPETOTAL:8|Prior Day Dollar Coins|56|7|null
+	PRIORDAYTAPETOTAL:9|Prior Day Halves|56|7|null
+	PRIORDAYTAPETOTAL:10|Prior Day Quarters|56|7|null
+	PRIORDAYTAPETOTAL:11|Prior Day Dimes|56|7|null
+	PRIORDAYTAPETOTAL:12|Prior Day Nickels|56|7|null
+	PRIORDAYTAPETOTAL:13|Prior Day Pennies|56|7|null
+	PRIORDAYTAPETOTAL:14|Prior Day Hundreds Straps|56|7|null
+	PRIORDAYTAPETOTAL:15|Prior Day Fifties Straps|56|7|null
+	PRIORDAYTAPETOTAL:16|Prior Day Twenties Straps|56|7|null
+	PRIORDAYTAPETOTAL:17|Prior Day Tens Straps|56|7|null
+	PRIORDAYTAPETOTAL:18|Prior Day Fives Straps|56|7|null
+	PRIORDAYTAPETOTAL:19|Prior Day Twos Straps|56|7|null
+	PRIORDAYTAPETOTAL:20|Prior Day Ones Straps|56|7|null
+	PRIORDAYTAPETOTAL:21|Prior Day Dollar Rolls|56|7|null
+	PRIORDAYTAPETOTAL:22|Prior Day Halves Rolls|56|7|null
+	PRIORDAYTAPETOTAL:23|Prior Day Quarters Rolls|56|7|null
+	PRIORDAYTAPETOTAL:24|Prior Day Dimes Rolls|56|7|null
+	PRIORDAYTAPETOTAL:25|Prior Day Nickels Rolls|56|7|null
+	PRIORDAYTAPETOTAL:26|Prior Day Pennies Rolls|56|7|null
+	PRIORDAYTAPETOTAL:27|Prior Day Bagged Coins|56|7|null
+	PRIORDAYTAPETOTAL:28|Prior Day Mutilated|56|7|null
+	PRIORDAYTAPETOTAL:29|Prior Day Bait|56|7|null
+	PRIORDAYTAPETOTAL:30|Prior Day Ending Cash|56|7|null
+	PRIORDAYTAPETOTAL:31|Prior Day Check Received|56|7|null
+	PRIORDAYTAPETOTAL:32|Prior Day Money Order|56|7|null
+	PRIORDAYTAPETOTAL:33|Prior Day Travelers Check|56|7|null
+	PRIORDAYTAPETOTAL:34|Prior Day Check Disbursed|56|7|null
+	PRIORDAYTAPETOTAL:35|Prior Day Secondary Check|56|7|null
+	PRIORDAYTAPETOTAL:36|Prior Day Bond Clearing|56|7|null
+	PRIORDAYTAPETOTAL:37|Prior Day Beginning Frgn|56|7|null
+	PRIORDAYTAPETOTAL:38|Prior Day Ending Frgn|56|7|null
 	RECORDCHANGEDATE|Record Change Date|57|3|null
 	PASSWORDMODE|Password Mode|58|5|1
 	PASSWORDHASH1|Password Hash 1|59|0|40
