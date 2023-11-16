@@ -241,6 +241,7 @@ public class SymLoginShell {
 				session = new DirectSymitarSession();
 
 			RepDevMain.SYMITAR_SESSIONS.put(sym, session);
+			RepDevMain.SESSION_INFO.put(sym, new SessionInfo("", "", "", "", ""));
 		}
 
 		if (session.isConnected()) {

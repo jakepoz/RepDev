@@ -19,6 +19,7 @@
 
 package com.repdev;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,6 +49,7 @@ import org.eclipse.swt.widgets.MessageBox;
  */
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
+	public static HashMap<Integer, SessionInfo> SESSION_INFO = new HashMap<Integer, SessionInfo>();
 
 	public static final boolean DEVELOPER = false; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
 	public static final int VMAJOR = 1;
@@ -236,6 +238,12 @@ public class RepDevMain {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		
+		SESSION_INFO = Config.getSessionInfo();
+		if(SESSION_INFO == null) {
+			SESSION_INFO = new HashMap<Integer, SessionInfo>();
+		}
+		
 		SymitarSession session;
 
 		// Start up data
@@ -246,6 +254,11 @@ public class RepDevMain {
 			else
 				session = new DirectSymitarSession();
 
+			if (SESSION_INFO.get(sym) == null) {
+				SessionInfo si = new SessionInfo("", "", "", "", "");
+				SESSION_INFO.put(sym, si);
+			}
+			
 			SYMITAR_SESSIONS.put(sym, session);
 		}
 		if(Config.getTerminateHour()==0){
@@ -271,12 +284,15 @@ public class RepDevMain {
 		try {
 			// Write the current syms to the Config file
 			ArrayList<Integer> newSyms = new ArrayList<Integer>();
+			HashMap<Integer, SessionInfo> newSessionInfo = new HashMap<Integer, SessionInfo>();
 
 			for (int sym : SYMITAR_SESSIONS.keySet()) {
 				newSyms.add(sym);
+				newSessionInfo.put(sym, new SessionInfo(SESSION_INFO.get(sym).getDescription(), SYMITAR_SESSIONS.get(sym)));
 			}
 
 			Config.setSyms(newSyms);
+			Config.setSessionInfo(newSessionInfo);
 
 
 			//Only save passwords if DEVELOPER FLAG is on

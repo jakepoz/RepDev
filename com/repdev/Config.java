@@ -22,6 +22,7 @@ package com.repdev;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -35,6 +36,7 @@ public class Config implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private ArrayList<Integer> syms = new ArrayList<Integer>();
+	private HashMap<Integer, SessionInfo> sessionInfo = new HashMap<Integer, SessionInfo>();
 	private String server = "127.0.0.1";
 	private int port = 23;
 	private int tabSize = 0; // 0 = Regular tab
@@ -87,6 +89,14 @@ public class Config implements Serializable {
 		return me.syms;
 	}
 
+	public static void setSessionInfo(HashMap<Integer, SessionInfo> newSessionInfo) {
+		me.sessionInfo = newSessionInfo;
+	}
+	
+	public static HashMap<Integer, SessionInfo> getSessionInfo(){
+		return me.sessionInfo;
+	}
+	
 	public static Config getConfig() {
 		return me;
 	}

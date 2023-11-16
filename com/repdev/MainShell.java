@@ -1248,7 +1248,9 @@ public class MainShell {
 
 		for (int sym : Config.getSyms()) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
-			item.setText("Sym " + sym);
+			String symdesc = "";
+			symdesc = (RepDevMain.SESSION_INFO.get(sym).getDescription().length() != 0 ? " - " + RepDevMain.SESSION_INFO.get(sym).getDescription() : "");
+			item.setText("Sym " + sym + symdesc);
 			item.setImage(RepDevMain.smallSymImage);
 			item.setData(sym);
 			new TreeItem(item, SWT.NONE).setText("Loading...");
@@ -1579,6 +1581,17 @@ public class MainShell {
 
 		});
 
+		final MenuItem renameSym = new MenuItem(treeMenu, SWT.NONE);
+		renameSym.setText("SYM Description");
+		renameSym.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				if (tree.getSelectionCount() == 1)
+					renameSymDesc(tree.getSelection()[0]);
+			}
+
+		});
+
 		final MenuItem renameFile = new MenuItem(treeMenu, SWT.NONE);
 		renameFile.setText("Rename Item");
 		renameFile.addSelectionListener(new SelectionAdapter() {
@@ -1854,6 +1867,7 @@ public class MainShell {
 					newProject.setEnabled(loggedIn);
 					openFile.setEnabled(loggedIn);
 
+					renameSym.setEnabled(tree.getSelection()[0].getData() instanceof Integer);
 					renameFile.setEnabled(!(tree.getSelection()[0].getData() instanceof String || tree.getSelection()[0].getData() instanceof Integer));
 					symLogoff.setEnabled(loggedIn && tree.getSelection()[0].getData() instanceof Integer);
 					symProp.setEnabled(loggedIn && tree.getSelection()[0].getData() instanceof Integer);
@@ -2100,6 +2114,19 @@ public class MainShell {
 		if (item.getData() instanceof Project) {
 			((Project) item.getData()).setName(newName);
 			item.setText(newName);
+		}
+	}
+
+	protected void renameSymDesc(final TreeItem item) {
+		int sym = (int)item.getData();
+		String strSYMDesc = (RepDevMain.SESSION_INFO.get(sym).getDescription() == null ? "" : RepDevMain.SESSION_INFO.get(sym).getDescription());
+		strSYMDesc = SymDescriptionShell.askForDescription(display, shell, strSYMDesc);
+		System.out.println("sym: " + sym);
+		if(strSYMDesc != null) {
+			strSYMDesc = (strSYMDesc.length() > 25 ? strSYMDesc.trim().substring(0,25) : strSYMDesc.trim());
+			RepDevMain.SESSION_INFO.get(sym).setDescription(strSYMDesc);
+			if (strSYMDesc != "") strSYMDesc = " - " + strSYMDesc;
+			item.setText("Sym " + sym + strSYMDesc);
 		}
 	}
 
