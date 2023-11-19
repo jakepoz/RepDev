@@ -257,8 +257,9 @@ public class RepDevMain {
 			if (SESSION_INFO.get(sym) == null) {
 				SessionInfo si = new SessionInfo("", "", "", "", "");
 				SESSION_INFO.put(sym, si);
+			} else {
+				session.setServer(SESSION_INFO.get(sym).getServer());
 			}
-			
 			SYMITAR_SESSIONS.put(sym, session);
 		}
 		if(Config.getTerminateHour()==0){

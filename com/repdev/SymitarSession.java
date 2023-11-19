@@ -351,6 +351,10 @@ public abstract class SymitarSession {
 		return server;
 	}
 
+	public void setServer(String server) {
+		this.server = server;
+	}
+
 	public int getPort() {
 		return port;
 	}

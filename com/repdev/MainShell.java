@@ -185,8 +185,6 @@ public class MainShell {
 	private void createShell() {
 		int leftPercent = 20, bottomPercent = 20;
 		shell.setText(RepDevMain.NAMESTR);
-		if(Config.getHostNameInTitle())
-			shell.setText(shell.getText() + " - " + Config.getServer());
 		shell.setImage(RepDevMain.smallProgramIcon);
 		if(Config.getWindowSize() != null)
 			shell.setSize(Config.getWindowSize());
@@ -427,6 +425,7 @@ public class MainShell {
 			// Attach find/replace shell here as well (in addition to folder
 			// listener)
 			findReplaceShell.attach(((ReportComposite) editor).getStyledText(), false);
+			setMainTitle();
 
 			return editor;
 		}
@@ -2288,6 +2287,7 @@ public class MainShell {
 		setMainFolderSelection(item);
 		f1.compareMode(false);
 		f2.compareMode(false);
+		setMainTitle();
 	}
 
 	private void removeDir(TreeItem currentItem) {
@@ -2902,8 +2902,6 @@ public class MainShell {
 				if (event.doit) {
 					if( mainfolder.getSelection() == event.item )
 						shell.setText(RepDevMain.NAMESTR); // remove active repgen name from title
-					if(Config.getHostNameInTitle())
-						shell.setText(shell.getText() + " - " + Config.getServer());
 					clearErrorAndTaskList((CTabItem) event.item);
 				}
 
@@ -3975,12 +3973,24 @@ public class MainShell {
 	}
 
 	private void setMainTitle(){
+		String server = "";
+		int sym;
+		
+		if(Config.getHostNameInTitle()) {
+			if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite && (mainfolder.getSelection() != null && ((EditorComposite) mainfolder.getSelection().getControl()).getFile() instanceof SymitarFile)) {
+				SymitarFile file =  ((EditorComposite) mainfolder.getSelection().getControl()).getFile();
+				if(!file.isLocal()) {
+					sym =file.getSym();
+					server = " - " + RepDevMain.SESSION_INFO.get(sym).getServer();
+				}
+			}
+		}
+		
 		if (Config.getFileNameInTitle())
-			shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR);
+			shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR + server);
 		else
-			shell.setText(RepDevMain.NAMESTR);
-		if(Config.getHostNameInTitle())
-			shell.setText(shell.getText() + " - " + Config.getServer());
+			shell.setText(RepDevMain.NAMESTR + server);
+		
 	}
 
 //	public ArrayList<EditorComposite> getEditorCompositeList() {

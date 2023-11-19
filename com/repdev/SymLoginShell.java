@@ -48,14 +48,15 @@ public class SymLoginShell {
 	private int result = -1;
 	private int sym;
 	private String aixUsername, aixPassword, userID, server;
-	public static String lastServer = Config.getServer() == null ? "" : Config.getServer();
+	public static String lastServer;
 	public static String lastUsername = Config.getLastUsername() == null ? "" : Config.getLastUsername();
 	public static String lastPassword = (RepDevMain.DEVELOPER && Config.getLastPassword() != null) ? Config.getLastPassword() : "";
 	public static String lastUserID = (RepDevMain.DEVELOPER && Config.getLastUserID() != null) ? Config.getLastUserID() : "";
 	
 	private void create(Shell parent, int inSym) {
 		result = -1;
-
+		lastServer = Config.getServer() == null ? "" : Config.getServer();
+		
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 5;
 		layout.marginBottom = 5;
@@ -83,13 +84,23 @@ public class SymLoginShell {
 		Label userIDLabel = new Label(shell, SWT.NONE);
 		userIDLabel.setText("UserID:");
 
-		final Text serverText = new Text(shell, SWT.BORDER);
-		serverText.setText(lastServer);
-
 		final Text symText = new Text(shell, SWT.BORDER | (inSym != -1 ? SWT.READ_ONLY : SWT.NONE));
 
 		if (inSym != -1)
 			symText.setText(String.valueOf(inSym));
+		try {
+			sym = Integer.parseInt(symText.getText().trim());
+			if (RepDevMain.SESSION_INFO.get(sym).getServer() != null) {
+				if(RepDevMain.SESSION_INFO.get(sym).getServer().length() != 0) {
+					lastServer = RepDevMain.SESSION_INFO.get(sym).getServer();
+				}
+			}
+		} catch (Exception ex) {
+			
+		}
+		
+		final Text serverText = new Text(shell, SWT.BORDER);
+		serverText.setText(lastServer);
 
 		final Text aixUserText = new Text(shell, SWT.BORDER);
 		aixUserText.setText(lastUsername);
@@ -115,7 +126,7 @@ public class SymLoginShell {
 					symText.setFocus();
 					return;
 				}
-
+				
 				server = serverText.getText().trim();
 				aixUsername = aixUserText.getText().trim();
 				aixPassword = aixPasswordText.getText().trim();
@@ -128,7 +139,7 @@ public class SymLoginShell {
 				Config.setLastPassword(lastPassword);
 				Config.setLastUsername(lastUsername);
 				Config.setLastUserID(lastUserID);
-
+				
 				result = 1000;
 
 				shell.dispose();
@@ -272,6 +283,7 @@ public class SymLoginShell {
 				diag.setMessage("WARNING: You specified SYM " + session.getSym() + " during login, but you are actually logged into SYM " + ((DirectSymitarSession)session).getActualSym());
 				diag.open();
 			}
+			RepDevMain.SESSION_INFO.get(sym).setServer(server);
 			me.result = sym;
 			return;
 		}
