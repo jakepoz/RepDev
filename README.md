@@ -14,6 +14,7 @@ Features:
  - Manage multiple projects and report files at once
  - Pleasant graphical theme
  - Supports EASE Client Menu Selections
+ - Facilitates your In-House Source Control Solution
 
 The latest versions can be download here:
 <a href="https://github.com/jakepoz/RepDev-downloads">RepDev Downloads</a> (scroll toward the bottom)
