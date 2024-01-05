@@ -74,7 +74,7 @@ public class RepgenParser {
 	boolean refreshIncludes = false; //The parser will keep track of changes as the file is edited, and if an include reparse is needed, this flag will be set. 
 	//Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
 	private boolean noParse = false;
-	public static final String[] taskTokens = { "todo", "fixme", "bug", "bugbug", "wtf" };
+	public static final String[] taskTokens = { "todo", "fixme", "bug", "bugbug", "wtf", "bm", "bookmark", "test", "note" };
 
 
 	public RepgenParser(StyledText txt, SymitarFile file) {
@@ -401,15 +401,22 @@ public class RepgenParser {
 										type = Task.Type.BUG;
 									} else if( tok.getStr().equals("wtf") ) {
 										type = Task.Type.WTF;
-									}
+									} else if( tok.getStr().equals("bm") || tok.getStr().equals("bookmark") ) {
+										type = Task.Type.BM;
+									} else if( tok.getStr().equals("test") ) {
+										type = Task.Type.TEST;
+									} else if( tok.getStr().equals("note") ) {
+										type = Task.Type.NOTE;
+ 									}
+
 	
 	
 									/* Don't die if the item does not have a line following it...
 									 * Taken from my #include "" double click code.
 									 */
 									int startOffset = tok.getStart();
-									int pos1 = txt.getText().toString().indexOf("\n",startOffset+tok.getStr().length()) - 1;
-									int pos2 = txt.getText().toString().indexOf("]",startOffset+tok.getStr().length()) - 1;
+									int pos1 = txt.getText().toString().indexOf("\n",startOffset + tok.getStr().length()) + 1;
+									int pos2 = txt.getText().toString().indexOf("]",startOffset + tok.getStr().length()) - 1;
 									int endOffset = (pos1<pos2 ? pos1 : pos2);
 	
 	
@@ -459,7 +466,13 @@ public class RepgenParser {
 										row.setImage(RepDevMain.smallTaskBug);
 									} else if( task.getType() == Task.Type.WTF ) {
 										row.setImage(RepDevMain.smallTaskWtf);
-									}
+									} else if( task.getType() == Task.Type.BM ) {
+										row.setImage(RepDevMain.smallTaskBookmark);
+									} else if( task.getType() == Task.Type.TEST ) {
+										row.setImage(RepDevMain.smallTaskTest);
+									} else if( task.getType() == Task.Type.NOTE ) {
+										row.setImage(RepDevMain.smallTaskNote);
+ 									}
 
 								}
 							}

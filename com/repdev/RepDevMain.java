@@ -67,7 +67,7 @@ public class RepDevMain {
 	smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
 	smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
 	smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage, smallProgramIcon, smallInstallImage, smallCompareImage, smallSurroundImage, smallSurroundPrint,
-	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage, smallFunctionImage, smallSnippetImage, smallKeywordImage, smallDefineVarImage,
+	smallTaskTodo, smallTaskFixme, smallTaskBug, smallTaskWtf, smallTaskTest, smallTaskBookmark, smallTaskNote, smallHighlight, smallHighlightGrey, smallFormatCodeImage, smallInsertSnippetImage, smallFunctionImage, smallSnippetImage, smallKeywordImage, smallDefineVarImage,
 	smallRepGenDemandImage;
 	public static final String IMAGE_DIR = "repdev-icons/";
 
@@ -188,6 +188,9 @@ public class RepDevMain {
 		smallTaskFixme = new Image(display, IMAGE_DIR + "small-task-fixme.png");
 		smallTaskBug = new Image(display, IMAGE_DIR + "small-task-bug.png");
 		smallTaskWtf = new Image(display, IMAGE_DIR + "small-task-wtf.png");
+		smallTaskTest = new Image(display, IMAGE_DIR + "small-task-test.png");
+		smallTaskBookmark = new Image(display, IMAGE_DIR + "small-task-bookmark.png");
+		smallTaskNote = new Image(display, IMAGE_DIR + "small-task-note.png");
 
 		smallFormatCodeImage = new Image(display, IMAGE_DIR + "small-format-code.png");
 		smallInsertSnippetImage = new Image(display, IMAGE_DIR + "small-insert-snippet.png");

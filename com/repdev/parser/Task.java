@@ -36,6 +36,9 @@ public class Task{
 	FIXME,
 	BUG,
 	WTF,
+	BM,
+	TEST,
+	NOTE
     }
     
     public Task( String fileName, String description, int line, int col, Type type) {
