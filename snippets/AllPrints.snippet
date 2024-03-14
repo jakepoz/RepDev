@@ -1,0 +1,31 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>All Print Var</Title>
+      <Author>Chad Helton</Author>
+      <Shortcut>
+      </Shortcut>
+      <Description>Prints a variable for all formats</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>specfilename</ID>
+          <Default>variable</Default>
+          <ToolTip>My Variable Name</ToolTip>
+        </Literal>
+      </Declarations>
+      <Code Language="PowerOn"><![CDATA[[TODO: REMOVE PRINT STATEMENT] PRINT "$specfilename$ " NEWLINE
+[TODO: REMOVE PRINT STATEMENT] PRINT "$specfilename$ "+$specfilename$ NEWLINE
+[TODO: REMOVE PRINT STATEMENT] PRINT "$specfilename$ "+FORMAT("##########99+",$specfilename$) NEWLINE
+[TODO: REMOVE PRINT STATEMENT] PRINT "$specfilename$ "+FORMAT("###,###,##9.99+",$specfilename$) NEWLINE
+[TODO: REMOVE PRINT STATEMENT] PRINT "$specfilename$ "+FORMAT("##9.999%",$specfilename$) NEWLINE
+[TODO: REMOVE PRINT STATEMENT] PRINT "$specfilename$ "+FORMAT("99/99/9999",$specfilename$) NEWLINE
+
+]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

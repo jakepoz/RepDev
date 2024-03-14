@@ -1,0 +1,31 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>All Popups</Title>
+      <Author>Chad Helton</Author>
+      <Shortcut>
+      </Shortcut>
+      <Description>Creates a popup for all formats</Description>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+          <ID>specfilename</ID>
+          <Default>variable</Default>
+          <ToolTip>Variable Name</ToolTip>
+        </Literal>
+      </Declarations>
+      <Code Language="PowerOn"><![CDATA[[TODO: REMOVE POPUP] POPUPMESSAGE(0,"$specfilename$ ")
+[TODO: REMOVE POPUP] POPUPMESSAGE(0,"$specfilename$ "+FORMAT("########99+",$specfilename$))
+[TODO: REMOVE POPUP] POPUPMESSAGE(0,"$specfilename$ "+$specfilename$)
+[TODO: REMOVE POPUP] POPUPMESSAGE(0,"$specfilename$ "+FORMAT("###,###,##9.99+",$specfilename$))
+[TODO: REMOVE POPUP] POPUPMESSAGE(0,"$specfilename$ "+FORMAT("##9.999%",$specfilename$))
+[TODO: REMOVE POPUP] POPUPMESSAGE(0,"$specfilename$ "+FORMAT("99/99/9999",$specfilename$))
+
+]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
