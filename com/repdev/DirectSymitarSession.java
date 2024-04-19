@@ -220,7 +220,7 @@ public class DirectSymitarSession extends SymitarSession {
 			traceLog(aixUsername);
 			
 			if(useSSH){
-				out.print(aixUsername + " \r");
+				out.print(aixUsername + "\r\n");
 			} else {
 				out.print(aixUsername + "\r");
 			}
@@ -230,7 +230,7 @@ public class DirectSymitarSession extends SymitarSession {
 			if( temp.indexOf("[c") == -1 ){
 				bSensitiveData = true;
 				if(useSSH){
-					line = writeLog(aixPassword + " \r", "[c", "password:", "Password:");
+					line = writeLog(aixPassword + "\r\n", "[c", "password:", "Password:");
 				} else {
 					line = writeLog(aixPassword + "\r", "[c", "invalid login name or password");
 				}
