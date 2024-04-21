@@ -371,6 +371,7 @@ public class MainShell {
 		findReplaceShell = new FindReplaceShell(shell);
 		shell.setMinimumSize(3 * MIN_COMP_SIZE, 3 * MIN_COMP_SIZE);
 		shell.setMaximized(Config.getWindowMaximized());
+		//TEST InputShell.getInput(shell, "Test Prompt", "This will change all of the saved AIX Password for a server.     \n\nEnter the Server\n\n", "", false);
 	}
 
 	public Object openFile(Sequence seq, int sym) {
@@ -2119,7 +2120,7 @@ public class MainShell {
 	protected void renameSymDesc(final TreeItem item) {
 		int sym = (int)item.getData();
 		String strSYMDesc = (RepDevMain.SESSION_INFO.get(sym).getDescription() == null ? "" : RepDevMain.SESSION_INFO.get(sym).getDescription());
-		strSYMDesc = SymDescriptionShell.askForDescription(display, shell, strSYMDesc);
+		strSYMDesc = InputShell.getInput(shell, "SYM Description", "Enter a SYM Description", strSYMDesc, false);
 		System.out.println("sym: " + sym);
 		if(strSYMDesc != null) {
 			strSYMDesc = (strSYMDesc.length() > 25 ? strSYMDesc.trim().substring(0,25) : strSYMDesc.trim());
@@ -3607,7 +3608,7 @@ public class MainShell {
 
 		});
 
-		MenuItem toolsOptions = new MenuItem(toolsMenu, SWT.PUSH);
+		final MenuItem toolsOptions = new MenuItem(toolsMenu, SWT.PUSH);
 		toolsOptions.setText("&Options");
 		toolsOptions.setImage(RepDevMain.smallOptionsImage);
 		toolsOptions.addSelectionListener(new SelectionAdapter() {
@@ -3616,11 +3617,19 @@ public class MainShell {
 			}
 		});
 
-		MenuItem toolsProject = new MenuItem(toolsMenu, SWT.PUSH);
+		final MenuItem toolsProject = new MenuItem(toolsMenu, SWT.PUSH);
 		toolsProject.setText("&Project File");
 		toolsProject.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ProjectBackupShell.open();
+			}
+		});
+
+		final MenuItem toolsChgPass = new MenuItem(toolsMenu, SWT.PUSH);
+		toolsChgPass.setText("&Update AIX Passwords");
+		toolsChgPass.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				RepDev_SSO.changeServerPasswords(shell);
 			}
 		});
 
@@ -3629,6 +3638,22 @@ public class MainShell {
 		helpAbout.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
 				showAboutBox();
+			}
+		});
+		
+		toolsMenu.addMenuListener(new MenuListener() {
+			public void menuHidden(MenuEvent e) {
+			}
+
+			public void menuShown(MenuEvent e) {
+				toolsProject.setEnabled(true);
+				toolsOptions.setEnabled(true);
+				
+				if (RepDevMain.MASTER_PASSWORD_HASH == null) {
+					toolsChgPass.setEnabled(false);
+				} else {
+					toolsChgPass.setEnabled(true);
+				}
 			}
 		});
 

@@ -33,13 +33,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class SymDescriptionShell {
-	private static SymDescriptionShell me = new SymDescriptionShell();
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
+public class InputShell {
+	private static InputShell me = new InputShell();
 	private Shell shell;
 	private String result;
-	private String strSYMDesc = "";
+	private String defaultValue = "";
+	private String title, prompt, defValue;
+	private boolean isPassword;
 
-	private SymDescriptionShell() {
+	private InputShell() {
 	}
 
 	private void create(Shell parent) {
@@ -51,24 +55,29 @@ public class SymDescriptionShell {
 		layout.spacing = 5;
 
 		shell = new Shell(parent, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
-		shell.setText("Rename SYM");
+		shell.setText(title);
 		shell.setLayout(layout);
 
 		Label lblSYMDesc = new Label(shell, SWT.NONE);
-		lblSYMDesc.setText("SYM Description");
+		lblSYMDesc.setText(prompt);
 
-		final Text txt = new Text(shell, SWT.BORDER);
-		txt.setText(strSYMDesc);
+		final Text txt;
+		if (isPassword) {
+			txt = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		} else {
+			txt = new Text(shell, SWT.BORDER);
+		}
+		txt.setText(defaultValue);
 
-		Button btnUpdate = new Button(shell, SWT.PUSH);
-		btnUpdate.setText("Update");
-		btnUpdate.addSelectionListener(new SelectionAdapter() {
+		Button btnOk = new Button(shell, SWT.PUSH);
+		btnOk.setText("   OK   ");
+		btnOk.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				result = txt.getText();
 				shell.dispose();
 			}
 		});
-		shell.setDefaultButton(btnUpdate);
+		shell.setDefaultButton(btnOk);
 
 		Button btnCancel = new Button(shell, SWT.PUSH);
 		btnCancel.setText("&Cancel");
@@ -79,26 +88,26 @@ public class SymDescriptionShell {
 		});
 
 		FormData frmLbl = new FormData();
-		frmLbl.top = new FormAttachment(0);
-		frmLbl.left = new FormAttachment(0);
+		frmLbl.top = new FormAttachment(10);
+		frmLbl.left = new FormAttachment(5);
 		lblSYMDesc.setLayoutData(frmLbl);
 
 		FormData frmTxt = new FormData();
 		frmTxt.top = new FormAttachment(lblSYMDesc);
-		frmTxt.left = new FormAttachment(lblSYMDesc, 0, SWT.LEFT);
+		frmTxt.left = new FormAttachment(0);
 		frmTxt.right = new FormAttachment(100);
 		frmTxt.width = 200;
 		txt.setLayoutData(frmTxt);
 
 		FormData frmOK = new FormData();
 		frmOK.top = new FormAttachment(txt);
-		frmOK.left = new FormAttachment(0);
+		frmOK.right = new FormAttachment(50);
 		frmOK.bottom = new FormAttachment(100);
-		btnUpdate.setLayoutData(frmOK);
+		btnOk.setLayoutData(frmOK);
 
 		FormData frmCancel = new FormData();
 		frmCancel.top = new FormAttachment(txt);
-		frmCancel.right = new FormAttachment(100);
+		frmCancel.left = new FormAttachment(50);
 		frmCancel.bottom = new FormAttachment(100);
 		btnCancel.setLayoutData(frmCancel);
 
@@ -108,10 +117,16 @@ public class SymDescriptionShell {
 	}
 
 	// returns -1 on cancel
-	public static String askForDescription(Display display, Shell parent, String strSYMDesc) {
-		me.strSYMDesc = strSYMDesc;
+	public static String getInput(Shell parent, String title, String prompt, String defaultValue, boolean isPassword) {
+		me.title = title;
+		me.prompt = prompt;
+		me.defaultValue = defaultValue;
+		me.isPassword = isPassword;
+		
 		me.create(parent);
 
+		Display display = me.shell.getDisplay();
+		
 		while (!me.shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();

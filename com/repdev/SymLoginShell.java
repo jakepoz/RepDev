@@ -48,7 +48,7 @@ public class SymLoginShell {
 	private int result = -1;
 	private int sym;
 	private String aixUsername, aixPassword, userID, server;
-	public static String lastServer;
+	public static String lastServer = "";
 	public static String lastUsername = Config.getLastUsername() == null ? "" : Config.getLastUsername();
 	public static String lastPassword = (RepDevMain.DEVELOPER && Config.getLastPassword() != null) ? Config.getLastPassword() : "";
 	public static String lastUserID = (RepDevMain.DEVELOPER && Config.getLastUserID() != null) ? Config.getLastUserID() : "";
@@ -56,6 +56,24 @@ public class SymLoginShell {
 	private void create(Shell parent, int inSym) {
 		result = -1;
 		lastServer = Config.getServer() == null ? "" : Config.getServer();
+		if (RepDev_SSO.isLoggedIn()) {
+			lastUsername = "";
+			lastPassword = "";
+			lastUserID = "";
+		}
+
+		//TODO: init encrypted password here -- if (inSym != -1)
+		if (inSym != -1) {
+			if (!RepDevMain.SESSION_INFO.get(inSym).getServer().equals("")) lastServer = RepDevMain.SESSION_INFO.get(inSym).getServer();
+			
+			if (RepDevMain.MASTER_PASSWORD_HASH != null && RepDevMain.MASTER_PASSWORD_HASH.length > 0) {
+				if (!RepDevMain.SESSION_INFO.get(inSym).getAixUserName().equals("")){
+					lastUsername = RepDevMain.SESSION_INFO.get(inSym).getAixUserName();
+					lastPassword = RepDev_SSO.decrypt(RepDevMain.MASTER_PASSWORD_HASH, RepDevMain.SESSION_INFO.get(inSym).getAixPassword());
+					lastUserID = RepDev_SSO.decrypt(RepDevMain.MASTER_PASSWORD_HASH, RepDevMain.SESSION_INFO.get(inSym).getUserID());
+				}
+			}
+		}
 		
 		FormLayout layout = new FormLayout();
 		layout.marginTop = 5;
@@ -88,7 +106,7 @@ public class SymLoginShell {
 
 		if (inSym != -1)
 			symText.setText(String.valueOf(inSym));
-		try {
+		/*try {
 			sym = Integer.parseInt(symText.getText().trim());
 			if (RepDevMain.SESSION_INFO.get(sym).getServer() != null) {
 				if(RepDevMain.SESSION_INFO.get(sym).getServer().length() != 0) {
@@ -97,7 +115,7 @@ public class SymLoginShell {
 			}
 		} catch (Exception ex) {
 			
-		}
+		}*/
 		
 		final Text serverText = new Text(shell, SWT.BORDER);
 		serverText.setText(lastServer);
@@ -126,20 +144,21 @@ public class SymLoginShell {
 					symText.setFocus();
 					return;
 				}
-				
+				//TODO: look for anything interesting here
 				server = serverText.getText().trim();
 				aixUsername = aixUserText.getText().trim();
 				aixPassword = aixPasswordText.getText().trim();
 				userID = userIDText.getText().trim();
 
-				lastUsername = aixUsername;
-				lastPassword = aixPassword;
-				lastUserID = userID;
-				
-				Config.setLastPassword(lastPassword);
-				Config.setLastUsername(lastUsername);
-				Config.setLastUserID(lastUserID);
-				
+				if (!RepDev_SSO.isLoggedIn()) {
+					lastUsername = aixUsername;
+					lastPassword = aixPassword;
+					lastUserID = userID;
+					
+					Config.setLastPassword(lastPassword);
+					Config.setLastUsername(lastUsername);
+					Config.setLastUserID(lastUserID);
+				}
 				result = 1000;
 
 				shell.dispose();
@@ -273,7 +292,8 @@ public class SymLoginShell {
 			}
 			String pass = FailedLogonShell.checkPass();
 			//Config.setLastUserID(pass);
-			lastUserID=pass;
+			lastUserID = pass;
+			userID = pass;
 			error = session.loginUser(pass);
 		}
 		if (error == SessionError.NONE){
@@ -283,7 +303,11 @@ public class SymLoginShell {
 				diag.setMessage("WARNING: You specified SYM " + session.getSym() + " during login, but you are actually logged into SYM " + ((DirectSymitarSession)session).getActualSym());
 				diag.open();
 			}
+			//TODO: encrypt and stuff passwords here
 			RepDevMain.SESSION_INFO.get(sym).setServer(server);
+			if (RepDev_SSO.isLoggedIn()) {
+				RepDevMain.SESSION_INFO.get(sym).setCredential(aixUsername, RepDev_SSO.encrypt(RepDevMain.MASTER_PASSWORD_HASH, aixPassword), RepDev_SSO.encrypt(RepDevMain.MASTER_PASSWORD_HASH, userID));
+			}
 			me.result = sym;
 			return;
 		}

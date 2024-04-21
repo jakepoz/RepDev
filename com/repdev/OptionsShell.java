@@ -52,10 +52,11 @@ public class OptionsShell {
 	// Controls
 	private Spinner tabSpinner;
 	private Combo styleCombo, hour, minute;
-	private Label varsLabel, serverLabel, portLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, liveSYMLabel, liveSYMColorLabel, useSourceControlLabel, sourceControlDirLabel;
+	private Label varsLabel, serverLabel, portLabel, useSSOLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, liveSYMLabel, liveSYMColorLabel, useSourceControlLabel, sourceControlDirLabel;
 	private Text  serverText, portText, errCheckPrefix, errCheckSuffix, liveSYMText, liveSYMColorText, sourceControlDir;
-	private Button varsButton, neverTerm, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers, useSourceControl;
-	
+	private Button varsButton, neverTerm, useSSO, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers, useSourceControl;
+	private String ssoPass = "";
+
 	public static void show(Shell parent) {
 		me.create(parent);		
 		me.shell.open();
@@ -107,6 +108,9 @@ public class OptionsShell {
 				Config.setLiveSymColor(liveSYMColorText.getText());
 				Config.setUseSourceControl(useSourceControl.getSelection());
 				Config.setSourceControlDir(sourceControlDir.getText());
+				if (!ssoPass.contentEquals("")) {
+					Config.setPasswordValidator(ssoPass);
+				}
 
 				/*if (testRadio.getSelection())
 					Config.setServer("test");
@@ -193,6 +197,54 @@ public class OptionsShell {
 		
 		portText = new Text(serverGroup, SWT.SINGLE | SWT.BORDER);
 		portText.setText(""+Config.getPort());
+		
+		useSSOLabel = new Label(serverGroup, SWT.NONE);
+		useSSOLabel.setText("Use Single Sign-On");
+		
+		useSSO = new Button(serverGroup, SWT.CHECK);
+		useSSO.setSelection(Config.useSSO());
+		useSSO.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if(useSSO.getSelection()){
+					// SET MASTER PASSWROD
+					String password = RepDev_SSO.getRepDevPassword(shell);
+					if (password.contentEquals("")) {
+						useSSO.setSelection(false);
+						ssoPass = "";
+					} else {
+						ssoPass = password;
+						RepDevMain.MASTER_PASSWORD_HASH = RepDev_SSO.md5Hash(ssoPass);
+						Config.setPasswordValidator(ssoPass);
+						//MessageBox dialog = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+						//dialog.setText("Settings");
+						//dialog.setMessage("Please click \"Save Settings\".  Exit and relaunch RepDev to log in.");
+						//dialog.open();
+					}
+				}
+				else{
+					// REMOVE MASTER PASSWORD AND CLEAR SYM PASSWORDS
+					MessageBox dialog = new MessageBox(shell, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+					dialog.setText("Single Sign-On");
+					dialog.setMessage("All of the cached passwords will be deleted IMMEDIATELY ! ! !");
+					int selection = dialog.open();
+					
+					if (selection == SWT.OK) {
+						System.out.println("ALL Passwords deleted");
+						
+						for (int sym : RepDevMain.SESSION_INFO.keySet()) {
+							RepDevMain.SESSION_INFO.get(sym).clearCredential();
+						}
+						
+						ssoPass = "";
+						Config.setPasswordValidator("");
+						RepDevMain.MASTER_PASSWORD_HASH = null;
+					} else {
+						System.out.println("ALL Passwords delete cancelled");
+						useSSO.setSelection(true);
+					}
+				}
+			}
+		});
 		
 		Group keepAliveGroup = new Group(serverOptions,SWT.NONE);
 		keepAliveGroup.setText("Keep Alive Options (Log out Sym Required)");
@@ -284,6 +336,18 @@ public class OptionsShell {
 		data.right = new FormAttachment(100);
 		data.width = 140;
 		portText.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(portLabel);
+		data.width = 140;
+		useSSOLabel.setLayoutData(data);
+		
+		data = new FormData();
+		data.left = new FormAttachment(useSSOLabel);
+		data.top = new FormAttachment(portLabel);
+		data.height = 25;
+		useSSO.setLayoutData(data);
 		
 		// align controls for the keepalive group:
 		data = new FormData();

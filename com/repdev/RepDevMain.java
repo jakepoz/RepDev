@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.MessageBox;
 public class RepDevMain {
 	public static final HashMap<Integer, SymitarSession> SYMITAR_SESSIONS = new HashMap<Integer, SymitarSession>();
 	public static HashMap<Integer, SessionInfo> SESSION_INFO = new HashMap<Integer, SessionInfo>();
-
+	public static byte [] MASTER_PASSWORD_HASH;
 	public static final boolean DEVELOPER = false; //Set this flag to enable saving passwords, this makes it easy for developers to log in and check stuff quickly after making changes
 	public static final int VMAJOR = 1;
 	public static final int VMINOR = 7;
@@ -91,6 +91,8 @@ public class RepDevMain {
 			createImages();
 			createGUI();
 
+			if (!Config.getPasswordValidator().contentEquals("") && RepDevMain.MASTER_PASSWORD_HASH == null) RepDev_SSO.login(mainShell.shell);
+			
 			while (!mainShell.isDisposed()) {
 				if (!display.readAndDispatch())
 					display.sleep();
@@ -292,7 +294,7 @@ public class RepDevMain {
 
 			for (int sym : SYMITAR_SESSIONS.keySet()) {
 				newSyms.add(sym);
-				newSessionInfo.put(sym, new SessionInfo(SESSION_INFO.get(sym).getDescription(), SYMITAR_SESSIONS.get(sym)));
+				newSessionInfo.put(sym, SESSION_INFO.get(sym));
 			}
 
 			Config.setSyms(newSyms);

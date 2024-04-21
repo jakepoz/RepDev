@@ -41,6 +41,7 @@ public class Config implements Serializable {
 	private int port = 23;
 	private int tabSize = 0; // 0 = Regular tab
 	private String lastUsername = "", lastPassword = "", lastUserID;
+	private String passwordValidator = "";
 	private boolean runOptionsAskForPrompts = true;
 	private int runOptionsQueue = -1;
 	private int rotkeyp=0, rotkeyu=0;
@@ -57,7 +58,7 @@ public class Config implements Serializable {
 	 * different, then a popup will notify the user and will launch the OptionsShell so that
 	 * the users can config the new options.
 	 */
-	public final static int REVISION = 5; // Modify this everytime we add new options to prompt the user.
+	public final static int REVISION = 6; // Modify this everytime we add new options to prompt the user.
 	private int revision=-1;
 	private boolean windowMaximized;
 	private Point windowSize;
@@ -101,6 +102,22 @@ public class Config implements Serializable {
 		return me;
 	}
 
+	public static String getPasswordValidator() {
+		return me.passwordValidator == null ? "" : me.passwordValidator;
+	}
+	
+	public static void setPasswordValidator(String passwordValidator) {
+		me.passwordValidator = passwordValidator;
+	}
+	
+	public static boolean useSSO() {
+		if (getPasswordValidator().equals("")) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+ 
 	public static String getLastPassword() {
 		String Pass="";
 		String last = me.lastPassword;
