@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -85,6 +86,12 @@ public class RepDevMain {
 				+"This program comes with ABSOLUTELY NO WARRANTY.\n"
 				+"This is free software, and you are welcome to redistribute it \n"
 				+"under certain conditions.\n");
+
+		Process p = Runtime.getRuntime().exec("cmd /k");
+		OutputStreamWriter outWriter = new OutputStreamWriter(p.getOutputStream());
+		System.out.println("Encoding: "+outWriter.getEncoding());
+		outWriter = null;
+		p = null;
 
 		try{
 			loadSettings();
