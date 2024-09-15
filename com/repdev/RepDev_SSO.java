@@ -16,8 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-import com.sun.org.apache.bcel.internal.Const;
-
 public class RepDev_SSO {
 
 	private static final int KEYLEN = 256;
