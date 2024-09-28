@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -87,11 +88,10 @@ public class RepDevMain {
 				+"This is free software, and you are welcome to redistribute it \n"
 				+"under certain conditions.\n");
 
-		Process p = Runtime.getRuntime().exec("cmd /k");
-		OutputStreamWriter outWriter = new OutputStreamWriter(p.getOutputStream());
-		System.out.println("Encoding: "+outWriter.getEncoding());
-		outWriter = null;
-		p = null;
+		System.out.println("Java Runtime version " + System.getProperty("java.runtime.version"));
+		System.out.println("---------------------------------------------------------");
+		System.out.println("Charset.defaultCharset()                  = " + Charset.defaultCharset());
+		System.out.println("System.getProperty(\"file.encoding\")       = " + System.getProperty("file.encoding"));
 
 		try{
 			loadSettings();
