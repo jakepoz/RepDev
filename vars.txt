@@ -271,6 +271,7 @@ SYSHOSTNAME
 @CREDITREPORTEQDECODE4|0,2,3: Blank ; 1: CREDREP:EQDECODE:4 |CHARACTER|
 @CREDITREPORTEQDECODE5|0,2,3: Blank ; 1: CREDREP:EQDECODE:5 |CHARACTER|
 @CREDITREPORTERROR|Error Message From PULLCREDITREPORT|CHARACTER|
+@CREDITREPORTEXTRANSACTIONID|0,2,3: Blank|CHARACTER|
 @CREDITREPORTFILEDIRECTORY|0-3: Blank |CHARACTER|
 @CREDITREPORTFILENAME|0-3: Blank |CHARACTER|
 @CREDITREPORTFIRSTNAME|0: Blank ; 1: CREDREP:FIRSTNAME ; 2: NAME:FIRST ; 3: LOANAPP PERSON:FIRST |CHARACTER|
@@ -377,6 +378,7 @@ SYSHOSTNAME
 @CREDITREPORTSCOREMODEL12|0,2,3: <Blank> 1: CREDREP:SCOREMODEL:12  |Character   |
 @CREDITREPORTSECONDARYNAME|0,2,3: Blank ; 1: CREDREP:SECONDARYNAME |CHARACTER|
 @CREDITREPORTSELECTCHECKCODE|0,2,3: Blank ; 1: CREDREP:SELECTCHECKCODE |CHARACTER|
+@CREDITREPORTSERVICEBUREAU|0,1: 1: CREDREP:SERVICEBUREAU|Code|1
 @CREDITREPORTSIGINCONSISTENT|0,2,3: <Blank> 1: CREDREP:REDFLAGALERT.SIGINCONSISTENT  |Yes/No   |
 @CREDITREPORTSOURCE|0-3: 0 |CODE|99
 @CREDITREPORTSPECIALCOMMENT|0,2,3: Blank ; 1: CREDREP:SPECIALCOMMENT |CHARACTER|
@@ -628,7 +630,11 @@ SYSHOSTNAME
 @LOANPROJECTLOANAMOUNT|Loan Amount|MONEY|
 @LOANPROJECTLOANAMOUNT|Loan Amount|MONEY|
 @LOANPROJECTLOANDATE|Loan Date|DATE|
+@LOANPROJECTMAPRPREPAIDFINCHG|Data Source: Supplied by the calling specfile; the amount is used in the calculation|MONEY|
+@LOANPROJECTMAPRTOTALFEES|Total fees used in calculating military APR for closed-end loans; the specfile receives this amount to use in the calculation|MONEY|
 @LOANPROJECTMATURITYDATE|Maturity Date|DATE|
+@LOANPROJECTMILITARYAPRLOAN|Code to 1:(0) Not a MAPR loan(1) MAPR loanData Source: Supplied by the calling specfile; if you do not use this variable, Projections uses the value in the Military APR Loan field in the related Loan or Application record|CODE|1
+@LOANPROJECTMILITARYAPR|Calculated military APR for close-end loans; the specfile receives this rate as a result of the calculation|RATE|
 @LOANPROJECTPAYMENT|Payment Amount|MONEY|
 @LOANPROJECTPAYMENT|Payment Amount|MONEY|
 @LOANPROJECTPAYMENTCOUNT|Payment Count|NUMBER|
@@ -637,6 +643,7 @@ SYSHOSTNAME
 @LOANPROJECTPAYMENTSKIPSTARTDAY|Payment Skip Day|CODE|1231
 @LOANPROJECTPAYMENTTYPE|Payment Type|CODE|1
 @LOANPROJECTPAYOFFDATE|Payoff Date|DATE|
+@LOANPROJECTPAYOFFINTDATE|Sets the day that interest begins to accrue|DATE|
 @LOANPROJECTPREPAIDFINANCECHG|Prepaid Finance Charge|MONEY|
 @LOANPROJECTPROMO1BALANCE|Promo 1 Balance|MONEY|
 @LOANPROJECTPROMO2BALANCE|Promo 2 Balance|MONEY|
@@ -892,6 +899,7 @@ SYSHOSTNAME
 @OVERDRAWUSETOLERANCE|Indicates if overdraw tolerance applies|Code|
 @OVERDRAWWITHDRAWALINCREMENT|Withdrawal increment amount|Money|
 @PREFORDINAL|This variable passes the zero-based ordinal of the Preference record through which access to the member's account data was authorized. If the member used a card to access the account|NUMBER|
+@PREFLOCATOR|This variable lets you access items in the Preference record, such as a member's preferred language, allowing a script author to match the language used elsewhere in home banking. This enables you to determine language preferences and access rights in custom scripts.|NUMBER|
 @RGANSAMOUNT|This variables pass the answer back before the next step of the specfile is executed|MONEY|
 @RGANSDATE|This variables pass the answer back before the next step of the specfile is executed|DATE|
 @RGANSNUM|This variables pass the answer back before the next step of the specfile is executed|NUMBER|
@@ -941,6 +949,7 @@ SYSHOSTNAME
 @VALIDATEMONEYINPUT|Value entered by user|MONEY|
 @VALIDATEMOPRODUCT|Money Order Product Code [MO TRANSACTION]|NUMBER|
 @VALIDATENUMBERINPUT|Value entered by user|NUMBER|
+@VALIDATESLIDTYPE|(0) Share; (1) Loan; (2) GL; Symitar Quest inserts a value that indicates the share, loan, or general ledger type.|CODE|2
 @VALIDATEONACCOUNT|YES/NO Value ; A value of 0 means that you are not in a valid account. A value of 1 indicates that you have accessed a valid account.|YES/NO|
 @VALIDATERATEINPUT|Value entered by user|RATE|
 @VALIDATERELATIONSHIPCODE|Relationship code|CODE|
