@@ -1,3 +1,17 @@
+ACCOUNTCHANGE|This keyword allows Change Account Number Wizard variables to be accessed by the specfile.|ACCOUNTCHANGE TARGET=ACCOUNT
+ACS|This keyword allows the ACS specfile to access account cross-sell variables.|ACS TARGET=ACCOUNT
+CARDCREATIONWIZARD|This keyword allows card variables to be accessed by the specfile defined in the Optional Specfile parameter in Card Creation Wizard Parameters.|CARDCREATIONWIZARD TARGET=ACCOUNT
+CHECKDISBURSEDWIZARD|This keyword allows Corporate Check Wizard variables to be accessed by the specfile.|CHECKDISBURSEDWIZARD TARGET=ACCOUNT
+COLLECTION|This keyword allows collection package variables to be accessed by the specfile to display additional information in the Collection Queue window.|COLLECTION TARGET=ACCOUNT
+NEXTCARD|This keyword is a special character string used within PowerOn output.|SET NEXTCARD
+NEXTCHECK|NEXTCHECK is a special keyword used with the CREATE command in batch specfile file maintenance to create a new Check record. Use this keyword to get the next available global sequence number.|CHECK NEXTCHECK CREATE
+NEXTCOLLATERAL|NEXTCOLLATERAL is a special keyword used with the CREATE command in batch specfile file maintenance to create a new Collateral record. Use this keyword instead of a specific collateral number to get the next available|COLLATERAL NEXTCOLLATERAL CREATE
+NEXTCTR|NEXTCTR is a special keyword used with the CREATE command in batch specfile file maintenance to create a new CTR record. Use this keyword instead of a specific CTR number to get the next available CTR number.|CTR NEXTCTR CREATE
+NEXTDOCUMENT|NEXTDOCUMENT is a special keyword used with the CREATE command in batch specfile file maintenance to create a new Collateral Document record. Use this keyword instead of a specific document number to get the next available document number.|DOCUMENT NEXTDOCUMENT CREATE
+NEXTMBRADDRESS|NEXTMBRADDRESS is a special keyword used with the CREATE command in batch specfile file maintenance to create a new member address record. Use this keyword instead of a specific number to get the next available address number.|CHECK NEXTMBRADDRESS CREATE
+NEXTSEQUENCE|This predefined keyword is used in batch file maintenance specfiles to request the next wire sequence number when creating a new wire record.|WIRE NEXTSEQUENCE CREATE
+TARGETFILE|This keyword must be used with FMPERFORM when the current file context is not the same as the file containing the record to be changed. When the current file context is the same as the file containing the record to be changed, this keyword is optional. While in a top-level record of one file, you can use FMPERFORM with the TARGETFILE option to create a top-level record and child records in another file.|FMPERFORM <FMType> TARGETFILE <RecordPath>
+
 #INCLUDE|Includes a repGen file|#INCLUDE PROCEDURENAME
 ACCESS|ACCESS in conjunction with PREFERENCE designates the Preference Access record in the Account file|PREFERENCE ACCESS:MNEMONIC
 ACCOUNT|Designates account as record in the account file|ACCOUNT:MNEMONIC

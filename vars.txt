@@ -9,6 +9,7 @@ SYSMEMOMODE|Memo Mode|NUMBER|
 SYSUSERNUMBER|User number of current user|NUMBER|
 SYSWINDOWSLEVEL|Indicates windows level, 3=Windows, lower = console|NUMBER|3
 LIVEINSTCHECK|Returns 1 if the specfile is running in a live SYM institution|NUMBER|
+SYSHOSTNAME
 
 @ACCTCHGDOCUMENTNUMBER|This variable contains the unique form identification number for the change|Number|
 @ACCTCHGNEWACCOUNTNUMBER|This variable contains the new account number to which the account is being changed|Number|
