@@ -647,6 +647,15 @@ public class RepgenParser {
 
 					curspot++;
 					inDate = !inDate;
+				} else if(cur == ':'){
+					if(chars[i+1] == '(') {
+						addToken(tokens,curspot,new Token(":(",cstart,commentDepth,commentDepth,inString,inString,inDefine, inDate,inDate));
+						i++;
+						cstart++;
+					} else {
+						addToken(tokens,curspot,new Token(":",cstart,commentDepth,commentDepth,inString,inString,inDefine, inDate,inDate));
+					}
+					curspot++;
 				} else if(scur.trim().length()!=0){
 					addToken(tokens,curspot,new Token(scur,cstart,commentDepth,commentDepth,inString,inString,inDefine,
 							inDate,inDate));
@@ -783,16 +792,28 @@ public class RepgenParser {
 
 						continue;
 					}
-					if( cur.getAfter().getAfter() != null && db.containsFieldName(cur.getStr() + ":" + cur.getAfter().getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getAfter().getStart()).equals(":"))	
+					if( cur.getAfter().getAfter() != null)	
 					{
-						cur.setStr(cur.getStr() + ":" + cur.getAfter().getAfter().getStr() );
-						tokens.remove(cur.getAfter());
-						tokens.remove(cur.getAfter().getAfter());
-						cur.setNearTokens(tokens, tokens.indexOf(cur));
-						if( cur.getAfter() != null )
-							cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
+						if ( db.containsFieldName(cur.getStr() + ":" + cur.getAfter().getAfter().getStr()) && str.substring(cur.getEnd(), cur.getAfter().getAfter().getStart()).equals(":") ) {
+							cur.setStr(cur.getStr() + ":" + cur.getAfter().getAfter().getStr() );
+							tokens.remove(cur.getAfter());
+							tokens.remove(cur.getAfter().getAfter());
+							cur.setNearTokens(tokens, tokens.indexOf(cur));
+							if( cur.getAfter() != null )
+								cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
 
-						continue;
+							continue;
+						} else if ( cur.getAfter().getAfter().getAfter() != null && db.containsFieldName(cur.getStr() + ":1") && cur.getAfter().getStr().equals(":(") && cur.getAfter().getAfter().getAfter().getStr().equals(")") ) {
+							cur.setStr(cur.getStr() + ":(" + cur.getAfter().getAfter().getStr()+")" );
+							tokens.remove(cur.getAfter());
+							tokens.remove(cur.getAfter().getAfter());
+							tokens.remove(cur.getAfter().getAfter().getAfter());
+							cur.setNearTokens(tokens, tokens.indexOf(cur));
+							if( cur.getAfter() != null )
+								cur.getAfter().setNearTokens(tokens, tokens.indexOf(cur.getAfter()));
+
+							continue;
+						}
 					}
 
 					i++;

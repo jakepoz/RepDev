@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.eclipse.swt.graphics.Color;
 
 import com.repdev.SnippetVariable;
+import com.repdev.SyntaxHighlighter;
 
 public class Token {
 	private String str;
@@ -31,7 +32,7 @@ public class Token {
 	private int pos, commentDepth, afterDepth;
 	private boolean inString, afterString, inDate, afterDate, inDefs, inComment;
 
-	private static final String[] heads = { "setup", "print title", "select", "define", "do", "total", "headers", "(", "\"", "'", "[", "procedure", "sort" };
+	private static final String[] heads = { "setup", "print title", "select", "define", "do", "total", "headers", ":(", "(", "\"", "'", "[", "procedure", "sort" };
 	private static final String[] ends = {"end", ")", "\"", "'", "]"};
 	
 	private Color specialBackground = null;
@@ -209,6 +210,50 @@ public class Token {
 		return false;
 	}
 
+	public boolean dbFieldValidNoSubFld(ArrayList<Record> records) {
+		Token record = before.before;
+
+		if (record == null)
+			return false;
+
+		if (!record.dbRecordValid())
+			return false;
+
+		String recordName = record.getStr();
+		String [] tmpField = str.split(":");
+
+		for (Record rec : DatabaseLayout.getInstance().getFlatRecords()) {
+			if (rec.getName().toLowerCase().equals(recordName)) {
+				for (Field field : rec.getFields()) {
+					String [] tmp = field.getName().toLowerCase().split(":");
+					if (tmp.length>0 && tmp[0].equals(tmpField[0])) {
+						if ( tmpField.length>1 && tmpField[1].indexOf("(") == 0 && tmpField[1].indexOf(")") == tmpField[1].length() - 1 ) {
+							String myVar= tmpField[1].substring(1, tmpField[1].length() - 1);
+							// if(isVar(myVar)) return true; //TODO: need to find a way to validate the info in the parenthesis is a variable.
+							return true;
+							
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	//TODO: Cannot make a reference to the non-static method.  By making getLvars() static, fubars the variable parser.
+	/*
+	public boolean isVar(String str) {
+		for (int i = 0; i < RepgenParser.getLvars().size(); i++){
+			Variable var = RepgenParser.getLvars().get(i);
+
+			if (var.getName().equals(str))
+				return true;
+		}
+
+		return false;
+	}
+*/
 	public boolean dbRecordValid() {
 		return DatabaseLayout.getInstance().containsRecordName(str);
 	}

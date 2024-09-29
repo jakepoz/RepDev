@@ -256,13 +256,15 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 			range = TYPE_CHAR.getRange(tok.getStart(), tok.length());
 		else if (tok.inDate())
 			range = TYPE_DATE.getRange(tok.getStart(), tok.length());
+		// Validates the token is a Record before the colon
 		else if (tok.getAfter() != null && tok.getAfter().getStr().equals(":")) {
 			if (tok.dbRecordValid())
 				range = STRUCT1.getRange(tok.getStart(), tok.length());
 			else
 				range = STRUCT1_INVALID.getRange(tok.getStart(), tok.length());
+		// Validates the token is a Field or a Field without the Sub Field if the next token is :(
 		} else if (tok.getBefore() != null && tok.getBefore().getStr().equals(":")) {
-			if (tok.dbFieldValid(RepgenParser.getDb().getTreeRecords()))
+			if (tok.dbFieldValid(RepgenParser.getDb().getTreeRecords()) || (tok.dbFieldValidNoSubFld(RepgenParser.getDb().getTreeRecords())))
 				range = STRUCT2.getRange(tok.getStart(), tok.length());
 			else
 				range = STRUCT2_INVALID.getRange(tok.getStart(), tok.length());
