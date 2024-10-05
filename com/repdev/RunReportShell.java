@@ -407,6 +407,7 @@ public class RunReportShell {
 		data.right = new FormAttachment(100);
 		data.top = new FormAttachment(messageLabel);
 		data.bottom = new FormAttachment(prevPromptButton);
+		data.height=100;
 		ioText.setLayoutData(data);
 		
 		data = new FormData();

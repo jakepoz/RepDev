@@ -1297,7 +1297,8 @@ public class DirectSymitarSession extends SymitarSession {
 					}
 					else {
 						setProgress(null, 0, text, text.getText().replace("\r", "") + "\n" + cur.getParameters().get("Prompt") + ": " + result.trim() + "\n");
- 						write( result.trim() + "\r");
+						text.setSelection(text.getText().length()-1);
+						write( result.trim() + "\r");
 					}
 				}
 				else if( cur.getCommand().equals("Bell") ){
