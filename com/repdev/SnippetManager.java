@@ -2,6 +2,8 @@ package com.repdev;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 //Manages snippets, creating a cache, etc
 public class SnippetManager {
@@ -38,5 +40,11 @@ public class SnippetManager {
 					snippets.add(cur);
 			}
 		}
+
+		Collections.sort(snippets, new Comparator<Snippet>(){
+			public int compare(Snippet s1, Snippet s2) {
+				return s1.getTitle().toUpperCase().compareTo(s2.getTitle().toUpperCase());
+			}
+		});
 	}
 }
