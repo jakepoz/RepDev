@@ -1618,15 +1618,28 @@ public class MainShell {
 
 				if(dialog.open() == SWT.YES){
 					for(TreeItem ti : tree.getSelection()){
-						if(ti.getData() instanceof Project)
-							name = ((Project)ti.getData()).getName();
-						else
-							name = ((SymitarFile)ti.getData()).getName();
+						boolean renamed = false;
+						int iteration = 0;
+						while(!renamed && iteration <= 30) {
+							if(ti.getData() instanceof Project)
+								name = ((Project)ti.getData()).getName();
+							else
+								name = ((SymitarFile)ti.getData()).getName();
 
-						nameLen = (name.length() > 22 ? 23 : name.length());
-						name = name.substring(0, nameLen).concat(date.format(new Date()));
-						System.out.println("NAME: "+name);
-						handleRenameItem(ti, name);
+							if(iteration==0) {
+								nameLen = (name.length() > 23 ? 24 : name.length());
+								name = name.substring(0, nameLen).concat(date.format(new Date()));
+							} else if(iteration >= 1 && iteration <= 9) {
+								nameLen = (name.length() > 22 ? 23 : name.length());
+								name = name.substring(0, nameLen).concat(Integer.toString(iteration)).concat(date.format(new Date()));
+							} else if(iteration >= 10 && iteration <= 30) {
+								nameLen = (name.length() > 21 ? 22 : name.length());
+								name = name.substring(0, nameLen).concat(Integer.toString(iteration)).concat(date.format(new Date()));
+							}
+							System.out.println("NAME: "+name);
+							renamed = handleRenameItem(ti, name);
+							iteration++;
+						}
 					}
 				}
 			}
@@ -2090,31 +2103,38 @@ public class MainShell {
 			openFile(file);
 	}
 
-	private void handleRenameItem(TreeItem item, String newName) {
+	private boolean handleRenameItem(TreeItem item, String newName) {
 		if (item.getData() instanceof SymitarFile) {
 			// Set SymitarFile name
-			if (((SymitarFile) item.getData()).saveName(newName))
+			if (((SymitarFile) item.getData()).saveName(newName)) {
 				item.setText(newName); // Set name in tree
 
-			// Now, set name in any open tabs
-			for (CTabItem c : mainfolder.getItems())
-				if (c.getData("file") == item.getData()) // Be sure it's the
-					// exact same
-					// instance, like it
-					// should be
-				{
-					c.setText(newName);
-					if (c.getControl() instanceof EditorComposite) {
-						c.setData("modified", false);
-						((EditorComposite) c.getControl()).updateModified();
+				// Now, set name in any open tabs
+				for (CTabItem c : mainfolder.getItems()) {
+					if (c.getData("file") == item.getData()) // Be sure it's the
+						// exact same
+						// instance, like it
+						// should be
+					{
+						c.setText(newName);
+						if (c.getControl() instanceof EditorComposite) {
+							c.setData("modified", false);
+							((EditorComposite) c.getControl()).updateModified();
+						}
 					}
 				}
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		if (item.getData() instanceof Project) {
 			((Project) item.getData()).setName(newName);
 			item.setText(newName);
+			return true;
 		}
+		return false;
 	}
 
 	protected void renameSymDesc(final TreeItem item) {
