@@ -837,6 +837,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'R':
 						RepDevMain.mainShell.runReport(file);
 						break;
+					case 'h':
+					case 'H':
+						parser.reparseAll();
+						break;
 
 					case 'g':
 					case 'G':
