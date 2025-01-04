@@ -158,6 +158,8 @@
 	PERITEMLIMIT:4|Limit 4 Per Item Limit|71|7|null
 	PERITEMLIMIT:5|Limit 5 Per Item Limit|71|7|null
 	PERITEMLIMIT:6|Limit 6 Per Item Limit|71|7|null
+	VERSIONID|Version ID|72|5|0
+	UUID|UUID|73|0|16
 	DIVYTDTAX|Dividend This Year Taxable|800|7|null
 	DIVYTDNONTAX|Dividend This Year Non-Tax|801|7|null
 	DIVLASTYEARTAX|Dividend Last Year Taxable|802|7|null
@@ -372,6 +374,10 @@
 		BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 		IRS1042SAMENDNUM|Amendment Number|128|5|9
 		HEADQUARTERS|Headquarters|129|5|1
+		MBRVERSIONID|MBR Version ID|130|5|0
+		MBRUUID|MBR UUID|131|0|16
+		MBRADDRVERSIONID|ADDR Version ID|132|5|0
+		MBRADDRUUID|ADDR UUID|133|0|16
 		SHORTNAME|Short Name|800|0|16
 		LONGNAME|Long Name|801|1|40
 		LICENSE|License|802|0|20
@@ -1001,6 +1007,8 @@
 		YEARENDBALANCE|Year-End Balance|192|7|null
 		IRS1042SUFID|1042-S Unique Form ID|193|4|null
 		POSITIVEPAYDRAFT|Positive Pay Draft|194|5|99
+		VERSIONID|Version ID|195|5|0
+		UUID|UUID|196|0|16
 		AVAILABLEBALANCE|Available Balance|800|7|null
 		PAYEELINE:1|Payee Line 1|801|0|40
 		PAYEELINE:2|Payee Line 2|801|0|40
@@ -1190,6 +1198,10 @@
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			HEADQUARTERS|Headquarters|129|5|1
+			MBRVERSIONID|MBR Version ID|130|5|0
+			MBRUUID|MBR UUID|131|0|16
+			MBRADDRVERSIONID|ADDR Version ID|132|5|0
+			MBRADDRUUID|ADDR UUID|133|0|16
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -2034,71 +2046,71 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 23 for 23|2|7|null
-		CONTRLASTYEAR:2|Contr 23 for 22|2|7|null
-		CONTRLASTYEAR:3|Contr 23 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 23 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 23 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 23 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 23 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 23 Unspecif|2|7|null
-		CONTRLASTYEAR:9|Contr 23 Unspecif|2|7|null
-		CONTRLASTYEAR:10|Contr 23 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 23 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 23 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 23 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 23 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 23 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 23 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 23 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 23 Excess 23|3|7|null
-		DISTRLASTYEAR:9|Distr 23 Excess 22|3|7|null
-		DISTRLASTYEAR:10|Distr 23 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 23 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 23 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 23 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 23 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 23 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 23 Ex Earn 23|3|7|null
-		DISTRLASTYEAR:17|Distr 23 Ex Earn 22|3|7|null
-		CONTRTHISYEAR:1|Contr 24 for 24|4|7|null
-		CONTRTHISYEAR:2|Contr 24 for 23|4|7|null
-		CONTRTHISYEAR:3|Contr 24 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 24 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 24 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 24 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 24 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 24 Unspecif|4|7|null
-		CONTRTHISYEAR:9|Contr 24 Unspecif|4|7|null
-		CONTRTHISYEAR:10|Contr 24 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 24 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 24 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 24 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 24 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 24 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 24 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 24 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 24 Excess 24|5|7|null
-		DISTRTHISYEAR:9|Distr 24 Excess 23|5|7|null
-		DISTRTHISYEAR:10|Distr 24 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 24 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 24 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 24 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 24 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 24 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 24 Ex Earn 24|5|7|null
-		DISTRTHISYEAR:17|Distr 24 Ex Earn 23|5|7|null
+		CONTRLASTYEAR:1|Contr 24 for 24|2|7|null
+		CONTRLASTYEAR:2|Contr 24 for 23|2|7|null
+		CONTRLASTYEAR:3|Contr 24 Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr 24 Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr 24 Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr 24 Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr 24 Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr 24 Unspecif|2|7|null
+		CONTRLASTYEAR:9|Contr 24 Unspecif|2|7|null
+		CONTRLASTYEAR:10|Contr 24 Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr 24 No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr 24 Exception|3|7|null
+		DISTRLASTYEAR:3|Distr 24 Disability|3|7|null
+		DISTRLASTYEAR:4|Distr 24 Death|3|7|null
+		DISTRLASTYEAR:5|Distr 24 Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr 24 Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr 24 Normal|3|7|null
+		DISTRLASTYEAR:8|Distr 24 Excess 24|3|7|null
+		DISTRLASTYEAR:9|Distr 24 Excess 23|3|7|null
+		DISTRLASTYEAR:10|Distr 24 Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr 24 Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr 24 Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr 24 Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr 24 Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr 24 Fee|3|7|null
+		DISTRLASTYEAR:16|Distr 24 Ex Earn 24|3|7|null
+		DISTRLASTYEAR:17|Distr 24 Ex Earn 23|3|7|null
+		CONTRTHISYEAR:1|Contr 25 for 25|4|7|null
+		CONTRTHISYEAR:2|Contr 25 for 24|4|7|null
+		CONTRTHISYEAR:3|Contr 25 Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr 25 Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr 25 Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr 25 Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr 25 Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr 25 Unspecif|4|7|null
+		CONTRTHISYEAR:9|Contr 25 Unspecif|4|7|null
+		CONTRTHISYEAR:10|Contr 25 Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr 25 No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr 25 Exception|5|7|null
+		DISTRTHISYEAR:3|Distr 25 Disability|5|7|null
+		DISTRTHISYEAR:4|Distr 25 Death|5|7|null
+		DISTRTHISYEAR:5|Distr 25 Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr 25 Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr 25 Normal|5|7|null
+		DISTRTHISYEAR:8|Distr 25 Excess 25|5|7|null
+		DISTRTHISYEAR:9|Distr 25 Excess 24|5|7|null
+		DISTRTHISYEAR:10|Distr 25 Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr 25 Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr 25 Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr 25 Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr 25 Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr 25 Fee|5|7|null
+		DISTRTHISYEAR:16|Distr 25 Ex Earn 25|5|7|null
+		DISTRTHISYEAR:17|Distr 25 Ex Earn 24|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 23|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 24|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 24|16|7|null
+		IRARMD|Req Min Distrib 25|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
@@ -2244,6 +2256,10 @@
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			HEADQUARTERS|Headquarters|129|5|1
+			MBRVERSIONID|MBR Version ID|130|5|0
+			MBRUUID|MBR UUID|131|0|16
+			MBRADDRVERSIONID|ADDR Version ID|132|5|0
+			MBRADDRUUID|ADDR UUID|133|0|16
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -2993,6 +3009,8 @@
 		CANCELABLE|Cancelable|439|5|1
 		INVESTOR|Investor|440|5|2
 		REMITTANCETYPE|Remittance Type|441|5|1
+		VERSIONID|Version ID|442|5|0
+		UUID|UUID|443|0|16
 		AVAILABLECREDIT|Available Credit|800|7|null
 		INTERESTDUE|Interest Due|801|7|null
 		LATECHARGEDUE|Late Charge Due|802|7|null
@@ -3232,6 +3250,10 @@
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			HEADQUARTERS|Headquarters|129|5|1
+			MBRVERSIONID|MBR Version ID|130|5|0
+			MBRUUID|MBR UUID|131|0|16
+			MBRADDRVERSIONID|ADDR Version ID|132|5|0
+			MBRADDRUUID|ADDR UUID|133|0|16
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -3397,6 +3419,10 @@
 				BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 				IRS1042SAMENDNUM|Amendment Number|128|5|9
 				HEADQUARTERS|Headquarters|129|5|1
+				MBRVERSIONID|MBR Version ID|130|5|0
+				MBRUUID|MBR UUID|131|0|16
+				MBRADDRVERSIONID|ADDR Version ID|132|5|0
+				MBRADDRUUID|ADDR UUID|133|0|16
 				SHORTNAME|Short Name|800|0|16
 				LONGNAME|Long Name|801|1|40
 				LICENSE|License|802|0|20
@@ -4244,6 +4270,10 @@
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			HEADQUARTERS|Headquarters|129|5|1
+			MBRVERSIONID|MBR Version ID|130|5|0
+			MBRUUID|MBR UUID|131|0|16
+			MBRADDRVERSIONID|ADDR Version ID|132|5|0
+			MBRADDRUUID|ADDR UUID|133|0|16
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -4695,6 +4725,10 @@
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			HEADQUARTERS|Headquarters|129|5|1
+			MBRVERSIONID|MBR Version ID|130|5|0
+			MBRUUID|MBR UUID|131|0|16
+			MBRADDRVERSIONID|ADDR Version ID|132|5|0
+			MBRADDRUUID|ADDR UUID|133|0|16
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -5068,6 +5102,10 @@
 			BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 			IRS1042SAMENDNUM|Amendment Number|128|5|9
 			HEADQUARTERS|Headquarters|129|5|1
+			MBRVERSIONID|MBR Version ID|130|5|0
+			MBRUUID|MBR UUID|131|0|16
+			MBRADDRVERSIONID|ADDR Version ID|132|5|0
+			MBRADDRUUID|ADDR UUID|133|0|16
 			SHORTNAME|Short Name|800|0|16
 			LONGNAME|Long Name|801|1|40
 			LICENSE|License|802|0|20
@@ -7820,6 +7858,8 @@
 	AUTHORIZEDBY|Authorized By|198|5|2
 	CREATEDHOLDLOCATOR|Created Hold Locator|199|4|null
 	SWITCHCODE|Switch Code|204|0|5
+	AVSINCOMINGSTREET|AVS Street|205|0|22
+	AVSINCOMINGZIP|AVS Zip|206|0|10
 	D91XINCOMPLETETRAN|D91X Incomplete Transaction?|207|5|1
 	D91XOPERATIONKEYS|D91X Operation Keys|208|0|8
 	D91XFUNCTIONID:1|D91X Function ID 1|209|0|1
@@ -10038,6 +10078,8 @@
 	ACTIVEDUTYSEPARATIONDATE|Active Duty Separation Date|76|3|null
 	LOB|LOB Code|77|0|2
 	LEI|Legal Entity Identifier|78|0|20
+	MBRVERSIONID|MBR Version ID|79|5|0
+	MBRUUID|MBR UUID|80|0|16
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
@@ -10097,6 +10139,8 @@
 	ADDRFMLASTPURGEDATE|ADDR FM History Purge Date|16|3|null
 	MBRADDRFILETYPE|ADDR File Type|17|5|1
 	HEADQUARTERS|Headquarters|18|5|1
+	MBRADDRVERSIONID|ADDR Version ID|19|5|0
+	MBRADDRUUID|ADDR UUID|20|0|16
 	***|MBRADDRESS FMHISTORY|Member Address FM History
 		ACCOUNTNUMBER|Account Number|2|0|17
 		IDTYPE|ID Type|3|5|12
@@ -10271,6 +10315,10 @@
 	BENEFICIALPERCENT|Beneficial Owner Percentage|127|2|null
 	IRS1042SAMENDNUM|Amendment Number|128|5|9
 	HEADQUARTERS|Headquarters|129|5|1
+	MBRVERSIONID|MBR Version ID|130|5|0
+	MBRUUID|MBR UUID|131|0|16
+	MBRADDRVERSIONID|ADDR Version ID|132|5|0
+	MBRADDRUUID|ADDR UUID|133|0|16
 	SHORTNAME|Short Name|800|0|16
 	LONGNAME|Long Name|801|1|40
 	LICENSE|License|802|0|20
