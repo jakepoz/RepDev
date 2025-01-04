@@ -106,6 +106,7 @@ public class FileDialog {
 		//if( dir == null){
 			typeCombo.add("LETTER");
 			typeCombo.add("HELP");
+			typeCombo.add("DATA");
 		//}
 		
 		typeCombo.select(0);
@@ -358,6 +359,8 @@ public class FileDialog {
 					else
 						item.setImage(0, RepDevMain.smallRepGenImage);
 				
+				else if( cur.getType() == FileType.DATA )
+					item.setImage(0, RepDevMain.smallDataImage);
 				else
 					item.setImage(0, RepDevMain.smallFileImage);
 				

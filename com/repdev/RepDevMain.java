@@ -65,7 +65,7 @@ public class RepDevMain {
 
 	public static MainShell mainShell;
 	private static Display display;
-	public static Image smallAddImage, smallErrorsImage, smallFileImage, smallProjectImage, smallRemoveImage, smallRepGenImage, smallSymImage, smallSymOnImage, smallTasksImage, smallActionSaveImage, smallFileAddImage, smallFileRemoveImage,
+	public static Image smallAddImage, smallErrorsImage, smallDataImage, smallFileImage, smallProjectImage, smallRemoveImage, smallRepGenImage, smallSymImage, smallSymOnImage, smallTasksImage, smallActionSaveImage, smallFileAddImage, smallFileRemoveImage,
 	smallProjectAddImage, smallProjectRemoveImage, smallRunImage, smallSymAddImage, smallSymRemoveImage, smallDBFieldImage, smallDBRecordImage, smallVariableImage, smallImportImage, smallFileNewImage, smallFileOpenImage, smallDeleteImage,
 	smallOptionsImage, smallIndentLessImage, smallIndentMoreImage, smallCutImage, smallCopyImage, smallPasteImage, smallSelectAllImage, smallRedoImage, smallUndoImage, smallFindImage, smallFindReplaceImage, smallExitImage, smallRunFMImage,
 	smallWarningImage, smallReportsImage, smallPrintImage, smallFolderImage, smallFolderAddImage, smallFolderRemoveImage, smallActionSaveAsImage, smallProgramIcon, smallInstallImage, smallCompareImage, smallSurroundImage, smallSurroundPrint,
@@ -143,6 +143,7 @@ public class RepDevMain {
 		smallFileAddImage = new Image(display, IMAGE_DIR + "small-file-add.png");
 		smallFileRemoveImage = new Image(display, IMAGE_DIR + "small-file-remove.png");
 		smallFileImage = new Image(display, IMAGE_DIR + "small-file.png");
+		smallDataImage = new Image(display, IMAGE_DIR + "small-data.png");
 		smallErrorsImage = new Image(display, IMAGE_DIR + "small-errors.png");
 		smallProjectAddImage = new Image(display, IMAGE_DIR + "small-project-add.png");
 		smallProjectRemoveImage = new Image(display, IMAGE_DIR + "small-project-remove.png");

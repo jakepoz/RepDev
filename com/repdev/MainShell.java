@@ -514,7 +514,7 @@ public class MainShell {
 
 			savetb.setEnabled(true);
 
-			if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP))
+			if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP)||(file.getType() == FileType.DATA))
 				hltoggle.setEnabled(true);
 
 			if (mainfolder.getSelection().getControl() instanceof EditorComposite){
@@ -2508,6 +2508,8 @@ public class MainShell {
 				switch (file.getType()) {
 				case REPGEN:
 					return RepDevMain.smallRepGenImage;
+				case DATA:
+					return RepDevMain.smallDataImage;
 				default:
 					return RepDevMain.smallFileImage;
 			}
@@ -2516,6 +2518,9 @@ public class MainShell {
 		switch (file.getType()) {
 		case REPGEN:
 			img = drawSymOverImage(RepDevMain.smallRepGenImage, file.getSym());
+			break;
+		case DATA:
+			img = drawSymOverImage(RepDevMain.smallDataImage, file.getSym());
 			break;
 		default:
 			img = drawSymOverImage(RepDevMain.smallFileImage, file.getSym());
@@ -2758,7 +2763,7 @@ public class MainShell {
 					else
 						run.setEnabled(true);
 
-					if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP))
+					if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP)||(file.getType() == FileType.DATA))
 						hltoggle.setEnabled(true);
 
 					savetb.setEnabled(true);
@@ -3998,7 +4003,7 @@ public class MainShell {
 
 			savetb.setEnabled(true);
 
-			if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP))
+			if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP)||(file.getType() == FileType.DATA))
 				hltoggle.setEnabled(true);
 		} else {
 			savetb.setEnabled(false);

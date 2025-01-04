@@ -804,6 +804,8 @@ public class DirectSymitarSession extends SymitarSession {
 			retrieve.getParameters().put("Type", "Letter");
 		else if( file.getType() == FileType.REPORT)
 			retrieve.getParameters().put("Type", "Report");
+		else if( file.getType() == FileType.DATA)
+			retrieve.getParameters().put("Type", "Data");
 
 		
 		retrieve.getParameters().put("Name", file.getName());
@@ -856,6 +858,8 @@ public class DirectSymitarSession extends SymitarSession {
 			list.getParameters().put("Type", "Help");
 		else if (type == FileType.LETTER)
 			list.getParameters().put("Type", "Letter");
+		else if (type == FileType.DATA)
+			list.getParameters().put("Type", "Data");
 
 		list.getParameters().put("Name", search);
 		list.getParameters().put("Action", "List");
@@ -1041,6 +1045,8 @@ public class DirectSymitarSession extends SymitarSession {
 			delete.getParameters().put("Type", "Letter");
 		else if (file.getType() == FileType.REPORT)
 			delete.getParameters().put("Type", "Report");
+		else if (file.getType() == FileType.DATA)
+			delete.getParameters().put("Type", "Data");
 
 		delete.getParameters().put("Name", file.getName());
 
@@ -1488,6 +1494,8 @@ public class DirectSymitarSession extends SymitarSession {
 			store.getParameters().put("Type", "Help");
 		else if (file.getType() == FileType.LETTER)
 			store.getParameters().put("Type", "Letter");
+		else if (file.getType() == FileType.DATA)
+			store.getParameters().put("Type", "Data");
 
 		store.getParameters().put("Name", file.getName());
 
@@ -1764,6 +1772,8 @@ public class DirectSymitarSession extends SymitarSession {
 			retrieve.getParameters().put("Type", "Letter");
 		else if (file.getType() == FileType.REPORT)
 			retrieve.getParameters().put("Type", "Report");
+		else if (file.getType() == FileType.DATA)
+			retrieve.getParameters().put("Type", "Data");
 
 		retrieve.getParameters().put("Name", file.getName());
 		retrieve.getParameters().put("NewName", newName);
