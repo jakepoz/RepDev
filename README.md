@@ -19,6 +19,7 @@ Features:
  - Pleasant graphical theme
  - Supports EASE Client Menu Selections
  - Supports Oracle/Sun Java as well as Open JDK, 32 bit and 64 bit
+ - Supports RepDev Single Sign-On to Servers and SYMs
  - Facilitates your In-House Source Control Solution
 
 The latest versions can be download here:
