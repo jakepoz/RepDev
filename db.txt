@@ -2046,71 +2046,71 @@
 			RECORDCHANGEDATE|Record Change Date|5|3|null
 	***|IRS|IRS
 		MAXCONTRIBUTION|Max Contribution|1|7|null
-		CONTRLASTYEAR:1|Contr 24 for 24|2|7|null
-		CONTRLASTYEAR:2|Contr 24 for 23|2|7|null
-		CONTRLASTYEAR:3|Contr 24 Rollover|2|7|null
-		CONTRLASTYEAR:4|Contr 24 Transfer|2|7|null
-		CONTRLASTYEAR:5|Contr 24 Roth Conv/MSA|2|7|null
-		CONTRLASTYEAR:6|Contr 24 Rechar/MSA|2|7|null
-		CONTRLASTYEAR:7|Contr 24 Unspecif|2|7|null
-		CONTRLASTYEAR:8|Contr 24 Unspecif|2|7|null
-		CONTRLASTYEAR:9|Contr 24 Unspecif|2|7|null
-		CONTRLASTYEAR:10|Contr 24 Unspecif|2|7|null
-		DISTRLASTYEAR:1|Distr 24 No Excptn|3|7|null
-		DISTRLASTYEAR:2|Distr 24 Exception|3|7|null
-		DISTRLASTYEAR:3|Distr 24 Disability|3|7|null
-		DISTRLASTYEAR:4|Distr 24 Death|3|7|null
-		DISTRLASTYEAR:5|Distr 24 Prohib Trn|3|7|null
-		DISTRLASTYEAR:6|Distr 24 Unspecif|3|7|null
-		DISTRLASTYEAR:7|Distr 24 Normal|3|7|null
-		DISTRLASTYEAR:8|Distr 24 Excess 24|3|7|null
-		DISTRLASTYEAR:9|Distr 24 Excess 23|3|7|null
-		DISTRLASTYEAR:10|Distr 24 Unspecif|3|7|null
-		DISTRLASTYEAR:11|Distr 24 Unspecif|3|7|null
-		DISTRLASTYEAR:12|Distr 24 Unspecif|3|7|null
-		DISTRLASTYEAR:13|Distr 24 Unspecif|3|7|null
-		DISTRLASTYEAR:14|Distr 24 Transfer|3|7|null
-		DISTRLASTYEAR:15|Distr 24 Fee|3|7|null
-		DISTRLASTYEAR:16|Distr 24 Ex Earn 24|3|7|null
-		DISTRLASTYEAR:17|Distr 24 Ex Earn 23|3|7|null
-		CONTRTHISYEAR:1|Contr 25 for 25|4|7|null
-		CONTRTHISYEAR:2|Contr 25 for 24|4|7|null
-		CONTRTHISYEAR:3|Contr 25 Rollover|4|7|null
-		CONTRTHISYEAR:4|Contr 25 Transfer|4|7|null
-		CONTRTHISYEAR:5|Contr 25 Roth Conv/MSA|4|7|null
-		CONTRTHISYEAR:6|Contr 25 Rechar/MSA|4|7|null
-		CONTRTHISYEAR:7|Contr 25 Unspecif|4|7|null
-		CONTRTHISYEAR:8|Contr 25 Unspecif|4|7|null
-		CONTRTHISYEAR:9|Contr 25 Unspecif|4|7|null
-		CONTRTHISYEAR:10|Contr 25 Unspecif|4|7|null
-		DISTRTHISYEAR:1|Distr 25 No Excptn|5|7|null
-		DISTRTHISYEAR:2|Distr 25 Exception|5|7|null
-		DISTRTHISYEAR:3|Distr 25 Disability|5|7|null
-		DISTRTHISYEAR:4|Distr 25 Death|5|7|null
-		DISTRTHISYEAR:5|Distr 25 Prohib Trn|5|7|null
-		DISTRTHISYEAR:6|Distr 25 Unspecif|5|7|null
-		DISTRTHISYEAR:7|Distr 25 Normal|5|7|null
-		DISTRTHISYEAR:8|Distr 25 Excess 25|5|7|null
-		DISTRTHISYEAR:9|Distr 25 Excess 24|5|7|null
-		DISTRTHISYEAR:10|Distr 25 Unspecif|5|7|null
-		DISTRTHISYEAR:11|Distr 25 Unspecif|5|7|null
-		DISTRTHISYEAR:12|Distr 25 Unspecif|5|7|null
-		DISTRTHISYEAR:13|Distr 25 Unspecif|5|7|null
-		DISTRTHISYEAR:14|Distr 25 Transfer|5|7|null
-		DISTRTHISYEAR:15|Distr 25 Fee|5|7|null
-		DISTRTHISYEAR:16|Distr 25 Ex Earn 25|5|7|null
-		DISTRTHISYEAR:17|Distr 25 Ex Earn 24|5|7|null
+		CONTRLASTYEAR:1|Contr PTY for PTY|2|7|null
+		CONTRLASTYEAR:2|Contr PTY for PTY-1|2|7|null
+		CONTRLASTYEAR:3|Contr PTY Rollover|2|7|null
+		CONTRLASTYEAR:4|Contr PTY Transfer|2|7|null
+		CONTRLASTYEAR:5|Contr PTY Roth Conv/MSA|2|7|null
+		CONTRLASTYEAR:6|Contr PTY Rechar/MSA|2|7|null
+		CONTRLASTYEAR:7|Contr PTY Unspecif|2|7|null
+		CONTRLASTYEAR:8|Contr PTY Unspecif|2|7|null
+		CONTRLASTYEAR:9|Contr PTY Unspecif|2|7|null
+		CONTRLASTYEAR:10|Contr PTY Unspecif|2|7|null
+		DISTRLASTYEAR:1|Distr PTY No Excptn|3|7|null
+		DISTRLASTYEAR:2|Distr PTY Exception|3|7|null
+		DISTRLASTYEAR:3|Distr PTY Disability|3|7|null
+		DISTRLASTYEAR:4|Distr PTY Death|3|7|null
+		DISTRLASTYEAR:5|Distr PTY Prohib Trn|3|7|null
+		DISTRLASTYEAR:6|Distr PTY Unspecif|3|7|null
+		DISTRLASTYEAR:7|Distr PTY Normal|3|7|null
+		DISTRLASTYEAR:8|Distr PTY Excess PTY|3|7|null
+		DISTRLASTYEAR:9|Distr PTY Excess PTY-1|3|7|null
+		DISTRLASTYEAR:10|Distr PTY Unspecif|3|7|null
+		DISTRLASTYEAR:11|Distr PTY Unspecif|3|7|null
+		DISTRLASTYEAR:12|Distr PTY Unspecif|3|7|null
+		DISTRLASTYEAR:13|Distr PTY Unspecif|3|7|null
+		DISTRLASTYEAR:14|Distr PTY Transfer|3|7|null
+		DISTRLASTYEAR:15|Distr PTY Fee|3|7|null
+		DISTRLASTYEAR:16|Distr PTY Ex Earn PTY|3|7|null
+		DISTRLASTYEAR:17|Distr PTY Ex Earn PTY-1|3|7|null
+		CONTRTHISYEAR:1|Contr CTY for CTY|4|7|null
+		CONTRTHISYEAR:2|Contr CTY for PTY|4|7|null
+		CONTRTHISYEAR:3|Contr CTY Rollover|4|7|null
+		CONTRTHISYEAR:4|Contr CTY Transfer|4|7|null
+		CONTRTHISYEAR:5|Contr CTY Roth Conv/MSA|4|7|null
+		CONTRTHISYEAR:6|Contr CTY Rechar/MSA|4|7|null
+		CONTRTHISYEAR:7|Contr CTY Unspecif|4|7|null
+		CONTRTHISYEAR:8|Contr CTY Unspecif|4|7|null
+		CONTRTHISYEAR:9|Contr CTY Unspecif|4|7|null
+		CONTRTHISYEAR:10|Contr CTY Unspecif|4|7|null
+		DISTRTHISYEAR:1|Distr CTY No Excptn|5|7|null
+		DISTRTHISYEAR:2|Distr CTY Exception|5|7|null
+		DISTRTHISYEAR:3|Distr CTY Disability|5|7|null
+		DISTRTHISYEAR:4|Distr CTY Death|5|7|null
+		DISTRTHISYEAR:5|Distr CTY Prohib Trn|5|7|null
+		DISTRTHISYEAR:6|Distr CTY Unspecif|5|7|null
+		DISTRTHISYEAR:7|Distr CTY Normal|5|7|null
+		DISTRTHISYEAR:8|Distr CTY Excess CTY|5|7|null
+		DISTRTHISYEAR:9|Distr CTY Excess PTY|5|7|null
+		DISTRTHISYEAR:10|Distr CTY Unspecif|5|7|null
+		DISTRTHISYEAR:11|Distr CTY Unspecif|5|7|null
+		DISTRTHISYEAR:12|Distr CTY Unspecif|5|7|null
+		DISTRTHISYEAR:13|Distr CTY Unspecif|5|7|null
+		DISTRTHISYEAR:14|Distr CTY Transfer|5|7|null
+		DISTRTHISYEAR:15|Distr CTY Fee|5|7|null
+		DISTRTHISYEAR:16|Distr CTY Ex Earn CTY|5|7|null
+		DISTRTHISYEAR:17|Distr CTY Ex Earn PTY|5|7|null
 		SSN|Taxpayer ID|6|0|9
 		IRSCODE|IRS Code|7|5|15
 		CONTRIBUTIONYEAR|Contribution Year|8|5|1
-		FAIRMARKETVALUELASTYEAR|Fair Mkt Value 24|9|7|null
+		FAIRMARKETVALUELASTYEAR|Fair Mkt Value PTY|9|7|null
 		OPENDATE|Open Date|10|3|null
 		MSAHOLDERCODE|MSA Holder Code|11|5|2
 		IRSPLAN|IRS Plan|12|5|99
 		FAIRMARKETVALUEDEATH|Fair Mkt Value Death|13|7|null
 		LOCATOR|Locator|14|4|null
 		RMDTABLEOPTION|RMD Table Option|15|5|2
-		IRARMD|Req Min Distrib 25|16|7|null
+		IRARMD|Req Min Distrib CTY|16|7|null
 		IRSHOLDERBIRTHDATE|IRS Holder Birth Date|17|3|null
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
