@@ -102,6 +102,9 @@ public class SymLoginShell {
 		Label userIDLabel = new Label(shell, SWT.NONE);
 		userIDLabel.setText("UserID:");
 
+		final Text serverText = new Text(shell, SWT.BORDER);
+		serverText.setText(lastServer);
+
 		final Text symText = new Text(shell, SWT.BORDER | (inSym != -1 ? SWT.READ_ONLY : SWT.NONE));
 
 		if (inSym != -1)
@@ -117,9 +120,6 @@ public class SymLoginShell {
 			
 		}*/
 		
-		final Text serverText = new Text(shell, SWT.BORDER);
-		serverText.setText(lastServer);
-
 		final Text aixUserText = new Text(shell, SWT.BORDER);
 		aixUserText.setText(lastUsername);
 
