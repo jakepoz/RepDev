@@ -254,7 +254,7 @@ public class DirectSymitarSession extends SymitarSession {
 
 			write("WINDOWSLEVEL=3\n");
 			
-			temp = readUntil("$ ", "SymStart~Global", "Selection :", "no longer supported!","Logins not allowed from host: ","Your password will expire:","invalid login name or password");
+			temp = readUntil("$ ", "SymStart~Global", "Selection :", "no longer supported!","Logins not allowed from host: ","Your password has expired.","Your password will expire:","invalid login name or password");
 			System.out.println(temp);
 			if (temp.contains("no longer supported!")) {
 				disconnect();
@@ -264,6 +264,10 @@ public class DirectSymitarSession extends SymitarSession {
 				System.out.print("You cannot log in from this IP. Verify this PC is setup to use Symitar!");
 				disconnect();
 				return SessionError.IP_NOT_ALLOWED;
+			} else if (temp.contains("Your password has expired.")) {
+				System.out.print("Your AIX password has expired.");
+				disconnect();
+				return SessionError.AIX_PASSWORD_EXPIRED;
 			} else if (temp.contains("Your password will expire:")) {
 				System.out.print("Your AIX password is due to expire.  Please Change it now.");
 				disconnect();
