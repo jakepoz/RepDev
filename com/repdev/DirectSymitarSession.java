@@ -256,6 +256,11 @@ public class DirectSymitarSession extends SymitarSession {
 			
 			temp = readUntil("$ ", "SymStart~Global", "Selection :", "no longer supported!","Logins not allowed from host: ","Your password has expired.","Your password will expire:","invalid login name or password");
 			System.out.println(temp);
+			if (temp.contains("Your password will expire:")) {
+				System.out.print("Your AIX password is due to expire.  Please Change it now.");
+				temp = readUntil("$ ", "SymStart~Global", "Selection :", "no longer supported!","Logins not allowed from host: ","Your password will expire:","invalid login name or password");
+				System.out.println(temp);
+			}
 			if (temp.contains("no longer supported!")) {
 				disconnect();
 				System.out.println(temp);
@@ -268,10 +273,6 @@ public class DirectSymitarSession extends SymitarSession {
 				System.out.print("Your AIX password has expired.");
 				disconnect();
 				return SessionError.AIX_PASSWORD_EXPIRED;
-			} else if (temp.contains("Your password will expire:")) {
-				System.out.print("Your AIX password is due to expire.  Please Change it now.");
-				disconnect();
-				return SessionError.AIX_PASSWORD_TO_EXPIRE;
 			} else if (temp.contains("invalid login name or password")) {
 				System.out.print("Invalid AIX Password was entered");
 				disconnect();
@@ -288,6 +289,11 @@ public class DirectSymitarSession extends SymitarSession {
 				} else {
 					System.out.println("Sending EASE Selection: " + EASE_Selection);
 					write(EASE_Selection+"\r");
+					temp = readUntil("SymStart~Global","UserId :");
+					if (temp.contains("UserId :")) {
+						System.out.print("In Symulate Mode");
+						return SessionError.NOT_WINDOWSLEVEL_3;
+					}
 				}
 			}else if( temp.contains("$ ") ){
 				write("sym " + sym + "\r");
