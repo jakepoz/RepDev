@@ -1413,6 +1413,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					editor.lineHighlight();
 				} catch (IllegalArgumentException ex) {
 					// Just ignore it
+				} catch (NullPointerException ex) {
+					return false;
+					// Just ignore it
 				}
 				editor.getStyledText().setFocus();
 			return true;
