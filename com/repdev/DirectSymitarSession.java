@@ -1105,41 +1105,46 @@ public class DirectSymitarSession extends SymitarSession {
 				log(cur);
 			
 			// menu option for batch fm
-			write("5\r");
+			write("5\r"); //(5)  Perform FM from PowerOn Output
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write(file.ordinal() + "\r");
+			write(file.ordinal() + "\r"); //(0) Account
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write("0\r");
+			write("0\r"); //Undo a Posting from FM Posting Journal?
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write(searchTitle + "\r");
+			write(searchTitle + "\r"); //Report Title
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write( searchDays + "\r");
+			write( searchDays + "\r"); //Limit Search Days to
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
 			if( file == FMFile.ACCOUNT ){
-				write("1\r");
+				write("1\r"); //Record FM History?
 				while( !(cur = readNextCommand()).getCommand().equals("Input") )
 					log(cur);
 			}
 			
-			write(result.getResultTitle() + "\r");
+			write(result.getResultTitle() + "\r"); //Name of Posting
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
 			
-			write("1\r");
+			write("1\r"); //Produce Empty Report if No Exceptions
 			while( !(cur = readNextCommand()).getCommand().equals("Input") )
 				log(cur);
+
+			if(cur.getCommand().equals("Input") && cur.getParameters().get("HelpCode").equals("25514")) {
+				write("0\r"); //Produce Empty Report if No Locking Excp?
+				while( !(cur = readNextCommand()).getCommand().equals("Input") );
+			}
 			
-			write("0\r");
+			write("0\r"); //Batch Options?
 			while( !(cur = readNextCommand()).getCommand().equals("Input") ){
 				log(cur);
 				if( cur.getParameters().get("Action").equals("DisplayLine") && cur.getParameters().get("Text").contains("Batch Queues Available:")){
