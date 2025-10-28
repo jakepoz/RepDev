@@ -3007,8 +3007,8 @@
 		FIXEDDEALERCITYTAXRATE|Fixed Dealer City Tax Rate|437|2|null
 		POSITIVEPAYDRAFT|Positive Pay Draft|438|5|99
 		CANCELABLE|Cancelable|439|5|1
-		INVESTOR|Investor|440|5|2
-		REMITTANCETYPE|Remittance Type|441|5|1
+		INVESTOR|Investor|440|5|4
+		REMITTANCETYPE|Remittance Type|441|5|2
 		VERSIONID|Version ID|442|5|0
 		UUID|UUID|443|0|16
 		AVAILABLECREDIT|Available Credit|800|7|null
@@ -4955,7 +4955,8 @@
 		POSTEMPLIMIT|POS Temp Limit|104|7|null
 		AUTHTEMPLIMIT|Auth Temp Limit|105|7|null
 		ONLINECARDISSUE|Online Card Issue|106|5|3
-		ONLINERUSHISSUE|Online Rush Card Issue|107|5|16
+		ONLINERUSHISSUE|Online Rush Card Issue|107|5|46
+		PLASTICCOUNT|Plastic Count|108|5|9999
 		LIMITDESCRIPTION:1|Limit 1 Description|800|0|40
 		LIMITDESCRIPTION:2|Limit 2 Description|800|0|40
 		LIMITDESCRIPTION:3|Limit 3 Description|800|0|40
@@ -7696,7 +7697,7 @@
 	OURSYSTEMDATE|Our System Date|30|3|null
 	PINLESSPINFLAG|PINless PIN Transaction?|31|5|1
 	PROCESSINGFLAGS|Processing Flags|32|0|5
-	TOKENID|Token ID|33|0|9
+	TOKENID|Token ID|33|0|12
 	TERMINALID|Terminal ID|34|0|16
 	NETWORKID|Network ID|35|0|15
 	DESTINATIONINSTID|Destination Institution ID|36|0|15
@@ -7739,6 +7740,7 @@
 	OURFEERULE|Our Fee Rule|73|5|100
 	REPLACECODE|Replacement Code|76|5|9999
 	REPLACEDATE1|Replacement Date 1|77|3|null
+	CARDACTIVATIONFLAG|Card Activation Message?|78|5|1
 	REPLACEDATE2|Replacement Date 2|79|3|null
 	REPLACEFIELD1|Replacement Field 1|81|0|20
 	REPLACEFIELD2|Replacement Field 2|82|0|20
@@ -7770,7 +7772,7 @@
 	OURIDTYPE1|Our ID Type 1|110|5|1
 	OURIDTYPE2|Our ID Type 2|111|5|1
 	OURFEEIDTYPE|Our Fee ID Type|112|5|1
-	NETWORKMESSAGEFORMAT|Network/Message Format|113|5|42
+	NETWORKMESSAGEFORMAT|Network/Message Format|113|5|41
 	REQTRANAMOUNT|Requested Transaction Amt|114|7|null
 	REQTRANFEEAMOUNT|Requested Transaction Fee Amt|115|7|null
 	REQSETTLEAMOUNT|Requested Settlement Amt|116|7|null
@@ -13184,17 +13186,18 @@
 	TAPETOTAL:25|Nickels Rolls|14|7|null
 	TAPETOTAL:26|Pennies Rolls|14|7|null
 	TAPETOTAL:27|Bagged Coins|14|7|null
-	TAPETOTAL:28|Mutilated|14|7|null
-	TAPETOTAL:29|Bait|14|7|null
-	TAPETOTAL:30|Ending Cash|14|7|null
-	TAPETOTAL:31|Check Received|14|7|null
-	TAPETOTAL:32|Money Order|14|7|null
-	TAPETOTAL:33|Travelers Check|14|7|null
-	TAPETOTAL:34|Check Disbursed|14|7|null
-	TAPETOTAL:35|Secondary Check|14|7|null
-	TAPETOTAL:36|Bond Clearing|14|7|null
-	TAPETOTAL:37|Beginning Frgn|14|7|null
-	TAPETOTAL:38|Ending Frgn|14|7|null
+	TAPETOTAL:28|Other|14|7|null
+	TAPETOTAL:29|Mutilated|14|7|null
+	TAPETOTAL:30|Bait|14|7|null
+	TAPETOTAL:31|Ending Cash|14|7|null
+	TAPETOTAL:32|Check Received|14|7|null
+	TAPETOTAL:33|Money Order|14|7|null
+	TAPETOTAL:34|Travelers Check|14|7|null
+	TAPETOTAL:35|Check Disbursed|14|7|null
+	TAPETOTAL:36|Secondary Check|14|7|null
+	TAPETOTAL:37|Bond Clearing|14|7|null
+	TAPETOTAL:38|Beginning Frgn|14|7|null
+	TAPETOTAL:39|Ending Frgn|14|7|null
 	SECURITYCODE:1|Parameter File Maintenance|15|5|1
 	SECURITYCODE:2|User File Maintenance|15|5|1
 	SECURITYCODE:3|Console File Maintenance|15|5|1
@@ -16190,17 +16193,18 @@
 	PRIORDAYTAPETOTAL:25|Prior Day Nickels Rolls|56|7|null
 	PRIORDAYTAPETOTAL:26|Prior Day Pennies Rolls|56|7|null
 	PRIORDAYTAPETOTAL:27|Prior Day Bagged Coins|56|7|null
-	PRIORDAYTAPETOTAL:28|Prior Day Mutilated|56|7|null
-	PRIORDAYTAPETOTAL:29|Prior Day Bait|56|7|null
-	PRIORDAYTAPETOTAL:30|Prior Day Ending Cash|56|7|null
-	PRIORDAYTAPETOTAL:31|Prior Day Check Received|56|7|null
-	PRIORDAYTAPETOTAL:32|Prior Day Money Order|56|7|null
-	PRIORDAYTAPETOTAL:33|Prior Day Travelers Check|56|7|null
-	PRIORDAYTAPETOTAL:34|Prior Day Check Disbursed|56|7|null
-	PRIORDAYTAPETOTAL:35|Prior Day Secondary Check|56|7|null
-	PRIORDAYTAPETOTAL:36|Prior Day Bond Clearing|56|7|null
-	PRIORDAYTAPETOTAL:37|Prior Day Beginning Frgn|56|7|null
-	PRIORDAYTAPETOTAL:38|Prior Day Ending Frgn|56|7|null
+	PRIORDAYTAPETOTAL:28|Prior Day Other|56|7|null
+	PRIORDAYTAPETOTAL:29|Prior Day Mutilated|56|7|null
+	PRIORDAYTAPETOTAL:30|Prior Day Bait|56|7|null
+	PRIORDAYTAPETOTAL:31|Prior Day Ending Cash|56|7|null
+	PRIORDAYTAPETOTAL:32|Prior Day Check Received|56|7|null
+	PRIORDAYTAPETOTAL:33|Prior Day Money Order|56|7|null
+	PRIORDAYTAPETOTAL:34|Prior Day Travelers Check|56|7|null
+	PRIORDAYTAPETOTAL:35|Prior Day Check Disbursed|56|7|null
+	PRIORDAYTAPETOTAL:36|Prior Day Secondary Check|56|7|null
+	PRIORDAYTAPETOTAL:37|Prior Day Bond Clearing|56|7|null
+	PRIORDAYTAPETOTAL:38|Prior Day Beginning Frgn|56|7|null
+	PRIORDAYTAPETOTAL:39|Prior Day Ending Frgn|56|7|null
 	RECORDCHANGEDATE|Record Change Date|57|3|null
 	PASSWORDMODE|Password Mode|58|5|1
 	PASSWORDHASH1|Password Hash 1|59|0|40
