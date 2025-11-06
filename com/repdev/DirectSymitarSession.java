@@ -1568,6 +1568,9 @@ public class DirectSymitarSession extends SymitarSession {
 
 			current = readNextCommand();
 			write(unpause);
+			if (current.toString().indexOf("Unable to save on Output Open")>=0) {
+				return SessionError.FILE_READ_ONLY;
+			}
 		} catch (IOException e) {
 			return SessionError.IO_ERROR;
 		}
