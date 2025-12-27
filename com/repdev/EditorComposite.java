@@ -20,6 +20,7 @@
 package com.repdev;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -1296,51 +1297,61 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if( parser.needRefreshIncludes() )
 			parser.parseIncludes();
 		
-		//sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
-		//sec.refreshList(parser.getLtokens(),txt.getText());
-		if(sec.exist(selString)){
-			gotoSection(selString);
-			return;
-		}
-		for( String key : incTokenCache.keySet()){
-			for(Token token : incTokenCache.get(key)){
-				if(matchTokenAndGoto(token, key, selString))
+		try {
+			//sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
+			//sec.refreshList(parser.getLtokens(),txt.getText());
+			if(sec.exist(selString)){
+				gotoSection(selString);
+				return;
+			}
+			for( String key : incTokenCache.keySet()){
+				for(Token token : incTokenCache.get(key)){
+					if(matchTokenAndGoto(token, key, selString))
+						return;
+				}
+			}
+			for(Variable var : parser.getLvars()){
+				if(matchVarAndGoto(var, selString))
 					return;
 			}
-		}
-		for(Variable var : parser.getLvars()){
-			if(matchVarAndGoto(var, selString))
-				return;
-		}
-		// Go through open files which include this file. Search for Variables/Procedures and goto. 
-		for(CTabItem tf : mainfolder.getItems()){
-			if(tf.getControl() instanceof EditorComposite) {
-				EditorComposite ec = ((EditorComposite) tf.getControl());
-				incTokenCache = ec.parser.getIncludeTokenChache();
-				for( String key : incTokenCache.keySet()){
-					if(key.equalsIgnoreCase(file.getName())){
-						
-						if( ec.parser.needRefreshIncludes() )
-							ec.parser.parseIncludes();
-						
-						if(ec.sec.exist(selString)){
-							gotoSection(selString);
-							return;
-						}
-						for( String key2 : incTokenCache.keySet()){
-							for(Token token : incTokenCache.get(key2)){
-								if(matchTokenAndGoto(token, key2, selString))
+			// Go through open files which include this file. Search for Variables/Procedures and goto. 
+			for(CTabItem tf : mainfolder.getItems()){
+				if(tf.getControl() instanceof EditorComposite) {
+					EditorComposite ec = ((EditorComposite) tf.getControl());
+					incTokenCache = ec.parser.getIncludeTokenChache();
+					for( String key : incTokenCache.keySet()){
+						if(key.equalsIgnoreCase(file.getName())){
+							
+							if( ec.parser.needRefreshIncludes() )
+								ec.parser.parseIncludes();
+							
+							if(ec.sec.exist(selString)){
+								gotoSection(selString);
+								return;
+							}
+							for( String key2 : incTokenCache.keySet()){
+								for(Token token : incTokenCache.get(key2)){
+									if(matchTokenAndGoto(token, key2, selString))
+										return;
+								}
+							}
+							for(Variable var : ec.parser.getLvars()){
+								if(matchVarAndGoto(var, selString))
 									return;
 							}
-						}
-						for(Variable var : ec.parser.getLvars()){
-							if(matchVarAndGoto(var, selString))
-								return;
 						}
 					}
 				}
 			}
+		} catch (ConcurrentModificationException e) {
+			//Alert INCLUDE file may have been modified.
+			MessageBox dialog = new MessageBox(this.getShell(), SWT.ICON_WARNING | SWT.OK);
+			dialog.setMessage("The include file may have been modified.  Please save this RepGen and Try again.");
+			dialog.setText("Jump to Procedure");
+			dialog.open();
 		}
+		
+		
 	}
 	private Boolean matchVarAndGoto(Variable var, String varToMatch){
 		Object o;
