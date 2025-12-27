@@ -63,6 +63,7 @@ public class DirectSymitarSession extends SymitarSession {
 	boolean connected = false;
 	boolean loggedInAIX = false;
 	boolean useSSH = false;
+	boolean passWillExpire = false;
 	Process p;
 	int actualSym = -1;
 	int consoleNum = -1;
@@ -258,13 +259,17 @@ public class DirectSymitarSession extends SymitarSession {
 			System.out.println(temp);
 			if (temp.contains("Your password will expire:")) {
 				System.out.print("Your AIX password is due to expire.  Please Change it now.");
+				passWillExpire = true;
 				temp = readUntil("$ ", "SymStart~Global", "Selection :", "no longer supported!","Logins not allowed from host: ","Your password will expire:","invalid login name or password");
 				System.out.println(temp);
 			}
 			if (temp.contains("no longer supported!")) {
 				disconnect();
 				System.out.println(temp);
-				return SessionError.NOT_WINDOWSLEVEL_3;
+				if (passWillExpire)
+					return SessionError.NOT_WINDOWSLEVEL_3_PASS_WILL_EXPIRE;
+				else
+					return SessionError.NOT_WINDOWSLEVEL_3;
 			} else if (temp.contains("Logins not allowed")) {
 				System.out.print("You cannot log in from this IP. Verify this PC is setup to use Symitar!");
 				disconnect();
@@ -292,7 +297,10 @@ public class DirectSymitarSession extends SymitarSession {
 					temp = readUntil("SymStart~Global","UserId :");
 					if (temp.contains("UserId :")) {
 						System.out.print("In Symulate Mode");
-						return SessionError.NOT_WINDOWSLEVEL_3;
+						if (passWillExpire)
+							return SessionError.NOT_WINDOWSLEVEL_3_PASS_WILL_EXPIRE;
+						else
+							return SessionError.NOT_WINDOWSLEVEL_3;
 					}
 				}
 			}else if( temp.contains("$ ") ){
