@@ -325,6 +325,9 @@ public class DirectSymitarSession extends SymitarSession {
 						} else if(current.getParameters().get("Text").contains("Revision Incompatibility")){
 							disconnect();
 							return SessionError.INCOMPATIBLE_REVISION;
+						} else if(current.getParameters().get("Text").contains("DBMS Not Available - Connection refused")){
+							disconnect();
+							return SessionError.DBMS_NOT_AVAILABLE;
 						} else {
 							disconnect();
 							return SessionError.UNDEFINED_ERROR;
