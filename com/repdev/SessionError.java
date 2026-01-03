@@ -86,7 +86,7 @@ public enum SessionError {
 			msg = "WINDOWSLEVEL not set to 3.";
 			break;
 		case NOT_WINDOWSLEVEL_3_PASS_WILL_EXPIRE:
-			msg = "RepDev is in Symulate mode because your password is due to expire.  Please change it now.";
+			msg = "RepDev is in Symulate mode because your AIX password is due to expire.  Please change it now.";
 			break;
 		case NULL_POINTER:
 			msg = "Null Pointer.";
