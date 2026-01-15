@@ -3658,6 +3658,14 @@ public class MainShell {
 			}
 		});
 
+		final MenuItem toolsChgRepDevPass = new MenuItem(toolsMenu, SWT.PUSH);
+		toolsChgRepDevPass.setText("&Change RepDev Password");
+		toolsChgRepDevPass.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				RepDev_SSO.changeRepDevPasswords(shell);
+			}
+		});
+
 		MenuItem helpAbout = new MenuItem(helpMenu, SWT.PUSH);
 		helpAbout.setText("&About");
 		helpAbout.addSelectionListener(new SelectionAdapter() {
@@ -3676,8 +3684,10 @@ public class MainShell {
 				
 				if (RepDevMain.MASTER_PASSWORD_HASH == null) {
 					toolsChgPass.setEnabled(false);
+					toolsChgRepDevPass.setEnabled(false);
 				} else {
 					toolsChgPass.setEnabled(true);
+					toolsChgRepDevPass.setEnabled(true);
 				}
 			}
 		});

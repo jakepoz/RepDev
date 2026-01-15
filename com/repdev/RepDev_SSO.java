@@ -185,6 +185,55 @@ public class RepDev_SSO {
 		}
 	}
 	
+	public static void changeRepDevPasswords(Shell shell) {
+		String prompt = "Change RepDev Password\n\nEnter your current password.";
+		String curPassword = InputShell.getInput(shell, TITLE, prompt, "", true);
+		String savedPassword = decrypt(md5Hash(curPassword), Config.getPasswordValidator());
+		
+		if(savedPassword.equals("RepDev")) {
+			String msg = "Enter a new RepDev Password.     \n\nMinimum: 8 characters, 1 upper, 1 lower,     \n1 number, 1 special character\n\n";
+			String newPass = getPassword(shell, msg, true);
+			byte[] newPassHash = md5Hash(newPass);
+			
+			if(!newPass.equals("")) {
+				for (int sym : RepDevMain.SESSION_INFO.keySet()) {
+					String aixPass = RepDevMain.SESSION_INFO.get(sym).getAixPassword();
+					String userPass = RepDevMain.SESSION_INFO.get(sym).getUserID();
+					if(!aixPass.equals("")) {
+						String clearTextPass = decrypt(RepDevMain.MASTER_PASSWORD_HASH, aixPass);
+						String newEncryptedPass = encrypt(newPassHash, clearTextPass);
+						RepDevMain.SESSION_INFO.get(sym).setAixPassword(newEncryptedPass);
+					}
+					if(!userPass.equals("")) {
+						String clearTextPass = decrypt(RepDevMain.MASTER_PASSWORD_HASH, userPass);
+						String newEncryptedPass = encrypt(newPassHash, clearTextPass);
+						RepDevMain.SESSION_INFO.get(sym).setUserID(newEncryptedPass);
+					}
+				}
+				
+				RepDevMain.MASTER_PASSWORD_HASH = newPassHash;
+				Config.setPasswordValidator(encrypt(newPassHash, "RepDev"));
+				RepDevMain.saveSettings();
+				
+				MessageBox dialog = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+				dialog.setText(TITLE);
+				dialog.setMessage("Password Changed.");
+				dialog.open();
+			}else {
+				MessageBox dialog = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+				dialog.setText(TITLE);
+				dialog.setMessage("Password not changed.");
+				dialog.open();
+			}
+			
+		}else {
+			MessageBox dialog = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+			dialog.setText(TITLE);
+			dialog.setMessage("Invalid password.");
+			dialog.open();
+		}
+	}
+	
 	public static String getRepDevPassword(Shell shell) {
 		String msg = "A RepDev password is required to encrypt your saved     \npasswords.  Please create a RepDev Password.     \n\nMinimum: 8 characters, 1 upper, 1 lower,     \n1 number, 1 special character\n\n";
 		String pass1 = getPassword(shell, msg, true);
