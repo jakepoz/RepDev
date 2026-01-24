@@ -2058,7 +2058,7 @@
 		CONTRLASTYEAR:8|Contr PTY Unspecif|2|7|null
 		CONTRLASTYEAR:9|Contr PTY Unspecif|2|7|null
 		CONTRLASTYEAR:10|Contr PTY Unspecif|2|7|null
-		CONTRLASTYEAR:11|Contr PTY for 24 Ppd Fed Dster|2|7|null
+		CONTRLASTYEAR:11|Contr PTY for PTY-1 Ppd Fed Dster|2|7|null
 		DISTRLASTYEAR:1|Distr PTY No Excptn|3|7|null
 		DISTRLASTYEAR:2|Distr PTY Exception|3|7|null
 		DISTRLASTYEAR:3|Distr PTY Disability|3|7|null
@@ -2088,7 +2088,7 @@
 		CONTRTHISYEAR:8|Contr CTY Unspecif|4|7|null
 		CONTRTHISYEAR:9|Contr CTY Unspecif|4|7|null
 		CONTRTHISYEAR:10|Contr CTY Unspecif|4|7|null
-		CONTRTHISYEAR:11|Contr CTY for 25 Ppd Fed Dster|4|7|null
+		CONTRTHISYEAR:11|Contr CTY for PTY Ppd Fed Dster|4|7|null
 		DISTRTHISYEAR:1|Distr CTY No Excptn|5|7|null
 		DISTRTHISYEAR:2|Distr CTY Exception|5|7|null
 		DISTRTHISYEAR:3|Distr CTY Disability|5|7|null
@@ -2123,8 +2123,8 @@
 		IRSHOLDERSPOUSEBIRTHDATE|IRS Holder Spouse Birth Date|18|3|null
 		RECORDCHANGEDATE|Record Change Date|19|3|null
 		LASTDISTRIBTYPE|Last Distribution Type|20|5|17
-		POSTPNDFEDDISASTCODELASTYEAR|Postponed Fed Disaster Code 25|21|0|6
-		POSTPNDFEDDISASTCODEPREVTAXYEAR|Postponed Fed Disaster Code 24|22|0|6
+		POSTPNDFEDDISASTCODELASTYEAR|Postponed Fed Disaster Code PTY|21|0|6
+		POSTPNDFEDDISASTCODEPREVTAXYEAR|Postponed Fed Disaster Code PTY-1|22|0|6
 		ACTUALMAXCONTRIBUTION|Actual Max Contribution|800|7|null
 		***|IRS NAME|IRS Name
 			TYPE|Name Type|1|5|53
