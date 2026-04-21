@@ -25,14 +25,10 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.Bullet;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
-import org.eclipse.swt.custom.LineStyleEvent;
-import org.eclipse.swt.custom.LineStyleListener;
-import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -65,6 +61,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.RGB;
@@ -86,7 +83,6 @@ import com.repdev.parser.BackgroundSectionParser;
 import com.repdev.parser.SectionInfo;
 import com.repdev.parser.Variable;
 import com.repdev.parser.Token.TokenType;
-import org.eclipse.swt.graphics.GlyphMetrics;
 
 /**
  * Main editor for repgen, help, and letter files
@@ -134,7 +130,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	
 	private Token startBlockToken;
 	private Token endBlockToken;
-	
+
+	private FoldingManager folding;
+
 	static SuggestShell suggest = new SuggestShell();
 
 	private static Font DEFAULT_FONT;
@@ -210,6 +208,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if( !canUndo() )
 			return;
 
+		// Stored undo offsets reference the unfolded buffer; expand first to keep them valid.
+		if (folding != null && folding.hasActiveFolds()) folding.expandAll();
+
 		try {
 			TextChange change;
 
@@ -261,6 +262,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void redo() {
 		if( !canRedo() )
 			return;
+
+		if (folding != null && folding.hasActiveFolds()) folding.expandAll();
 
 		try {
 			TextChange change;
@@ -500,13 +503,24 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		return highlighter.getLineColor();
 	}
 
-	//Calculate and expand the width of numbered "bullet" margin.  Allows the whole number to be displayed as more lines are added to the file.
+	/** Width of just the line-number column (no fold column). */
+	public final int calcNumberColumnWidth(){
+		if (!showLineNumbers) return 0;
+		int lastLine = txt.getLineCount()+1;
+		return (Integer.toString(lastLine).length() * 12) + 6;
+	}
+
+	//Calculate and expand the width of the gutter margin (line numbers + fold column).
 	final public int calcWidth(){
+		int foldW = (folding != null) ? folding.getExtraGutterWidth() : 0;
 		if (this.showLineNumbers) {
-			int lastLine = txt.getLineCount()+1;
-			return (Integer.toString(lastLine).length() * 12) +6;
+			return calcNumberColumnWidth() + foldW;
 		}
-		return 12; //return a width of 12px for "right click" implementation... eventually.
+		return 12 + foldW;
+	}
+
+	public FoldingManager getFolding(){
+		return folding;
 	}
 	private void buildGUI() {
 		setLayout(new FormLayout());
@@ -541,9 +555,16 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		// Load the Section Info
 		sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
 
+		// Code folding - only meaningful for RepGen (parser provides head/end tokens)
+		if (file.getType() == FileType.REPGEN) {
+			folding = new FoldingManager(this, txt, parser);
+		}
+
 		txt.addDisposeListener(new DisposeListener(){
 
 			public void widgetDisposed(DisposeEvent e) {
+				if( folding != null)
+					folding.dispose();
 				if( parser != null)
 					parser.cleanupTokenCache();
 			}
@@ -587,6 +608,17 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		//Place any auto complete things in here
 		txt.addVerifyListener(new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
+				// If an edit would span the header line of a folded region,
+				// expand that region first so the hidden text can't be orphaned.
+				if (folding != null && !folding.isInFoldOp() && folding.hasActiveFolds()) {
+					int startLine = txt.getLineAtOffset(e.start);
+					int endLine = txt.getLineAtOffset(e.end);
+					boolean needsExpand = false;
+					for (int ln = startLine; ln <= endLine; ln++) {
+						if (folding.foldedAtLine(ln) != null) { needsExpand = true; break; }
+					}
+					if (needsExpand) folding.expandAll();
+				}
 				if (e.text.equals("\t")) {
 
 					if(snippetMode){
@@ -638,42 +670,42 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			}
 		});
 
-		// Set the style of numbered bullets (12 pixels wide for each digit)
-		final StyleRange style = new StyleRange();
-		final int bulletStyle; 
-		int bulletWidth = 12;
-		if (showLineNumbers){
-			bulletWidth = calcWidth();
-			bulletStyle = ST.BULLET_NUMBER;
-		} else{
-			bulletStyle = ST.BULLET_TEXT;  //another eventual implementation for "right click" feature
+		// Reserve left-margin space for the gutter; numbers and fold triangles
+		// are painted directly by the paint listeners below.
+		if (showLineNumbers || folding != null) {
+			txt.setMargins(calcWidth(), 0, 0, 0);
 		}
-		style.foreground = highlighter.getBulletColor();
-		style.start = 1;
-		style.length = txt.getLineCount();
-		style.metrics = new GlyphMetrics(0, 0, bulletWidth);
-		
-		// Add the style (numbered bullets) to the text in file. 
-		txt.addLineStyleListener(new LineStyleListener() {
-			public void lineGetStyle(LineStyleEvent e) {
-				e.bulletIndex = txt.getLineAtOffset(e.lineOffset);
-				if (showLineNumbers){
-					style.metrics.width = calcWidth();
-					e.bullet = new Bullet(bulletStyle, style);
-				}
-			}
-		});
-		
-		// Add paint listener to modify numbered bullets, when lines are being added
+
+		// Paint the line numbers in the left portion of the gutter. The fold
+		// triangle painter (FoldingManager) draws in the right portion, so the
+		// two never overlap (VS Code-style [numbers][fold][text] layout).
+		final Color bulletColor = highlighter.getBulletColor();
 		txt.addPaintListener(new PaintListener (){
 			public void paintControl (PaintEvent e){
-				
-	            Rectangle clientArea = txt.getClientArea();
-	            // To minimize the amount of page being redrawn, trying to limit it to just the numbered bullet margin area
-				int width = calcWidth();
-				Rectangle bgArea = new Rectangle(-2,-2,width,(txt.getLineCount()+1) * txt.getLineHeight());
-				
-				txt.getLineCount();
+				if (!showLineNumbers) return;
+				int lh = txt.getLineHeight();
+				if (lh == 0) return;
+				int topLine = txt.getTopIndex();
+				int clientH = txt.getClientArea().height;
+				int maxLine = topLine + (clientH / lh) + 2;
+				if (maxLine > txt.getLineCount()) maxLine = txt.getLineCount();
+
+				int numberColW = calcNumberColumnWidth();
+				GC gc = e.gc;
+				Color oldFg = gc.getForeground();
+				gc.setForeground(bulletColor);
+
+				for (int line = topLine; line < maxLine; line++) {
+					int y;
+					try { y = txt.getLocationAtOffset(txt.getOffsetAtLine(line)).y; }
+					catch (IllegalArgumentException ex) { continue; }
+					String num = String.valueOf(line + 1);
+					int numW = gc.textExtent(num).x;
+					int nx = numberColW - numW - 4;
+					if (nx < 0) nx = 0;
+					gc.drawString(num, nx, y, true);
+				}
+				gc.setForeground(oldFg);
 			}
 		});
 
@@ -681,6 +713,28 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 			public void modifyText(ExtendedModifyEvent event) {
 				lineHighlight();
+
+				// Keep folded region line numbers in sync with edits above them.
+				// Only needed for user edits; fold/unfold operations manage their own shifts.
+				if (folding != null && !folding.isInFoldOp() && folding.hasActiveFolds()) {
+					String inserted = "";
+					try {
+						if (event.length > 0)
+							inserted = txt.getText(event.start, event.start + event.length - 1);
+					} catch (Exception ex) { inserted = ""; }
+					int removedNL = 0, addedNL = 0;
+					String removed = event.replacedText == null ? "" : event.replacedText;
+					for (int i = 0; i < removed.length(); i++) if (removed.charAt(i) == '\n') removedNL++;
+					for (int i = 0; i < inserted.length(); i++) if (inserted.charAt(i) == '\n') addedNL++;
+					int delta = addedNL - removedNL;
+					if (delta != 0) {
+						int editStartLine = txt.getLineAtOffset(event.start);
+						folding.shiftFoldsBelow(editStartLine, delta);
+					}
+				}
+				if (folding != null && !folding.isInFoldOp()) {
+					folding.recomputeRanges();
+				}
 
 				modified = true;
 				updateModified();
@@ -692,7 +746,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				else if (undoMode == 2)
 					stack = redos;
 
-				if (undoMode != 0 ) {
+				// Fold/unfold operations mutate the buffer but must not pollute the
+				// undo history - they have their own separate state.
+				boolean skipUndoPush = (folding != null && folding.isInFoldOp());
+
+				if (undoMode != 0 && !skipUndoPush ) {
 					stack.push(new TextChange(event.start, event.length, event.replacedText, txt.getTopIndex()));
 
 					if (stack.size() > UNDO_LIMIT)
@@ -766,11 +824,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					updateSnippet();
 				}
 
-				// Redraw numbered bullets area
-				if (showLineNumbers){
-					style.metrics.width = calcWidth();
-					txt.setStyleRange(style);
-					txt.redraw(1,1, 72, txt.getLineHeight()*txt.getLineCount(), true);
+				// Refresh gutter: width may have grown with line count; re-reserve
+				// the left margin and repaint so the number/triangle columns update.
+				if (showLineNumbers || folding != null) {
+					int w = calcWidth();
+					txt.setMargins(w, 0, 0, 0);
+					txt.redraw(0, 0, w, txt.getLineHeight() * txt.getLineCount(), true);
 				}
 			}
 
@@ -847,6 +906,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'G':
 						gotoSectionShell();
 						break;
+					case '-':
+					case SWT.KEYPAD_SUBTRACT:
+						if (folding != null) folding.collapseAtCaret();
+						break;
+					case '=':
+					case '+':
+					case SWT.KEYPAD_ADD:
+						if (folding != null) folding.expandAtCaret();
+						break;
 					}
 				}
 				else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
@@ -900,6 +968,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'g':
 					case 'G':
 						gotoDefinition();
+						break;
+					case '-':
+					case SWT.KEYPAD_SUBTRACT:
+						if (folding != null) folding.collapseAll();
+						break;
+					case '=':
+					case '+':
+					case SWT.KEYPAD_ADD:
+						if (folding != null) folding.expandAll();
 						break;
 					}
 				}
@@ -1637,7 +1714,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 * @param errorCheck Flag to check errors with symitar
 	 */
 	public void saveFile( boolean errorCheck ){
-		file.saveFile(txt.getText());
+		String toSave = (folding != null) ? folding.getUnfoldedText() : txt.getText();
+		file.saveFile(toSave);
 		commitUndo();
 		modified = false;
 		updateModified();
@@ -2012,6 +2090,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 
 	public void sendToFormatter(){
+		// Formatter does a full-buffer replace; expand all folds first so hidden lines aren't lost.
+		if (folding != null && folding.hasActiveFolds()) folding.expandAll();
 		Formatter formatter = new Formatter(txt.getText(),parser.getLtokens());
 		parser.setReparse(false);
 		txt.setText(formatter.getFormattedFile());
