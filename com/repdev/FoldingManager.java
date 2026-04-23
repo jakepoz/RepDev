@@ -123,6 +123,14 @@ public class FoldingManager {
 
 	public boolean hasActiveFolds() { return !folded.isEmpty(); }
 
+	public int getDisplayLineNumber(int visibleLine) {
+		return displayLineNumberFor(visibleLine, folded);
+	}
+
+	public int getUnfoldedLineCount() {
+		return unfoldedLineCount(txt.getLineCount(), folded);
+	}
+
 	/**
 	 * Shift the headerLine of every fold whose header is strictly below the
 	 * given edit line. Called after a user edit changes the newline count above
@@ -255,12 +263,25 @@ public class FoldingManager {
 	}
 
 	public void expandAll() {
-		// Unfold innermost-first (largest line number first).
-		ArrayList<FoldRegion> regions = new ArrayList<FoldRegion>(folded);
-		Collections.sort(regions, new Comparator<FoldRegion>() {
-			public int compare(FoldRegion a, FoldRegion b) { return b.headerLine - a.headerLine; }
-		});
-		for (int i = 0; i < regions.size(); i++) expand(regions.get(i));
+		if (folded.isEmpty()) return;
+		String expanded = expandAllText(txt.getText(), folded);
+
+		inFoldOp = true;
+		try {
+			if (parser != null) parser.setReparse(false);
+			txt.setRedraw(false);
+			txt.replaceTextRange(0, txt.getCharCount(), expanded);
+		} finally {
+			txt.setRedraw(true);
+			if (parser != null) {
+				parser.setReparse(true);
+				parser.reparseAll();
+			}
+			inFoldOp = false;
+		}
+
+		folded.clear();
+		recomputeRanges();
 	}
 
 	private void collapse(FoldableRange range) {
@@ -364,12 +385,16 @@ public class FoldingManager {
 	 */
 	public String getUnfoldedText() {
 		if (folded.isEmpty()) return txt.getText();
-		ArrayList<FoldRegion> sorted = new ArrayList<FoldRegion>(folded);
+		return expandAllText(txt.getText(), folded);
+	}
+
+	static String expandAllText(String visibleText, ArrayList<FoldRegion> foldedRegions) {
+		ArrayList<FoldRegion> sorted = new ArrayList<FoldRegion>(foldedRegions);
 		// Insert from bottom up so earlier insert offsets stay valid.
 		Collections.sort(sorted, new Comparator<FoldRegion>() {
 			public int compare(FoldRegion a, FoldRegion b) { return b.headerLine - a.headerLine; }
 		});
-		StringBuilder sb = new StringBuilder(txt.getText());
+		StringBuilder sb = new StringBuilder(visibleText);
 		for (int i = 0; i < sorted.size(); i++) {
 			FoldRegion fr = sorted.get(i);
 			int offset = offsetAtLineStart(sb, fr.headerLine + 1);
@@ -394,6 +419,23 @@ public class FoldingManager {
 		int n = 0;
 		for (int i = 0; i < s.length(); i++) if (s.charAt(i) == '\n') n++;
 		return n;
+	}
+
+	static int displayLineNumberFor(int visibleLine, ArrayList<FoldRegion> foldedRegions) {
+		int line = visibleLine + 1;
+		for (int i = 0; i < foldedRegions.size(); i++) {
+			FoldRegion fr = foldedRegions.get(i);
+			if (fr.headerLine < visibleLine) line += countNewlines(fr.hiddenText);
+		}
+		return line;
+	}
+
+	static int unfoldedLineCount(int visibleLineCount, ArrayList<FoldRegion> foldedRegions) {
+		int lineCount = visibleLineCount;
+		for (int i = 0; i < foldedRegions.size(); i++) {
+			lineCount += countNewlines(foldedRegions.get(i).hiddenText);
+		}
+		return lineCount;
 	}
 
 	private void paintMarkers(PaintEvent e) {

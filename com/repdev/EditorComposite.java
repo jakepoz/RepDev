@@ -506,7 +506,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	/** Width of just the line-number column (no fold column). */
 	public final int calcNumberColumnWidth(){
 		if (!showLineNumbers) return 0;
-		int lastLine = txt.getLineCount()+1;
+		int lastLine = (folding != null) ? folding.getUnfoldedLineCount() : txt.getLineCount();
 		return (Integer.toString(lastLine).length() * 12) + 6;
 	}
 
@@ -699,7 +699,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					int y;
 					try { y = txt.getLocationAtOffset(txt.getOffsetAtLine(line)).y; }
 					catch (IllegalArgumentException ex) { continue; }
-					String num = String.valueOf(line + 1);
+					int displayLine = (folding != null) ? folding.getDisplayLineNumber(line) : line + 1;
+					String num = String.valueOf(displayLine);
 					int numW = gc.textExtent(num).x;
 					int nx = numberColW - numW - 4;
 					if (nx < 0) nx = 0;
