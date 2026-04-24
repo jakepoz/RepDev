@@ -56,10 +56,23 @@ public class FoldingManager {
 	public static class FoldRegion {
 		public final int headerLine;
 		public final String hiddenText;
+		/**
+		 * The batch-t=0 headerLine for this fold — preserved through shifts.
+		 * During a fold-all batch, {@link #headerLine} drifts as siblings
+		 * collapse above this entry, but originalHeaderLine stays anchored so
+		 * nested-check math stays in a consistent coord system.
+		 * Outside a batch this equals {@link #headerLine}.
+		 */
+		public final int originalHeaderLine;
 
 		FoldRegion(int headerLine, String hiddenText) {
+			this(headerLine, hiddenText, headerLine);
+		}
+
+		FoldRegion(int headerLine, String hiddenText, int originalHeaderLine) {
 			this.headerLine = headerLine;
 			this.hiddenText = hiddenText;
+			this.originalHeaderLine = originalHeaderLine;
 		}
 	}
 
@@ -87,6 +100,17 @@ public class FoldingManager {
 
 	private final Color markerColor;
 	private boolean inFoldOp = false;
+	// True while a fold-all is iterating. Individual collapse/expand ops suppress
+	// their per-op parser.reparseAll() + recomputeRanges() (which triggers the
+	// "Parsing vars for ..." pass and is O(N) per fold). One reparse runs at
+	// the end of the batch, covering all collapses at once.
+	private boolean batchMode = false;
+	// Snapshot of hiddenText strings present in `folded` at batch start. Used
+	// in collapseInternal to distinguish nested folds that existed before the
+	// batch (user pre-folds — their lines are NOT reflected in the snapshot
+	// range's endLine) from those the batch itself created (whose lines ARE in
+	// the snapshot). Lets us delta-adjust the range without a mid-op reparse.
+	private HashSet<String> preBatchHiddenTexts = null;
 
 	public FoldingManager(EditorComposite editor, StyledText txt, RepgenParser parser) {
 		this.editor = editor;
@@ -141,7 +165,7 @@ public class FoldingManager {
 		for (int i = 0; i < folded.size(); i++) {
 			FoldRegion fr = folded.get(i);
 			if (fr.headerLine > editLine) {
-				folded.set(i, new FoldRegion(fr.headerLine + delta, fr.hiddenText));
+				folded.set(i, new FoldRegion(fr.headerLine + delta, fr.hiddenText, fr.originalHeaderLine));
 			}
 		}
 	}
@@ -249,20 +273,60 @@ public class FoldingManager {
 		if (fr != null) expand(fr);
 	}
 
-	public void collapseAll() {
+	public void collapseAll() { collapseAllInternal(true); }
+
+	/** Undo-replay entry point — collapses without pushing a new undo marker. */
+	public void collapseAllSilent() { collapseAllInternal(false); }
+
+	private void collapseAllInternal(boolean pushUndo) {
 		// Fold from bottom up so earlier line numbers stay stable during iteration.
 		ArrayList<FoldableRange> ranges = new ArrayList<FoldableRange>(foldable);
 		Collections.sort(ranges, new Comparator<FoldableRange>() {
 			public int compare(FoldableRange a, FoldableRange b) { return b.headerLine - a.headerLine; }
 		});
-		for (int i = 0; i < ranges.size(); i++) {
-			FoldableRange r = ranges.get(i);
-			FoldableRange fresh = foldableAtLine(r.headerLine);
-			if (fresh != null && foldedAtLine(fresh.headerLine) == null) collapse(fresh);
+		boolean prevBatch = batchMode;
+		batchMode = true;
+		HashSet<String> prevSnapshot = preBatchHiddenTexts;
+		preBatchHiddenTexts = new HashSet<String>();
+		for (int i = 0; i < folded.size(); i++) preBatchHiddenTexts.add(folded.get(i).hiddenText);
+		// Anchor the t=0 coord system for this batch: every fold already in
+		// `folded` gets originalHeaderLine = its current headerLine. Batch-
+		// added folds will set originalHeaderLine from their snapshot range's
+		// headerLine, which is also a t=0 coord. That keeps nested-check math
+		// consistent regardless of shift accumulation.
+		for (int i = 0; i < folded.size(); i++) {
+			FoldRegion fr = folded.get(i);
+			folded.set(i, new FoldRegion(fr.headerLine, fr.hiddenText, fr.headerLine));
+		}
+		boolean any = false;
+		try {
+			for (int i = 0; i < ranges.size(); i++) {
+				FoldableRange r = ranges.get(i);
+				FoldableRange fresh = foldableAtLine(r.headerLine);
+				if (fresh != null && foldedAtLine(fresh.headerLine) == null) {
+					collapseInternal(fresh, false);
+					any = true;
+				}
+			}
+		} finally {
+			batchMode = prevBatch;
+			preBatchHiddenTexts = prevSnapshot;
+		}
+		if (any) {
+			// One reparse + foldable rebuild to leave the parser and range cache
+			// consistent after suppressing per-op reparses during the batch.
+			if (parser != null) parser.reparseAll();
+			recomputeRanges();
+			if (pushUndo) editor.pushFoldUndo(EditorComposite.FOLD_OP_COLLAPSE_ALL, -1);
 		}
 	}
 
-	public void expandAll() {
+	public void expandAll() { expandAllInternal(true); }
+
+	/** Undo-replay entry point — expands without pushing a new undo marker. */
+	public void expandAllSilent() { expandAllInternal(false); }
+
+	private void expandAllInternal(boolean pushUndo) {
 		if (folded.isEmpty()) return;
 		String expanded = expandAllText(txt.getText(), folded);
 
@@ -282,24 +346,79 @@ public class FoldingManager {
 
 		folded.clear();
 		recomputeRanges();
+		if (pushUndo) editor.pushFoldUndo(EditorComposite.FOLD_OP_EXPAND_ALL, -1);
 	}
 
-	private void collapse(FoldableRange range) {
+	/** Undo-replay: collapse the range whose header is at {@code line}, without pushing undo. */
+	public void collapseAtLineSilent(int line) {
+		FoldableRange fr = foldableAtLine(line);
+		if (fr != null && foldedAtLine(line) == null) collapseInternal(fr, false);
+	}
+
+	/** Undo-replay: expand the fold whose header is at {@code line}, without pushing undo. */
+	public void expandAtLineSilent(int line) {
+		FoldRegion fr = foldedAtLine(line);
+		if (fr != null) expandInternal(fr, false);
+	}
+
+	private void collapse(FoldableRange range) { collapseInternal(range, true); }
+
+	private void collapseInternal(FoldableRange range, boolean pushUndo) {
 		// Expand any nested folds inside this range so the captured hidden text is complete.
+		// In batch mode, prior iterations have shifted folded entries' *current*
+		// headerLines upward as siblings collapsed above them, so a sibling below
+		// this range can end up with a current headerLine inside the stale
+		// range.endLine. Use originalHeaderLine — the batch-t=0 coord — so the
+		// test stays consistent with the snapshot range's own t=0 bounds.
 		ArrayList<FoldRegion> nested = new ArrayList<FoldRegion>();
 		for (int i = 0; i < folded.size(); i++) {
 			FoldRegion fr = folded.get(i);
-			if (fr.headerLine > range.headerLine && fr.headerLine <= range.endLine) nested.add(fr);
+			int probe = batchMode ? fr.originalHeaderLine : fr.headerLine;
+			if (probe > range.headerLine && probe <= range.endLine) nested.add(fr);
 		}
 		Collections.sort(nested, new Comparator<FoldRegion>() {
 			public int compare(FoldRegion a, FoldRegion b) { return b.headerLine - a.headerLine; }
 		});
-		for (int i = 0; i < nested.size(); i++) expand(nested.get(i));
 
-		// Reacquire the range after any line shifts from the nested expansions.
-		FoldableRange fresh = foldableAtLine(range.headerLine);
-		if (fresh == null) return;
-		range = fresh;
+		// Count lines/chars of nested folds that existed BEFORE the batch
+		// started (user pre-folds). The batch-collapse snapshot `range` already
+		// reflects a buffer state where those lines were hidden, so restoring
+		// them via expandInternal pushes range.endLine/endTokenOffset down by
+		// exactly these totals. Batch-added nested folds do NOT count — the
+		// snapshot pre-dates their collapse, so expanding them just returns
+		// the buffer to the snapshot's state.
+		int preBatchLines = 0;
+		int preBatchChars = 0;
+		if (batchMode && preBatchHiddenTexts != null) {
+			for (int i = 0; i < nested.size(); i++) {
+				FoldRegion nfr = nested.get(i);
+				if (preBatchHiddenTexts.contains(nfr.hiddenText)) {
+					preBatchLines += countNewlines(nfr.hiddenText);
+					preBatchChars += nfr.hiddenText.length();
+				}
+			}
+		}
+
+		for (int i = 0; i < nested.size(); i++) expandInternal(nested.get(i), false);
+
+		if (batchMode) {
+			// Adjust the snapshot range in place — avoids the expensive
+			// parser.reparseAll() + recomputeRanges() + foldableAtLine re-fetch
+			// that non-batch mode relies on.
+			if (preBatchLines > 0 || preBatchChars > 0) {
+				range = new FoldableRange(
+					range.headerLine,
+					range.endLine + preBatchLines,
+					range.endTokenOffset + preBatchChars,
+					range.bracket);
+			}
+		} else {
+			// Non-batch: each expandInternal already recomputed foldable, so
+			// re-fetching returns the up-to-date range.
+			FoldableRange fresh = foldableAtLine(range.headerLine);
+			if (fresh == null) return;
+			range = fresh;
+		}
 
 		int lineCount = txt.getLineCount();
 		if (range.headerLine + 1 >= lineCount) return;
@@ -327,27 +446,41 @@ public class FoldingManager {
 			txt.setRedraw(true);
 			if (parser != null) {
 				parser.setReparse(true);
-				parser.reparseAll();
+				if (!batchMode) parser.reparseAll();
 			}
 			inFoldOp = false;
 		}
 
 		int removedLines = linesBefore - txt.getLineCount();
+		// Sanity: the number of newlines captured must match what the buffer lost,
+		// or every shift derived from removedLines below is off. This has caught
+		// trailing-newline edge cases in the past where sliceEnd=charCount but the
+		// last line had no terminator; log loudly if it ever fires again.
+		int hiddenNL = countNewlines(hidden);
+		if (hiddenNL != removedLines) {
+			System.err.println("FoldingManager.collapse: removedLines/hiddenNL mismatch — removed=" + removedLines
+					+ " hiddenNL=" + hiddenNL + " header=" + range.headerLine + " end=" + range.endLine
+					+ " bracket=" + range.bracket + "; using removedLines for shifts");
+		}
 		// Compute the original last visible line that moved up by removedLines.
 		// After collapse: the "]" (bracket case) or nothing extra stays at headerLine+1.
 		int breakLine = range.bracket ? range.headerLine : range.endLine;
 		for (int i = 0; i < folded.size(); i++) {
 			FoldRegion fr = folded.get(i);
 			if (fr.headerLine > breakLine) {
-				folded.set(i, new FoldRegion(fr.headerLine - removedLines, fr.hiddenText));
+				folded.set(i, new FoldRegion(fr.headerLine - removedLines, fr.hiddenText, fr.originalHeaderLine));
 			}
 		}
 		folded.add(new FoldRegion(range.headerLine, hidden));
 
-		recomputeRanges();
+		if (!batchMode) recomputeRanges();
+		if (pushUndo) editor.pushFoldUndo(EditorComposite.FOLD_OP_COLLAPSE, range.headerLine);
 	}
 
-	private void expand(FoldRegion region) {
+	private void expand(FoldRegion region) { expandInternal(region, true); }
+
+	private void expandInternal(FoldRegion region, boolean pushUndo) {
+		int origHeaderLine = region.headerLine;
 		int lineCount = txt.getLineCount();
 		int insertOffset = (region.headerLine + 1 >= lineCount)
 				? txt.getCharCount()
@@ -362,7 +495,7 @@ public class FoldingManager {
 			txt.setRedraw(true);
 			if (parser != null) {
 				parser.setReparse(true);
-				parser.reparseAll();
+				if (!batchMode) parser.reparseAll();
 			}
 			inFoldOp = false;
 		}
@@ -372,11 +505,12 @@ public class FoldingManager {
 		for (int i = 0; i < folded.size(); i++) {
 			FoldRegion fr = folded.get(i);
 			if (fr.headerLine > region.headerLine) {
-				folded.set(i, new FoldRegion(fr.headerLine + addedLines, fr.hiddenText));
+				folded.set(i, new FoldRegion(fr.headerLine + addedLines, fr.hiddenText, fr.originalHeaderLine));
 			}
 		}
 
-		recomputeRanges();
+		if (!batchMode) recomputeRanges();
+		if (pushUndo) editor.pushFoldUndo(EditorComposite.FOLD_OP_EXPAND, origHeaderLine);
 	}
 
 	/**
@@ -412,6 +546,13 @@ public class FoldingManager {
 				if (found == line) return i + 1;
 			}
 		}
+		// Diagnostic: reaching here means a fold's stored headerLine exceeds the
+		// visible text's line count. Appending at EOF matches the historical
+		// "sections ended up at the bottom of the file, out of order" symptom.
+		// Log so upstream shift bugs (in shiftFoldsBelow / collapse / modifyText)
+		// surface instead of silently corrupting the file.
+		System.err.println("FoldingManager.offsetAtLineStart: requested line " + line
+				+ " but visible text only has " + found + " newline(s); appending at EOF");
 		return cs.length();
 	}
 

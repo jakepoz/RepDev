@@ -149,10 +149,20 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		DEFAULT_FONT = cur;
 	}
 
+	// Fold-operation tags used inside TextChange entries; drive the dispatch in
+	// undo()/redo() so fold/unfold is a first-class undoable action.
+	public static final int FOLD_OP_NONE = 0;
+	public static final int FOLD_OP_COLLAPSE = 1;      // a single range was collapsed at foldLine
+	public static final int FOLD_OP_EXPAND = 2;        // a single region was expanded at foldLine
+	public static final int FOLD_OP_COLLAPSE_ALL = 3;  // fold-all (foldLine unused)
+	public static final int FOLD_OP_EXPAND_ALL = 4;    // unfold-all (foldLine unused)
+
 	class TextChange {
 		private int start, length, topIndex;
 		private String replacedText;
 		private boolean commit;
+		private int foldOp = FOLD_OP_NONE;
+		private int foldLine;
 
 		public TextChange(boolean commit) {
 			this.commit = commit;
@@ -162,6 +172,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			this.length = length;
 			this.replacedText = replacedText;
 			this.topIndex = topIndex;
+			this.commit = false;
+		}
+		public TextChange(int foldOp, int foldLine) {
+			this.foldOp = foldOp;
+			this.foldLine = foldLine;
 			this.commit = false;
 		}
 
@@ -184,6 +199,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		public String getReplacedText() {
 			return replacedText;
 		}
+
+		public boolean isFoldOp() { return foldOp != FOLD_OP_NONE; }
+		public int getFoldOp() { return foldOp; }
+		public int getFoldLine() { return foldLine; }
 	}
 
 	public EditorComposite(Composite parent, CTabItem tabItem, SymitarFile file) {
@@ -208,9 +227,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if( !canUndo() )
 			return;
 
-		// Stored undo offsets reference the unfolded buffer; expand first to keep them valid.
-		if (folding != null && folding.hasActiveFolds()) folding.expandAll();
-
 		try {
 			TextChange change;
 
@@ -231,9 +247,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 
 				while (!(undos.size() == 0 || (change = undos.pop()).isCommit())) {
-					txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
-					txt.setCaretOffset(change.getStart());
-					txt.setTopIndex(change.getTopIndex());
+					if (change.isFoldOp()) {
+						applyFoldUndo(change);
+						redos.push(change);
+					} else {
+						txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
+						txt.setCaretOffset(change.getStart());
+						txt.setTopIndex(change.getTopIndex());
+					}
 
 				}
 
@@ -263,8 +284,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		if( !canRedo() )
 			return;
 
-		if (folding != null && folding.hasActiveFolds()) folding.expandAll();
-
 		try {
 			TextChange change;
 
@@ -279,9 +298,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					parser.setReparse(false);
 
 				while (!(redos.size() == 0 || (change = redos.pop()).isCommit())) {
-					txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
-					txt.setCaretOffset(change.getStart());
-					txt.setTopIndex(change.getTopIndex());
+					if (change.isFoldOp()) {
+						applyFoldRedo(change);
+						undos.push(change);
+					} else {
+						txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
+						txt.setCaretOffset(change.getStart());
+						txt.setTopIndex(change.getTopIndex());
+					}
 				}
 				undos.push(new TextChange(true));
 			}
@@ -308,6 +332,42 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void commitUndo() {
 		if (undos.size() == 0 || !undos.peek().isCommit())
 			undos.add(new TextChange(true));
+	}
+
+	/**
+	 * Record a fold/unfold as its own undoable step. Called by FoldingManager
+	 * after a successful user-initiated fold op. The fold is bracketed with
+	 * commit markers so it becomes an atomic undo unit, independent of any
+	 * text edits before or after.
+	 */
+	public void pushFoldUndo(int op, int line) {
+		if (undoMode != 1) return; // skip during initialisation (0) or replay (2)
+		commitUndo();
+		undos.push(new TextChange(op, line));
+		undos.push(new TextChange(true));
+		if (undos.size() > UNDO_LIMIT) undos.remove(0);
+	}
+
+	/** Inverse of the recorded fold op — used when replaying undo. */
+	private void applyFoldUndo(TextChange change) {
+		if (folding == null) return;
+		switch (change.getFoldOp()) {
+			case FOLD_OP_COLLAPSE:      folding.expandAtLineSilent(change.getFoldLine()); break;
+			case FOLD_OP_EXPAND:        folding.collapseAtLineSilent(change.getFoldLine()); break;
+			case FOLD_OP_COLLAPSE_ALL:  folding.expandAllSilent(); break;
+			case FOLD_OP_EXPAND_ALL:    folding.collapseAllSilent(); break;
+		}
+	}
+
+	/** Same op as recorded — used when replaying redo. */
+	private void applyFoldRedo(TextChange change) {
+		if (folding == null) return;
+		switch (change.getFoldOp()) {
+			case FOLD_OP_COLLAPSE:      folding.collapseAtLineSilent(change.getFoldLine()); break;
+			case FOLD_OP_EXPAND:        folding.expandAtLineSilent(change.getFoldLine()); break;
+			case FOLD_OP_COLLAPSE_ALL:  folding.collapseAllSilent(); break;
+			case FOLD_OP_EXPAND_ALL:    folding.expandAllSilent(); break;
+		}
 	}
 
 	public void setLineColor(SyntaxHighlighter hiColor){
@@ -608,8 +668,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		//Place any auto complete things in here
 		txt.addVerifyListener(new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
-				// If an edit would span the header line of a folded region,
-				// expand that region first so the hidden text can't be orphaned.
+				// If an edit would span the header line of a folded region, the
+				// hidden text must be reinstated before the edit lands. SWT
+				// explicitly forbids mutating the widget from inside verifyText
+				// (the pending edit's offsets become stale the moment we run
+				// replaceTextRange), so we cancel this keystroke and schedule
+				// the expand for the next UI tick. The user can re-issue the
+				// edit against the now-expanded buffer.
 				if (folding != null && !folding.isInFoldOp() && folding.hasActiveFolds()) {
 					int startLine = txt.getLineAtOffset(e.start);
 					int endLine = txt.getLineAtOffset(e.end);
@@ -617,7 +682,17 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					for (int ln = startLine; ln <= endLine; ln++) {
 						if (folding.foldedAtLine(ln) != null) { needsExpand = true; break; }
 					}
-					if (needsExpand) folding.expandAll();
+					if (needsExpand) {
+						e.doit = false;
+						txt.getDisplay().asyncExec(new Runnable() {
+							public void run() {
+								if (!txt.isDisposed() && folding != null && folding.hasActiveFolds()) {
+									folding.expandAll();
+								}
+							}
+						});
+						return;
+					}
 				}
 				if (e.text.equals("\t")) {
 
@@ -719,10 +794,24 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				// Only needed for user edits; fold/unfold operations manage their own shifts.
 				if (folding != null && !folding.isInFoldOp() && folding.hasActiveFolds()) {
 					String inserted = "";
-					try {
-						if (event.length > 0)
-							inserted = txt.getText(event.start, event.start + event.length - 1);
-					} catch (Exception ex) { inserted = ""; }
+					// Bounds-check before reading the inserted slice — silently
+					// catching here would miscount addedNL and leave folds with
+					// wrong headerLines, which later drops them at EOF (see
+					// FoldingManager.offsetAtLineStart diagnostic).
+					int charCount = txt.getCharCount();
+					if (event.length > 0 && event.start >= 0 && event.start + event.length <= charCount) {
+						try {
+							inserted = txt.getTextRange(event.start, event.length);
+						} catch (Exception ex) {
+							System.err.println("EditorComposite.modifyText: getTextRange failed — start="
+									+ event.start + " length=" + event.length + " charCount=" + charCount
+									+ "; fold shifts may be wrong: " + ex);
+						}
+					} else if (event.length > 0) {
+						System.err.println("EditorComposite.modifyText: event offsets out of range — start="
+								+ event.start + " length=" + event.length + " charCount=" + charCount
+								+ "; fold shifts may be wrong");
+					}
 					int removedNL = 0, addedNL = 0;
 					String removed = event.replacedText == null ? "" : event.replacedText;
 					for (int i = 0; i < removed.length(); i++) if (removed.charAt(i) == '\n') removedNL++;
