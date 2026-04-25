@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.RGB;
 
+import com.repdev.parser.HiddenTextProvider;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Token;
 
@@ -47,7 +48,7 @@ import com.repdev.parser.Token;
  * StyledText buffer and caching them in-memory. On save, getUnfoldedText()
  * reassembles the full source.
  */
-public class FoldingManager {
+public class FoldingManager implements HiddenTextProvider {
 
 	/** Width in pixels of the gutter column that holds the fold triangle. */
 	public static final int FOLD_COLUMN_WIDTH = 18;
@@ -146,6 +147,52 @@ public class FoldingManager {
 	public boolean isInFoldOp() { return inFoldOp; }
 
 	public boolean hasActiveFolds() { return !folded.isEmpty(); }
+
+	/**
+	 * Defensive snapshot of the currently-collapsed regions. Callers (e.g.
+	 * Find/Replace, goto-definition) need to inspect hidden text without being
+	 * able to mutate the manager's own list.
+	 */
+	public ArrayList<FoldRegion> getFoldedRegions() {
+		return new ArrayList<FoldRegion>(folded);
+	}
+
+	/**
+	 * Hidden text segments suitable for usage scans (e.g. unused-variable
+	 * detection). Skips folds whose body would yield false positives:
+	 * <ul>
+	 *   <li>{@code DEFINE...END} bodies — appearances there are declarations,
+	 *       not usages, so counting them as references would mask a genuinely
+	 *       unused variable.</li>
+	 *   <li>Bracket comment bodies ({@code [...]}) — comments don't count as
+	 *       usages either, matching the live parser's {@code tok.getCDepth() > 0}
+	 *       filter on visible tokens.</li>
+	 * </ul>
+	 */
+	public Iterable<String> getUsageSearchableHiddenText() {
+		ArrayList<String> result = new ArrayList<String>();
+		for (int i = 0; i < folded.size(); i++) {
+			FoldRegion fr = folded.get(i);
+			String header = headerLineText(fr.headerLine);
+			if (header == null) continue;
+			String trimmed = header.trim();
+			String lower = trimmed.toLowerCase();
+			// Skip folded DEFINE blocks: their hidden body is declarations.
+			if (lower.equals("define")
+					|| lower.startsWith("define ")
+					|| lower.startsWith("define\t")) continue;
+			// Skip bracket comment folds: header line opens with '['.
+			if (trimmed.length() > 0 && trimmed.charAt(0) == '[') continue;
+			result.add(fr.hiddenText);
+		}
+		return result;
+	}
+
+	private String headerLineText(int line) {
+		if (line < 0 || line >= txt.getLineCount()) return null;
+		try { return txt.getLine(line); }
+		catch (IllegalArgumentException ex) { return null; }
+	}
 
 	public int getDisplayLineNumber(int visibleLine) {
 		return displayLineNumberFor(visibleLine, folded);

@@ -70,6 +70,15 @@ public class RepgenParser {
 	BackgroundSymitarErrorChecker errorCheckerWorker = null;
 	BackgroundIncludeParser includeParserWorker = null;
 
+	// Optional source of currently-hidden text (e.g. collapsed folds). When
+	// set, usage scans (unused-var check) also walk these segments so that a
+	// variable referenced only inside a folded region isn't flagged unused.
+	private HiddenTextProvider hiddenTextProvider = null;
+
+	public void setHiddenTextProvider(HiddenTextProvider p) {
+		this.hiddenTextProvider = p;
+	}
+
 	boolean initialIncludeParseNeeded = true; //This will make sure that we parse the includes at least once when the file is first opened
 	boolean refreshIncludes = false; //The parser will keep track of changes as the file is edited, and if an include reparse is needed, this flag will be set. 
 	//Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
@@ -309,6 +318,23 @@ public class RepgenParser {
 
 								if( var.getName().equals(tok.getStr()) )
 									unused = false;
+							}
+						}
+
+						// Hidden-text fallback: a variable used only inside a
+						// collapsed fold won't appear in ltokens (folding
+						// physically removes the lines from the buffer), so the
+						// visible-token scans above can flag it as unused. Scan
+						// the fold body text directly. The provider already
+						// excludes DEFINE bodies (declarations) and bracket
+						// comments (not usages).
+						if (unused && hiddenTextProvider != null) {
+							String varNameLower = var.getName().toLowerCase();
+							for (String hidden : hiddenTextProvider.getUsageSearchableHiddenText()) {
+								if (containsWord(hidden.toLowerCase(), varNameLower)) {
+									unused = false;
+									break;
+								}
 							}
 						}
 
@@ -1180,6 +1206,26 @@ public class RepgenParser {
 
 	public static KeywordLayout getKeywords() {
 		return keywords;
+	}
+
+	/**
+	 * Whole-word containment test: matches when neither neighboring char is a
+	 * letter or digit. RepGen identifiers are alphanumeric, so this matches the
+	 * token-boundary semantics used elsewhere. Both inputs must already be
+	 * lowercased if a case-insensitive match is wanted.
+	 */
+	private static boolean containsWord(String haystack, String word) {
+		if (haystack == null || word == null || word.length() == 0) return false;
+		int from = 0;
+		while (true) {
+			int idx = haystack.indexOf(word, from);
+			if (idx < 0) return false;
+			char before = idx == 0 ? ' ' : haystack.charAt(idx - 1);
+			int afterIdx = idx + word.length();
+			char after = afterIdx >= haystack.length() ? ' ' : haystack.charAt(afterIdx);
+			if (!Character.isLetterOrDigit(before) && !Character.isLetterOrDigit(after)) return true;
+			from = idx + 1;
+		}
 	}
 
 	public static void setKeywords(KeywordLayout keywords) {

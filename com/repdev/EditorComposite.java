@@ -618,6 +618,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		// Code folding - only meaningful for RepGen (parser provides head/end tokens)
 		if (file.getType() == FileType.REPGEN) {
 			folding = new FoldingManager(this, txt, parser);
+			// Let the parser see hidden text for usage scans (unused-var check),
+			// otherwise variables referenced only inside a folded region are
+			// flagged as unused even though they're really in use.
+			parser.setHiddenTextProvider(folding);
 		}
 
 		txt.addDisposeListener(new DisposeListener(){
@@ -1450,20 +1454,31 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 
 	public void gotoDefinition(){
-		
+		gotoDefinitionImpl(true);
+	}
+
+	/**
+	 * @param tryFoldExpansion when true, allows one fallback pass that expands
+	 * a folded region containing the symbol and retries the lookup. Folded
+	 * regions are physically removed from the buffer so the parser's tokens /
+	 * variables / sections don't include them — without this fallback, jumping
+	 * into a definition that's currently folded would silently fail.
+	 */
+	private void gotoDefinitionImpl(boolean tryFoldExpansion){
+
 		CTabFolder mainfolder = RepDevMain.mainShell.getMainfolder();
-			
+
 		HashMap<String, ArrayList<Token>> incTokenCache = parser.getIncludeTokenChache();
 		String selString=txt.getSelectionText();
 		if(selString.length() == 0)
 			selString=getTokenAt(txt.getCaretOffset()) != null ? getTokenAt(txt.getCaretOffset()).getStr() : "";
 		if(!isAlphaNumeric(selString))
 			return;
-		
-				
+
+
 		if( parser.needRefreshIncludes() )
 			parser.parseIncludes();
-		
+
 		try {
 			//sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
 			//sec.refreshList(parser.getLtokens(),txt.getText());
@@ -1481,17 +1496,17 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				if(matchVarAndGoto(var, selString))
 					return;
 			}
-			// Go through open files which include this file. Search for Variables/Procedures and goto. 
+			// Go through open files which include this file. Search for Variables/Procedures and goto.
 			for(CTabItem tf : mainfolder.getItems()){
 				if(tf.getControl() instanceof EditorComposite) {
 					EditorComposite ec = ((EditorComposite) tf.getControl());
 					incTokenCache = ec.parser.getIncludeTokenChache();
 					for( String key : incTokenCache.keySet()){
 						if(key.equalsIgnoreCase(file.getName())){
-							
+
 							if( ec.parser.needRefreshIncludes() )
 								ec.parser.parseIncludes();
-							
+
 							if(ec.sec.exist(selString)){
 								gotoSection(selString);
 								return;
@@ -1516,9 +1531,139 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			dialog.setMessage("The include file may have been modified.  Please save this RepGen and Try again.");
 			dialog.setText("Jump to Procedure");
 			dialog.open();
+			return;
 		}
-		
-		
+
+		// Nothing matched in any visible token / var / section list. If the
+		// definition lives inside a currently-folded region, the parser can't
+		// see it — try expanding the fold containing the symbol and either
+		// retry the lookup (variable case) or jump inline (procedure case).
+		if (tryFoldExpansion && folding != null && folding.hasActiveFolds()) {
+			int result = expandFoldContainingSymbol(selString);
+			if (result == FOLD_EXPANSION_RETRY) {
+				gotoDefinitionImpl(false);
+			}
+			// FOLD_EXPANSION_JUMPED: nothing more to do — handled inline.
+			// FOLD_EXPANSION_NONE: silent fall-through, same as before.
+		}
+	}
+
+	private static final int FOLD_EXPANSION_NONE = 0;
+	private static final int FOLD_EXPANSION_RETRY = 1;
+	private static final int FOLD_EXPANSION_JUMPED = 2;
+
+	/**
+	 * Expands a folded region whose body holds the definition of {@code symbol}.
+	 * Two shapes count as a definition:
+	 * <ul>
+	 *   <li><b>DEFINE-headed fold</b> whose hidden body contains
+	 *       {@code symbol=...} — variable declaration inside a folded
+	 *       {@code DEFINE...END} block. An {@code =} anywhere else is an
+	 *       assignment, not a definition, and is ignored.</li>
+	 *   <li><b>PROCEDURE-headed fold</b> whose visible header line is
+	 *       {@code procedure symbol}. The header stays visible after fold, but
+	 *       {@link BackgroundSectionParser} only registers a section once its
+	 *       matching {@code END} is seen at depth 0 — so the procedure isn't
+	 *       in {@code sec} until the body is restored.</li>
+	 * </ul>
+	 *
+	 * <p>After any expansion, also refresh {@code sec} so the retry pass can
+	 * find the freshly-completed section (the normal refresh fires on caret
+	 * move, which hasn't happened here).
+	 */
+	private int expandFoldContainingSymbol(String symbol) {
+		if (symbol == null || symbol.length() == 0 || folding == null) return FOLD_EXPANSION_NONE;
+		String needle = symbol.toLowerCase();
+		for (FoldingManager.FoldRegion fr : folding.getFoldedRegions()) {
+			if (isProcedureHeaderForSymbol(fr.headerLine, needle)) {
+				int headerLine = fr.headerLine;
+				folding.toggleAtLine(headerLine);
+				// Jump inline rather than retrying through sec.exist().
+				// BackgroundSectionParser.refreshList runs the parse on a
+				// background thread, racing with our retry — the retry can
+				// acquire the synchronized lock before the parse thread does
+				// and read the pre-expansion section list. Since we already
+				// know the header line, jump to it directly.
+				try {
+					int target = txt.getOffsetAtLine(headerLine);
+					txt.setCaretOffset(txt.getCharCount());
+					txt.showSelection();
+					txt.setCaretOffset(target);
+					handleCaretChange();
+					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
+					txt.showSelection();
+					lineHighlight();
+				} catch (IllegalArgumentException ex) {
+					// Expansion already happened; just couldn't position the caret.
+				}
+				return FOLD_EXPANSION_JUMPED;
+			}
+			if (isDefineHeaderLine(fr.headerLine)
+					&& containsAssignmentOf(fr.hiddenText.toLowerCase(), needle)) {
+				folding.toggleAtLine(fr.headerLine);
+				return FOLD_EXPANSION_RETRY;
+			}
+		}
+		return FOLD_EXPANSION_NONE;
+	}
+
+	/** True if the visible buffer line at {@code line} starts with the DEFINE keyword. */
+	private boolean isDefineHeaderLine(int line) {
+		String trimmed = trimmedLowerLine(line);
+		if (trimmed == null) return false;
+		return trimmed.equals("define")
+				|| trimmed.startsWith("define ")
+				|| trimmed.startsWith("define\t");
+	}
+
+	/**
+	 * True if the visible buffer line at {@code line} is {@code PROCEDURE name}
+	 * with {@code name} (lowercased) equal to {@code lowerSymbol}.
+	 */
+	private boolean isProcedureHeaderForSymbol(int line, String lowerSymbol) {
+		String trimmed = trimmedLowerLine(line);
+		if (trimmed == null || !trimmed.startsWith("procedure")) return false;
+		int kwEnd = "procedure".length();
+		if (kwEnd >= trimmed.length()) return false;
+		// Must have a non-identifier separator after the keyword (whitespace etc.)
+		if (Character.isLetterOrDigit(trimmed.charAt(kwEnd))) return false;
+		String rest = trimmed.substring(kwEnd).trim();
+		if (!rest.startsWith(lowerSymbol)) return false;
+		int after = lowerSymbol.length();
+		if (after >= rest.length()) return true;
+		return !Character.isLetterOrDigit(rest.charAt(after));
+	}
+
+	private String trimmedLowerLine(int line) {
+		if (line < 0 || line >= txt.getLineCount()) return null;
+		try { return txt.getLine(line).trim().toLowerCase(); }
+		catch (IllegalArgumentException ex) { return null; }
+	}
+
+	/**
+	 * True if {@code word} appears in {@code haystack} as a whole word
+	 * immediately followed (skipping spaces/tabs) by {@code =} — the shape of
+	 * a RepGen variable assignment. Both inputs must already be lowercased.
+	 */
+	private static boolean containsAssignmentOf(String haystack, String word) {
+		int from = 0;
+		while (true) {
+			int idx = haystack.indexOf(word, from);
+			if (idx < 0) return false;
+			char before = idx == 0 ? ' ' : haystack.charAt(idx - 1);
+			if (Character.isLetterOrDigit(before)) { from = idx + 1; continue; }
+			int afterIdx = idx + word.length();
+			char after = afterIdx >= haystack.length() ? ' ' : haystack.charAt(afterIdx);
+			if (Character.isLetterOrDigit(after)) { from = idx + 1; continue; }
+			int p = afterIdx;
+			while (p < haystack.length()) {
+				char c = haystack.charAt(p);
+				if (c == ' ' || c == '\t') { p++; continue; }
+				if (c == '=') return true;
+				break;
+			}
+			from = idx + 1;
+		}
 	}
 	private Boolean matchVarAndGoto(Variable var, String varToMatch){
 		Object o;

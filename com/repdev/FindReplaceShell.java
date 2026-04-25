@@ -43,7 +43,7 @@ public class FindReplaceShell {
 	private RepgenParser parser; //Only used to disable it for replace All operations, can always be null
 	private Label infoLabel;
 	private Text findText, replaceText;
-	private Button forwardButton,backwardButton,caseButton, wrapButton, findButton, replaceButton, replaceAllButton, replaceFindButton; 
+	private Button forwardButton,backwardButton,caseButton, wrapButton, includeFoldedButton, findButton, replaceButton, replaceAllButton, replaceFindButton;
 	private boolean replace = true;
 	
 	public FindReplaceShell(Shell parent){
@@ -149,7 +149,7 @@ public class FindReplaceShell {
 		});
 		
  		wrapButton = new Button(optionsGroup,SWT.CHECK);
- 		wrapButton.setText("Wrap search"); 				
+ 		wrapButton.setText("Wrap search");
 		wrapButton.setSelection(Config.getWrapSearch());
  		wrapButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
@@ -161,7 +161,17 @@ public class FindReplaceShell {
 				}
 			}
 		});
- 		
+
+ 		includeFoldedButton = new Button(optionsGroup,SWT.CHECK);
+ 		includeFoldedButton.setText("Include folded sections");
+		includeFoldedButton.setSelection(Config.getIncludeFoldedSections());
+ 		includeFoldedButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e){
+				Config.setIncludeFoldedSections(includeFoldedButton.getSelection());
+			}
+		});
+
+
 		findButton = new Button(shell,SWT.NONE);
 		findButton.setText("Find");
 		findButton.addSelectionListener(new SelectionAdapter(){
@@ -241,16 +251,19 @@ public class FindReplaceShell {
 		data.top = new FormAttachment(replaceText);
 		optionsGroup.setLayoutData(data);
 		
+		// Anchor below optionsGroup since it now has 3 children and is taller
+		// than directionGroup (2 radios). Without this, options overflows the
+		// action buttons.
 		data = new FormData();
 		data.width = buttonWidth;
 		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(directionGroup);
+		data.top = new FormAttachment(optionsGroup);
 		findButton.setLayoutData(data);
-		
+
 		data = new FormData();
 		data.width = buttonWidth;
 		data.left = new FormAttachment(findButton);
-		data.top = new FormAttachment(directionGroup);
+		data.top = new FormAttachment(optionsGroup);
 		replaceFindButton.setLayoutData(data);
 		
 		data = new FormData();
@@ -406,6 +419,13 @@ public class FindReplaceShell {
 		
 		if( nextPos == -1)
 		{
+			// Fallback: look inside collapsed fold regions. On a hit, expand the
+			// best-positioned fold for the current direction and retry — the
+			// previously hidden text is now in the buffer, so the standard
+			// search path will land on it.
+			if (includeFoldedButton.getSelection() && expandFoldContaining(findText.getText())) {
+				return find();
+			}
 			infoLabel.setText("String not found");
 			return false;
 		}
@@ -415,7 +435,64 @@ public class FindReplaceShell {
 			if(txt.getParent() instanceof EditorComposite)
 				RepDevMain.mainShell.addToNavHistory(((EditorComposite)txt.getParent()).getFile(), txt.getLineAtOffset(txt.getCaretOffset()));
 		}
-		
+
+		return true;
+	}
+
+	/**
+	 * Scan currently-folded regions for {@code findStr} and, if found, expand
+	 * the region best-suited to the current search direction. After return, the
+	 * caller should retry the normal find loop — the hit is now visible.
+	 *
+	 * Direction handling: forward search prefers the closest fold whose
+	 * header is at/after the caret line so the retry doesn't need wrap. Backward
+	 * prefers the closest fold strictly before the caret line. If no fold in
+	 * the current direction matches, falls back to any fold (only when wrap is
+	 * on, since the retry needs wrap to reach matches behind/ahead of caret).
+	 */
+	private boolean expandFoldContaining(String findStr) {
+		if (findStr == null || findStr.length() == 0) return false;
+		if (!(txt.getParent() instanceof EditorComposite)) return false;
+		FoldingManager folding = ((EditorComposite) txt.getParent()).getFolding();
+		if (folding == null || !folding.hasActiveFolds()) return false;
+
+		boolean caseSensitive = caseButton.getSelection();
+		String needle = caseSensitive ? findStr : findStr.toLowerCase();
+		boolean forward = forwardButton.getSelection();
+		boolean wrap = wrapButton.getSelection();
+
+		int caretLine;
+		try { caretLine = txt.getLineAtOffset(txt.getCaretOffset()); }
+		catch (IllegalArgumentException ex) { return false; }
+
+		FoldingManager.FoldRegion bestInDir = null;
+		FoldingManager.FoldRegion bestAny = null;
+		for (FoldingManager.FoldRegion fr : folding.getFoldedRegions()) {
+			String hay = caseSensitive ? fr.hiddenText : fr.hiddenText.toLowerCase();
+			if (!hay.contains(needle)) continue;
+
+			// Track the closest in document order, used as the wrap fallback.
+			if (bestAny == null
+					|| (forward && fr.headerLine < bestAny.headerLine)
+					|| (!forward && fr.headerLine > bestAny.headerLine)) {
+				bestAny = fr;
+			}
+			// Forward includes headerLine == caretLine: the body sits at
+			// headerLine+1+ in the buffer, which is past the caret offset.
+			// Backward must be strict: a fold at the caret line lives after
+			// the caret, so backward find() wouldn't reach it.
+			boolean inDir = forward ? (fr.headerLine >= caretLine) : (fr.headerLine < caretLine);
+			if (!inDir) continue;
+			if (bestInDir == null
+					|| (forward && fr.headerLine < bestInDir.headerLine)
+					|| (!forward && fr.headerLine > bestInDir.headerLine)) {
+				bestInDir = fr;
+			}
+		}
+
+		FoldingManager.FoldRegion pick = bestInDir != null ? bestInDir : (wrap ? bestAny : null);
+		if (pick == null) return false;
+		folding.toggleAtLine(pick.headerLine);
 		return true;
 	}
 }

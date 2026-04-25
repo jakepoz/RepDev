@@ -63,6 +63,7 @@ public class Config implements Serializable {
 	private boolean windowMaximized;
 	private Point windowSize;
 	private boolean listUnusedVars, wrapSearch, caseSensitive, neverTerminateKeepAlive;
+	private boolean includeFoldedSections;
 	private int terminateHour;
 	private int terminateMinute;
 	private int sashHSize, sashVSize;
@@ -435,6 +436,22 @@ public class Config implements Serializable {
 	 */
 	public static void setCaseSensitive(boolean b){
 		me.caseSensitive = b;
+	}
+
+	/**
+	 * Return true if Include Folded Sections is checked in the FindReplaceShell dialogue box.
+	 * @return boolean
+	 */
+	public static boolean getIncludeFoldedSections(){
+		return me.includeFoldedSections;
+	}
+
+	/**
+	 * Set this to true if Include Folded Sections is checked in the FindReplaceShell dialogue box.
+	 * @param boolean
+	 */
+	public static void setIncludeFoldedSections(boolean b){
+		me.includeFoldedSections = b;
 	}
 	
 	/**
