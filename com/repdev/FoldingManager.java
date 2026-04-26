@@ -230,8 +230,24 @@ public class FoldingManager implements HiddenTextProvider {
 		// Head tokens on folded header lines are orphans: their matching end
 		// has been removed from the buffer, so pushing them onto the stack
 		// would mispair outer regions. Collect those lines up front and skip.
+		// Bracket folds also leave an orphan ']' in the buffer at headerLine+1
+		// (the bracket fold preserves the closer so the comment highlighter
+		// still sees it). Without skipping it too, the ']' pops whatever outer
+		// head is on the stack — e.g. a PROCEDURE that contains the folded
+		// bracket — and produces a bogus FoldableRange that ends at the ']'
+		// instead of the real END. That misclick then strands the inner
+		// folds (DO/END etc.) outside the new fold's hiddenText, leaving them
+		// as ghost entries with headerLines past the visible buffer.
 		HashSet<Integer> foldedHeaderLines = new HashSet<Integer>();
-		for (int i = 0; i < folded.size(); i++) foldedHeaderLines.add(folded.get(i).headerLine);
+		HashSet<Integer> orphanCloserLines = new HashSet<Integer>();
+		for (int i = 0; i < folded.size(); i++) {
+			FoldRegion fr = folded.get(i);
+			foldedHeaderLines.add(fr.headerLine);
+			String header = headerLineText(fr.headerLine);
+			if (header != null && header.trim().startsWith("[")) {
+				orphanCloserLines.add(fr.headerLine + 1);
+			}
+		}
 
 		Stack<Integer> stack = new Stack<Integer>();
 		int charCount = txt.getCharCount();
@@ -250,6 +266,15 @@ public class FoldingManager implements HiddenTextProvider {
 				if (foldedHeaderLines.contains(tLine)) continue; // orphan head inside a collapsed region
 				stack.push(i);
 			} else if (t.isRealEnd() && !")".equals(s) && !"\"".equals(s) && !"'".equals(s)) {
+				if ("]".equals(s) && !orphanCloserLines.isEmpty()) {
+					int tStart = t.getStart();
+					if (tStart >= 0 && tStart < charCount) {
+						try {
+							int tLine = txt.getLineAtOffset(tStart);
+							if (orphanCloserLines.contains(tLine)) continue;
+						} catch (IllegalArgumentException ignored) { }
+					}
+				}
 				if (!stack.isEmpty()) {
 					int headIdx = stack.pop();
 					Token head = tokens.get(headIdx);
