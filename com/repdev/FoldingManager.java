@@ -25,6 +25,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Stack;
 
+import org.eclipse.swt.custom.ExtendedModifyEvent;
+import org.eclipse.swt.custom.ExtendedModifyListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -122,6 +124,17 @@ public class FoldingManager implements HiddenTextProvider {
 	}
 
 	private void install() {
+		// Registered first so headerLine shifts complete before downstream
+		// listeners (SyntaxHighlighter -> RepgenParser.textModified) run.
+		// Without this ordering, parser-side canonical-source reassembly sees
+		// stale headerLine values for one edit cycle and reinserts hidden
+		// blocks at the wrong offset — corrupting model-coord parse state.
+		txt.addExtendedModifyListener(new ExtendedModifyListener() {
+			public void modifyText(ExtendedModifyEvent event) {
+				onTextModified(event);
+			}
+		});
+
 		txt.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				paintMarkers(e);
@@ -140,6 +153,58 @@ public class FoldingManager implements HiddenTextProvider {
 				toggleAtLine(line);
 			}
 		});
+	}
+
+	/**
+	 * Apply fold-state updates triggered by user edits to the visible buffer.
+	 * Two concerns:
+	 * <ol>
+	 *   <li>{@link #shiftFoldsBelow}: edits above a fold change the view line
+	 *       of its header; the {@link FoldRegion#headerLine} stored on each
+	 *       collapsed entry must follow.</li>
+	 *   <li>{@link #recomputeRanges}: edits may add/remove foldable head/end
+	 *       pairs, so the cached foldable list needs rebuilding.</li>
+	 * </ol>
+	 * Skipped during in-progress fold operations — those manage their own
+	 * shifts and rebuilds.
+	 */
+	private void onTextModified(ExtendedModifyEvent event) {
+		if (inFoldOp) return;
+
+		if (hasActiveFolds()) {
+			String inserted = "";
+			int charCount = txt.getCharCount();
+			if (event.length > 0 && event.start >= 0 && event.start + event.length <= charCount) {
+				try {
+					inserted = txt.getTextRange(event.start, event.length);
+				} catch (Exception ex) {
+					// Bounds-check above should preclude this; log so an
+					// upstream miscount surfaces instead of silently leaving
+					// fold headerLines wrong (which later drops fold bodies
+					// at EOF, see offsetAtLineStart diagnostic).
+					System.err.println("FoldingManager.onTextModified: getTextRange failed — start="
+							+ event.start + " length=" + event.length + " charCount=" + charCount
+							+ "; fold shifts may be wrong: " + ex);
+				}
+			} else if (event.length > 0) {
+				System.err.println("FoldingManager.onTextModified: event offsets out of range — start="
+						+ event.start + " length=" + event.length + " charCount=" + charCount
+						+ "; fold shifts may be wrong");
+			}
+			int removedNL = 0, addedNL = 0;
+			String removed = event.replacedText == null ? "" : event.replacedText;
+			for (int i = 0; i < removed.length(); i++) if (removed.charAt(i) == '\n') removedNL++;
+			for (int i = 0; i < inserted.length(); i++) if (inserted.charAt(i) == '\n') addedNL++;
+			int delta = addedNL - removedNL;
+			if (delta != 0) {
+				int editStartLine;
+				try { editStartLine = txt.getLineAtOffset(event.start); }
+				catch (IllegalArgumentException ex) { editStartLine = -1; }
+				if (editStartLine >= 0) shiftFoldsBelow(editStartLine, delta);
+			}
+		}
+
+		recomputeRanges();
 	}
 
 	public int getExtraGutterWidth() { return FOLD_COLUMN_WIDTH; }
@@ -258,11 +323,17 @@ public class FoldingManager implements HiddenTextProvider {
 		for (int i = 0; i < tokens.size(); i++) {
 			Token t = tokens.get(i);
 			String s = t.getStr();
+			// Token offsets are model (canonical-source) coords. Foldable
+			// ranges are expressed in view coords because they drive UI
+			// (gutter, click-to-fold) and the buffer slice on collapse. Tokens
+			// whose model offset maps to -1 are inside an existing fold —
+			// skip them; they belong to the outer fold's hiddenText and
+			// shouldn't generate a new foldable range.
 			// Only consider block-level head/end pairs: skip string/date/paren openers
 			// which produce noisy single-line folds.
 			if (t.isRealHead() && !"\"".equals(s) && !"'".equals(s)
 					&& !"(".equals(s) && !":(".equals(s)) {
-				int tStart = t.getStart();
+				int tStart = modelToView(t.getStart());
 				if (tStart < 0 || tStart >= charCount) continue;
 				int tLine;
 				try { tLine = txt.getLineAtOffset(tStart); }
@@ -271,7 +342,7 @@ public class FoldingManager implements HiddenTextProvider {
 				stack.push(i);
 			} else if (t.isRealEnd() && !")".equals(s) && !"\"".equals(s) && !"'".equals(s)) {
 				if ("]".equals(s) && !orphanCloserLines.isEmpty()) {
-					int tStart = t.getStart();
+					int tStart = modelToView(t.getStart());
 					if (tStart >= 0 && tStart < charCount) {
 						try {
 							int tLine = txt.getLineAtOffset(tStart);
@@ -282,8 +353,8 @@ public class FoldingManager implements HiddenTextProvider {
 				if (!stack.isEmpty()) {
 					int headIdx = stack.pop();
 					Token head = tokens.get(headIdx);
-					int hStart = head.getStart();
-					int eStart = t.getStart();
+					int hStart = modelToView(head.getStart());
+					int eStart = modelToView(t.getStart());
 					if (hStart < 0 || eStart < 0 || hStart >= charCount || eStart > charCount) continue;
 					try {
 						int hl = txt.getLineAtOffset(hStart);
@@ -636,6 +707,164 @@ public class FoldingManager implements HiddenTextProvider {
 		int n = 0;
 		for (int i = 0; i < s.length(); i++) if (s.charAt(i) == '\n') n++;
 		return n;
+	}
+
+	// ------------------------------------------------------------------
+	// Model/view coordinate translation.
+	//
+	// Folded regions are physically excised from the StyledText buffer. The
+	// canonical (unfolded) source — returned by {@link #getUnfoldedText()} /
+	// {@link #getFullSourceText()} — is the model; the StyledText buffer is a
+	// projection that hides those segments.
+	//
+	// Two distinct offset spaces:
+	//   * model offset: index into the unfolded source.
+	//   * view offset:  index into the live StyledText buffer.
+	// Parser data structures (tokens, vars, errors) live in model coords so
+	// they stay correct across fold/expand. UI consumers (caret placement,
+	// styling, gutter) live in view coords. Translation only happens at the
+	// boundary between the two — that's the entire purpose of this API.
+	//
+	// Implementation note: folds are stored sorted-on-collapse and walked in
+	// view-headerLine order. For each fold, its hidden text sits in the model
+	// at view-offset(headerLine+1) plus the cumulative length of all earlier
+	// folds' hidden text. The two methods below are exact inverses of each
+	// other on visible offsets, and modelToView returns -1 on hidden offsets.
+	// ------------------------------------------------------------------
+
+	private ArrayList<FoldRegion> foldedSortedByHeader() {
+		ArrayList<FoldRegion> sorted = new ArrayList<FoldRegion>(folded);
+		Collections.sort(sorted, new Comparator<FoldRegion>() {
+			public int compare(FoldRegion a, FoldRegion b) { return a.headerLine - b.headerLine; }
+		});
+		return sorted;
+	}
+
+	/**
+	 * Translate a view offset (index into the live buffer) to a model offset
+	 * (index into the unfolded source). Inverse of {@link #modelToView(int)}
+	 * on visible offsets.
+	 */
+	public int viewToModel(int viewOffset) {
+		if (folded.isEmpty()) return viewOffset;
+		int modelOffset = viewOffset;
+		ArrayList<FoldRegion> sorted = foldedSortedByHeader();
+		for (int i = 0; i < sorted.size(); i++) {
+			FoldRegion fr = sorted.get(i);
+			int hiddenStartView;
+			try { hiddenStartView = txt.getOffsetAtLine(fr.headerLine + 1); }
+			catch (IllegalArgumentException ex) { continue; }
+			if (viewOffset >= hiddenStartView) modelOffset += fr.hiddenText.length();
+		}
+		return modelOffset;
+	}
+
+	/**
+	 * Translate a model offset to a view offset, or {@code -1} if the model
+	 * offset lies inside a currently-folded region (not visible).
+	 */
+	public int modelToView(int modelOffset) {
+		if (folded.isEmpty()) return modelOffset;
+		ArrayList<FoldRegion> sorted = foldedSortedByHeader();
+		int accum = 0;
+		for (int i = 0; i < sorted.size(); i++) {
+			FoldRegion fr = sorted.get(i);
+			int hiddenStartView;
+			try { hiddenStartView = txt.getOffsetAtLine(fr.headerLine + 1); }
+			catch (IllegalArgumentException ex) { continue; }
+			int hiddenStartModel = hiddenStartView + accum;
+			int hiddenEndModel = hiddenStartModel + fr.hiddenText.length();
+			if (modelOffset >= hiddenStartModel && modelOffset < hiddenEndModel) return -1;
+			if (modelOffset >= hiddenEndModel) accum += fr.hiddenText.length();
+		}
+		return modelOffset - accum;
+	}
+
+	/** True iff the given model offset is currently visible (not inside a fold). */
+	public boolean isModelOffsetVisible(int modelOffset) {
+		return modelToView(modelOffset) >= 0;
+	}
+
+	/**
+	 * Translate a zero-based model line number to a zero-based view line
+	 * number, or {@code -1} if the line is hidden by a fold.
+	 */
+	public int modelLineToViewLine(int modelLine) {
+		if (folded.isEmpty()) return modelLine;
+		ArrayList<FoldRegion> sorted = foldedSortedByHeader();
+		int viewLine = modelLine;
+		for (int i = 0; i < sorted.size(); i++) {
+			FoldRegion fr = sorted.get(i);
+			int hiddenStartModelLine = fr.headerLine + 1;
+			// Cumulative folded-line offset before this fold is what shifts
+			// model-line numbering up to this point — but headerLine is
+			// already in view coords, so the hidden lines below it haven't
+			// yet been counted. Add them now if our modelLine is past them.
+			int hiddenLines = countNewlines(fr.hiddenText);
+			// hiddenStartModelLine is in *current view-line-then-shifted* terms.
+			// The model line that corresponds to view headerLine+1 = headerLine+1 + (sum of hidden lines from folds with smaller headerLine).
+			int hiddenStartModelLineAbs = hiddenStartModelLine;
+			for (int j = 0; j < i; j++) hiddenStartModelLineAbs += countNewlines(sorted.get(j).hiddenText);
+			if (modelLine >= hiddenStartModelLineAbs && modelLine < hiddenStartModelLineAbs + hiddenLines) return -1;
+			if (modelLine >= hiddenStartModelLineAbs + hiddenLines) viewLine -= hiddenLines;
+		}
+		return viewLine;
+	}
+
+	/** Translate a zero-based view line number to a zero-based model line number. */
+	public int viewLineToModelLine(int viewLine) {
+		if (folded.isEmpty()) return viewLine;
+		ArrayList<FoldRegion> sorted = foldedSortedByHeader();
+		int modelLine = viewLine;
+		for (int i = 0; i < sorted.size(); i++) {
+			FoldRegion fr = sorted.get(i);
+			if (fr.headerLine < viewLine) modelLine += countNewlines(fr.hiddenText);
+		}
+		return modelLine;
+	}
+
+	/**
+	 * Expand any folds whose hidden range covers the given model offset, so
+	 * subsequent {@link #modelToView(int)} returns a visible offset. No-op if
+	 * the offset is already visible. Used by goto-definition / error-row
+	 * navigation when the target sits inside a collapsed region.
+	 */
+	public void ensureModelOffsetVisible(int modelOffset) {
+		if (folded.isEmpty()) return;
+		// Iterate over a snapshot — expand() mutates `folded`.
+		ArrayList<FoldRegion> snapshot = foldedSortedByHeader();
+		int accum = 0;
+		for (int i = 0; i < snapshot.size(); i++) {
+			FoldRegion fr = snapshot.get(i);
+			int hiddenStartView;
+			try { hiddenStartView = txt.getOffsetAtLine(fr.headerLine + 1); }
+			catch (IllegalArgumentException ex) { continue; }
+			int hiddenStartModel = hiddenStartView + accum;
+			int hiddenEndModel = hiddenStartModel + fr.hiddenText.length();
+			if (modelOffset >= hiddenStartModel && modelOffset < hiddenEndModel) {
+				expand(fr);
+				return;
+			}
+			if (modelOffset >= hiddenEndModel) accum += fr.hiddenText.length();
+		}
+	}
+
+	/** Convenience: like {@link #ensureModelOffsetVisible} for a model line. */
+	public void ensureModelLineVisible(int modelLine) {
+		ensureModelOffsetVisible(offsetOfModelLineStart(modelLine));
+	}
+
+	private int offsetOfModelLineStart(int modelLine) {
+		String s = getUnfoldedText();
+		if (modelLine <= 0) return 0;
+		int found = 0;
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) == '\n') {
+				found++;
+				if (found == modelLine) return i + 1;
+			}
+		}
+		return s.length();
 	}
 
 	static int displayLineNumberFor(int visibleLine, ArrayList<FoldRegion> foldedRegions) {

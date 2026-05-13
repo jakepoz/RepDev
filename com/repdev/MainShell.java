@@ -3032,20 +3032,16 @@ public class MainShell {
 					editor = (EditorComposite) o;
 
 				if (error.getLine() >= 0 && editor != null) {
-					editor.getStyledText().setTopIndex(Math.max(0, error.getLine() - 10));
-
-					try {
-						editor.getStyledText().setCaretOffset(
-								Math.min(editor.getStyledText().getOffsetAtLine(Math.max(0, error.getLine() - 1)) + Math.max(0, error.getCol() - 1), editor.getStyledText()
-										.getCharCount() - 1));
-						editor.handleCaretChange();
+					// Error line/col are model coords (1-based, as returned by
+					// Symitar / lineColAt). gotoModelLine takes 0-based model
+					// line/col and auto-expands any enclosing fold so the
+					// error site is visible even when its section is collapsed.
+					int modelLine = Math.max(0, error.getLine() - 1);
+					int modelCol = Math.max(0, error.getCol() - 1);
+					if (editor.gotoModelLine(modelLine, modelCol)) {
 						editor.lineHighlight();
-						// Drop Navigation Position
-						addToNavHistory(editor.getFile(), editor.getStyledText().getLineAtOffset(editor.getStyledText().getCaretOffset()));						
-					} catch (IllegalArgumentException ex) {
-						// Just ignore it
+						addToNavHistory(editor.getFile(), editor.getStyledText().getLineAtOffset(editor.getStyledText().getCaretOffset()));
 					}
-
 					editor.getStyledText().setFocus();
 				}
 			}
@@ -3074,20 +3070,17 @@ public class MainShell {
 					editor = (EditorComposite) o;
 
 				if (task.getLine() >= 0 && editor != null) {
-					editor.getStyledText().setTopIndex(Math.max(0, task.getLine() - 10));
-
-					try {
-						editor.getStyledText().setCaretOffset(
-								Math.min(editor.getStyledText().getOffsetAtLine(Math.max(0, task.getLine() - 1)) + Math.max(0, task.getCol() - 1), editor.getStyledText()
-										.getCharCount() - 1));
-						editor.handleCaretChange();
+					// Task line/col are 0-based model coords (set by the task
+					// scanner via lineColAt). gotoModelLine handles fold
+					// expansion + view translation; preserving the historical
+					// MainShell semantic where task.getLine() is treated as
+					// 1-based for navigation by subtracting 1.
+					int modelLine = Math.max(0, task.getLine() - 1);
+					int modelCol = Math.max(0, task.getCol() - 1);
+					if (editor.gotoModelLine(modelLine, modelCol)) {
 						editor.lineHighlight();
-						// Drop Navigation Position
 						addToNavHistory(editor.getFile(), editor.getStyledText().getLineAtOffset(editor.getStyledText().getCaretOffset()));
-					} catch (IllegalArgumentException ex) {
-						// Just ignore it
 					}
-
 					editor.getStyledText().setFocus();
 				}
 			}

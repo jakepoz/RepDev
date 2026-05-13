@@ -50,4 +50,17 @@ public interface HiddenTextProvider {
 	 * always project the full source should always return non-null.
 	 */
 	String getFullSourceText();
+
+	/**
+	 * Translate a view offset (index into the live {@code StyledText} buffer)
+	 * to a model offset (index into the unfolded source). Implementations
+	 * with no active projection return {@code viewOffset} unchanged.
+	 */
+	int viewToModel(int viewOffset);
+
+	/**
+	 * Translate a model offset to a view offset, or {@code -1} if the model
+	 * offset lies inside a currently-hidden region.
+	 */
+	int modelToView(int modelOffset);
 }
