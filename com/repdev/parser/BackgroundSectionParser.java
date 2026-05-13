@@ -114,9 +114,17 @@ public class BackgroundSectionParser{
 	 * This is the exposed method for calling the background parser.
 	 */
 	public void refreshList(ArrayList <Token> token, String txt){
-		this.token = token;
+		// Defensive copy: token positions are model offsets that index into
+		// {@code txt}. The caller hands us a live reference to the parser's
+		// ltokens list, which the parser keeps mutating from the UI thread.
+		// Without a snapshot the background parse can iterate tokens that
+		// describe a state more recent than the accompanying text, producing
+		// substring(start, end) calls with offsets past txt.length() — e.g.
+		// "Range [31710, 31719) out of bounds for length 30230" while the
+		// user edits a long file with sections collapsed.
+		this.token = (token != null) ? new ArrayList<Token>(token) : new ArrayList<Token>();
 		this.txt = txt;
-		
+
 		// Do not parse again if it is currently parsing
 		if(!parsing){
 			parsing = true;
@@ -177,14 +185,24 @@ public class BackgroundSectionParser{
 					System.out.println(tok.getStr()+":"+curDepth);
 				}
 				curDepth=1;
+				// Defensive bounds checks: this thread reads tokens against a
+				// text snapshot, but Token offsets can briefly disagree with
+				// the snapshot when the parser races on the UI thread. Skip
+				// the section rather than crash with substring OOBE.
+				String title;
 				if(tok.getStr().equals("procedure")){
-					si.setTitle(txt.substring(tok.getAfter().getStart(),tok.getAfter().getEnd()));
+					Token after = tok.getAfter();
+					if (after == null) continue;
+					title = safeSubstring(txt, after.getStart(), after.getEnd());
 				}
 				else{
-					si.setTitle(txt.substring(tok.getStart(),tok.getEnd()));
+					title = safeSubstring(txt, tok.getStart(), tok.getEnd());
 				}
+				if (title == null) continue;
+				si.setTitle(title);
 				si.setPos(tok.getStart());
-				si.setFirstInsertPos(txt.indexOf("\n", si.getPos())+1);
+				int nl = (si.getPos() >= 0 && si.getPos() <= txt.length()) ? txt.indexOf("\n", si.getPos()) : -1;
+				si.setFirstInsertPos(nl + 1);
 			}
 			else if(curDepth == 0){
 				if(tok.getStr().equals("end") && tok.isRealEnd()){
@@ -199,6 +217,17 @@ public class BackgroundSectionParser{
 		parsing = false;
 	}
 	
+	/**
+	 * Substring helper that returns {@code null} instead of throwing when the
+	 * requested range falls outside the snapshot. Used to absorb the brief
+	 * window where this thread's token snapshot describes a parser state that
+	 * has advanced past the accompanying text snapshot.
+	 */
+	private static String safeSubstring(String src, int start, int end) {
+		if (src == null || start < 0 || end < start || end > src.length()) return null;
+		return src.substring(start, end);
+	}
+
 	/**
 	 * This is an internal method that returns true if the specified is a section head.
 	 * @return <B>boolean</B> true/false
