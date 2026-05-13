@@ -63,4 +63,14 @@ public interface HiddenTextProvider {
 	 * offset lies inside a currently-hidden region.
 	 */
 	int modelToView(int modelOffset);
+
+	/**
+	 * Notification that the parser has finished updating its token list.
+	 * Folding implementations that derive foldable ranges from
+	 * {@code parser.getLtokens()} should rebuild that cache here — driving
+	 * the rebuild from this callback rather than a {@code modifyText}
+	 * listener avoids the ordering trap where the listener fires before
+	 * the parser has processed the same edit.
+	 */
+	void onTokensUpdated();
 }

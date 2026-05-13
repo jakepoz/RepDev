@@ -1424,6 +1424,32 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		frmTxt.bottom = new FormAttachment(100);
 		txt.setLayoutData(frmTxt);
 
+		// Force a full reparse + fold-range refresh now that the buffer is
+		// populated. The txt.setText(str) above does fire modifyText and the
+		// SyntaxHighlighter→parser→onTokensUpdated chain runs, but observed
+		// behavior on file open was an empty foldable list (no carets drawn)
+		// until the user typed something. Forcing a synchronous rebuild here
+		// removes any dependence on listener ordering and timing for the
+		// initial draw.
+		if (parser != null) {
+			parser.reparseAll();
+		}
+		if (folding != null) {
+			folding.recomputeRanges();
+			// Diagnostic confirmed `foldable` is populated at this point, but
+			// the synchronous txt.redraw() above fires before SWT has finished
+			// laying out the StyledText — paintMarkers reads getClientArea()
+			// height of 0 and skips every line. Defer a second redraw to the
+			// next event loop tick so the gutter paint sees real bounds.
+			final FoldingManager f = folding;
+			final StyledText t = txt;
+			t.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!t.isDisposed()) t.redraw();
+				}
+			});
+		}
+
 		if( parser != null )
 			parser.errorCheck();
 

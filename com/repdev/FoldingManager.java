@@ -171,6 +171,13 @@ public class FoldingManager implements HiddenTextProvider {
 	private void onTextModified(ExtendedModifyEvent event) {
 		if (inFoldOp) return;
 
+		// Fold-headerLine shifts MUST run before SyntaxHighlighter's listener
+		// fires parser.textModified — the parser reassembles canonical source
+		// from the post-edit view buffer plus folded segments, and that
+		// reassembly is only correct when each fold's headerLine reflects
+		// post-edit line numbering. Foldable-range recomputation, on the
+		// other hand, has to wait until *after* the parser has produced fresh
+		// tokens; that path lives in {@link #onTokensUpdated()} instead.
 		if (hasActiveFolds()) {
 			String inserted = "";
 			int charCount = txt.getCharCount();
@@ -203,7 +210,16 @@ public class FoldingManager implements HiddenTextProvider {
 				if (editStartLine >= 0) shiftFoldsBelow(editStartLine, delta);
 			}
 		}
+	}
 
+	/**
+	 * Parser callback: rebuild the foldable-range cache against the freshly
+	 * updated token list. Suppressed during fold-batches (collapseAll /
+	 * expandAll), which call {@code recomputeRanges} once at the end of the
+	 * batch via their own path.
+	 */
+	public void onTokensUpdated() {
+		if (inFoldOp) return;
 		recomputeRanges();
 	}
 
@@ -341,26 +357,31 @@ public class FoldingManager implements HiddenTextProvider {
 				if (foldedHeaderLines.contains(tLine)) continue; // orphan head inside a collapsed region
 				stack.push(i);
 			} else if (t.isRealEnd() && !")".equals(s) && !"\"".equals(s) && !"'".equals(s)) {
+				// Translate first and skip ends inside a hidden region BEFORE
+				// touching the stack. Popping for a hidden end steals an entry
+				// from an outer block whose head we did push — the next real
+				// end then pairs with the wrong head, and an outer fold ends
+				// up matched to an inner END (e.g. a PRINT TITLE that spans
+				// 104-160 gets clipped to 104-152 because the manual fold's
+				// own END token inside the hidden body popped first).
+				int eStartView = modelToView(t.getStart());
+				if (eStartView < 0 || eStartView >= charCount) continue;
 				if ("]".equals(s) && !orphanCloserLines.isEmpty()) {
-					int tStart = modelToView(t.getStart());
-					if (tStart >= 0 && tStart < charCount) {
-						try {
-							int tLine = txt.getLineAtOffset(tStart);
-							if (orphanCloserLines.contains(tLine)) continue;
-						} catch (IllegalArgumentException ignored) { }
-					}
+					try {
+						int tLine = txt.getLineAtOffset(eStartView);
+						if (orphanCloserLines.contains(tLine)) continue;
+					} catch (IllegalArgumentException ignored) { }
 				}
 				if (!stack.isEmpty()) {
 					int headIdx = stack.pop();
 					Token head = tokens.get(headIdx);
 					int hStart = modelToView(head.getStart());
-					int eStart = modelToView(t.getStart());
-					if (hStart < 0 || eStart < 0 || hStart >= charCount || eStart > charCount) continue;
+					if (hStart < 0 || hStart >= charCount) continue;
 					try {
 						int hl = txt.getLineAtOffset(hStart);
-						int el = txt.getLineAtOffset(eStart);
+						int el = txt.getLineAtOffset(eStartView);
 						boolean isBracket = "[".equals(head.getStr());
-						if (el - hl >= 1) foldable.add(new FoldableRange(hl, el, eStart, isBracket));
+						if (el - hl >= 1) foldable.add(new FoldableRange(hl, el, eStartView, isBracket));
 					} catch (IllegalArgumentException ignored) { }
 				}
 			}
@@ -426,6 +447,23 @@ public class FoldingManager implements HiddenTextProvider {
 	public void collapseAllSilent() { collapseAllInternal(false); }
 
 	private void collapseAllInternal(boolean pushUndo) {
+		// Expand any pre-existing manual folds first so the snapshot ranges
+		// describe the fully-expanded view. Without this, snapshot.endLine
+		// reflects a T=0 view where some lines are hidden — by the time a
+		// later iteration processes the outermost block, those lines have
+		// been absorbed into a chain of batch-created folds and the snapshot
+		// value no longer matches the buffer, leaving the tail of the outer
+		// block unfolded (the "PRINT TITLE folded to line 155 instead of
+		// 160" symptom). The +preBatchLines accounting in collapseInternal
+		// only handles the simplest case (pre-batch fold directly nested in
+		// the snapshot range); chained absorption defeats it. Expanding up
+		// front sidesteps the bookkeeping entirely. Semantics are unchanged
+		// for fold-all: manual folds get absorbed into their enclosing
+		// top-level block exactly as before.
+		if (!folded.isEmpty()) {
+			expandAllInternal(false);
+		}
+
 		// Fold from bottom up so earlier line numbers stay stable during iteration.
 		ArrayList<FoldableRange> ranges = new ArrayList<FoldableRange>(foldable);
 		Collections.sort(ranges, new Comparator<FoldableRange>() {
@@ -435,16 +473,10 @@ public class FoldingManager implements HiddenTextProvider {
 		batchMode = true;
 		HashSet<String> prevSnapshot = preBatchHiddenTexts;
 		preBatchHiddenTexts = new HashSet<String>();
-		for (int i = 0; i < folded.size(); i++) preBatchHiddenTexts.add(folded.get(i).hiddenText);
-		// Anchor the t=0 coord system for this batch: every fold already in
-		// `folded` gets originalHeaderLine = its current headerLine. Batch-
-		// added folds will set originalHeaderLine from their snapshot range's
-		// headerLine, which is also a t=0 coord. That keeps nested-check math
-		// consistent regardless of shift accumulation.
-		for (int i = 0; i < folded.size(); i++) {
-			FoldRegion fr = folded.get(i);
-			folded.set(i, new FoldRegion(fr.headerLine, fr.hiddenText, fr.headerLine));
-		}
+		// With pre-batch folds now fully expanded above, there are no
+		// pre-batch hiddenTexts to track; the snapshot below is exhaustive.
+		// Keep the field-allocation pattern so nested-expansion math elsewhere
+		// stays consistent.
 		boolean any = false;
 		try {
 			for (int i = 0; i < ranges.size(); i++) {
@@ -482,6 +514,14 @@ public class FoldingManager implements HiddenTextProvider {
 			if (parser != null) parser.setReparse(false);
 			txt.setRedraw(false);
 			txt.replaceTextRange(0, txt.getCharCount(), expanded);
+			// Clear `folded` BEFORE the parser reparses. parser.reparseAll()
+			// reads canonical source via getUnfoldedText(), which re-inserts
+			// every entry in `folded` into the buffer text. If the entries
+			// linger past the replaceTextRange (which already wrote the full
+			// expanded text), canonical comes back with hidden segments
+			// duplicated — token offsets then drift past buffer length and
+			// every downstream view-coord operation degrades into garbage.
+			folded.clear();
 		} finally {
 			txt.setRedraw(true);
 			if (parser != null) {
@@ -491,7 +531,6 @@ public class FoldingManager implements HiddenTextProvider {
 			inFoldOp = false;
 		}
 
-		folded.clear();
 		recomputeRanges();
 		if (pushUndo) editor.pushFoldUndo(EditorComposite.FOLD_OP_EXPAND_ALL, -1);
 	}
@@ -589,6 +628,37 @@ public class FoldingManager implements HiddenTextProvider {
 			if (parser != null) parser.setReparse(false);
 			txt.setRedraw(false);
 			txt.replaceTextRange(sliceStart, sliceEnd - sliceStart, "");
+
+			// Bring `folded` to its post-collapse shape BEFORE parser.reparseAll().
+			// parser.reparseAll() reads canonical source via getUnfoldedText(),
+			// which combines the live buffer with every entry in `folded` —
+			// each entry inserted at its (current) headerLine. Two updates
+			// have to land first or canonical comes back wrong:
+			//   1. Shift downstream entries up by the removed line count, so
+			//      their headerLines still point to the right view rows.
+			//   2. Append the just-collapsed region, so its hidden body is
+			//      present in canonical (the buffer has lost those lines).
+			// Without this, every reparseAll mid-collapse produced model
+			// offsets that didn't match the buffer state the UI sees, which
+			// surfaced as fold-all mis-collapsing, garbled highlighting, and
+			// later offsetAtLineStart "requested line N past EOF" warnings.
+			int removedLines = linesBefore - txt.getLineCount();
+			int hiddenNL = countNewlines(hidden);
+			if (hiddenNL != removedLines) {
+				System.err.println("FoldingManager.collapse: removedLines/hiddenNL mismatch — removed=" + removedLines
+						+ " hiddenNL=" + hiddenNL + " header=" + range.headerLine + " end=" + range.endLine
+						+ " bracket=" + range.bracket + "; using removedLines for shifts");
+			}
+			// Compute the original last visible line that moved up by removedLines.
+			// After collapse: the "]" (bracket case) or nothing extra stays at headerLine+1.
+			int breakLine = range.bracket ? range.headerLine : range.endLine;
+			for (int i = 0; i < folded.size(); i++) {
+				FoldRegion fr = folded.get(i);
+				if (fr.headerLine > breakLine) {
+					folded.set(i, new FoldRegion(fr.headerLine - removedLines, fr.hiddenText, fr.originalHeaderLine));
+				}
+			}
+			folded.add(new FoldRegion(range.headerLine, hidden));
 		} finally {
 			txt.setRedraw(true);
 			if (parser != null) {
@@ -597,28 +667,6 @@ public class FoldingManager implements HiddenTextProvider {
 			}
 			inFoldOp = false;
 		}
-
-		int removedLines = linesBefore - txt.getLineCount();
-		// Sanity: the number of newlines captured must match what the buffer lost,
-		// or every shift derived from removedLines below is off. This has caught
-		// trailing-newline edge cases in the past where sliceEnd=charCount but the
-		// last line had no terminator; log loudly if it ever fires again.
-		int hiddenNL = countNewlines(hidden);
-		if (hiddenNL != removedLines) {
-			System.err.println("FoldingManager.collapse: removedLines/hiddenNL mismatch — removed=" + removedLines
-					+ " hiddenNL=" + hiddenNL + " header=" + range.headerLine + " end=" + range.endLine
-					+ " bracket=" + range.bracket + "; using removedLines for shifts");
-		}
-		// Compute the original last visible line that moved up by removedLines.
-		// After collapse: the "]" (bracket case) or nothing extra stays at headerLine+1.
-		int breakLine = range.bracket ? range.headerLine : range.endLine;
-		for (int i = 0; i < folded.size(); i++) {
-			FoldRegion fr = folded.get(i);
-			if (fr.headerLine > breakLine) {
-				folded.set(i, new FoldRegion(fr.headerLine - removedLines, fr.hiddenText, fr.originalHeaderLine));
-			}
-		}
-		folded.add(new FoldRegion(range.headerLine, hidden));
 
 		if (!batchMode) recomputeRanges();
 		if (pushUndo) editor.pushFoldUndo(EditorComposite.FOLD_OP_COLLAPSE, range.headerLine);
@@ -638,6 +686,20 @@ public class FoldingManager implements HiddenTextProvider {
 			if (parser != null) parser.setReparse(false);
 			txt.setRedraw(false);
 			txt.replaceTextRange(insertOffset, 0, region.hiddenText);
+			// Remove the expanded region from `folded` BEFORE the parser
+			// reparses. parser.reparseAll() reads canonical source via
+			// getUnfoldedText(), which re-inserts every still-folded entry.
+			// Leaving this region in `folded` after we've already written
+			// its body into the buffer would duplicate the hidden text in
+			// the canonical snapshot and corrupt every downstream offset.
+			folded.remove(region);
+			int addedLines = countNewlines(region.hiddenText);
+			for (int i = 0; i < folded.size(); i++) {
+				FoldRegion fr = folded.get(i);
+				if (fr.headerLine > region.headerLine) {
+					folded.set(i, new FoldRegion(fr.headerLine + addedLines, fr.hiddenText, fr.originalHeaderLine));
+				}
+			}
 		} finally {
 			txt.setRedraw(true);
 			if (parser != null) {
@@ -645,15 +707,6 @@ public class FoldingManager implements HiddenTextProvider {
 				if (!batchMode) parser.reparseAll();
 			}
 			inFoldOp = false;
-		}
-
-		folded.remove(region);
-		int addedLines = countNewlines(region.hiddenText);
-		for (int i = 0; i < folded.size(); i++) {
-			FoldRegion fr = folded.get(i);
-			if (fr.headerLine > region.headerLine) {
-				folded.set(i, new FoldRegion(fr.headerLine + addedLines, fr.hiddenText, fr.originalHeaderLine));
-			}
 		}
 
 		if (!batchMode) recomputeRanges();

@@ -1190,6 +1190,14 @@ public class RepgenParser {
 					parseIncludes();
 					initialIncludeParseNeeded = false;
 				}
+
+				// Notify the folding manager (or any other registered
+				// projection) that ltokens reflects the latest edit. Driving
+				// fold-range recomputation from this callback rather than a
+				// modifyText listener avoids the registration-order trap
+				// where the listener would otherwise fire ahead of this
+				// parse pass and rebuild ranges against stale tokens.
+				if (hiddenTextProvider != null) hiddenTextProvider.onTokensUpdated();
 			} catch (Exception e) {
 				System.err.println("Syntax Highlighter error!");
 				e.printStackTrace();
@@ -1222,6 +1230,7 @@ public class RepgenParser {
 			String canonical = canonicalSourceText();
 			parse(file.getName(), canonical, 0, canonical.length() - 1, 0, null, ltokens, lasttokens, removedtokens, lvars, txt);
 			rebuildVars(file.getName(), canonical, ltokens);
+			if (hiddenTextProvider != null) hiddenTextProvider.onTokensUpdated();
 			System.out.println("Reparsed");
 		} catch (Exception e) {
 			System.err.println("Syntax Highlighter error!");
