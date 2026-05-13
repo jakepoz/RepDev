@@ -38,4 +38,16 @@ public interface HiddenTextProvider {
 	 * i.e. excluding declaration bodies and comment bodies.
 	 */
 	Iterable<String> getUsageSearchableHiddenText();
+
+	/**
+	 * Snapshot of the canonical (unfolded) source text. The parser uses this
+	 * for variable discovery and error-position arithmetic so that content
+	 * hidden inside collapsed folds still contributes to the symbol table and
+	 * error reports.
+	 *
+	 * <p>Returning {@code null} signals "no projection in effect" — callers
+	 * fall back to the live {@code StyledText} buffer. Implementations that
+	 * always project the full source should always return non-null.
+	 */
+	String getFullSourceText();
 }

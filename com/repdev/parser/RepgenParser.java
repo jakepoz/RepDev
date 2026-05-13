@@ -232,6 +232,22 @@ public class RepgenParser {
 			try {
 				Display display = tblErrors.getDisplay();
 
+				// Snapshot the canonical (unfolded) source up front. Variables
+				// declared inside a collapsed fold hold model offsets that
+				// exceed txt.getCharCount(); computing line/col against this
+				// string rather than the live StyledText buffer keeps the
+				// worker from throwing IllegalArgumentException and silently
+				// aborting before any rows reach tblErrors.
+				final String[] canonicalSourceHolder = new String[1];
+				display.syncExec(new Runnable() {
+					public void run() {
+						if (txt.isDisposed()) return;
+						String full = (hiddenTextProvider != null) ? hiddenTextProvider.getFullSourceText() : null;
+						canonicalSourceHolder[0] = (full != null) ? full : txt.getText();
+					}
+				});
+				final String canonicalSource = (canonicalSourceHolder[0] != null) ? canonicalSourceHolder[0] : "";
+
 				// Remove old errors
 				errorList.clear();
 				taskList.clear();
@@ -273,13 +289,10 @@ public class RepgenParser {
 								if (var2.equals(var))
 									count++;
 
-							if (count > 1 && !tblErrors.isDisposed())
-								display.syncExec(new Runnable() {
-									public void run() {
-										if (!txt.isDisposed())
-											errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName().toUpperCase(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
-									}
-								});
+							if (count > 1 && !tblErrors.isDisposed()) {
+								int[] lc = lineColAt(canonicalSource, var.getPos());
+								errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName().toUpperCase(), lc[0] + 1, lc[1] + 1, Error.Type.WARNING));
+							}
 						}
 					}
 				}
@@ -338,14 +351,9 @@ public class RepgenParser {
 							}
 						}
 
-						if( unused && !tblErrors.isDisposed()){
-							display.syncExec(new Runnable() {
-								public void run() {
-									if (!txt.isDisposed() && com.repdev.Config.getListUnusedVars()){
-										errorList.add(new Error(var.getFilename(), "Variable Unused: " + var.getName().toUpperCase(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
-									}
-								}
-							});
+						if( unused && !tblErrors.isDisposed() && com.repdev.Config.getListUnusedVars()) {
+							int[] lc = lineColAt(canonicalSource, var.getPos());
+							errorList.add(new Error(var.getFilename(), "Variable Unused: " + var.getName().toUpperCase(), lc[0] + 1, lc[1] + 1, Error.Type.WARNING));
 						}
 					}
 					// Redraw Main Screen after background variables are parsed
@@ -1040,6 +1048,68 @@ public class RepgenParser {
 
 	}
 
+	/**
+	 * Rebuild {@link #lvars} from the canonical (unfolded) source rather than
+	 * the live {@code StyledText} buffer. When folding has removed a DEFINE
+	 * body from the visible buffer, those declarations are absent from
+	 * {@link #ltokens} and the standard {@code rebuildVars(...)} call would
+	 * wipe them from the symbol table — breaking IntelliSense, the unused-var
+	 * checker, and any other consumer of {@code lvars}.
+	 *
+	 * <p>If no {@link HiddenTextProvider} is set, or if it reports the same
+	 * text as the live buffer (no active folds), this is a passthrough to the
+	 * existing visible-buffer rebuild — preserving prior behavior in the
+	 * unfolded case and in compare-tab editors that don't fold.
+	 *
+	 * <p>When the canonical text differs from the buffer, a throwaway full
+	 * parse builds a temporary token list whose positions are <em>model
+	 * offsets</em> (i.e. offsets into the unfolded source). {@code rebuildVars}
+	 * is then driven from those tokens. {@link #ltokens} itself stays anchored
+	 * to the visible buffer so the syntax highlighter and fold-range
+	 * computation keep working unchanged.
+	 *
+	 * <p>Side effect: {@link Variable#getPos()} for vars declared inside a
+	 * folded region holds a model offset that exceeds {@code txt.getCharCount()}.
+	 * Callers that pass {@code var.getPos()} to {@code StyledText.getLineAtOffset}
+	 * must guard against that — see {@link BackgroundSymitarErrorChecker} for
+	 * the pattern (compute line/col against the canonical source string instead
+	 * of the live buffer).
+	 */
+	private synchronized void rebuildVarsFromCanonicalSource(String fileName) {
+		String fullText = (hiddenTextProvider != null) ? hiddenTextProvider.getFullSourceText() : null;
+		String visibleText = txt.getText();
+		if (fullText == null || fullText.equals(visibleText)) {
+			rebuildVars(fileName, visibleText, ltokens);
+			return;
+		}
+		ArrayList<Token> fullTokens = new ArrayList<Token>();
+		parse(fileName, fullText, 0, fullText.length() - 1, 0, null,
+				fullTokens, new ArrayList<Token>(), new ArrayList<Token>(),
+				new ArrayList<Variable>(), null);
+		rebuildVars(fileName, fullText, fullTokens);
+	}
+
+	/**
+	 * Compute (line, column) for a model offset against a canonical source
+	 * string. Used by the error checker so a {@link Variable#getPos()} that
+	 * lives inside a collapsed fold doesn't trip
+	 * {@code StyledText.getLineAtOffset} (which would throw
+	 * {@code IllegalArgumentException} for offsets past the visible buffer,
+	 * silently aborting the worker before any errors reach the table).
+	 *
+	 * @return {@code int[]{line, col}}, both zero-based. Offsets beyond the
+	 *         string clamp to the last line; negative offsets clamp to (0, 0).
+	 */
+	static int[] lineColAt(String text, int offset) {
+		int line = 0, col = 0;
+		int max = Math.min(offset, text.length());
+		for (int i = 0; i < max; i++) {
+			if (text.charAt(i) == '\n') { line++; col = 0; }
+			else col++;
+		}
+		return new int[]{ line, col };
+	}
+
 	public void textModified(int start, int length, String replacedText){
 		if (reparse) {
 			int st = start;
@@ -1104,7 +1174,7 @@ public class RepgenParser {
 
 
 				if( rebuildVars )
-					rebuildVars(file.getName(), txt.getText(), ltokens);
+					rebuildVarsFromCanonicalSource(file.getName());
 
 				if( initialIncludeParseNeeded ){
 					parseIncludes();
@@ -1138,7 +1208,7 @@ public class RepgenParser {
 		try {
 			ltokens = new ArrayList<Token>();
 			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, removedtokens, lvars, txt);
-			rebuildVars(file.getName(), txt.getText(), ltokens);
+			rebuildVarsFromCanonicalSource(file.getName());
 			System.out.println("Reparsed");
 		} catch (Exception e) {
 			System.err.println("Syntax Highlighter error!");

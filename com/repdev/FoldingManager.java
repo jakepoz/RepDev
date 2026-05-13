@@ -169,6 +169,10 @@ public class FoldingManager implements HiddenTextProvider {
 	 *       filter on visible tokens.</li>
 	 * </ul>
 	 */
+	public String getFullSourceText() {
+		return getUnfoldedText();
+	}
+
 	public Iterable<String> getUsageSearchableHiddenText() {
 		ArrayList<String> result = new ArrayList<String>();
 		for (int i = 0; i < folded.size(); i++) {
