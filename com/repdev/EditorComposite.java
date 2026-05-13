@@ -1444,7 +1444,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		frmTxt.bottom = new FormAttachment(100);
 		txt.setLayoutData(frmTxt);
 
-		if( parser != null && !file.isLocal())
+		if( parser != null )
 			parser.errorCheck();
 
 		undoMode = 1;
@@ -1986,7 +1986,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 
 
-		if( parser != null && errorCheck && !file.isLocal())
+		if( parser != null && errorCheck )
 			parser.errorCheck();
 	}
 

@@ -270,9 +270,17 @@ public class RepgenParser {
 						checkFile = false;
 					}
 				}
-				if(checkFile){
-					ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
-					errorList.add(new Error(result));
+				// Symitar server-side compile check requires a connected
+				// session. Local files (no host) and offline sessions skip
+				// this step; local-only checks (duplicate vars, unused vars)
+				// below still run so the user gets feedback while editing
+				// disconnected.
+				if(checkFile && !file.isLocal()){
+					com.repdev.SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
+					if (session != null && session.isConnected()) {
+						ErrorCheckResult result = session.errorCheckRepGen(file.getName());
+						errorList.add(new Error(result));
+					}
 				}
 
 
