@@ -25,14 +25,10 @@ import java.util.HashMap;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.Bullet;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ExtendedModifyEvent;
 import org.eclipse.swt.custom.ExtendedModifyListener;
-import org.eclipse.swt.custom.LineStyleEvent;
-import org.eclipse.swt.custom.LineStyleListener;
-import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -65,6 +61,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.RGB;
@@ -86,7 +83,6 @@ import com.repdev.parser.BackgroundSectionParser;
 import com.repdev.parser.SectionInfo;
 import com.repdev.parser.Variable;
 import com.repdev.parser.Token.TokenType;
-import org.eclipse.swt.graphics.GlyphMetrics;
 
 /**
  * Main editor for repgen, help, and letter files
@@ -134,7 +130,9 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	
 	private Token startBlockToken;
 	private Token endBlockToken;
-	
+
+	private FoldingManager folding;
+
 	static SuggestShell suggest = new SuggestShell();
 
 	private static Font DEFAULT_FONT;
@@ -151,10 +149,20 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		DEFAULT_FONT = cur;
 	}
 
+	// Fold-operation tags used inside TextChange entries; drive the dispatch in
+	// undo()/redo() so fold/unfold is a first-class undoable action.
+	public static final int FOLD_OP_NONE = 0;
+	public static final int FOLD_OP_COLLAPSE = 1;      // a single range was collapsed at foldLine
+	public static final int FOLD_OP_EXPAND = 2;        // a single region was expanded at foldLine
+	public static final int FOLD_OP_COLLAPSE_ALL = 3;  // fold-all (foldLine unused)
+	public static final int FOLD_OP_EXPAND_ALL = 4;    // unfold-all (foldLine unused)
+
 	class TextChange {
 		private int start, length, topIndex;
 		private String replacedText;
 		private boolean commit;
+		private int foldOp = FOLD_OP_NONE;
+		private int foldLine;
 
 		public TextChange(boolean commit) {
 			this.commit = commit;
@@ -164,6 +172,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			this.length = length;
 			this.replacedText = replacedText;
 			this.topIndex = topIndex;
+			this.commit = false;
+		}
+		public TextChange(int foldOp, int foldLine) {
+			this.foldOp = foldOp;
+			this.foldLine = foldLine;
 			this.commit = false;
 		}
 
@@ -186,6 +199,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		public String getReplacedText() {
 			return replacedText;
 		}
+
+		public boolean isFoldOp() { return foldOp != FOLD_OP_NONE; }
+		public int getFoldOp() { return foldOp; }
+		public int getFoldLine() { return foldLine; }
 	}
 
 	public EditorComposite(Composite parent, CTabItem tabItem, SymitarFile file) {
@@ -230,9 +247,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 
 				while (!(undos.size() == 0 || (change = undos.pop()).isCommit())) {
-					txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
-					txt.setCaretOffset(change.getStart());
-					txt.setTopIndex(change.getTopIndex());
+					if (change.isFoldOp()) {
+						applyFoldUndo(change);
+						redos.push(change);
+					} else {
+						txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
+						txt.setCaretOffset(change.getStart());
+						txt.setTopIndex(change.getTopIndex());
+					}
 
 				}
 
@@ -276,9 +298,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					parser.setReparse(false);
 
 				while (!(redos.size() == 0 || (change = redos.pop()).isCommit())) {
-					txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
-					txt.setCaretOffset(change.getStart());
-					txt.setTopIndex(change.getTopIndex());
+					if (change.isFoldOp()) {
+						applyFoldRedo(change);
+						undos.push(change);
+					} else {
+						txt.replaceTextRange(change.getStart(), change.getLength(), change.getReplacedText());
+						txt.setCaretOffset(change.getStart());
+						txt.setTopIndex(change.getTopIndex());
+					}
 				}
 				undos.push(new TextChange(true));
 			}
@@ -305,6 +332,42 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public void commitUndo() {
 		if (undos.size() == 0 || !undos.peek().isCommit())
 			undos.add(new TextChange(true));
+	}
+
+	/**
+	 * Record a fold/unfold as its own undoable step. Called by FoldingManager
+	 * after a successful user-initiated fold op. The fold is bracketed with
+	 * commit markers so it becomes an atomic undo unit, independent of any
+	 * text edits before or after.
+	 */
+	public void pushFoldUndo(int op, int line) {
+		if (undoMode != 1) return; // skip during initialisation (0) or replay (2)
+		commitUndo();
+		undos.push(new TextChange(op, line));
+		undos.push(new TextChange(true));
+		if (undos.size() > UNDO_LIMIT) undos.remove(0);
+	}
+
+	/** Inverse of the recorded fold op — used when replaying undo. */
+	private void applyFoldUndo(TextChange change) {
+		if (folding == null) return;
+		switch (change.getFoldOp()) {
+			case FOLD_OP_COLLAPSE:      folding.expandAtLineSilent(change.getFoldLine()); break;
+			case FOLD_OP_EXPAND:        folding.collapseAtLineSilent(change.getFoldLine()); break;
+			case FOLD_OP_COLLAPSE_ALL:  folding.expandAllSilent(); break;
+			case FOLD_OP_EXPAND_ALL:    folding.collapseAllSilent(); break;
+		}
+	}
+
+	/** Same op as recorded — used when replaying redo. */
+	private void applyFoldRedo(TextChange change) {
+		if (folding == null) return;
+		switch (change.getFoldOp()) {
+			case FOLD_OP_COLLAPSE:      folding.collapseAtLineSilent(change.getFoldLine()); break;
+			case FOLD_OP_EXPAND:        folding.expandAtLineSilent(change.getFoldLine()); break;
+			case FOLD_OP_COLLAPSE_ALL:  folding.collapseAllSilent(); break;
+			case FOLD_OP_EXPAND_ALL:    folding.expandAllSilent(); break;
+		}
 	}
 
 	public void setLineColor(SyntaxHighlighter hiColor){
@@ -500,13 +563,24 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		return highlighter.getLineColor();
 	}
 
-	//Calculate and expand the width of numbered "bullet" margin.  Allows the whole number to be displayed as more lines are added to the file.
+	/** Width of just the line-number column (no fold column). */
+	public final int calcNumberColumnWidth(){
+		if (!showLineNumbers) return 0;
+		int lastLine = (folding != null) ? folding.getUnfoldedLineCount() : txt.getLineCount();
+		return (Integer.toString(lastLine).length() * 12) + 6;
+	}
+
+	//Calculate and expand the width of the gutter margin (line numbers + fold column).
 	final public int calcWidth(){
+		int foldW = (folding != null) ? folding.getExtraGutterWidth() : 0;
 		if (this.showLineNumbers) {
-			int lastLine = txt.getLineCount()+1;
-			return (Integer.toString(lastLine).length() * 12) +6;
+			return calcNumberColumnWidth() + foldW;
 		}
-		return 12; //return a width of 12px for "right click" implementation... eventually.
+		return 12 + foldW;
+	}
+
+	public FoldingManager getFolding(){
+		return folding;
 	}
 	private void buildGUI() {
 		setLayout(new FormLayout());
@@ -533,17 +607,34 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				txt.setFont(DEFAULT_FONT);
 		}
 
+		// Folding is constructed BEFORE the syntax highlighter so its modifyText
+		// listener (which performs fold-line shifts) runs first on every edit.
+		// SyntaxHighlighter.modifyText calls parser.textModified, which reads
+		// the canonical source via the HiddenTextProvider seam — that reassembly
+		// is only correct once fold headerLines reflect the post-edit line
+		// numbering. Reversing this order causes parser state to drift one edit
+		// behind the buffer when folds are active.
+		if (file.getType() == FileType.REPGEN) {
+			folding = new FoldingManager(this, txt, parser);
+			parser.setHiddenTextProvider(folding);
+		}
+
 		highlighter = new SyntaxHighlighter(parser);
 		setLineColor(highlighter);
 
 		final EditorComposite tempEditor = this;
 
-		// Load the Section Info
-		sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
+		// Load the Section Info — feed it the canonical source so section
+		// positions stay valid when folds hide a section body. Consumers of
+		// SectionInfo.getPos() / getFirstInsertPos() / getLastInsertPos() must
+		// translate model→view via folding before indexing into the StyledText.
+		sec = new BackgroundSectionParser(parser.getLtokens(), parser.canonicalSourceText());
 
 		txt.addDisposeListener(new DisposeListener(){
 
 			public void widgetDisposed(DisposeEvent e) {
+				if( folding != null)
+					folding.dispose();
 				if( parser != null)
 					parser.cleanupTokenCache();
 			}
@@ -587,6 +678,32 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		//Place any auto complete things in here
 		txt.addVerifyListener(new VerifyListener() {
 			public void verifyText(VerifyEvent e) {
+				// If an edit would span the header line of a folded region, the
+				// hidden text must be reinstated before the edit lands. SWT
+				// explicitly forbids mutating the widget from inside verifyText
+				// (the pending edit's offsets become stale the moment we run
+				// replaceTextRange), so we cancel this keystroke and schedule
+				// the expand for the next UI tick. The user can re-issue the
+				// edit against the now-expanded buffer.
+				if (folding != null && !folding.isInFoldOp() && folding.hasActiveFolds()) {
+					int startLine = txt.getLineAtOffset(e.start);
+					int endLine = txt.getLineAtOffset(e.end);
+					boolean needsExpand = false;
+					for (int ln = startLine; ln <= endLine; ln++) {
+						if (folding.foldedAtLine(ln) != null) { needsExpand = true; break; }
+					}
+					if (needsExpand) {
+						e.doit = false;
+						txt.getDisplay().asyncExec(new Runnable() {
+							public void run() {
+								if (!txt.isDisposed() && folding != null && folding.hasActiveFolds()) {
+									folding.expandAll();
+								}
+							}
+						});
+						return;
+					}
+				}
 				if (e.text.equals("\t")) {
 
 					if(snippetMode){
@@ -638,42 +755,43 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			}
 		});
 
-		// Set the style of numbered bullets (12 pixels wide for each digit)
-		final StyleRange style = new StyleRange();
-		final int bulletStyle; 
-		int bulletWidth = 12;
-		if (showLineNumbers){
-			bulletWidth = calcWidth();
-			bulletStyle = ST.BULLET_NUMBER;
-		} else{
-			bulletStyle = ST.BULLET_TEXT;  //another eventual implementation for "right click" feature
+		// Reserve left-margin space for the gutter; numbers and fold triangles
+		// are painted directly by the paint listeners below.
+		if (showLineNumbers || folding != null) {
+			txt.setMargins(calcWidth(), 0, 0, 0);
 		}
-		style.foreground = highlighter.getBulletColor();
-		style.start = 1;
-		style.length = txt.getLineCount();
-		style.metrics = new GlyphMetrics(0, 0, bulletWidth);
-		
-		// Add the style (numbered bullets) to the text in file. 
-		txt.addLineStyleListener(new LineStyleListener() {
-			public void lineGetStyle(LineStyleEvent e) {
-				e.bulletIndex = txt.getLineAtOffset(e.lineOffset);
-				if (showLineNumbers){
-					style.metrics.width = calcWidth();
-					e.bullet = new Bullet(bulletStyle, style);
-				}
-			}
-		});
-		
-		// Add paint listener to modify numbered bullets, when lines are being added
+
+		// Paint the line numbers in the left portion of the gutter. The fold
+		// triangle painter (FoldingManager) draws in the right portion, so the
+		// two never overlap (VS Code-style [numbers][fold][text] layout).
+		final Color bulletColor = highlighter.getBulletColor();
 		txt.addPaintListener(new PaintListener (){
 			public void paintControl (PaintEvent e){
-				
-	            Rectangle clientArea = txt.getClientArea();
-	            // To minimize the amount of page being redrawn, trying to limit it to just the numbered bullet margin area
-				int width = calcWidth();
-				Rectangle bgArea = new Rectangle(-2,-2,width,(txt.getLineCount()+1) * txt.getLineHeight());
-				
-				txt.getLineCount();
+				if (!showLineNumbers) return;
+				int lh = txt.getLineHeight();
+				if (lh == 0) return;
+				int topLine = txt.getTopIndex();
+				int clientH = txt.getClientArea().height;
+				int maxLine = topLine + (clientH / lh) + 2;
+				if (maxLine > txt.getLineCount()) maxLine = txt.getLineCount();
+
+				int numberColW = calcNumberColumnWidth();
+				GC gc = e.gc;
+				Color oldFg = gc.getForeground();
+				gc.setForeground(bulletColor);
+
+				for (int line = topLine; line < maxLine; line++) {
+					int y;
+					try { y = txt.getLocationAtOffset(txt.getOffsetAtLine(line)).y; }
+					catch (IllegalArgumentException ex) { continue; }
+					int displayLine = (folding != null) ? folding.getDisplayLineNumber(line) : line + 1;
+					String num = String.valueOf(displayLine);
+					int numW = gc.textExtent(num).x;
+					int nx = numberColW - numW - 4;
+					if (nx < 0) nx = 0;
+					gc.drawString(num, nx, y, true);
+				}
+				gc.setForeground(oldFg);
 			}
 		});
 
@@ -681,6 +799,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 			public void modifyText(ExtendedModifyEvent event) {
 				lineHighlight();
+				// Fold-headerLine shifts and foldable-range recomputation are
+				// owned by FoldingManager's own modifyText listener (registered
+				// first, runs ahead of SyntaxHighlighter so parser.textModified
+				// sees the post-shift state when reading canonical source).
 
 				modified = true;
 				updateModified();
@@ -692,7 +814,11 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				else if (undoMode == 2)
 					stack = redos;
 
-				if (undoMode != 0 ) {
+				// Fold/unfold operations mutate the buffer but must not pollute the
+				// undo history - they have their own separate state.
+				boolean skipUndoPush = (folding != null && folding.isInFoldOp());
+
+				if (undoMode != 0 && !skipUndoPush ) {
 					stack.push(new TextChange(event.start, event.length, event.replacedText, txt.getTopIndex()));
 
 					if (stack.size() > UNDO_LIMIT)
@@ -766,11 +892,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					updateSnippet();
 				}
 
-				// Redraw numbered bullets area
-				if (showLineNumbers){
-					style.metrics.width = calcWidth();
-					txt.setStyleRange(style);
-					txt.redraw(1,1, 72, txt.getLineHeight()*txt.getLineCount(), true);
+				// Refresh gutter: width may have grown with line count; re-reserve
+				// the left margin and repaint so the number/triangle columns update.
+				if (showLineNumbers || folding != null) {
+					int w = calcWidth();
+					txt.setMargins(w, 0, 0, 0);
+					txt.redraw(0, 0, w, txt.getLineHeight() * txt.getLineCount(), true);
 				}
 			}
 
@@ -847,27 +974,38 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'G':
 						gotoSectionShell();
 						break;
+					case '-':
+					case SWT.KEYPAD_SUBTRACT:
+						if (folding != null) folding.collapseAtCaret();
+						break;
+					case '=':
+					case '+':
+					case SWT.KEYPAD_ADD:
+						if (folding != null) folding.expandAtCaret();
+						break;
 					}
 				}
 				else if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ) {
 					switch(e.keyCode) {
 					case 'p':
 					case 'P':
-						if(startBlockToken != null && endBlockToken != null){					
+						if(startBlockToken != null && endBlockToken != null){
 							try {
-								int setPos = 0;
+								// Compare caret (view) with token offsets (model)
+								// in a single coord space, then jump via
+								// gotoModelOffset so any covering fold expands.
 								StyledText newTxt = tempEditor.getStyledText();
-								if(newTxt.getCaretOffset() >= startBlockToken.getStart() &&
-										newTxt.getCaretOffset() <= startBlockToken.getEnd())
-									setPos = endBlockToken.getEnd();
+								int caretModel = (folding != null)
+										? folding.viewToModel(newTxt.getCaretOffset())
+										: newTxt.getCaretOffset();
+								int setPosModel;
+								if (caretModel >= startBlockToken.getStart()
+										&& caretModel <= startBlockToken.getEnd())
+									setPosModel = endBlockToken.getEnd();
 								else
-									setPos = startBlockToken.getStart();
-								
-								//newTxt.setCaretOffset(txt.getText().length());
-								//newTxt.showSelection();
-								newTxt.setCaretOffset(setPos);
-								tempEditor.handleCaretChange();
-								newTxt.showSelection();
+									setPosModel = startBlockToken.getStart();
+
+								tempEditor.gotoModelOffset(setPosModel);
 								tempEditor.lineHighlight();
 							} catch (IllegalArgumentException ex) {
 								// Just ignore it
@@ -887,12 +1025,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'd':
 					case 'D':
 						String sTmpString=txt.getSelectionText();
-						if(sTmpString.length() == 0 && getTokenAt(txt.getCaretOffset()) != null){
-							int iStart, iEnd;
-							iStart=getTokenAt(txt.getCaretOffset()).getStart();
-							iEnd=getTokenAt(txt.getCaretOffset()).getEnd();
-							txt.setSelection(iStart, iEnd);
-							sTmpString= txt.getSelectionText();
+						if(sTmpString.length() == 0) {
+							Token tok = getTokenAt(txt.getCaretOffset());
+							int iStart = tokenStartView(tok);
+							int iEnd = tokenEndView(tok);
+							if (iStart >= 0 && iEnd >= 0) {
+								txt.setSelection(iStart, iEnd);
+								sTmpString = txt.getSelectionText();
+							}
 						}
 						if(isAlphaNumeric(sTmpString))
 							defineVarShell(sTmpString);
@@ -900,6 +1040,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					case 'g':
 					case 'G':
 						gotoDefinition();
+						break;
+					case '-':
+					case SWT.KEYPAD_SUBTRACT:
+						if (folding != null) folding.collapseAll();
+						break;
+					case '=':
+					case '+':
+					case SWT.KEYPAD_ADD:
+						if (folding != null) folding.expandAll();
 						break;
 					}
 				}
@@ -1143,12 +1292,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		defineVar.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String sTmpString=txt.getSelectionText();
-				if(sTmpString.length() == 0 && getTokenAt(txt.getCaretOffset()) != null){
-					int iStart, iEnd;
-					iStart=getTokenAt(txt.getCaretOffset()).getStart();
-					iEnd=getTokenAt(txt.getCaretOffset()).getEnd();
-					txt.setSelection(iStart, iEnd);
-					sTmpString= txt.getSelectionText();
+				if(sTmpString.length() == 0) {
+					Token tok = getTokenAt(txt.getCaretOffset());
+					int iStart = tokenStartView(tok);
+					int iEnd = tokenEndView(tok);
+					if (iStart >= 0 && iEnd >= 0) {
+						txt.setSelection(iStart, iEnd);
+						sTmpString = txt.getSelectionText();
+					}
 				}
 				if(isAlphaNumeric(sTmpString))
 					defineVarShell(sTmpString);
@@ -1273,7 +1424,33 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		frmTxt.bottom = new FormAttachment(100);
 		txt.setLayoutData(frmTxt);
 
-		if( parser != null && !file.isLocal())
+		// Force a full reparse + fold-range refresh now that the buffer is
+		// populated. The txt.setText(str) above does fire modifyText and the
+		// SyntaxHighlighter→parser→onTokensUpdated chain runs, but observed
+		// behavior on file open was an empty foldable list (no carets drawn)
+		// until the user typed something. Forcing a synchronous rebuild here
+		// removes any dependence on listener ordering and timing for the
+		// initial draw.
+		if (parser != null) {
+			parser.reparseAll();
+		}
+		if (folding != null) {
+			folding.recomputeRanges();
+			// Diagnostic confirmed `foldable` is populated at this point, but
+			// the synchronous txt.redraw() above fires before SWT has finished
+			// laying out the StyledText — paintMarkers reads getClientArea()
+			// height of 0 and skips every line. Defer a second redraw to the
+			// next event loop tick so the gutter paint sees real bounds.
+			final FoldingManager f = folding;
+			final StyledText t = txt;
+			t.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!t.isDisposed()) t.redraw();
+				}
+			});
+		}
+
+		if( parser != null )
 			parser.errorCheck();
 
 		undoMode = 1;
@@ -1283,20 +1460,31 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 
 	public void gotoDefinition(){
-		
+		gotoDefinitionImpl(true);
+	}
+
+	/**
+	 * @param tryFoldExpansion when true, allows one fallback pass that expands
+	 * a folded region containing the symbol and retries the lookup. Folded
+	 * regions are physically removed from the buffer so the parser's tokens /
+	 * variables / sections don't include them — without this fallback, jumping
+	 * into a definition that's currently folded would silently fail.
+	 */
+	private void gotoDefinitionImpl(boolean tryFoldExpansion){
+
 		CTabFolder mainfolder = RepDevMain.mainShell.getMainfolder();
-			
+
 		HashMap<String, ArrayList<Token>> incTokenCache = parser.getIncludeTokenChache();
 		String selString=txt.getSelectionText();
 		if(selString.length() == 0)
 			selString=getTokenAt(txt.getCaretOffset()) != null ? getTokenAt(txt.getCaretOffset()).getStr() : "";
 		if(!isAlphaNumeric(selString))
 			return;
-		
-				
+
+
 		if( parser.needRefreshIncludes() )
 			parser.parseIncludes();
-		
+
 		try {
 			//sec = new BackgroundSectionParser(parser.getLtokens(),txt.getText());
 			//sec.refreshList(parser.getLtokens(),txt.getText());
@@ -1314,17 +1502,17 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				if(matchVarAndGoto(var, selString))
 					return;
 			}
-			// Go through open files which include this file. Search for Variables/Procedures and goto. 
+			// Go through open files which include this file. Search for Variables/Procedures and goto.
 			for(CTabItem tf : mainfolder.getItems()){
 				if(tf.getControl() instanceof EditorComposite) {
 					EditorComposite ec = ((EditorComposite) tf.getControl());
 					incTokenCache = ec.parser.getIncludeTokenChache();
 					for( String key : incTokenCache.keySet()){
 						if(key.equalsIgnoreCase(file.getName())){
-							
+
 							if( ec.parser.needRefreshIncludes() )
 								ec.parser.parseIncludes();
-							
+
 							if(ec.sec.exist(selString)){
 								gotoSection(selString);
 								return;
@@ -1349,9 +1537,139 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			dialog.setMessage("The include file may have been modified.  Please save this RepGen and Try again.");
 			dialog.setText("Jump to Procedure");
 			dialog.open();
+			return;
 		}
-		
-		
+
+		// Nothing matched in any visible token / var / section list. If the
+		// definition lives inside a currently-folded region, the parser can't
+		// see it — try expanding the fold containing the symbol and either
+		// retry the lookup (variable case) or jump inline (procedure case).
+		if (tryFoldExpansion && folding != null && folding.hasActiveFolds()) {
+			int result = expandFoldContainingSymbol(selString);
+			if (result == FOLD_EXPANSION_RETRY) {
+				gotoDefinitionImpl(false);
+			}
+			// FOLD_EXPANSION_JUMPED: nothing more to do — handled inline.
+			// FOLD_EXPANSION_NONE: silent fall-through, same as before.
+		}
+	}
+
+	private static final int FOLD_EXPANSION_NONE = 0;
+	private static final int FOLD_EXPANSION_RETRY = 1;
+	private static final int FOLD_EXPANSION_JUMPED = 2;
+
+	/**
+	 * Expands a folded region whose body holds the definition of {@code symbol}.
+	 * Two shapes count as a definition:
+	 * <ul>
+	 *   <li><b>DEFINE-headed fold</b> whose hidden body contains
+	 *       {@code symbol=...} — variable declaration inside a folded
+	 *       {@code DEFINE...END} block. An {@code =} anywhere else is an
+	 *       assignment, not a definition, and is ignored.</li>
+	 *   <li><b>PROCEDURE-headed fold</b> whose visible header line is
+	 *       {@code procedure symbol}. The header stays visible after fold, but
+	 *       {@link BackgroundSectionParser} only registers a section once its
+	 *       matching {@code END} is seen at depth 0 — so the procedure isn't
+	 *       in {@code sec} until the body is restored.</li>
+	 * </ul>
+	 *
+	 * <p>After any expansion, also refresh {@code sec} so the retry pass can
+	 * find the freshly-completed section (the normal refresh fires on caret
+	 * move, which hasn't happened here).
+	 */
+	private int expandFoldContainingSymbol(String symbol) {
+		if (symbol == null || symbol.length() == 0 || folding == null) return FOLD_EXPANSION_NONE;
+		String needle = symbol.toLowerCase();
+		for (FoldingManager.FoldRegion fr : folding.getFoldedRegions()) {
+			if (isProcedureHeaderForSymbol(fr.headerLine, needle)) {
+				int headerLine = fr.headerLine;
+				folding.toggleAtLine(headerLine);
+				// Jump inline rather than retrying through sec.exist().
+				// BackgroundSectionParser.refreshList runs the parse on a
+				// background thread, racing with our retry — the retry can
+				// acquire the synchronized lock before the parse thread does
+				// and read the pre-expansion section list. Since we already
+				// know the header line, jump to it directly.
+				try {
+					int target = txt.getOffsetAtLine(headerLine);
+					txt.setCaretOffset(txt.getCharCount());
+					txt.showSelection();
+					txt.setCaretOffset(target);
+					handleCaretChange();
+					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
+					txt.showSelection();
+					lineHighlight();
+				} catch (IllegalArgumentException ex) {
+					// Expansion already happened; just couldn't position the caret.
+				}
+				return FOLD_EXPANSION_JUMPED;
+			}
+			if (isDefineHeaderLine(fr.headerLine)
+					&& containsAssignmentOf(fr.hiddenText.toLowerCase(), needle)) {
+				folding.toggleAtLine(fr.headerLine);
+				return FOLD_EXPANSION_RETRY;
+			}
+		}
+		return FOLD_EXPANSION_NONE;
+	}
+
+	/** True if the visible buffer line at {@code line} starts with the DEFINE keyword. */
+	private boolean isDefineHeaderLine(int line) {
+		String trimmed = trimmedLowerLine(line);
+		if (trimmed == null) return false;
+		return trimmed.equals("define")
+				|| trimmed.startsWith("define ")
+				|| trimmed.startsWith("define\t");
+	}
+
+	/**
+	 * True if the visible buffer line at {@code line} is {@code PROCEDURE name}
+	 * with {@code name} (lowercased) equal to {@code lowerSymbol}.
+	 */
+	private boolean isProcedureHeaderForSymbol(int line, String lowerSymbol) {
+		String trimmed = trimmedLowerLine(line);
+		if (trimmed == null || !trimmed.startsWith("procedure")) return false;
+		int kwEnd = "procedure".length();
+		if (kwEnd >= trimmed.length()) return false;
+		// Must have a non-identifier separator after the keyword (whitespace etc.)
+		if (Character.isLetterOrDigit(trimmed.charAt(kwEnd))) return false;
+		String rest = trimmed.substring(kwEnd).trim();
+		if (!rest.startsWith(lowerSymbol)) return false;
+		int after = lowerSymbol.length();
+		if (after >= rest.length()) return true;
+		return !Character.isLetterOrDigit(rest.charAt(after));
+	}
+
+	private String trimmedLowerLine(int line) {
+		if (line < 0 || line >= txt.getLineCount()) return null;
+		try { return txt.getLine(line).trim().toLowerCase(); }
+		catch (IllegalArgumentException ex) { return null; }
+	}
+
+	/**
+	 * True if {@code word} appears in {@code haystack} as a whole word
+	 * immediately followed (skipping spaces/tabs) by {@code =} — the shape of
+	 * a RepGen variable assignment. Both inputs must already be lowercased.
+	 */
+	private static boolean containsAssignmentOf(String haystack, String word) {
+		int from = 0;
+		while (true) {
+			int idx = haystack.indexOf(word, from);
+			if (idx < 0) return false;
+			char before = idx == 0 ? ' ' : haystack.charAt(idx - 1);
+			if (Character.isLetterOrDigit(before)) { from = idx + 1; continue; }
+			int afterIdx = idx + word.length();
+			char after = afterIdx >= haystack.length() ? ' ' : haystack.charAt(afterIdx);
+			if (Character.isLetterOrDigit(after)) { from = idx + 1; continue; }
+			int p = afterIdx;
+			while (p < haystack.length()) {
+				char c = haystack.charAt(p);
+				if (c == ' ' || c == '\t') { p++; continue; }
+				if (c == '=') return true;
+				break;
+			}
+			from = idx + 1;
+		}
 	}
 	private Boolean matchVarAndGoto(Variable var, String varToMatch){
 		Object o;
@@ -1369,18 +1687,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				editor = (EditorComposite) o;
 //					if (token.getStart() >= 0 && editor != null) {
 //						editor.getStyledText().setTopIndex(Math.max(0, task.getLine() - 10));
-				try {
-					StyledText newTxt = editor.getStyledText();
-					newTxt.setCaretOffset(newTxt.getText().length());
-					newTxt.showSelection();
-					newTxt.setCaretOffset(var.getPos());
-					editor.handleCaretChange();
-					// Drop Navigation Position
+				// var.getPos() is a model offset in the target editor's
+				// canonical source. Use the target editor's gotoModelOffset so
+				// any fold covering the declaration auto-expands before the
+				// caret moves.
+				if (editor.gotoModelOffset(var.getPos())) {
 					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
-					newTxt.showSelection();
 					editor.lineHighlight();
-				} catch (IllegalArgumentException ex) {
-					// Just ignore it
 				}
 				editor.getStyledText().setFocus();
 			return true;
@@ -1412,21 +1725,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				editor = (EditorComposite) o;
 //			if (token.getStart() >= 0 && editor != null) {
 //				editor.getStyledText().setTopIndex(Math.max(0, task.getLine() - 10));
+				// token.getBefore().getStart() is a model offset in the target
+				// editor's canonical source.
 				try {
-					StyledText newTxt = editor.getStyledText();
-					newTxt.setCaretOffset(newTxt.getText().length());
-					newTxt.showSelection();
-					newTxt.setCaretOffset(token.getBefore().getStart());
-					editor.handleCaretChange();
-					// Drop Navigation Position
-					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
-					newTxt.showSelection();
-					editor.lineHighlight();
-				} catch (IllegalArgumentException ex) {
-					// Just ignore it
+					if (editor.gotoModelOffset(token.getBefore().getStart())) {
+						RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
+						editor.lineHighlight();
+					}
 				} catch (NullPointerException ex) {
 					return false;
-					// Just ignore it
 				}
 				editor.getStyledText().setFocus();
 			return true;
@@ -1447,15 +1754,20 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		int iEndPos, iCurPos;
 
 		if(sec.exist("define")){
-			// Get the insertion point in the DEFINE section.
+			// Get the insertion point in the DEFINE section. Section offsets
+			// are model coords; translate (auto-expanding if DEFINE is folded)
+			// before driving the StyledText caret.
 			iEndPos = sec.getLastInsertPos("define");
+			if (folding != null) folding.ensureModelOffsetVisible(iEndPos);
+			int viewEndPos = (folding != null) ? folding.modelToView(iEndPos) : iEndPos;
+			if (viewEndPos < 0) return;
 			// Save the current position of the cursor so that we can return to this
 			// point after the variable has been inserted.
 			iCurPos = txt.getCaretOffset();
 			// Move the cursor to the insertion point and insert the variable definition.
-			
-			try{		
-				txt.setCaretOffset(iEndPos);
+
+			try{
+				txt.setCaretOffset(viewEndPos);
 				txt.insert(sStr+"\n");
 				// if the original cursor is after the define section, then recalculate the
 				// new cursor position.
@@ -1498,7 +1810,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 * in.
 	 */
 	public void gotoSectionShell(){
-		GotoSectionShell.create(this, txt.getCaretOffset());
+		// SectionInfo positions are model coords; the goto shell compares the
+		// caret against them to preselect the current section. Translate the
+		// view-coord caret offset at the call site so the shell stays a pure
+		// model-coord consumer.
+		int caretModel = (folding != null) ? folding.viewToModel(txt.getCaretOffset()) : txt.getCaretOffset();
+		GotoSectionShell.create(this, caretModel);
 	}
 
 	/**
@@ -1515,15 +1832,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 */
 	public void gotoSection(String section){
 		if(!section.equals("") && sec.exist(section)){
-			txt.setCaretOffset(txt.getText().length());
-			txt.showSelection();
-			txt.setCaretOffset(sec.getPos(section));
-			handleCaretChange();
-			// Drop Navigation Position
-			RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
-			txt.showSelection();
-			lineHighlight();
-			
+			// sec.getPos is a model offset (section positions are computed
+			// from canonical source). gotoModelOffset auto-expands any fold
+			// covering the section header and translates to view coords.
+			if (gotoModelOffset(sec.getPos(section))) {
+				RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
+				lineHighlight();
+			}
 		}
 	}
 
@@ -1611,9 +1926,14 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 * @param offset
 	 * @return Token
 	 */
-	public Token getTokenAt(int offset){
+	public Token getTokenAt(int viewOffset){
 		int beforeTokenEnd = 0;
 		Token token = null;
+
+		// Token offsets are model coords; the caller hands us a view offset
+		// (typically txt.getCaretOffset()). Translate once at the boundary so
+		// the inner comparisons line up.
+		int offset = (folding != null) ? folding.viewToModel(viewOffset) : viewOffset;
 
 		for(Token tok : parser.getLtokens()){
 			if(offset == 0){
@@ -1630,6 +1950,71 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		return token;
 	}
 
+	/**
+	 * View-coord start of a token whose stored offset is in model coords.
+	 * Returns -1 when the token sits inside a currently-collapsed fold.
+	 * Callers that need to feed the value to {@code StyledText.setSelection}
+	 * or {@code redrawRange} must guard against -1.
+	 */
+	public int tokenStartView(Token tok) {
+		if (tok == null) return -1;
+		return (folding != null) ? folding.modelToView(tok.getStart()) : tok.getStart();
+	}
+
+	/** Companion to {@link #tokenStartView} for the token's end offset. */
+	public int tokenEndView(Token tok) {
+		if (tok == null) return -1;
+		return (folding != null) ? folding.modelToView(tok.getEnd()) : tok.getEnd();
+	}
+
+	/**
+	 * Move the caret to a model offset (e.g. a variable's declaration site,
+	 * a section header, an error line). Auto-expands any enclosing fold so
+	 * the target is visible. Returns {@code true} if the caret was placed,
+	 * {@code false} if the offset is out of range.
+	 */
+	public boolean gotoModelOffset(int modelOffset) {
+		if (modelOffset < 0) return false;
+		if (folding != null) {
+			folding.ensureModelOffsetVisible(modelOffset);
+		}
+		int viewOffset = (folding != null) ? folding.modelToView(modelOffset) : modelOffset;
+		if (viewOffset < 0) return false;
+		int max = txt.getCharCount();
+		if (viewOffset > max) viewOffset = max;
+		try {
+			txt.setCaretOffset(viewOffset);
+			handleCaretChange();
+			txt.showSelection();
+		} catch (IllegalArgumentException ex) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Move the caret to a zero-based model line (column 1). Auto-expands any
+	 * enclosing fold. Returns {@code true} on success.
+	 */
+	public boolean gotoModelLine(int modelLine, int col) {
+		if (folding != null) folding.ensureModelLineVisible(modelLine);
+		int viewLine = (folding != null) ? folding.modelLineToViewLine(modelLine) : modelLine;
+		if (viewLine < 0) return false;
+		int max = Math.max(0, txt.getLineCount() - 1);
+		if (viewLine > max) viewLine = max;
+		try {
+			int offset = txt.getOffsetAtLine(viewLine) + Math.max(0, col);
+			int charCount = txt.getCharCount();
+			if (offset > charCount) offset = charCount;
+			txt.setCaretOffset(offset);
+			handleCaretChange();
+			txt.showSelection();
+		} catch (IllegalArgumentException ex) {
+			return false;
+		}
+		return true;
+	}
+
 	// Bruce - End
 
 	/**
@@ -1637,7 +2022,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 * @param errorCheck Flag to check errors with symitar
 	 */
 	public void saveFile( boolean errorCheck ){
-		file.saveFile(txt.getText());
+		String toSave = (folding != null) ? folding.getUnfoldedText() : txt.getText();
+		file.saveFile(toSave);
 		commitUndo();
 		modified = false;
 		updateModified();
@@ -1673,7 +2059,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		}
 
 
-		if( parser != null && errorCheck && !file.isLocal())
+		if( parser != null && errorCheck )
 			parser.errorCheck();
 	}
 
@@ -1853,11 +2239,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 		tokens = parser.getLtokens();
 
-		//Find your current token
+		//Find your current token. Token offsets are model coords; translate
+		// the view-coord caret offset to model before comparing.
+		int caretModel = (folding != null) ? folding.viewToModel(txt.getCaretOffset()) : txt.getCaretOffset();
 		for( Token tok: tokens ) {
 			tokloc++;
 
-			if(txt.getCaretOffset() >= tok.getStart()  && txt.getCaretOffset() <= tok.getEnd()) {
+			if(caretModel >= tok.getStart()  && caretModel <= tok.getEnd()) {
 				cur = tok;
 				break;
 			}
@@ -1872,9 +2260,10 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			}
 		}
 
-		// Refresh the Section Info
+		// Refresh the Section Info. Tokens are model-coord; feed the canonical
+		// source so positions stay valid when folds hide a section body.
 		if(prevTxtLine != txt.getLineAtOffset(txt.getCaretOffset())){
-			sec.refreshList(tokens, txt.getText());
+			sec.refreshList(tokens, parser.canonicalSourceText());
 			prevTxtLine = txt.getLineAtOffset(txt.getCaretOffset());
 		}
 
@@ -1982,9 +2371,12 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			}
 		}
 
-		//IF we need to update, only call this once
-		for( Token tok : redrawTokens )
-			txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
+		//IF we need to update, only call this once. Token offsets are model
+		// coords; redrawRange needs view coords — skip when hidden.
+		for( Token tok : redrawTokens ) {
+			int v = tokenStartView(tok);
+			if (v >= 0) txt.redrawRange(v, tok.getStr().length(), false);
+		}
 	}
 
 	private void clearSnippetMode() {
@@ -1996,7 +2388,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				tok.setBackgroundReason(Token.SpecialBackgroundReason.NONE);
 				tok.setSpecialBackground(null);
 				tok.setCurrentVar(null);
-				txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
+				int v = tokenStartView(tok);
+				if (v >= 0) txt.redrawRange(v, tok.getStr().length(), false);
 			}
 		}
 
@@ -2012,6 +2405,8 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	}
 
 	public void sendToFormatter(){
+		// Formatter does a full-buffer replace; expand all folds first so hidden lines aren't lost.
+		if (folding != null && folding.hasActiveFolds()) folding.expandAll();
 		Formatter formatter = new Formatter(txt.getText(),parser.getLtokens());
 		parser.setReparse(false);
 		txt.setText(formatter.getFormattedFile());
@@ -2105,7 +2500,13 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 				for( Token tok : parser.getLtokens()){
 
 
-					if( tok.getStart() >= (list.get(x) + snippetStartPos) && tok.getEnd() <= (snippetStartPos + list.get(x) + list.get(x+1))){
+					// snippetStartPos + list offsets are view coords; token
+					// offsets are model. Compare in view coords by translating
+					// the token endpoints (skip tokens inside a fold).
+					int tokViewStart = tokenStartView(tok);
+					int tokViewEnd = tokenEndView(tok);
+					if (tokViewStart < 0 || tokViewEnd < 0) continue;
+					if( tokViewStart >= (list.get(x) + snippetStartPos) && tokViewEnd <= (snippetStartPos + list.get(x) + list.get(x+1))){
 						if( i == currentEditVarPos ){
 							tok.setSpecialBackground(SNIPPET_VAR_CURRENT);
 
@@ -2117,7 +2518,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 						tok.setBackgroundReason(Token.SpecialBackgroundReason.CODE_SNIPPET);
 						tok.setCurrentVar(currentSnippet.getVar(i));
-						txt.redrawRange(tok.getStart(),tok.getStr().length(),false);
+						txt.redrawRange(tokViewStart, tok.getStr().length(), false);
 					}
 				}
 			}

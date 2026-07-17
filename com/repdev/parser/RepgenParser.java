@@ -70,6 +70,19 @@ public class RepgenParser {
 	BackgroundSymitarErrorChecker errorCheckerWorker = null;
 	BackgroundIncludeParser includeParserWorker = null;
 
+	// Optional source of currently-hidden text (e.g. collapsed folds). When
+	// set, usage scans (unused-var check) also walk these segments so that a
+	// variable referenced only inside a folded region isn't flagged unused.
+	private HiddenTextProvider hiddenTextProvider = null;
+
+	public void setHiddenTextProvider(HiddenTextProvider p) {
+		this.hiddenTextProvider = p;
+	}
+
+	public HiddenTextProvider getHiddenTextProvider() {
+		return hiddenTextProvider;
+	}
+
 	boolean initialIncludeParseNeeded = true; //This will make sure that we parse the includes at least once when the file is first opened
 	boolean refreshIncludes = false; //The parser will keep track of changes as the file is edited, and if an include reparse is needed, this flag will be set. 
 	//Since include parsing is resource intensive, it's up to the rest of the code to decide when to parse these if needed. (Usually on file save)
@@ -223,6 +236,22 @@ public class RepgenParser {
 			try {
 				Display display = tblErrors.getDisplay();
 
+				// Snapshot the canonical (unfolded) source up front. Variables
+				// declared inside a collapsed fold hold model offsets that
+				// exceed txt.getCharCount(); computing line/col against this
+				// string rather than the live StyledText buffer keeps the
+				// worker from throwing IllegalArgumentException and silently
+				// aborting before any rows reach tblErrors.
+				final String[] canonicalSourceHolder = new String[1];
+				display.syncExec(new Runnable() {
+					public void run() {
+						if (txt.isDisposed()) return;
+						String full = (hiddenTextProvider != null) ? hiddenTextProvider.getFullSourceText() : null;
+						canonicalSourceHolder[0] = (full != null) ? full : txt.getText();
+					}
+				});
+				final String canonicalSource = (canonicalSourceHolder[0] != null) ? canonicalSourceHolder[0] : "";
+
 				// Remove old errors
 				errorList.clear();
 				taskList.clear();
@@ -245,9 +274,17 @@ public class RepgenParser {
 						checkFile = false;
 					}
 				}
-				if(checkFile){
-					ErrorCheckResult result = RepDevMain.SYMITAR_SESSIONS.get(sym).errorCheckRepGen(file.getName());
-					errorList.add(new Error(result));
+				// Symitar server-side compile check requires a connected
+				// session. Local files (no host) and offline sessions skip
+				// this step; local-only checks (duplicate vars, unused vars)
+				// below still run so the user gets feedback while editing
+				// disconnected.
+				if(checkFile && !file.isLocal()){
+					com.repdev.SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
+					if (session != null && session.isConnected()) {
+						ErrorCheckResult result = session.errorCheckRepGen(file.getName());
+						errorList.add(new Error(result));
+					}
 				}
 
 
@@ -264,13 +301,10 @@ public class RepgenParser {
 								if (var2.equals(var))
 									count++;
 
-							if (count > 1 && !tblErrors.isDisposed())
-								display.syncExec(new Runnable() {
-									public void run() {
-										if (!txt.isDisposed())
-											errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName().toUpperCase(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
-									}
-								});
+							if (count > 1 && !tblErrors.isDisposed()) {
+								int[] lc = lineColAt(canonicalSource, var.getPos());
+								errorList.add(new Error(file.getName(), "Duplicate variable name: " + var.getName().toUpperCase(), lc[0] + 1, lc[1] + 1, Error.Type.WARNING));
+							}
 						}
 					}
 				}
@@ -312,14 +346,26 @@ public class RepgenParser {
 							}
 						}
 
-						if( unused && !tblErrors.isDisposed()){
-							display.syncExec(new Runnable() {
-								public void run() {
-									if (!txt.isDisposed() && com.repdev.Config.getListUnusedVars()){
-										errorList.add(new Error(var.getFilename(), "Variable Unused: " + var.getName().toUpperCase(), txt.getLineAtOffset(var.getPos()) + 1, var.getPos() - txt.getOffsetAtLine(txt.getLineAtOffset(var.getPos())) + 1,Error.Type.WARNING));
-									}
+						// Hidden-text fallback: a variable used only inside a
+						// collapsed fold won't appear in ltokens (folding
+						// physically removes the lines from the buffer), so the
+						// visible-token scans above can flag it as unused. Scan
+						// the fold body text directly. The provider already
+						// excludes DEFINE bodies (declarations) and bracket
+						// comments (not usages).
+						if (unused && hiddenTextProvider != null) {
+							String varNameLower = var.getName().toLowerCase();
+							for (String hidden : hiddenTextProvider.getUsageSearchableHiddenText()) {
+								if (containsWord(hidden.toLowerCase(), varNameLower)) {
+									unused = false;
+									break;
 								}
-							});
+							}
+						}
+
+						if( unused && !tblErrors.isDisposed() && com.repdev.Config.getListUnusedVars()) {
+							int[] lc = lineColAt(canonicalSource, var.getPos());
+							errorList.add(new Error(var.getFilename(), "Variable Unused: " + var.getName().toUpperCase(), lc[0] + 1, lc[1] + 1, Error.Type.WARNING));
 						}
 					}
 					// Redraw Main Screen after background variables are parsed
@@ -376,65 +422,63 @@ public class RepgenParser {
 					}
 				});
 
-				display.syncExec(new Runnable() {
-					public void run() {
-						try {
-							for (final Token tok : ltokens) {
-								boolean isTask = false;
-								for( String task: taskTokens )
-									if( tok.getStr().equals(task)) isTask = true;
-	
-								if ( tok.getCDepth() > 0 && isTask && ( tok.getAfter()!=null ) && tok.getAfter().getStr().equals(":")) {
-									int line = txt.getLineAtOffset(tok.getStart());
-									int col = tok.getStart() - txt.getOffsetAtLine(line);
-									String desc = txt.getText(tok.getStart(), txt.getOffsetAtLine(line+1)-1);
-	
-	
-									desc = desc.trim();
-									desc = desc.replaceAll("\\]$", "");
-	
-									Task.Type type;
-									type = Task.Type.TODO;
-									if( tok.getStr().equals("fixme") ) {
-										type = Task.Type.FIXME;
-									} else if( tok.getStr().equals("bug") || tok.getStr().equals("bugbug") ) {
-										type = Task.Type.BUG;
-									} else if( tok.getStr().equals("wtf") ) {
-										type = Task.Type.WTF;
-									} else if( tok.getStr().equals("bm") || tok.getStr().equals("bookmark") ) {
-										type = Task.Type.BM;
-									} else if( tok.getStr().equals("test") ) {
-										type = Task.Type.TEST;
-									} else if( tok.getStr().equals("note") ) {
-										type = Task.Type.NOTE;
- 									}
+				// Task scanning is a pure data operation over ltokens and the
+				// canonical source — no StyledText access required, so no need
+				// to bounce through syncExec. Token offsets are model coords;
+				// derive line/col from canonical source so tasks inside folded
+				// regions still report correctly.
+				try {
+					for (final Token tok : ltokens) {
+						boolean isTask = false;
+						for( String task: taskTokens )
+							if( tok.getStr().equals(task)) isTask = true;
 
-	
-	
-									/* Don't die if the item does not have a line following it...
-									 * Taken from my #include "" double click code.
-									 */
-									int startOffset = tok.getStart();
-									int pos1 = txt.getText().toString().indexOf("\n",startOffset + tok.getStr().length()) + 1;
-									int pos2 = txt.getText().toString().indexOf("]",startOffset + tok.getStr().length()) - 1;
-									int endOffset = (pos1<pos2 ? pos1 : pos2);
-	
-	
-									if( endOffset - 1 <= startOffset)
-										desc = "";
-									else
-										desc = txt.getText(startOffset, endOffset);
-									desc = desc.trim();
-	
-									Task task = new Task(file.getName(), desc, line, col, type);
-									taskList.add( task );
-								}
+						if ( tok.getCDepth() > 0 && isTask && ( tok.getAfter()!=null ) && tok.getAfter().getStr().equals(":")) {
+							int[] lc = lineColAt(canonicalSource, tok.getStart());
+							int line = lc[0];
+							int col = lc[1];
+
+							Task.Type type;
+							type = Task.Type.TODO;
+							if( tok.getStr().equals("fixme") ) {
+								type = Task.Type.FIXME;
+							} else if( tok.getStr().equals("bug") || tok.getStr().equals("bugbug") ) {
+								type = Task.Type.BUG;
+							} else if( tok.getStr().equals("wtf") ) {
+								type = Task.Type.WTF;
+							} else if( tok.getStr().equals("bm") || tok.getStr().equals("bookmark") ) {
+								type = Task.Type.BM;
+							} else if( tok.getStr().equals("test") ) {
+								type = Task.Type.TEST;
+							} else if( tok.getStr().equals("note") ) {
+								type = Task.Type.NOTE;
 							}
-						} catch (Exception e) {
-							// TODO: handle exception (Places TC here to fix a crash when a repgen being parsed is closed)
+
+							int startOffset = tok.getStart();
+							int searchFrom = startOffset + tok.getStr().length();
+							int newlinePos = canonicalSource.indexOf("\n", searchFrom);
+							int bracketPos = canonicalSource.indexOf("]", searchFrom) - 1;
+							int endOffset;
+							if (newlinePos == -1) newlinePos = canonicalSource.length();
+							else newlinePos = newlinePos + 1;
+							if (bracketPos < 0) bracketPos = canonicalSource.length();
+							endOffset = Math.min(newlinePos, bracketPos);
+
+							String desc;
+							if( endOffset - 1 <= startOffset || endOffset > canonicalSource.length())
+								desc = "";
+							else
+								desc = canonicalSource.substring(startOffset, endOffset);
+							desc = desc.trim();
+							desc = desc.replaceAll("\\]$", "");
+
+							Task task = new Task(file.getName(), desc, line, col, type);
+							taskList.add( task );
 						}
 					}
-				});
+				} catch (Exception e) {
+					// TODO: handle exception (Places TC here to fix a crash when a repgen being parsed is closed)
+				}
 
 				// Update the tasks table
 				display.asyncExec(new Runnable() {
@@ -830,14 +874,29 @@ public class RepgenParser {
 			else
 				charEnd = str.length();
 
-			if( txt != null)
+			if( txt != null) {
+				// charStart/charEnd are model offsets (parse runs against the
+				// canonical source). Translate to view offsets before driving
+				// the StyledText redraw; if either endpoint maps into a hidden
+				// region, fall back to a full redraw.
+				int viewStart = charStart;
+				int viewEnd = charEnd;
+				if (hiddenTextProvider != null) {
+					int vs = hiddenTextProvider.modelToView(charStart);
+					int ve = hiddenTextProvider.modelToView(charEnd);
+					if (vs < 0 || ve < 0) { redrawAll = true; }
+					else { viewStart = vs; viewEnd = ve; }
+				}
+				int viewMax = txt.getCharCount();
+				if (viewStart > viewMax) viewStart = viewMax;
+				if (viewEnd > viewMax) viewEnd = viewMax;
 				if( redrawAll )
-					txt.redrawRange(0, txt.getCharCount(), false);
+					txt.redrawRange(0, viewMax, false);
+				else if( replacedText != null &&  replacedText.contains("\n") )
+					txt.redrawRange(viewStart, viewMax-viewStart, false);
 				else
-					if( replacedText != null &&  replacedText.contains("\n") )
-						txt.redrawRange(charStart, txt.getCharCount()-charStart, false);
-					else
-						txt.redrawRange(charStart,charEnd-charStart,false); 
+					txt.redrawRange(viewStart, viewEnd-viewStart, false);
+			}
 		}
 
 		return allDefs;
@@ -1014,17 +1073,64 @@ public class RepgenParser {
 
 	}
 
+	/**
+	 * Canonical (unfolded) source text for the current file. Returns the live
+	 * {@code StyledText} buffer when no projection is in effect — at which
+	 * point view and model offsets coincide. Always non-null.
+	 *
+	 * <p>This is the single source of truth for everything the parser
+	 * produces ({@link #ltokens}, {@link #lvars}, error positions). All
+	 * offsets stored in those structures are model offsets and may exceed
+	 * {@code txt.getCharCount()} when folds are active. UI consumers must
+	 * translate via {@link HiddenTextProvider#modelToView(int)} before
+	 * indexing into {@code txt}.
+	 */
+	public String canonicalSourceText() {
+		if (hiddenTextProvider != null) {
+			String full = hiddenTextProvider.getFullSourceText();
+			if (full != null) return full;
+		}
+		return txt.getText();
+	}
+
+	/**
+	 * Compute (line, column) for a model offset against a canonical source
+	 * string. Used by the error checker so a {@link Variable#getPos()} that
+	 * lives inside a collapsed fold doesn't trip
+	 * {@code StyledText.getLineAtOffset} (which would throw
+	 * {@code IllegalArgumentException} for offsets past the visible buffer,
+	 * silently aborting the worker before any errors reach the table).
+	 *
+	 * @return {@code int[]{line, col}}, both zero-based. Offsets beyond the
+	 *         string clamp to the last line; negative offsets clamp to (0, 0).
+	 */
+	static int[] lineColAt(String text, int offset) {
+		int line = 0, col = 0;
+		int max = Math.min(offset, text.length());
+		for (int i = 0; i < max; i++) {
+			if (text.charAt(i) == '\n') { line++; col = 0; }
+			else col++;
+		}
+		return new int[]{ line, col };
+	}
+
 	public void textModified(int start, int length, String replacedText){
 		if (reparse) {
-			int st = start;
+			// Translate the StyledText event offsets (view coords) to model
+			// coords so the incremental parse extends ltokens against the
+			// canonical source. When no projection is active, the translation
+			// is a no-op and behavior matches the pre-folding code path.
+			int modelStart = (hiddenTextProvider != null) ? hiddenTextProvider.viewToModel(start) : start;
+			int st = modelStart;
 			int end = st + length;
 			int oldend = st + replacedText.length();
 			boolean rebuildVars = false;
 
 			long time = System.currentTimeMillis();
 
+			String canonical = canonicalSourceText();
 			try {
-				parse(file.getName(), txt.getText(), st, end, oldend, replacedText, ltokens, lasttokens, removedtokens, lvars, txt);
+				parse(file.getName(), canonical, st, end, oldend, replacedText, ltokens, lasttokens, removedtokens, lvars, txt);
 
 				for( Token cur : lasttokens){
 					if( cur.inDefs() )
@@ -1078,12 +1184,20 @@ public class RepgenParser {
 
 
 				if( rebuildVars )
-					rebuildVars(file.getName(), txt.getText(), ltokens);
+					rebuildVars(file.getName(), canonical, ltokens);
 
 				if( initialIncludeParseNeeded ){
 					parseIncludes();
 					initialIncludeParseNeeded = false;
 				}
+
+				// Notify the folding manager (or any other registered
+				// projection) that ltokens reflects the latest edit. Driving
+				// fold-range recomputation from this callback rather than a
+				// modifyText listener avoids the registration-order trap
+				// where the listener would otherwise fire ahead of this
+				// parse pass and rebuild ranges against stale tokens.
+				if (hiddenTextProvider != null) hiddenTextProvider.onTokensUpdated();
 			} catch (Exception e) {
 				System.err.println("Syntax Highlighter error!");
 				e.printStackTrace();
@@ -1095,7 +1209,9 @@ public class RepgenParser {
 
 	public void parseIncludes(){
 		if( includeParserWorker == null ){
-			includeParserWorker = new BackgroundIncludeParser(txt.getText());
+			// Use canonical source so #include directives inside folded
+			// regions still feed the include graph.
+			includeParserWorker = new BackgroundIncludeParser(canonicalSourceText());
 			refreshIncludes = false;
 			includeParserWorker.start();
 		}
@@ -1111,8 +1227,10 @@ public class RepgenParser {
 	public void reparseAll() {
 		try {
 			ltokens = new ArrayList<Token>();
-			parse(file.getName(), txt.getText(), 0, txt.getCharCount() - 1, 0, null, ltokens, lasttokens, removedtokens, lvars, txt);
-			rebuildVars(file.getName(), txt.getText(), ltokens);
+			String canonical = canonicalSourceText();
+			parse(file.getName(), canonical, 0, canonical.length() - 1, 0, null, ltokens, lasttokens, removedtokens, lvars, txt);
+			rebuildVars(file.getName(), canonical, ltokens);
+			if (hiddenTextProvider != null) hiddenTextProvider.onTokensUpdated();
 			System.out.println("Reparsed");
 		} catch (Exception e) {
 			System.err.println("Syntax Highlighter error!");
@@ -1180,6 +1298,26 @@ public class RepgenParser {
 
 	public static KeywordLayout getKeywords() {
 		return keywords;
+	}
+
+	/**
+	 * Whole-word containment test: matches when neither neighboring char is a
+	 * letter or digit. RepGen identifiers are alphanumeric, so this matches the
+	 * token-boundary semantics used elsewhere. Both inputs must already be
+	 * lowercased if a case-insensitive match is wanted.
+	 */
+	private static boolean containsWord(String haystack, String word) {
+		if (haystack == null || word == null || word.length() == 0) return false;
+		int from = 0;
+		while (true) {
+			int idx = haystack.indexOf(word, from);
+			if (idx < 0) return false;
+			char before = idx == 0 ? ' ' : haystack.charAt(idx - 1);
+			int afterIdx = idx + word.length();
+			char after = afterIdx >= haystack.length() ? ' ' : haystack.charAt(afterIdx);
+			if (!Character.isLetterOrDigit(before) && !Character.isLetterOrDigit(after)) return true;
+			from = idx + 1;
+		}
 	}
 
 	public static void setKeywords(KeywordLayout keywords) {

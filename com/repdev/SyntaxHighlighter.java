@@ -37,6 +37,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 import com.repdev.parser.FunctionLayout;
+import com.repdev.parser.HiddenTextProvider;
 import com.repdev.parser.RepgenParser;
 import com.repdev.parser.Token;
 import com.repdev.parser.Variable;
@@ -244,36 +245,47 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 	}
 
 	public StyleRange getStyle(Token tok) {
+		return getStyleAtView(tok, tok.getStart());
+	}
+
+	/**
+	 * Build a {@link StyleRange} for {@code tok} anchored at the given view
+	 * offset. The parser stores token offsets in model (unfolded) coords;
+	 * StyledText needs view coords. Callers translate via
+	 * {@link HiddenTextProvider#modelToView(int)} once per token and pass the
+	 * result here.
+	 */
+	public StyleRange getStyleAtView(Token tok, int viewStart) {
 		boolean isVar = false;
 		StyleRange range = null;
 
 		if (tok.getCDepth() != 0) {
-			range = COMMENTS.getRange(tok.getStart(), tok.length());
+			range = COMMENTS.getRange(viewStart, tok.length());
 			for( String taskType: RepgenParser.taskTokens )
-				if( tok.getStr().equals(taskType) && (tok.getAfter() != null && tok.getAfter().getStr().equals(":")) ) range = TASK.getRange(tok.getStart(), tok.length());
+				if( tok.getStr().equals(taskType) && (tok.getAfter() != null && tok.getAfter().getStr().equals(":")) ) range = TASK.getRange(viewStart, tok.length());
 
 		} else if (tok.inString())
-			range = TYPE_CHAR.getRange(tok.getStart(), tok.length());
+			range = TYPE_CHAR.getRange(viewStart, tok.length());
 		else if (tok.inDate())
-			range = TYPE_DATE.getRange(tok.getStart(), tok.length());
+			range = TYPE_DATE.getRange(viewStart, tok.length());
 		// Validates the token is a Record before the colon
 		else if (tok.getAfter() != null && tok.getAfter().getStr().equals(":")) {
 			if (tok.dbRecordValid())
-				range = STRUCT1.getRange(tok.getStart(), tok.length());
+				range = STRUCT1.getRange(viewStart, tok.length());
 			else
-				range = STRUCT1_INVALID.getRange(tok.getStart(), tok.length());
+				range = STRUCT1_INVALID.getRange(viewStart, tok.length());
 		// Validates the token is a Field or a Field without the Sub Field if the next token is :(
 		} else if (tok.getBefore() != null && tok.getBefore().getStr().equals(":")) {
 			if (tok.dbFieldValid(RepgenParser.getDb().getTreeRecords()) || (tok.dbFieldValidNoSubFld(RepgenParser.getDb().getTreeRecords())))
-				range = STRUCT2.getRange(tok.getStart(), tok.length());
+				range = STRUCT2.getRange(viewStart, tok.length());
 			else
-				range = STRUCT2_INVALID.getRange(tok.getStart(), tok.length());
+				range = STRUCT2_INVALID.getRange(viewStart, tok.length());
 		} else if (FunctionLayout.getInstance().containsName(tok.getStr()) && tok.getAfter() != null && tok.getAfter().getStr().equals("("))
-			range = FUNCTIONS.getRange(tok.getStart(), tok.length());
+			range = FUNCTIONS.getRange(viewStart, tok.length());
 		else if (RepgenParser.getKeywords().contains(tok.getStr()))
-			range = KEYWORDS.getRange(tok.getStart(), tok.length());
+			range = KEYWORDS.getRange(viewStart, tok.length());
 		else if (RepgenParser.getSpecialvars().contains(tok.getStr()))
-			range = VARIABLES.getRange(tok.getStart(), tok.length());
+			range = VARIABLES.getRange(viewStart, tok.length());
 		for (int i = 0; i < parser.getLvars().size(); i++){
 			Variable var = parser.getLvars().get(i);
 
@@ -282,9 +294,9 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		}
 
 		if (range == null && isVar)
-			range = VARIABLES.getRange(tok.getStart(), tok.length());
+			range = VARIABLES.getRange(viewStart, tok.length());
 		else if( range == null ){
-			range = NORMAL.getRange(tok.getStart(), tok.length());	
+			range = NORMAL.getRange(viewStart, tok.length());
 		}
 
 		if( tok.getSpecialBackground() != null)
@@ -297,35 +309,57 @@ public class SyntaxHighlighter implements ExtendedModifyListener, LineStyleListe
 		ArrayList<Token> ltokens = parser.getLtokens();
 		ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
 
-		int line = txt.getLineAtOffset(event.lineOffset);
+		// event.lineOffset is in view (StyledText) coords; tokens are in model
+		// coords. Translate the view-line range to model coords once, scan
+		// ltokens against that range, then translate each token's start back
+		// to view coords when building the StyleRange.
+		HiddenTextProvider htp = parser.getHiddenTextProvider();
+		int viewLineStart = event.lineOffset;
+		int line = txt.getLineAtOffset(viewLineStart);
+		int viewLineEnd;
+		if (line + 1 < txt.getLineCount())
+			viewLineEnd = txt.getOffsetAtLine(line + 1);
+		else
+			viewLineEnd = txt.getCharCount();
+
+		int modelLineStart = (htp != null) ? htp.viewToModel(viewLineStart) : viewLineStart;
+		int modelLineEnd = (htp != null) ? htp.viewToModel(viewLineEnd) : viewLineEnd;
 
 		int ftoken;
 		for (ftoken = 0; ftoken < ltokens.size(); ftoken++)
-			if (ltokens.get(ftoken).getEnd() >= event.lineOffset)
+			if (ltokens.get(ftoken).getEnd() >= modelLineStart)
 				break;
 
-		int ltoken = ltokens.size();
-		if (line + 1 < txt.getLineCount()) {
-			int pos = txt.getOffsetAtLine(line + 1);
-
-			for (ltoken = ftoken; ltoken < ltokens.size(); ltoken++)
-				if (ltokens.get(ltoken).getStart() > pos)
-					break;
-		}
+		int ltoken;
+		for (ltoken = ftoken; ltoken < ltokens.size(); ltoken++)
+			if (ltokens.get(ltoken).getStart() > modelLineEnd)
+				break;
 
 		for (int i = ftoken; i < ltoken; i++){
-			StyleRange range = getStyle(ltokens.get(i));			
+			Token tok = ltokens.get(i);
+			int tokViewStart = (htp != null) ? htp.modelToView(tok.getStart()) : tok.getStart();
+			// modelToView returns -1 for tokens inside a fold; skip — there's
+			// no visible glyph to style.
+			if (tokViewStart < 0) continue;
+
+			StyleRange range = getStyleAtView(tok, tokViewStart);
 			ranges.add(range);
 
-			//If we are a backgroudn highlighted token, and a CODE SNIPPET one, then connect the highlighting over whitespace between tokens
-			if( ltokens.get(i).getBackgroundReason() == SpecialBackgroundReason.CODE_SNIPPET )
-				if( i + 1 < ltoken && ltokens.get(i+1).getBackgroundReason() == SpecialBackgroundReason.CODE_SNIPPET && ltokens.get(i+1).getSnippetVar() == ltokens.get(i).getSnippetVar())
-					ranges.add(new StyleRange(ltokens.get(i).getEnd(),ltokens.get(i+1).getStart()-ltokens.get(i).getEnd(),null,ltokens.get(i).getSpecialBackground()));
+			// Connect the snippet background highlight over whitespace between
+			// adjacent CODE_SNIPPET tokens. Both endpoints must translate to
+			// view coords — if either falls inside a fold, skip the connector.
+			if (tok.getBackgroundReason() == SpecialBackgroundReason.CODE_SNIPPET
+					&& i + 1 < ltoken
+					&& ltokens.get(i+1).getBackgroundReason() == SpecialBackgroundReason.CODE_SNIPPET
+					&& ltokens.get(i+1).getSnippetVar() == tok.getSnippetVar()) {
+				int tokViewEnd = (htp != null) ? htp.modelToView(tok.getEnd()) : tok.getEnd();
+				int nextViewStart = (htp != null) ? htp.modelToView(ltokens.get(i+1).getStart()) : ltokens.get(i+1).getStart();
+				if (tokViewEnd >= 0 && nextViewStart >= 0 && nextViewStart > tokViewEnd)
+					ranges.add(new StyleRange(tokViewEnd, nextViewStart - tokViewEnd, null, tok.getSpecialBackground()));
+			}
 		}
 
-		StyleRange[] rangesArray = new StyleRange[ranges.size()];
-
-		event.styles = ranges.toArray(rangesArray);
+		event.styles = ranges.toArray(new StyleRange[ranges.size()]);
 	}
 
 	public void setCustomLines(int[] lines)

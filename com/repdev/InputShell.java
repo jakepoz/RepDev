@@ -33,7 +33,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
+// no longer supported in modern java versions, Boolean is provide by jdk
+// import com.sun.org.apache.xpath.internal.operations.Bool;
 
 public class InputShell {
 	private static InputShell me = new InputShell();
