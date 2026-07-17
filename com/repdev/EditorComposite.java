@@ -582,6 +582,30 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	public FoldingManager getFolding(){
 		return folding;
 	}
+
+	/**
+	 * Live-disable code folding for this editor: unfold everything, then drop the fold
+	 * manager, its gutter column, and its listeners so the buffer reverts to plain-editor
+	 * behavior (no fold icons, hotkeys, or unfold-on-save). Called when the user turns off
+	 * "Enable code folding" and saves, so open tabs update without a reopen.
+	 *
+	 * Re-enabling only takes effect when an editor is (re)opened — the fold listener must
+	 * be registered ahead of the highlighter's for correct parser ordering (see the
+	 * construction comment above), which a live re-attach can't guarantee.
+	 */
+	public void disableFolding(){
+		if (folding == null) return;
+		if (folding.hasActiveFolds()) folding.expandAllSilent();
+		if (parser != null) parser.setHiddenTextProvider(null);
+		folding.dispose();
+		folding = null;
+		if (!txt.isDisposed()) {
+			// Shrink the gutter back (calcWidth now excludes the fold column) and repaint.
+			txt.setMargins(calcWidth(), 0, 0, 0);
+			txt.redraw();
+		}
+	}
+
 	private void buildGUI() {
 		setLayout(new FormLayout());
 
@@ -614,7 +638,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		// is only correct once fold headerLines reflect the post-edit line
 		// numbering. Reversing this order causes parser state to drift one edit
 		// behind the buffer when folds are active.
-		if (file.getType() == FileType.REPGEN) {
+		if (file.getType() == FileType.REPGEN && Config.getFoldingEnabled()) {
 			folding = new FoldingManager(this, txt, parser);
 			parser.setHiddenTextProvider(folding);
 		}

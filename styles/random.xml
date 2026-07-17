@@ -11,6 +11,10 @@
     <editor bgColor="$rand" fgColor="$rand" line="$rand" token="$rand" font="Courier New" fontSize="11" />
 
     <linenumber fgColor="#C0C0C0" />
+    <!-- Fold gutter markers. fgColor sets the icon color.
+         shape="triangle" (default) or shape="plusminus" for boxed +/- icons.
+         guideColor sets the vertical block-guide line; omit for a dimmed default. -->
+    <folding fgColor="#808080" shape="triangle" />
     <comments fgColor="$rand" />
     <variables fgColor="$rand" style="bold" />    
     <functions fgColor="$rand" style="bold" />    

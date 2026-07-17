@@ -52,9 +52,9 @@ public class OptionsShell {
 	// Controls
 	private Spinner tabSpinner;
 	private Combo styleCombo, hour, minute;
-	private Label varsLabel, serverLabel, portLabel, useSSOLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, liveSYMLabel, liveSYMColorLabel, useSourceControlLabel, sourceControlDirLabel;
+	private Label varsLabel, serverLabel, portLabel, useSSOLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, enableFoldingLabel, liveSYMLabel, liveSYMColorLabel, useSourceControlLabel, sourceControlDirLabel;
 	private Text  serverText, portText, errCheckPrefix, errCheckSuffix, liveSYMText, liveSYMColorText, sourceControlDir;
-	private Button varsButton, neverTerm, useSSO, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers, useSourceControl;
+	private Button varsButton, neverTerm, useSSO, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers, enableFolding, useSourceControl;
 	private String ssoPass = "";
 
 	public static void show(Shell parent) {
@@ -104,6 +104,11 @@ public class OptionsShell {
 				Config.setFileNameInTitle(fileNameInTitle.getSelection());
 				Config.setHostNameInTitle(hostInTitle.getSelection());
 				Config.setViewLineNumbers(viewLineNumbers.getSelection());
+				Config.setFoldingEnabled(enableFolding.getSelection());
+				// Disabling takes effect on open editors immediately (unfold + remove the
+				// fold gutter); enabling applies the next time an editor is opened.
+				if (!enableFolding.getSelection() && RepDevMain.mainShell != null)
+					RepDevMain.mainShell.disableFoldingOnOpenEditors();
 				Config.setLiveSym(Integer.parseInt(liveSYMText.getText()));
 				Config.setLiveSymColor(liveSYMColorText.getText());
 				Config.setUseSourceControl(useSourceControl.getSelection());
@@ -125,6 +130,8 @@ public class OptionsShell {
 				if(styleCombo.getSelectionIndex() > -1) {
 				    Config.setStyle(styleCombo.getItem(styleCombo.getSelectionIndex()));
 				    SyntaxHighlighter.loadStyle(Config.getStyle());
+				    if (RepDevMain.mainShell != null)
+				        RepDevMain.mainShell.refreshEditorStyles();
 				}
 				
 				// Project file backup
@@ -487,6 +494,11 @@ public class OptionsShell {
 		viewLineNumbers = new Button(editorGroup, SWT.CHECK);
 		viewLineNumbers.setSelection((Config.getViewLineNumbers()));
 
+		enableFoldingLabel = new Label(editorGroup, SWT.NONE);
+		enableFoldingLabel.setText("Enable code folding");
+		enableFolding = new Button(editorGroup, SWT.CHECK);
+		enableFolding.setSelection((Config.getFoldingEnabled()));
+
 		Group noErrorCheckGroup = new Group(editorOptions,SWT.NONE);
 		noErrorCheckGroup.setText("No Error Check for these Files");
 		layout = new FormLayout();
@@ -518,6 +530,7 @@ public class OptionsShell {
 			fileNameInTitle.setSelection(true);
 			hostInTitle.setSelection(true);
 			viewLineNumbers.setSelection(true);
+			enableFolding.setSelection(true);
 			RepDevMain.saveSettings();
 		}
 		FormData data = new FormData();
@@ -647,6 +660,18 @@ public class OptionsShell {
 		data.top = new FormAttachment(hostInTitle);
 		data.right = new FormAttachment(100);
 		viewLineNumbers.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(viewLineNumbersLabel);
+		data.width = 163;
+		enableFoldingLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(enableFoldingLabel);
+		data.top = new FormAttachment(viewLineNumbers);
+		data.right = new FormAttachment(100);
+		enableFolding.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(0);

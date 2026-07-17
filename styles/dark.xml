@@ -12,6 +12,10 @@
     
 	<comments fgColor="#7F7F7F" />
     <linenumber fgColor="#C0C0C0" />
+    <!-- Fold gutter markers. fgColor sets the icon color.
+         shape="triangle" (default) or shape="plusminus" for boxed +/- icons.
+         guideColor sets the vertical block-guide line; omit for a dimmed default. -->
+    <folding fgColor="#A0A0A0" shape="plusminus" />
     <variables fgColor="#00BF00" style="bold" />    
     <functions fgColor="#0000FF" style="bold" />    
     <keywords fgColor="#0000FF" />

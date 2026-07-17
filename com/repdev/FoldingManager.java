@@ -19,6 +19,7 @@
 
 package com.repdev;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -101,7 +102,18 @@ public class FoldingManager implements HiddenTextProvider {
 	private final ArrayList<FoldRegion> folded = new ArrayList<FoldRegion>();
 	private final ArrayList<FoldableRange> foldable = new ArrayList<FoldableRange>();
 
-	private final Color markerColor;
+	/** Fallback triangle color when the active style declares no <folding fgColor="..."/>. */
+	private static final RGB DEFAULT_MARKER_RGB = new RGB(90, 90, 90);
+	/** Marker glyph styles selectable via the style's {@code <folding shape="..."/>} attribute. */
+	private static final String SHAPE_TRIANGLE = "triangle";
+	private static final String SHAPE_PLUSMINUS = "plusminus";
+	// Not final: refreshStyle() disposes and recreates these when the theme changes.
+	private Color markerColor;
+	// Always-on vertical guide line drawn from each expanded block's icon down to its end.
+	private Color guideColor;
+	// Which glyph to paint in the fold gutter. Defaults to triangles; a style may opt
+	// into boxed +/- markers with shape="plusminus".
+	private String markerShape = SHAPE_TRIANGLE;
 	private boolean inFoldOp = false;
 	// True while a fold-all is iterating. Individual collapse/expand ops suppress
 	// their per-op parser.reparseAll() + recomputeRanges() (which triggers the
@@ -119,9 +131,74 @@ public class FoldingManager implements HiddenTextProvider {
 		this.editor = editor;
 		this.txt = txt;
 		this.parser = parser;
-		this.markerColor = new Color(txt.getDisplay(), new RGB(90, 90, 90));
+		loadFoldingStyle();
 		install();
 	}
+
+	/**
+	 * Read the fold marker's color, glyph shape, and guide-line color from the active
+	 * style's {@code <folding fgColor="..." shape="..." guideColor="..."/>} element in one
+	 * parse, and (re)build {@link #markerColor} / {@link #markerShape} / {@link #guideColor}.
+	 * Missing or malformed values fall back to {@link #DEFAULT_MARKER_RGB},
+	 * {@link #SHAPE_TRIANGLE}, and — for the guide — a dimmed blend of the marker color
+	 * toward the editor background, so older or custom style files keep working. Mirrors
+	 * how SyntaxHighlighter resolves per-element style values.
+	 */
+	private void loadFoldingStyle() {
+		RGB rgb = DEFAULT_MARKER_RGB;
+		RGB guideRgb = null;
+		RGB bg = null;
+		String shape = SHAPE_TRIANGLE;
+		try {
+			Style style = new Style(new File("styles\\" + Config.getStyle() + ".xml"));
+			RGB c = style.getColor("folding", "fgColor");
+			if (c != null) rgb = c;
+			String s = style.getValue("folding", "shape");
+			if (s != null && s.trim().length() > 0) shape = s.trim().toLowerCase();
+			guideRgb = style.getColor("folding", "guideColor"); // explicit override; may be null
+			bg = style.getColor("editor", "bgColor");           // used to dim the default guide
+		} catch (Exception ex) {
+			// Malformed/absent style file — keep the default gray triangle.
+		}
+		if (guideRgb == null) guideRgb = dimToward(rgb, bg);
+
+		Color oldMarker = markerColor;
+		Color oldGuide = guideColor;
+		markerColor = new Color(txt.getDisplay(), rgb);
+		guideColor = new Color(txt.getDisplay(), guideRgb);
+		if (oldMarker != null && !oldMarker.isDisposed()) oldMarker.dispose();
+		if (oldGuide != null && !oldGuide.isDisposed()) oldGuide.dispose();
+		markerShape = shape;
+	}
+
+	/**
+	 * Default fold-guide color: the marker color blended halfway toward the editor
+	 * background so the always-on guide line reads as a dimmed version of the icon.
+	 * Falls back to a mid-gray blend when the background is unknown (e.g. randomized styles).
+	 */
+	private static RGB dimToward(RGB c, RGB bg) {
+		RGB target = (bg != null) ? bg : new RGB(128, 128, 128);
+		return new RGB((c.red + target.red) / 2,
+		               (c.green + target.green) / 2,
+		               (c.blue + target.blue) / 2);
+	}
+
+	/**
+	 * Re-read the fold marker's color and shape from the current style and repaint. Called
+	 * after a theme change so open editors update live, matching how syntax colors refresh.
+	 */
+	public void refreshStyle() {
+		if (txt.isDisposed()) return;
+		loadFoldingStyle();
+		txt.redraw();
+	}
+
+	// Listener references retained so dispose() can unregister them — required when
+	// folding is torn down live (user disables the feature) rather than only at editor
+	// close, so a detached manager stops receiving edit/paint/click events.
+	private ExtendedModifyListener modifyListener;
+	private PaintListener paintListener;
+	private MouseAdapter mouseListener;
 
 	private void install() {
 		// Registered first so headerLine shifts complete before downstream
@@ -129,19 +206,21 @@ public class FoldingManager implements HiddenTextProvider {
 		// Without this ordering, parser-side canonical-source reassembly sees
 		// stale headerLine values for one edit cycle and reinserts hidden
 		// blocks at the wrong offset — corrupting model-coord parse state.
-		txt.addExtendedModifyListener(new ExtendedModifyListener() {
+		modifyListener = new ExtendedModifyListener() {
 			public void modifyText(ExtendedModifyEvent event) {
 				onTextModified(event);
 			}
-		});
+		};
+		txt.addExtendedModifyListener(modifyListener);
 
-		txt.addPaintListener(new PaintListener() {
+		paintListener = new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				paintMarkers(e);
 			}
-		});
+		};
+		txt.addPaintListener(paintListener);
 
-		txt.addMouseListener(new MouseAdapter() {
+		mouseListener = new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
 				if (e.button != 1 || txt.getLineHeight() == 0) return;
 				int gutter = editor.calcWidth();
@@ -152,7 +231,8 @@ public class FoldingManager implements HiddenTextProvider {
 				if (line < 0 || line >= txt.getLineCount()) return;
 				toggleAtLine(line);
 			}
-		});
+		};
+		txt.addMouseListener(mouseListener);
 	}
 
 	/**
@@ -951,6 +1031,35 @@ public class FoldingManager implements HiddenTextProvider {
 		GC gc = e.gc;
 		Color oldFg = gc.getForeground();
 		Color oldBg = gc.getBackground();
+
+		// Always-on fold guide lines: a dimmed vertical line from each expanded block's
+		// icon down to its end line, capped with a short foot (└). Drawn before the glyphs
+		// so the icons sit on top. Iterates the foldable list directly — not just the
+		// visible rows — so the guide still shows when its header has scrolled off the top;
+		// the span is clipped to the client area in pixel space.
+		gc.setForeground(guideColor);
+		int lastLine = txt.getLineCount() - 1;
+		for (int i = 0; i < foldable.size(); i++) {
+			FoldableRange fr = foldable.get(i);
+			int endLine = fr.endLine;
+			if (endLine > lastLine) endLine = lastLine;
+			if (endLine <= fr.headerLine) continue;
+			int yHead, yEnd;
+			try {
+				yHead = txt.getLocationAtOffset(txt.getOffsetAtLine(fr.headerLine)).y;
+				yEnd = txt.getLocationAtOffset(txt.getOffsetAtLine(endLine)).y;
+			} catch (IllegalArgumentException ex) { continue; }
+			int yStart = yHead + (lh / 2) + 7; // just below the header glyph
+			int yStop = yEnd + (lh / 2);       // middle of the end row
+			if (yStop <= yStart) continue;
+			boolean endVisible = (yStop >= 0 && yStop <= clientH);
+			int a = Math.max(yStart, 0);
+			int b = Math.min(yStop, clientH);
+			if (b <= a) continue;
+			gc.drawLine(cx, a, cx, b);
+			if (endVisible) gc.drawLine(cx, b, cx + 4, b); // foot marking the block end
+		}
+
 		gc.setForeground(markerColor);
 		gc.setBackground(markerColor);
 
@@ -963,15 +1072,29 @@ public class FoldingManager implements HiddenTextProvider {
 				y = txt.getLocationAtOffset(txt.getOffsetAtLine(line)).y;
 			} catch (IllegalArgumentException ex) { continue; }
 			int cy = y + (lh / 2);
-			int s = 6;
-			if (isFolded) {
-				// Right-pointing triangle (region is collapsed)
-				int[] pts = { cx - (s - 2), cy - s, cx + (s - 1), cy, cx - (s - 2), cy + s };
-				gc.fillPolygon(pts);
+			if (SHAPE_PLUSMINUS.equals(markerShape)) {
+				// Boxed +/- : a bordered square with a horizontal bar (expanded, "-"),
+				// plus a vertical bar when collapsed to form "+". Only the outline and
+				// bars are stroked in markerColor; the box interior stays the editor
+				// background (drawRectangle/drawLine use the foreground only).
+				int half = 5;   // box half-size → 10px square
+				int inset = 2;  // bar padding inside the box
+				gc.drawRectangle(cx - half, cy - half, half * 2, half * 2);
+				gc.drawLine(cx - half + inset, cy, cx + half - inset, cy);
+				if (isFolded)
+					gc.drawLine(cx, cy - half + inset, cx, cy + half - inset);
 			} else {
-				// Down-pointing triangle (region is expanded, click to collapse)
-				int[] pts = { cx - s, cy - (s - 3), cx + s, cy - (s - 3), cx, cy + (s - 1) };
-				gc.fillPolygon(pts);
+				// Triangles (default shape).
+				int s = 6;
+				if (isFolded) {
+					// Right-pointing triangle (region is collapsed)
+					int[] pts = { cx - (s - 2), cy - s, cx + (s - 1), cy, cx - (s - 2), cy + s };
+					gc.fillPolygon(pts);
+				} else {
+					// Down-pointing triangle (region is expanded, click to collapse)
+					int[] pts = { cx - s, cy - (s - 3), cx + s, cy - (s - 3), cx, cy + (s - 1) };
+					gc.fillPolygon(pts);
+				}
 			}
 		}
 		gc.setForeground(oldFg);
@@ -979,6 +1102,12 @@ public class FoldingManager implements HiddenTextProvider {
 	}
 
 	public void dispose() {
+		if (!txt.isDisposed()) {
+			if (modifyListener != null) txt.removeExtendedModifyListener(modifyListener);
+			if (paintListener != null) txt.removePaintListener(paintListener);
+			if (mouseListener != null) txt.removeMouseListener(mouseListener);
+		}
 		if (markerColor != null && !markerColor.isDisposed()) markerColor.dispose();
+		if (guideColor != null && !guideColor.isDisposed()) guideColor.dispose();
 	}
 }

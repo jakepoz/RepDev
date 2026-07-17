@@ -4027,6 +4027,37 @@ public class MainShell {
 		return mainfolder;
 	}
 
+	/**
+	 * Tear down code folding on every open editor. Called when the user disables the
+	 * "Enable code folding" option so open tabs unfold and lose their fold gutter
+	 * immediately, rather than staying folded until reopened.
+	 */
+	public void disableFoldingOnOpenEditors() {
+		if (mainfolder == null || mainfolder.isDisposed())
+			return;
+		for (CTabItem tab : mainfolder.getItems()) {
+			if (tab.getControl() instanceof EditorComposite)
+				((EditorComposite) tab.getControl()).disableFolding();
+		}
+	}
+
+	/**
+	 * Re-read theme-derived colors for every open editor. Called after a style change
+	 * so the fold-triangle color (and any repaint-driven syntax colors) update live,
+	 * without needing to reopen tabs.
+	 */
+	public void refreshEditorStyles() {
+		if (mainfolder == null || mainfolder.isDisposed())
+			return;
+		for (CTabItem tab : mainfolder.getItems()) {
+			if (tab.getControl() instanceof EditorComposite) {
+				FoldingManager fm = ((EditorComposite) tab.getControl()).getFolding();
+				if (fm != null)
+					fm.refreshStyle();
+			}
+		}
+	}
+
 	private void setMainTitle(){
 		String server = "";
 		int sym;
