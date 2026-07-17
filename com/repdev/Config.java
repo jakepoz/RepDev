@@ -73,7 +73,12 @@ public class Config implements Serializable {
 	private boolean fileNameInWinTitle = true;
 	private boolean hostInTitle = true;
 	private boolean viewLineNumbers = true;
-	
+	// Stored inverted on purpose: existing repdev.conf files were serialized before this
+	// field existed, so on load Java sets it to the boolean default (false). Keeping the
+	// "disabled" sense means that default maps to folding ENABLED, matching the intended
+	// default for upgraders. Always go through get/setFoldingEnabled below.
+	private boolean foldingDisabled = false;
+
 	@SuppressWarnings("unused")
 	private int maxQueues = 3; //The largest value this slider goes up to, We should probably scrap this since the max value is 9999 and the error checking code is good enough now that it can detect what needs to be entered. In real life, this can also be non continous large ranges, which complicates things.
 							//UPDATE: Ok, this has been removed, however, you can't remove items from Serialized classes.
@@ -549,5 +554,13 @@ public class Config implements Serializable {
 
 	public static boolean getViewLineNumbers(){
 		return me.viewLineNumbers;
+	}
+
+	public static void setFoldingEnabled(boolean enabled){
+		me.foldingDisabled = !enabled;
+	}
+
+	public static boolean getFoldingEnabled(){
+		return !me.foldingDisabled;
 	}
 }

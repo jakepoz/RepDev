@@ -11,6 +11,10 @@
     <editor bgColor="F1F1F1" fgColor="1D1D1D" line="D5D5D5" token="ABABAB" font="Courier New" fontSize="11" />
 
     <linenumber fgColor="#C0C0C0" />
+    <!-- Fold gutter markers. fgColor sets the icon color.
+         shape="triangle" (default) or shape="plusminus" for boxed +/- icons.
+         guideColor sets the vertical block-guide line; omit for a dimmed default. -->
+    <folding fgColor="#6A6A6A" shape="triangle" />
     <comments fgColor="#969AA1" />
     <variables fgColor="#515151" style="bold" />    
     <functions fgColor="#515151" style="bold" />    
