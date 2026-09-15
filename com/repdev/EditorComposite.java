@@ -215,6 +215,15 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		buildGUI();
 	}
 
+	/**
+	 * Re-points this editor at a different tab item. Required when the editor is moved
+	 * to another editor pane: the old CTabItem is disposed, and EditorComposite writes
+	 * the modified marker through this reference and disposes it on close. 
+	 */
+	public void setTabItem(CTabItem tabItem) {
+		this.tabItem = tabItem;
+	}
+
 	public boolean canUndo(){
 		return undos.size() > 0 && !snippetMode;
 	}
@@ -1496,8 +1505,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 	 */
 	private void gotoDefinitionImpl(boolean tryFoldExpansion){
 
-		CTabFolder mainfolder = RepDevMain.mainShell.getMainfolder();
-
 		HashMap<String, ArrayList<Token>> incTokenCache = parser.getIncludeTokenChache();
 		String selString=txt.getSelectionText();
 		if(selString.length() == 0)
@@ -1527,7 +1534,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 					return;
 			}
 			// Go through open files which include this file. Search for Variables/Procedures and goto.
-			for(CTabItem tf : mainfolder.getItems()){
+			for(CTabItem tf : RepDevMain.mainShell.getPanes().allItems()){
 				if(tf.getControl() instanceof EditorComposite) {
 					EditorComposite ec = ((EditorComposite) tf.getControl());
 					incTokenCache = ec.parser.getIncludeTokenChache();
@@ -2058,7 +2065,6 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			parser.parseIncludes();
 
 		//Check other open tabs, and if needed set the flag to reparse their includes
-		CTabFolder folder = (CTabFolder)getParent();
 		Object loc;
 
 		if( file.isLocal())
@@ -2066,7 +2072,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		else
 			loc = file.getSym();
 
-		for( CTabItem cur : folder.getItems()){
+		for( CTabItem cur : RepDevMain.mainShell.getPanes().allItems()){
 			if( cur.getControl() == null || !(cur.getControl() instanceof EditorComposite) )
 				continue;
 
@@ -2096,6 +2102,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 		else
 			loc = file.getSym();
 
+		// Deliberately folder-local: openFile de-duplicates tabs across panes, and getParent() follows setParent moves.
 		for( CTabItem cur : folder.getItems())
 			if( cur.getData("file") != null && ((SymitarFile)cur.getData("file")).equals(file) && cur.getData("loc").equals(loc)  )
 				if( modified && ( cur.getData("modified") == null || !((Boolean)cur.getData("modified")))){

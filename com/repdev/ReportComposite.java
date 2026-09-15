@@ -77,6 +77,13 @@ public class ReportComposite extends Composite implements TabTextView{
 		buildGUI();
 	}
 	
+	/**
+	 * Re-points this report view at a different tab item, for moves between editor panes.
+	 */
+	public void setTabItem(CTabItem tabItem) {
+		this.tabItem = tabItem;
+	}
+
 	public StyledText getStyledText(){
 		return txt;
 	}

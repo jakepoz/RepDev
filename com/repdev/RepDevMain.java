@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Main run class, runs as first startup
@@ -353,6 +354,9 @@ public class RepDevMain {
 	private static void createGlobalHotkeys(){
 		Display.getDefault().addFilter(SWT.KeyDown, new Listener() {
 			public void handleEvent(Event e) {
+				Shell main = RepDevMain.mainShell == null ? null : RepDevMain.mainShell.getShell();
+				boolean mainActive = main != null && !main.isDisposed()
+						&& Display.getDefault().getActiveShell() == main;
 				if( e.stateMask == (SWT.CTRL | SWT.SHIFT) ){
 //					if(e.keyCode == SWT.F11)
 //						RepDevMain.mainShell.toggleFullScreen();
@@ -370,6 +374,11 @@ public class RepDevMain {
 					case 'O':
 						RepDevMain.mainShell.showOptions();
 						break;
+					case '\\':
+					case '|':
+						if (mainActive)
+							RepDevMain.mainShell.toggleSplitOrientation();
+						break;
 					}
 
 				}
@@ -379,8 +388,15 @@ public class RepDevMain {
 					case 'O':
 						RepDevMain.mainShell.showFileOpenMenu();
 						break;
+					case '\\':
+						if (mainActive)
+							RepDevMain.mainShell.splitEditorHere();
+						break;
 					}
 				}
+				else if (e.stateMask == 0 && e.keyCode == SWT.F6)
+					if (mainActive)
+						RepDevMain.mainShell.focusOtherEditorView();
 			}
 			});
 	}

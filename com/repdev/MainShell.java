@@ -31,13 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
@@ -70,7 +65,6 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 //import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -110,11 +104,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.repdev.parser.Error;
 import com.repdev.parser.RepgenParser;
@@ -122,7 +113,6 @@ import com.repdev.parser.Task;
 
 // no longer supported in modern java versions, Boolean is provide by jdk
 //import com.sun.org.apache.xpath.internal.operations.Bool;
-//import com.sun.xml.internal.ws.util.xml.NodeListIterator;
 
 /**
  * Main graphical user interface. Provides some utility methods as well. Really
@@ -136,12 +126,12 @@ import com.repdev.parser.Task;
 
 public class MainShell {
 	private static final int MIN_COL_WIDTH = 75, MIN_COMP_SIZE = 65;
-	private CTabFolder mainfolder;
-	private Display display;
+	private EditorPaneManager panes;
+	Display display;
 	//private Shell shell;
 	private Tree tree;
 	private Table tblErrors, tblTasks;
-	private FindReplaceShell findReplaceShell;
+	FindReplaceShell findReplaceShell;
 	private SurroundWithShell surroundWithShell;
 	private final int MAX_RECENTS = 5;
 	private ArrayList<CTabItem> tabHistory = new ArrayList<CTabItem>();
@@ -151,7 +141,8 @@ public class MainShell {
 	// CoolBar for our universal tool bar at the top.
 	private CoolBar coolBar;
 	private ToolBar editorBar;
-	private ToolItem savetb, install, print, run, hltoggle, fscreen;
+	ToolItem savetb, install, print, run, hltoggle;
+	private ToolItem fscreen;
 	private ArrayList<CoolItem> coolItems; // <-- may not be needed, keep for
 	// future stuff though
 
@@ -205,7 +196,7 @@ public class MainShell {
 				}
 				Config.setWindowSize(shell.getSize());
 
-				for (CTabItem tab : mainfolder.getItems())
+				for (CTabItem tab : panes.allItems())
 					if (!confirmClose(tab))
 						close = false;
 
@@ -377,67 +368,59 @@ public class MainShell {
 	}
 
 	public Object openFile(Sequence seq, int sym) {
-		boolean found = false;
 		Composite editor;
 
-		for (CTabItem c : mainfolder.getItems()) {
-			if (c.getData("seq") != null && (Sequence) c.getData("seq") == seq && c.getData("sym") != null && ((Integer) c.getData("sym")) == sym) {
-				setMainFolderSelection(c);
-				found = true;
-				return c.getControl();
+		CTabItem existing = panes.findItem(seq, sym);
+		if (existing != null) {
+			setMainFolderSelection(existing);
+			return existing.getControl();
+		}
+
+		CTabItem item = panes.newItem(SWT.CLOSE);
+
+		item.setText("Sequence View: " + seq.getSeq());
+		// item.setToolTipText("Sequence View: " + seq.getSeq()); // only enable this if we are shrinking tabs
+
+		item.setData("seq", seq);
+		item.setData("sym", sym);
+
+		item.setImage(drawSymOverImage(RepDevMain.smallReportsImage, sym));
+
+		editor = new ReportComposite(item.getParent(), item, seq);
+		editor.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+
 			}
-		}
 
-		if (!found) {
-			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
+			public void focusLost(FocusEvent e) {
 
-			item.setText("Sequence View: " + seq.getSeq());
-			// item.setToolTipText("Sequence View: " + seq.getSeq()); // only enable this if we are shrinking tabs
+			}
+		});
 
-			item.setData("seq", seq);
-			item.setData("sym", sym);
+		run.setEnabled(false);
+		savetb.setEnabled(false);
+		install.setEnabled(false);
+		hltoggle.setEnabled(false);
 
-			item.setImage(drawSymOverImage(RepDevMain.smallReportsImage, sym));
+		// If anything goes wrong initializing the error, it will dispose of
+		// the current item
+		// So, then we shouldn't do anything
+		if (item.isDisposed())
+			return null;
 
-			editor = new ReportComposite(mainfolder, item, seq);
-			editor.addFocusListener(new FocusListener() {
-				public void focusGained(FocusEvent e) {
+		//activeFolder().setSelection(item);
+		setMainFolderSelection(item);
+		item.setControl(editor);
 
-				}
+		// Attach find/replace shell here as well (in addition to folder
+		// listener)
+		findReplaceShell.attach(((ReportComposite) editor).getStyledText(), false);
+		setMainTitle();
 
-				public void focusLost(FocusEvent e) {
-
-				}
-			});
-
-			run.setEnabled(false);
-			savetb.setEnabled(false);
-			install.setEnabled(false);
-			hltoggle.setEnabled(false);
-
-			// If anything goes wrong initializing the error, it will dispose of
-			// the current item
-			// So, then we shouldn't do anything
-			if (item.isDisposed())
-				return null;
-
-			//mainfolder.setSelection(item);
-			setMainFolderSelection(item);
-			item.setControl(editor);
-
-			// Attach find/replace shell here as well (in addition to folder
-			// listener)
-			findReplaceShell.attach(((ReportComposite) editor).getStyledText(), false);
-			setMainTitle();
-
-			return editor;
-		}
-
-		return null;
+		return editor;
 	}
 
 	public Object openFile(final SymitarFile file) {
-		boolean found = false;
 		Composite editor;
 		Object loc;
 
@@ -446,99 +429,92 @@ public class MainShell {
 		else
 			loc = file.getSym();
 
-		for (CTabItem c : mainfolder.getItems()) {
-			if (c.getData("file") != null && c.getData("file").equals(file) && c.getData("loc") != null && c.getData("loc").equals(loc)) {
-				setMainFolderSelection(c);
-				found = true;
-				return c.getControl();
-			}
+		CTabItem existing = panes.findItem(file, loc);
+		if (existing != null) {
+			setMainFolderSelection(existing);
+			return existing.getControl();
 		}
 
-		if (!found) {
-			CTabItem item = new CTabItem(mainfolder, SWT.CLOSE); 
-			item.setText(file.getName());
-			// item.setToolTipText(file.getName()); // only use this if we are shrinking tabs
-			item.setImage(getFileImage(file));
-			item.setData("file", file);
-			item.setData("loc", loc);
+		CTabItem item = panes.newItem(SWT.CLOSE);
+		item.setText(file.getName());
+		// item.setToolTipText(file.getName()); // only use this if we are shrinking tabs
+		item.setImage(getFileImage(file));
+		item.setData("file", file);
+		item.setData("loc", loc);
 
-			if (file.getType() == FileType.REPORT)
-				editor = new ReportComposite(mainfolder, item, file);
-			else {
-				editor = new EditorComposite(mainfolder, item, file /*
-				 * ,save,
-				 * install,
-				 * print,
-				 * run
-				 */);
-				//EditorCompositeList.add((EditorComposite)editor);
-			}
+		if (file.getType() == FileType.REPORT)
+			editor = new ReportComposite(item.getParent(), item, file);
+		else {
+			editor = new EditorComposite(item.getParent(), item, file /*
+			 * ,save,
+			 * install,
+			 * print,
+			 * run
+			 */);
+			//EditorCompositeList.add((EditorComposite)editor);
+		}
 
-			// If anything goes wrong creating the Editor, we want to fail here
-			// It will dispose of the item to indicate this fault.
-			if (file.isCompareMode()) {
-				file.compareMode(false);
+		// If anything goes wrong creating the Editor, we want to fail here
+		// It will dispose of the item to indicate this fault.
+		if (file.isCompareMode()) {
+			file.compareMode(false);
+			return null;
+		} else {
+			if (item.isDisposed()) {
+				MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+				dialog.setMessage("There has been an error loading this file, the filename is probably too long");
+				dialog.setText("Error");
+				dialog.open();
+
 				return null;
-			} else {
-				if (item.isDisposed()) {
-					MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					dialog.setMessage("There has been an error loading this file, the filename is probably too long");
-					dialog.setText("Error");
-					dialog.open();
-
-					return null;
-				}
 			}
-			mainfolder.setSelection(item);
-			item.setControl(editor);
-			setMainFolderSelection(item);
-			mainfolder.notifyListeners(SWT.Selection, new Event());
-			
-
-
-			//When we are closing, we must dispose the control in the CTabItem, otherwise we leak swt objects
-			item.addDisposeListener(new DisposeListener(){
-				public void widgetDisposed(DisposeEvent e) {
-					if(((CTabItem)e.widget).getControl() != null)
-						((CTabItem)e.widget).getControl().dispose();
-				}
-			});
-
-			if (file.getType() != FileType.REPGEN || file.isLocal())
-				install.setEnabled(false);
-			else
-				install.setEnabled(true);
-
-			if (file.getType() != FileType.REPGEN || file.isLocal())
-				run.setEnabled(false);
-			else
-				run.setEnabled(true);
-
-			savetb.setEnabled(true);
-
-			if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP)||(file.getType() == FileType.DATA))
-				hltoggle.setEnabled(true);
-
-			if (mainfolder.getSelection().getControl() instanceof EditorComposite){
-				if(((EditorComposite)mainfolder.getSelection().getControl()).getHighlight()){
-					hltoggle.setImage(RepDevMain.smallHighlight);
-				}else{
-					hltoggle.setImage(RepDevMain.smallHighlightGrey);
-				}
-			}
-			// Attach find/replace shell here as well (in addition to folder
-			// listener)
-			findReplaceShell.attach(((EditorComposite) mainfolder.getSelection().getControl()).getStyledText(), true);
-
-			if (!Config.getRecentFiles().contains(file))
-				Config.getRecentFiles().add(0, file);
-
-			if (Config.getRecentFiles().size() > MAX_RECENTS)
-				Config.getRecentFiles().remove(Config.getRecentFiles().size() - 1);
-			return editor;
 		}
+		item.setControl(editor);
+		setMainFolderSelection(item);
+		item.getParent().notifyListeners(SWT.Selection, new Event());
 
-		return null;
+
+
+		//When we are closing, we must dispose the control in the CTabItem, otherwise we leak swt objects
+		item.addDisposeListener(new DisposeListener(){
+			public void widgetDisposed(DisposeEvent e) {
+				if(((CTabItem)e.widget).getControl() != null)
+					((CTabItem)e.widget).getControl().dispose();
+			}
+		});
+
+		if (file.getType() != FileType.REPGEN || file.isLocal())
+			install.setEnabled(false);
+		else
+			install.setEnabled(true);
+
+		if (file.getType() != FileType.REPGEN || file.isLocal())
+			run.setEnabled(false);
+		else
+			run.setEnabled(true);
+
+		savetb.setEnabled(true);
+
+		if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP)||(file.getType() == FileType.DATA))
+			hltoggle.setEnabled(true);
+
+		if (activeFolder().getSelection().getControl() instanceof EditorComposite){
+			if(((EditorComposite)activeFolder().getSelection().getControl()).getHighlight()){
+				hltoggle.setImage(RepDevMain.smallHighlight);
+			}else{
+				hltoggle.setImage(RepDevMain.smallHighlightGrey);
+			}
+		}
+		// Attach find/replace shell here as well (in addition to folder
+		// listener)
+		findReplaceShell.attach(((EditorComposite) activeFolder().getSelection().getControl()).getStyledText(), true);
+
+		if (!Config.getRecentFiles().contains(file))
+			Config.getRecentFiles().add(0, file);
+
+		if (Config.getRecentFiles().size() > MAX_RECENTS)
+			Config.getRecentFiles().remove(Config.getRecentFiles().size() - 1);
+		return editor;
 	}
 
 	private void doubleClickTreeItem() {
@@ -851,7 +827,7 @@ public class MainShell {
 			ProjectManager.saveProjects(proj.getDir());
 
 		tree.notifyListeners(SWT.Selection, null);
-		for (CTabItem c : mainfolder.getItems()) {
+		for (CTabItem c : panes.allItems()) {
 			if (c.getData("file") != null && c.getData("file").equals(file)) {
 				c.dispose();
 			}
@@ -1513,7 +1489,7 @@ public class MainShell {
 
 				// Go thru the Tab Items to see if the RepGen is currently open.  If it is,
 				// Then install it.
-				for(CTabItem tf : mainfolder.getItems()){
+				for(CTabItem tf : panes.allItems()){
 					// Run only if the RepGen is found.
 					try{
 						if(tf.getControl() instanceof EditorComposite &&
@@ -1528,11 +1504,11 @@ public class MainShell {
 							setMainFolderSelection(tf);
 							if(modified == true){
 								// If the RepGen was modified, prompt to save and install
-								((EditorComposite) mainfolder.getSelection().getControl()).installRepgen(true);
+								((EditorComposite) activeFolder().getSelection().getControl()).installRepgen(true);
 							}
 							else{
 								// If the RepGen was not modified, install
-								((EditorComposite) mainfolder.getSelection().getControl()).installRepgen(false);
+								((EditorComposite) activeFolder().getSelection().getControl()).installRepgen(false);
 							}
 						}
 					}
@@ -1770,13 +1746,13 @@ public class MainShell {
 
 				if (dialog.open() == SWT.OK) {
 					/*
-					 * if( mainfolder.getSelectionIndex() != -1){ if(
-					 * confirmClose(mainfolder.getSelection()) ){
-					 * clearErrorList(mainfolder.getSelection());
-					 * mainfolder.getSelection().dispose(); setLineColumn(); } }
+					 * if( activeFolder().getSelectionIndex() != -1){ if(
+					 * confirmClose(activeFolder().getSelection()) ){
+					 * clearErrorList(activeFolder().getSelection());
+					 * activeFolder().getSelection().dispose(); setLineColumn(); } }
 					 */
 
-					for (CTabItem item : mainfolder.getItems()) {
+					for (CTabItem item : panes.allItems()) {
 						if ( item.getData("file") != null && (((SymitarFile) item.getData("file")).getSym() == sym) && confirmClose(item)) {
 							clearErrorAndTaskList(item);
 							item.dispose();
@@ -2112,7 +2088,7 @@ public class MainShell {
 				item.setText(newName); // Set name in tree
 
 				// Now, set name in any open tabs
-				for (CTabItem c : mainfolder.getItems()) {
+				for (CTabItem c : panes.allItems()) {
 					if (c.getData("file") == item.getData()) // Be sure it's the
 						// exact same
 						// instance, like it
@@ -2276,9 +2252,9 @@ public class MainShell {
 		//this, but for the time being it should work.
 		
 		/*EditorComposite temp = (EditorComposite)openFile(f1);
-		for (CTabItem tab : mainfolder.getItems()){
+		for (CTabItem tab : panes.allItems()){
 			if (tab.getControl() != null && tab.getControl() instanceof EditorComposite){
-				bgcolor =((EditorComposite)mainfolder.getSelection().getControl()).getLineColor();
+				bgcolor =((EditorComposite)activeFolder().getSelection().getControl()).getLineColor();
 			}
 			if (tab.getControl() != null && tab.getControl() instanceof EditorComposite && tab.getControl() == temp){
 				tab.dispose();
@@ -2289,7 +2265,7 @@ public class MainShell {
 		//TODO:Rewrite the above section so that it runs faster, or determines the color in another way
 
 
-		CTabItem item = new CTabItem(mainfolder, SWT.CLOSE);
+		CTabItem item = panes.newItem(SWT.CLOSE);
 
 		item.setText("Compare Text BETA");
 		item.setImage(RepDevMain.smallCompareImage);
@@ -2297,7 +2273,7 @@ public class MainShell {
 		// item.setData("file", file);
 		// item.setData("loc", loc);
 
-		item.setControl(new CompareComposite(mainfolder, item, f1, f2, bgcolor));
+		item.setControl(new CompareComposite(item.getParent(), item, f1, f2, bgcolor));
 
 		item.addDisposeListener(new DisposeListener(){
 
@@ -2376,8 +2352,8 @@ public class MainShell {
 	public void setLineColumn() {
 		int line, col;
 
-		if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof TabTextView) {
-			StyledText txt = ((TabTextView) mainfolder.getSelection().getControl()).getStyledText();
+		if (activeFolder().getSelection() != null && activeFolder().getSelection().getControl() instanceof TabTextView) {
+			StyledText txt = ((TabTextView) activeFolder().getSelection().getControl()).getStyledText();
 			line = txt.getLineAtOffset(txt.getCaretOffset());
 			col = txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1;
 
@@ -2535,17 +2511,19 @@ public class MainShell {
 	// Draw Rectangle Around Destination Tab Start
 	PaintListener destTabRectPL;
 	Rectangle destTabRect = new Rectangle(0, 0, 0, 0);
-	private void drawDestTabRect(CTabItem destTab){
+	CTabFolder destTabRectFolder;
+	void drawDestTabRect(CTabItem destTab){
 		if(destTab != null){
-			if(destTabRect.x != destTab.getBounds().x){ // Only do this if new or we are in a new tab spot
+			if(destTabRectFolder != destTab.getParent() || destTabRect.x != destTab.getBounds().x){ // Only do this if new or we are in a new tab spot
 				
-				if(destTabRectPL != null){ // dragging over new tab spot - remove old if exists
-					mainfolder.removePaintListener(destTabRectPL);
+				if(destTabRectPL != null && destTabRectFolder != null && !destTabRectFolder.isDisposed()){ // dragging over new tab spot - remove old if exists
+					destTabRectFolder.removePaintListener(destTabRectPL);
 					//destTabRect = null;
 					//destTabRectPL = null;
 				}
 				
 				destTabRect = destTab.getBounds();
+				destTabRectFolder = destTab.getParent();
 				destTabRectPL = new PaintListener()
 				{
 			        public void paintControl(PaintEvent e) {
@@ -2555,13 +2533,14 @@ public class MainShell {
 			            e.gc.drawRectangle(destTabRect);
 			        }
 			    };
-				mainfolder.addPaintListener(destTabRectPL);
-				mainfolder.redraw();
+				destTabRectFolder.addPaintListener(destTabRectPL);
+				destTabRectFolder.redraw();
 			}
 		}
 		else{
-			if(destTabRectPL != null)
-				mainfolder.removePaintListener(destTabRectPL); // Null destTab Argument means remove the rectangle
+			if(destTabRectPL != null && destTabRectFolder != null && !destTabRectFolder.isDisposed())
+				destTabRectFolder.removePaintListener(destTabRectPL); // Null destTab Argument means remove the rectangle
+			destTabRectFolder = null;
 			}
 		
 	}
@@ -2583,365 +2562,38 @@ public class MainShell {
 	Color titleForeColor = null, titleBackColor1 = null, titleBackColor2 = null;
 	private void createEditorPane(Composite self) {
 		self.setLayout(new FillLayout());
-		mainfolder = new CTabFolder(self,  SWT.TOP | SWT.BORDER);
-		final Cursor cursor = new Cursor(display, SWT.CURSOR_SIZEALL);
-		mainfolder.setLayout(new FillLayout());
-		mainfolder.setSimple(false);
+		panes = new EditorPaneManager(self, this);
+	}
 
-		Menu tabContextMenu = new Menu(mainfolder);
-		mainfolder.setMenu(tabContextMenu);
+	/**
+	 * The editor folder the user is currently working in. Most of MainShell's tab code
+	 * means exactly "the folder holding the tab in front of me" and is correct
+	 * unchanged once it resolves through here. Call sites that instead mean "every open
+	 * tab" meed to use panes.allItems();
+	 */
+	private CTabFolder activeFolder() {
+		return panes.active();
+	}
 
-		// XP Theme Color Tabs With Gradient start
-		  try {
-				  File file = new File("styles\\" + Config.getStyle() + ".xml");
-				  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				  DocumentBuilder db = dbf.newDocumentBuilder();
-				  Document doc = db.parse(file);
-				  doc.getDocumentElement().normalize();
-				  NodeList nodeLst = doc.getElementsByTagName("tabStyle");
-				  if(nodeLst.getLength() > 0){
-					  NamedNodeMap attributes = nodeLst.item(0).getAttributes();
-					  titleForeColor = HextoColor(attributes.getNamedItem("fgColor").getTextContent());
-					  titleBackColor1 = HextoColor(attributes.getNamedItem("bgcolor1").getTextContent());
-					  titleBackColor2 = HextoColor(attributes.getNamedItem("bgcolor2").getTextContent());
-				  }
-			  } catch (Exception e) {
-				  e.printStackTrace();
-			  }
-			  if(titleForeColor == null || titleBackColor1 == null || titleBackColor2 == null){
-				titleForeColor = display.getSystemColor(SWT.COLOR_TITLE_FOREGROUND);
-				titleBackColor1 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-				titleBackColor2 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-			  }
-		mainfolder.setSelectionForeground(titleForeColor);
-		mainfolder.setSelectionBackground(new Color[] { titleBackColor1,titleBackColor2 }, new int[] { 100 }, true);
-		//  XP Theme Color Tabs With Gradient End
-		
-		// Drag tab code start
-		// Close tab with middle mouse code start
-		// Tab history code start
-		Listener listener = new Listener() {
-			boolean drag = false;
-			boolean exitDrag = false;
-			CTabItem dragItem;
-			public void handleEvent(Event e) {
-				Point p = new Point(e.x, e.y);
-				if (e.type == SWT.DragDetect) {
-					p = mainfolder.toControl(display.getCursorLocation()); // see bug 43251
-				}
-				switch (e.type) {
-				case SWT.MouseDown: {
-					  if (e.button == 2){ // Close tab with middle click (or mouse wheel click)
-							if (confirmClose(mainfolder.getSelection())) {
-								clearErrorAndTaskList(mainfolder.getSelection());
-								mainfolder.getSelection().dispose();
-								setLineColumn();
-							}
-					  }
-					  else{ // Record that tab selection was changed
-						  addToTabHistory();
-						  //addToNavHistory(((EditorComposite)item.getControl()).getFile(),line);
-					  }
-					  break;
-				}
-				case SWT.DragDetect: {
-					CTabItem item = mainfolder.getItem(p);
-					if (item == null)
-						return;
-					//e.image = display.getSystemImage(SWT.ICON_WARNING);
+	EditorPaneManager getPanes() {
+		return panes;
+	}
 
-					drag = true;
-					exitDrag = false;
-					dragItem = item;
-					mainfolder.setCursor(cursor);
-					break;
-				}
-				case SWT.MouseEnter:
-					if (exitDrag) {
-						exitDrag = false;
-						drag = e.button != 0;
-					}
-					break;
-				case SWT.MouseExit:
-					if (drag) {
-						mainfolder.setInsertMark(null, false);
-						exitDrag = true;
-						drag = false;
-					}
-					break;
-				case SWT.MouseUp: {
-					if (!drag)
-						return;
-					mainfolder.setInsertMark(null, false);
-					drawDestTabRect(null);
-					CTabItem item = mainfolder.getItem(new Point(p.x, 1));
-					if (item != null) {
-						Rectangle sourceRect = dragItem.getBounds();
-						Rectangle destRect = item.getBounds();
-						boolean after = sourceRect.x < destRect.x;
-						int index = mainfolder.indexOf(item);
-						index = after ? index + 1 : index - 0;
-						index = Math.max(0, index);
-						CTabItem newItem = new CTabItem(mainfolder, SWT.CLOSE, index);
-						//newItem.setText("new tab item");
-						newItem.setText(dragItem.getText()); // move over the tab's text
-						newItem.setToolTipText(newItem.getToolTipText()); // move over tooltip text
-						
-						newItem.setImage(dragItem.getImage()); // Mover over the sym icon
-						Control c = dragItem.getControl();
-						
-						newItem.setControl(c);
-						// move over data attributes for files and reports
-						if(dragItem.getData("seq") != null)
-							newItem.setData("seq", dragItem.getData("seq"));
-						if(dragItem.getData("sym") != null)
-							newItem.setData("sym", dragItem.getData("sym"));
-						if(dragItem.getData("file") != null)
-							newItem.setData("file", dragItem.getData("file"));
-						if(dragItem.getData("loc") != null)
-							newItem.setData("loc", dragItem.getData("loc"));
-						if(dragItem.getData("modified") != null)
-							newItem.setData("modified", dragItem.getData("modified"));
-						if(dragItem.getData("error") != null)
-							newItem.setData("error", dragItem.getData("error"));
-						if(dragItem.getData("task") != null)
-							newItem.setData("task", dragItem.getData("task"));
-						dragItem.setControl(null);
-						dragItem.dispose();
-						setMainFolderSelection(newItem);
-						if (mainfolder.getSelection() != null && (mainfolder.getSelection().getControl()) instanceof EditorComposite)
-							((EditorComposite) mainfolder.getSelection().getControl()).getStyledText().setFocus();
-						setMainTitle();
-					}
-					drag = false;
-					exitDrag = false;
-					dragItem = null;
-					mainfolder.setCursor(null);
-					break;
-				}
-				case SWT.MouseMove: {
-					if (!drag)
-						return;
-					CTabItem item = mainfolder.getItem(new Point(p.x, 2));
-					if (item == null) {
-						mainfolder.setInsertMark(null, false);
-						drawDestTabRect(null);
-						return;
-					}
-					Rectangle rect = item.getBounds();
-					boolean after = p.x > rect.x + rect.width / 2;
-					mainfolder.setInsertMark(item, after);
-					drawDestTabRect(item);
-//				    // Workaround for bug #32846
-//				    if (item == -1) {
-//				    	mainfolder.redraw();
-//				    }
-					break;
-				}
-				}
-			}
-		};
-		mainfolder.addListener(SWT.DragDetect, listener);
-		mainfolder.addListener(SWT.MouseUp, listener);
-		mainfolder.addListener(SWT.MouseMove, listener);
-		mainfolder.addListener(SWT.MouseExit, listener);
-		mainfolder.addListener(SWT.MouseEnter, listener);
-		mainfolder.addListener(SWT.MouseDown, listener);
+	void splitEditorHere() {
+		CTabItem sel = panes.active().getSelection();
+		if (sel != null)
+			panes.moveToOtherView(sel);
+	}
 
-		// Drag tab code end
+	void toggleSplitOrientation() {
+		if (!panes.isSplit())
+			return;
+		panes.setOrientation(panes.getOrientation() == SWT.HORIZONTAL ? SWT.VERTICAL : SWT.HORIZONTAL);
+		Config.setSplitOrientation(panes.getOrientation());
+	}
 
-		mainfolder.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getSelection() != null && (mainfolder.getSelection().getControl()) instanceof EditorComposite) {
-					SymitarFile file = ((EditorComposite) mainfolder.getSelection().getControl()).getFile();
-					if (file.getType() != FileType.REPGEN || file.isLocal())
-						install.setEnabled(false);
-					else
-						install.setEnabled(true);
-
-					if (file.getType() != FileType.REPGEN || file.isLocal())
-						run.setEnabled(false);
-					else
-						run.setEnabled(true);
-
-					if ((file.getType() == FileType.REPGEN)||(file.getType() == FileType.LETTER)||(file.getType() == FileType.HELP)||(file.getType() == FileType.DATA))
-						hltoggle.setEnabled(true);
-
-					savetb.setEnabled(true);
-					print.setEnabled(true);
-				} else {
-					print.setEnabled(true);
-					savetb.setEnabled(false);
-					run.setEnabled(false);
-					install.setEnabled(false);
-					hltoggle.setEnabled(false);
-				}
-			}
-		});
-
-		final MenuItem closeTab = new MenuItem(tabContextMenu, SWT.NONE);
-		closeTab.setText("Close Tab");
-		closeTab.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getSelectionIndex() != -1) {
-					if (confirmClose(mainfolder.getSelection())) {
-						clearErrorAndTaskList(mainfolder.getSelection());
-						mainfolder.getSelection().dispose();
-						setLineColumn();
-					}
-				}
-			}
-
-		});
-
-		final MenuItem closeOthers = new MenuItem(tabContextMenu, SWT.NONE);
-		closeOthers.setText("Close Others");
-		closeOthers.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getItems().length > 1) {
-
-					for (CTabItem item : mainfolder.getItems())
-						if (!item.equals(mainfolder.getSelection()))
-							if (confirmClose(item)) {
-								clearErrorAndTaskList(item);
-								item.dispose();
-							}
-
-				}
-			}
-
-		});
-
-		final MenuItem closeAll = new MenuItem(tabContextMenu, SWT.NONE);
-		closeAll.setText("Close All");
-		closeAll.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getItems().length >= 1) {
-
-					for (CTabItem item : mainfolder.getItems())
-						if (confirmClose(item)) {
-							clearErrorAndTaskList(item);
-							item.dispose();
-						}
-
-				}
-			}
-
-		});
-
-		final MenuItem separator = new MenuItem(tabContextMenu, SWT.SEPARATOR);
-
-		final MenuItem save = new MenuItem(tabContextMenu, SWT.None);
-		save.setText("Save");
-		save.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getSelectionIndex() != -1 && (mainfolder.getSelection().getControl() instanceof EditorComposite)) {
-					((EditorComposite) mainfolder.getSelection().getControl()).saveFile(true);
-				} else {
-					System.out.println("Error:  Can not save non-EditorComposite File");
-				}
-			}
-		});
-
-		final MenuItem saveAll = new MenuItem(tabContextMenu, SWT.NONE);
-		saveAll.setText("Save All");
-		saveAll.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				saveAllRepgens();
-			}
-
-		});
-
-		final MenuItem installRepgen = new MenuItem(tabContextMenu, SWT.NONE);
-		installRepgen.setText("Install");
-		installRepgen.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getSelectionIndex() != -1 && (mainfolder.getSelection().getControl() instanceof EditorComposite)) {
-
-					((EditorComposite) mainfolder.getSelection().getControl()).installRepgen(true);
-				}
-			}
-		});
-
-		tabContextMenu.addMenuListener(new MenuAdapter() {
-
-			@Override
-			public void menuShown(MenuEvent e) {
-				boolean flag = mainfolder.getSelectionIndex() != -1;
-
-				closeTab.setEnabled(flag);
-				closeAll.setEnabled(flag);
-
-				save
-				.setEnabled((flag && (mainfolder.getSelection().getControl() instanceof EditorComposite) && mainfolder.getSelection().getData("modified") != null && (Boolean) mainfolder
-						.getSelection().getData("modified")));
-
-				saveAll.setEnabled(flag);
-				installRepgen.setEnabled(flag && (mainfolder.getSelection().getControl() instanceof EditorComposite)
-						&& !((EditorComposite) mainfolder.getSelection().getControl()).getFile().isLocal());
-
-				closeOthers.setEnabled(mainfolder.getItems().length > 1);
-
-			}
-
-		});
-
-		// Make the find/replace box know which thing we are looking through, if
-		// the window is open as we switch tabs
-		mainfolder.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite)
-					findReplaceShell.attach(((EditorComposite) mainfolder.getSelection().getControl()).getStyledText(), true);
-				else if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof ReportComposite)
-					findReplaceShell.attach(((ReportComposite) mainfolder.getSelection().getControl()).getStyledText(), false);
-				
-				// show active repgen's title in the window title
-				setMainTitle();
-			}
-
-		});
-
-		mainfolder.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e){
-				if (mainfolder.getSelection().getControl() instanceof EditorComposite){
-					if(((EditorComposite)mainfolder.getSelection().getControl()).getHighlight()){
-						hltoggle.setImage(RepDevMain.smallHighlight);
-					}else{
-						hltoggle.setImage(RepDevMain.smallHighlightGrey);
-					}
-				}
-			}
-		});
-
-		mainfolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
-			public void close(CTabFolderEvent event) {
-				event.doit = confirmClose((CTabItem) event.item);
-				setLineColumn();
-
-				if (event.doit) {
-					if( mainfolder.getSelection() == event.item )
-						shell.setText(RepDevMain.NAMESTR); // remove active repgen name from title
-					clearErrorAndTaskList((CTabItem) event.item);
-				}
-
-				if (mainfolder.getItemCount() == 1) {
-					install.setEnabled(false);
-					savetb.setEnabled(false);
-					hltoggle.setEnabled(false);
-					print.setEnabled(false);
-					run.setEnabled(false);
-				}
-			}
-		});
+	void focusOtherEditorView() {
+		panes.focusOtherView();
 	}
 
 	protected void clearErrorAndTaskList(CTabItem item) {
@@ -2970,7 +2622,22 @@ public class MainShell {
 		}
 	}
 
-	private boolean confirmClose(CTabItem item) {
+	/**
+	 * Copies presentation and data attributes from one tab to another. Used both by
+	 * in-folder tab dragging and by moves between editor panes. Deliberately does not
+	 * touch setControl.. the caller owns control ownership and disposal ordering.
+	 */
+	static void copyTabState(CTabItem from, CTabItem to) {
+		to.setText(from.getText());
+		to.setToolTipText(from.getToolTipText());
+		to.setImage(from.getImage());
+
+		for (String key : new String[] { "seq", "sym", "file", "loc", "modified", "error", "task" })
+			if (from.getData(key) != null)
+				to.setData(key, from.getData(key));
+	}
+
+	boolean confirmClose(CTabItem item) {
 		if (item != null && item.getData("modified") != null && ((Boolean) item.getData("modified"))) {
 			MessageBox dialog = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO | SWT.CANCEL);
 			dialog.setText("Confirm File Close");
@@ -2989,12 +2656,11 @@ public class MainShell {
 			}
 		}
 
-		if (mainfolder.getSelection().getControl() instanceof EditorComposite)
+		if (item.getControl() instanceof EditorComposite)
 			for (TableItem tItem : tblErrors.getItems())
-				if (tItem.getData("file").equals(mainfolder.getSelection().getData("file")) && tItem.getData("sym").equals(mainfolder.getSelection().getData("sym"))){
+				if (tItem.getData("file").equals(item.getData("file"))
+						&& tItem.getData("sym").equals(item.getData("sym")))
 					tItem.dispose();
-					//EditorCompositeList.remove(mainfolder.getSelection().getControl());
-				}
 		// Remove entries matching this tab from the tabHistory stack since we are closing the file
 		List<CTabItem> closingTab = Arrays.asList(item);
 		tabHistory.removeAll(closingTab);
@@ -3177,8 +2843,10 @@ public class MainShell {
 	}
 			
 		
-	private void setMainFolderSelection(CTabItem item){
-		mainfolder.setSelection(item);
+	void setMainFolderSelection(CTabItem item){
+		if (item == null)
+			return;
+		item.getParent().setSelection(item);
 		addToTabHistory();
 
 			//RepgenParser parser = ((EditorComposite)cur.getControl()).getParser();
@@ -3186,20 +2854,20 @@ public class MainShell {
 	}
 	public void addToTabHistory()
 	{
-		if(mainfolder.getSelectionIndex() == -1 || !(mainfolder.getItem(mainfolder.getSelectionIndex()) instanceof TabTextView))
+		if(activeFolder().getSelectionIndex() == -1 || !(activeFolder().getItem(activeFolder().getSelectionIndex()) instanceof TabTextView))
 			return; // There is no index... return or we will crash with array out of bounds
-		  if( tabHistory.isEmpty() || !tabHistory.get(tabHistory.size()-1).equals(mainfolder.getSelection())){
-			  tabHistory.add(mainfolder.getSelection());
+		  if( tabHistory.isEmpty() || !tabHistory.get(tabHistory.size()-1).equals(activeFolder().getSelection())){
+			  tabHistory.add(activeFolder().getSelection());
 			  // the following used to reside in setMainFolderSelection
-				if(((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()) != null){
-					StyledText txt = ((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText();
+				if(((TabTextView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()) != null){
+					StyledText txt = ((TabTextView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).getStyledText();
 					int line = txt.getLineAtOffset(txt.getCaretOffset());
 					//int col = txt.getCaretOffset() - txt.getOffsetAtLine(line) + 1;
-					if(mainfolder.getSelection().getControl() instanceof EditorComposite)
-						addToNavHistory(((EditorComposite)mainfolder.getSelection().getControl()).getFile(),line);
+					if(activeFolder().getSelection().getControl() instanceof EditorComposite)
+						addToNavHistory(((EditorComposite)activeFolder().getSelection().getControl()).getFile(),line);
 					// I do not deal with Reports for nav history (I ran into problems because their file instance is usually null)
-//					else if(mainfolder.getSelection().getControl() instanceof ReportComposite)
-//						addToNavHistory(((ReportComposite)mainfolder.getSelection().getControl()).getFile(),line);
+//					else if(activeFolder().getSelection().getControl() instanceof ReportComposite)
+//						addToNavHistory(((ReportComposite)activeFolder().getSelection().getControl()).getFile(),line);
 				}
 			  if(tabHistory.size() > TAB_HISTORY_LIMIT)
 				  tabHistory.remove(0); // Keep the history at TAB_HISTORY_LIMIT steps max
@@ -3244,6 +2912,8 @@ public class MainShell {
 		fileItem.setText("&File");
 		MenuItem editItem = new MenuItem(bar, SWT.CASCADE);
 		editItem.setText("&Edit");
+		MenuItem viewItem = new MenuItem(bar, SWT.CASCADE);
+		viewItem.setText("&View");
 		MenuItem toolsItem = new MenuItem(bar, SWT.CASCADE);
 		toolsItem.setText("&Tools");
 		MenuItem helpItem = new MenuItem(bar, SWT.CASCADE);
@@ -3257,14 +2927,16 @@ public class MainShell {
 		helpItem.setMenu(helpMenu);
 		Menu editMenu = new Menu(shell, SWT.DROP_DOWN);
 		editItem.setMenu(editMenu);
+		Menu viewMenu = new Menu(shell, SWT.DROP_DOWN);
+		viewItem.setMenu(viewMenu);
 
 		final MenuItem fileSave = new MenuItem(fileMenu, SWT.PUSH);
 		fileSave.setText("&Save\tCTRL+S");
 		fileSave.setImage(RepDevMain.smallActionSaveImage);
 		fileSave.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite)
-					((EditorComposite) mainfolder.getSelection().getControl()).saveFile(true);
+				if (activeFolder().getSelection() != null && activeFolder().getSelection().getControl() instanceof EditorComposite)
+					((EditorComposite) activeFolder().getSelection().getControl()).saveFile(true);
 			}
 		});
 
@@ -3276,11 +2948,11 @@ public class MainShell {
 			public void widgetSelected(SelectionEvent arg0) {
 				// FileDialog dialog;
 
-				if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite && mainfolder.getSelection().getData("modified") != null
-						&& !(Boolean) mainfolder.getSelection().getData("modified")) {
+				if (activeFolder().getSelection() != null && activeFolder().getSelection().getControl() instanceof EditorComposite && activeFolder().getSelection().getData("modified") != null
+						&& !(Boolean) activeFolder().getSelection().getData("modified")) {
 
 					FileDialog dialog;
-					SymitarFile file = ((EditorComposite) mainfolder.getSelection().getControl()).getFile();
+					SymitarFile file = ((EditorComposite) activeFolder().getSelection().getControl()).getFile();
 
 					if (file.isLocal())
 						dialog = new FileDialog(shell, FileDialog.Mode.SAVE, file.getDir());
@@ -3298,23 +2970,23 @@ public class MainShell {
 						// Remove any already open tabs of the new file, so if
 						// we are overrwriting, it gets updated and this is
 						// clear to the user
-						for (CTabItem item : mainfolder.getItems())
+						for (CTabItem item : panes.allItems())
 							if (item.getData("file") != null && item.getData("file").equals(result.get(0)))
 								item.dispose();
 
 						openFile(result.get(0));
 					}
-				} else if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite
-						&& mainfolder.getSelection().getData("modified") != null && (Boolean) mainfolder.getSelection().getData("modified")) {
+				} else if (activeFolder().getSelection() != null && activeFolder().getSelection().getControl() instanceof EditorComposite
+						&& activeFolder().getSelection().getData("modified") != null && (Boolean) activeFolder().getSelection().getData("modified")) {
 
 					FileDialog dialog;
 
-					SymitarFile file = ((EditorComposite) mainfolder.getSelection().getControl()).getFile();
-					int fileSym = ((EditorComposite) mainfolder.getSelection().getControl()).getFile().getSym();
-					boolean local = ((EditorComposite) mainfolder.getSelection().getControl()).getFile().isLocal();
+					SymitarFile file = ((EditorComposite) activeFolder().getSelection().getControl()).getFile();
+					int fileSym = ((EditorComposite) activeFolder().getSelection().getControl()).getFile().getSym();
+					boolean local = ((EditorComposite) activeFolder().getSelection().getControl()).getFile().isLocal();
 					dialog = new FileDialog(shell, FileDialog.Mode.SAVE, file.getDir());
 
-					String tmp = ((EditorComposite) mainfolder.getSelection().getControl()).getStyledText().getText();
+					String tmp = ((EditorComposite) activeFolder().getSelection().getControl()).getStyledText().getText();
 					/*
 					 * SymitarFile tmp1 = new
 					 * SymitarFile(System.getProperty("user.home"),"tmp_1_2_3");
@@ -3330,7 +3002,7 @@ public class MainShell {
 						SymitarFile tbs = new SymitarFile(path, result.get(0).getName(), result.get(0).getType());
 						System.out.println(path + "," + result.get(0).getName());
 						tbs.saveFile(tmp);
-						for (CTabItem item : mainfolder.getItems())
+						for (CTabItem item : panes.allItems())
 							if (item.getData("file") != null && item.getData("file").equals(result.get(0)))
 								item.dispose();
 						openFile(tbs);
@@ -3343,7 +3015,7 @@ public class MainShell {
 							tmp1.open();
 						} else {
 							tbs.saveFile(tmp);
-							for (CTabItem item : mainfolder.getItems())
+							for (CTabItem item : panes.allItems())
 								if (item.getData("file") != null && item.getData("file").equals(result.get(0)))
 									item.dispose();
 							openFile(tbs);
@@ -3377,9 +3049,9 @@ public class MainShell {
 			}
 
 			public void menuShown(MenuEvent e) {
-				filePrint.setEnabled(mainfolder.getSelection() != null);
-				fileSave.setEnabled(mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite);
-				fileSaveAs.setEnabled(mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite);
+				filePrint.setEnabled(activeFolder().getSelection() != null);
+				fileSave.setEnabled(activeFolder().getSelection() != null && activeFolder().getSelection().getControl() instanceof EditorComposite);
+				fileSaveAs.setEnabled(activeFolder().getSelection() != null && activeFolder().getSelection().getControl() instanceof EditorComposite);
 
 				int i;
 
@@ -3443,11 +3115,11 @@ public class MainShell {
 		editUndo.setText("Undo Typing\tCTRL+Z");
 		editUndo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if (mainfolder.getSelectionIndex() == -1)
+				if (activeFolder().getSelectionIndex() == -1)
 					return;
 
-				if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView)
-					((TabTextEditorView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).undo();
+				if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextEditorView)
+					((TabTextEditorView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).undo();
 			}
 		});
 
@@ -3456,11 +3128,11 @@ public class MainShell {
 		editRedo.setText("Redo Typing\tCTRL+Y");
 		editRedo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if (mainfolder.getSelectionIndex() == -1)
+				if (activeFolder().getSelectionIndex() == -1)
 					return;
 
-				if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView)
-					((TabTextEditorView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).redo();
+				if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextEditorView)
+					((TabTextEditorView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).redo();
 			}
 		});
 
@@ -3471,11 +3143,11 @@ public class MainShell {
 		editCut.setText("Cut\tCTRL+X");
 		editCut.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if (mainfolder.getSelectionIndex() == -1)
+				if (activeFolder().getSelectionIndex() == -1)
 					return;
 
-				if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextView)
-					((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().cut();
+				if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextView)
+					((TabTextView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).getStyledText().cut();
 			}
 		});
 
@@ -3484,11 +3156,11 @@ public class MainShell {
 		editCopy.setText("Copy\tCTRL+C");
 		editCopy.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if (mainfolder.getSelectionIndex() == -1)
+				if (activeFolder().getSelectionIndex() == -1)
 					return;
 
-				if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextView)
-					((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().copy();
+				if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextView)
+					((TabTextView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).getStyledText().copy();
 			}
 		});
 
@@ -3497,11 +3169,11 @@ public class MainShell {
 		editPaste.setText("Paste\tCTRL+V");
 		editPaste.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if (mainfolder.getSelectionIndex() == -1)
+				if (activeFolder().getSelectionIndex() == -1)
 					return;
 
-				if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextView)
-					((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().paste();
+				if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextView)
+					((TabTextView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).getStyledText().paste();
 			}
 		});
 
@@ -3512,11 +3184,11 @@ public class MainShell {
 		editSelectAll.setText("Select All\tCTRL+A");
 		editSelectAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent arg0) {
-				if (mainfolder.getSelectionIndex() == -1)
+				if (activeFolder().getSelectionIndex() == -1)
 					return;
 
-				if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextView)
-					((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText().selectAll();
+				if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextView)
+					((TabTextView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).getStyledText().selectAll();
 			}
 		});
 
@@ -3544,7 +3216,7 @@ public class MainShell {
 		editGotoLine.setText("Goto Line\tCTRL+L");
 		editGotoLine.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				StyledText txt = ((TabTextView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).getStyledText();
+				StyledText txt = ((TabTextView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).getStyledText();
 				GotoLineShell.show(txt.getParent().getShell(), txt);
 			}
 		});
@@ -3554,8 +3226,8 @@ public class MainShell {
 		editFormat.setImage(RepDevMain.smallFormatCodeImage);
 		editFormat.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if( mainfolder.getSelection() != null &&  mainfolder.getSelection().getControl() instanceof EditorComposite) {
-					((EditorComposite)mainfolder.getSelection().getControl()).sendToFormatter();
+				if( activeFolder().getSelection() != null &&  activeFolder().getSelection().getControl() instanceof EditorComposite) {
+					((EditorComposite)activeFolder().getSelection().getControl()).sendToFormatter();
 				}
 			}		    
 		});
@@ -3566,7 +3238,7 @@ public class MainShell {
 		replaceTabs.setImage(RepDevMain.smallFindReplaceImage);
 		replaceTabs.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if( mainfolder.getSelection() != null &&  mainfolder.getSelection().getControl() instanceof EditorComposite) {
+				if( activeFolder().getSelection() != null &&  activeFolder().getSelection().getControl() instanceof EditorComposite) {
 					ReplaceTabs();
 				}
 			}		    
@@ -3578,7 +3250,7 @@ public class MainShell {
 			}
 
 			public void menuShown(MenuEvent e) {
-				if (mainfolder.getSelectionIndex() == -1) {
+				if (activeFolder().getSelectionIndex() == -1) {
 					editRedo.setEnabled(false);
 					editUndo.setEnabled(false);
 
@@ -3602,30 +3274,67 @@ public class MainShell {
 					editFindNext.setEnabled(true);
 					editFind.setEnabled(true);
 
-					if( mainfolder.getSelection() != null &&  mainfolder.getSelection().getControl() instanceof EditorComposite){ 
+					if( activeFolder().getSelection() != null &&  activeFolder().getSelection().getControl() instanceof EditorComposite){
 						editFormat.setEnabled(true);
 						replaceTabs.setEnabled(true);
 					}
 
-					if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView
-							&& ((TabTextEditorView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canRedo())
+					if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextEditorView
+							&& ((TabTextEditorView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).canRedo())
 						editRedo.setEnabled(true);
 					else
 						editRedo.setEnabled(false);
 
-					if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView
-							&& ((TabTextEditorView) mainfolder.getItem(mainfolder.getSelectionIndex()).getControl()).canUndo())
+					if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextEditorView
+							&& ((TabTextEditorView) activeFolder().getItem(activeFolder().getSelectionIndex()).getControl()).canUndo())
 						editUndo.setEnabled(true);
 					else
 						editUndo.setEnabled(false);
 
-					if (mainfolder.getItem(mainfolder.getSelectionIndex()).getControl() instanceof TabTextEditorView)
+					if (activeFolder().getItem(activeFolder().getSelectionIndex()).getControl() instanceof TabTextEditorView)
 						editGotoLine.setEnabled(true);
 					else
 						editGotoLine.setEnabled(false);
 				}
 			}
 
+		});
+
+		final MenuItem viewSplit = new MenuItem(viewMenu, SWT.NONE);
+		viewSplit.setText("&Move to Other View\tCTRL+\\");
+		viewSplit.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				splitEditorHere();
+			}
+		});
+
+		final MenuItem viewOrientation = new MenuItem(viewMenu, SWT.NONE);
+		viewOrientation.setText("Toggle Split &Orientation\tCTRL+SHIFT+\\");
+		viewOrientation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				toggleSplitOrientation();
+			}
+		});
+
+		final MenuItem viewFocusOther = new MenuItem(viewMenu, SWT.NONE);
+		viewFocusOther.setText("&Focus Other View\tF6");
+		viewFocusOther.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				focusOtherEditorView();
+			}
+		});
+
+		viewMenu.addMenuListener(new MenuAdapter() {
+			@Override
+			public void menuShown(MenuEvent e) {
+				CTabItem sel = panes.active().getSelection();
+				viewSplit.setEnabled(sel != null && panes.canMove(sel));
+				viewOrientation.setEnabled(panes.isSplit());
+				viewFocusOther.setEnabled(panes.isSplit());
+			}
 		});
 
 		final MenuItem toolsOptions = new MenuItem(toolsMenu, SWT.PUSH);
@@ -3762,33 +3471,33 @@ public class MainShell {
 	}
 
 	protected void print() {
-		if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof TabTextView) {
+		if (activeFolder().getSelection() != null && activeFolder().getSelection().getControl() instanceof TabTextView) {
 			PrintDialog dialog = new PrintDialog(shell);
 			PrinterData data = dialog.open();
 
 			if (data != null) {
 				StyledTextPrintOptions options = new StyledTextPrintOptions();
 				options.footer = "\t\t<page>";
-				options.jobName = "RepDev - " + mainfolder.getSelection().getText();
+				options.jobName = "RepDev - " + activeFolder().getSelection().getText();
 				options.printLineBackground = false;
 				options.printTextFontStyle = true;
 				options.printTextForeground = true;
 				options.printTextBackground = true;
 
-				Runnable runnable = ((TabTextView) mainfolder.getSelection().getControl()).getStyledText().print(new Printer(data), options);
+				Runnable runnable = ((TabTextView) activeFolder().getSelection().getControl()).getStyledText().print(new Printer(data), options);
 				runnable.run();
 			}
 		}
 	}
 
 	public void showFindWindow() {
-		if (mainfolder.getSelection() == null)
+		if (activeFolder().getSelection() == null)
 			findReplaceShell.attach(null, false);
-		else if (mainfolder.getSelection().getControl() instanceof EditorComposite)
-			findReplaceShell.attach(((EditorComposite) mainfolder.getSelection().getControl()).getStyledText(), ((EditorComposite) mainfolder.getSelection().getControl())
+		else if (activeFolder().getSelection().getControl() instanceof EditorComposite)
+			findReplaceShell.attach(((EditorComposite) activeFolder().getSelection().getControl()).getStyledText(), ((EditorComposite) activeFolder().getSelection().getControl())
 					.getParser(), true);
-		else if (mainfolder.getSelection().getControl() instanceof ReportComposite)
-			findReplaceShell.attach(((ReportComposite) mainfolder.getSelection().getControl()).getStyledText(), null, false);
+		else if (activeFolder().getSelection().getControl() instanceof ReportComposite)
+			findReplaceShell.attach(((ReportComposite) activeFolder().getSelection().getControl()).getStyledText(), null, false);
 
 		findReplaceShell.open();
 	}
@@ -3821,8 +3530,8 @@ public class MainShell {
 	}
 
 	public void saveAllRepgens() {
-		if (mainfolder.getItems().length >= 1) {
-			for (CTabItem item : mainfolder.getItems()) {
+		if (panes.allItems().size() >= 1) {
+			for (CTabItem item : panes.allItems()) {
 				if ((item.getControl() instanceof EditorComposite) && item.getData("modified") != null && (Boolean) item.getData("modified")) {
 					System.out.println("Saving file: " + item.getData("file"));
 					((EditorComposite) item.getControl()).saveFile(true);
@@ -3833,19 +3542,19 @@ public class MainShell {
 	}
 
 	public void reopenCurrentTab() {
-		SymitarFile File = (SymitarFile) mainfolder.getSelection().getData("file");
+		SymitarFile File = (SymitarFile) activeFolder().getSelection().getData("file");
 		closeCurrentTab();
 		openFile(File);
 	}
 	
 	public void closeCurrentTab() {
-//		System.out.println(mainfolder.getSelection());
-//		if(mainfolder.getSelection() != null)
-//			mainfolder.getSelection().dispose();
-		if (mainfolder.getSelectionIndex() != -1) {
-			if (confirmClose(mainfolder.getSelection())) {
-				clearErrorAndTaskList(mainfolder.getSelection());
-				mainfolder.getSelection().dispose();
+//		System.out.println(activeFolder().getSelection());
+//		if(activeFolder().getSelection() != null)
+//			activeFolder().getSelection().dispose();
+		if (activeFolder().getSelectionIndex() != -1) {
+			if (confirmClose(activeFolder().getSelection())) {
+				clearErrorAndTaskList(activeFolder().getSelection());
+				activeFolder().getSelection().dispose();
 				setLineColumn();
 			}
 		}
@@ -3853,9 +3562,9 @@ public class MainShell {
 	
 	//Replace tabs in the document 
 	public void ReplaceTabs(){
-		StyledText txt = ((EditorComposite) mainfolder.getSelection().getControl()).getStyledText();
+		StyledText txt = ((EditorComposite) activeFolder().getSelection().getControl()).getStyledText();
 		//RepgenParser parser = ((EditorComposite)cur.getControl()).getParser();
-		RepgenParser parser = ((EditorComposite) mainfolder.getSelection().getControl()).getParser();
+		RepgenParser parser = ((EditorComposite) activeFolder().getSelection().getControl()).getParser();
 		txt.setRedraw(false);
 		if( parser != null)
 			parser.setReparse(false);
@@ -3952,17 +3661,17 @@ public class MainShell {
 		
 		savetb.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getSelection().getControl() instanceof EditorComposite)
-					((EditorComposite) mainfolder.getSelection().getControl()).saveFile(true);
+				if (activeFolder().getSelection().getControl() instanceof EditorComposite)
+					((EditorComposite) activeFolder().getSelection().getControl()).saveFile(true);
 			}
 		});
 
 		hltoggle.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if(mainfolder.getSelection().getControl() instanceof EditorComposite){
-					boolean highlight = ((EditorComposite) mainfolder.getSelection().getControl()).getHighlight();
+				if(activeFolder().getSelection().getControl() instanceof EditorComposite){
+					boolean highlight = ((EditorComposite) activeFolder().getSelection().getControl()).getHighlight();
 					highlight=(highlight)?false:true;
-					((EditorComposite) mainfolder.getSelection().getControl()).highlight(highlight,false);
+					((EditorComposite) activeFolder().getSelection().getControl()).highlight(highlight,false);
 					if(highlight){
 						hltoggle.setImage(RepDevMain.smallHighlight);
 					}else{
@@ -3974,8 +3683,8 @@ public class MainShell {
 
 		install.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getSelection().getControl() instanceof EditorComposite)
-					((EditorComposite) mainfolder.getSelection().getControl()).installRepgen(true);
+				if (activeFolder().getSelection().getControl() instanceof EditorComposite)
+					((EditorComposite) activeFolder().getSelection().getControl()).installRepgen(true);
 			}
 		});
 
@@ -3987,15 +3696,15 @@ public class MainShell {
 
 		run.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (mainfolder.getSelection().getControl() instanceof EditorComposite)
-					RepDevMain.mainShell.runReport(((EditorComposite) mainfolder.getSelection().getControl()).getFile());
+				if (activeFolder().getSelection().getControl() instanceof EditorComposite)
+					RepDevMain.mainShell.runReport(((EditorComposite) activeFolder().getSelection().getControl()).getFile());
 			}
 		});
 	}
 
 	private void setEditorBarStatus() {
-		if (mainfolder.getSelection().getControl() instanceof EditorComposite) {
-			SymitarFile file = ((EditorComposite) mainfolder.getSelection().getControl()).getFile();
+		if (activeFolder().getSelection().getControl() instanceof EditorComposite) {
+			SymitarFile file = ((EditorComposite) activeFolder().getSelection().getControl()).getFile();
 			if (file.getType() != FileType.REPGEN || file.isLocal())
 				install.setEnabled(false);
 			else
@@ -4023,19 +3732,15 @@ public class MainShell {
 		return shell;
 	}
 
-	public CTabFolder getMainfolder() {
-		return mainfolder;
-	}
-
 	/**
 	 * Tear down code folding on every open editor. Called when the user disables the
 	 * "Enable code folding" option so open tabs unfold and lose their fold gutter
 	 * immediately, rather than staying folded until reopened.
 	 */
 	public void disableFoldingOnOpenEditors() {
-		if (mainfolder == null || mainfolder.isDisposed())
+		if (activeFolder() == null || activeFolder().isDisposed())
 			return;
-		for (CTabItem tab : mainfolder.getItems()) {
+		for (CTabItem tab : panes.allItems()) {
 			if (tab.getControl() instanceof EditorComposite)
 				((EditorComposite) tab.getControl()).disableFolding();
 		}
@@ -4047,9 +3752,9 @@ public class MainShell {
 	 * without needing to reopen tabs.
 	 */
 	public void refreshEditorStyles() {
-		if (mainfolder == null || mainfolder.isDisposed())
+		if (activeFolder() == null || activeFolder().isDisposed())
 			return;
-		for (CTabItem tab : mainfolder.getItems()) {
+		for (CTabItem tab : panes.allItems()) {
 			if (tab.getControl() instanceof EditorComposite) {
 				FoldingManager fm = ((EditorComposite) tab.getControl()).getFolding();
 				if (fm != null)
@@ -4058,13 +3763,13 @@ public class MainShell {
 		}
 	}
 
-	private void setMainTitle(){
+	void setMainTitle(){
 		String server = "";
 		int sym;
 		
 		if(Config.getHostNameInTitle()) {
-			if (mainfolder.getSelection() != null && mainfolder.getSelection().getControl() instanceof EditorComposite && (mainfolder.getSelection() != null && ((EditorComposite) mainfolder.getSelection().getControl()).getFile() instanceof SymitarFile)) {
-				SymitarFile file =  ((EditorComposite) mainfolder.getSelection().getControl()).getFile();
+			if (activeFolder().getSelection() != null && activeFolder().getSelection().getControl() instanceof EditorComposite && (activeFolder().getSelection() != null && ((EditorComposite) activeFolder().getSelection().getControl()).getFile() instanceof SymitarFile)) {
+				SymitarFile file =  ((EditorComposite) activeFolder().getSelection().getControl()).getFile();
 				if(!file.isLocal()) {
 					sym =file.getSym();
 					server = " - " + RepDevMain.SESSION_INFO.get(sym).getServer();
@@ -4073,7 +3778,7 @@ public class MainShell {
 		}
 		
 		if (Config.getFileNameInTitle())
-			shell.setText(mainfolder.getSelection().getText() + " - " +RepDevMain.NAMESTR + server);
+			shell.setText(activeFolder().getSelection().getText() + " - " +RepDevMain.NAMESTR + server);
 		else
 			shell.setText(RepDevMain.NAMESTR + server);
 		

@@ -51,8 +51,8 @@ public class OptionsShell {
 	
 	// Controls
 	private Spinner tabSpinner;
-	private Combo styleCombo, hour, minute;
-	private Label varsLabel, serverLabel, portLabel, useSSOLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, enableFoldingLabel, liveSYMLabel, liveSYMColorLabel, useSourceControlLabel, sourceControlDirLabel;
+	private Combo styleCombo, hour, minute, splitOrientation;
+	private Label varsLabel, serverLabel, portLabel, useSSOLabel, errChkPrefixLabel, errChkSuffixLabel, nameInTitleLabel, hostInTitleLabel, viewLineNumbersLabel, enableFoldingLabel, splitOrientationLabel, liveSYMLabel, liveSYMColorLabel, useSourceControlLabel, sourceControlDirLabel;
 	private Text  serverText, portText, errCheckPrefix, errCheckSuffix, liveSYMText, liveSYMColorText, sourceControlDir;
 	private Button varsButton, neverTerm, useSSO, devForgetBox, backupEnable, fileNameInTitle, hostInTitle, viewLineNumbers, enableFolding, useSourceControl;
 	private String ssoPass = "";
@@ -109,6 +109,9 @@ public class OptionsShell {
 				// fold gutter); enabling applies the next time an editor is opened.
 				if (!enableFolding.getSelection() && RepDevMain.mainShell != null)
 					RepDevMain.mainShell.disableFoldingOnOpenEditors();
+				Config.setSplitOrientation(splitOrientation.getSelectionIndex() == 1 ? SWT.VERTICAL : SWT.HORIZONTAL);
+				if (RepDevMain.mainShell != null)
+					RepDevMain.mainShell.getPanes().setOrientation(Config.getSplitOrientation());
 				Config.setLiveSym(Integer.parseInt(liveSYMText.getText()));
 				Config.setLiveSymColor(liveSYMColorText.getText());
 				Config.setUseSourceControl(useSourceControl.getSelection());
@@ -499,6 +502,12 @@ public class OptionsShell {
 		enableFolding = new Button(editorGroup, SWT.CHECK);
 		enableFolding.setSelection((Config.getFoldingEnabled()));
 
+		splitOrientationLabel = new Label(editorGroup, SWT.NONE);
+		splitOrientationLabel.setText("Split editor orientation");
+		splitOrientation = new Combo(editorGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+		splitOrientation.setItems(new String[] { "Side by side", "Stacked" });
+		splitOrientation.select(Config.getSplitOrientation() == SWT.VERTICAL ? 1 : 0);
+
 		Group noErrorCheckGroup = new Group(editorOptions,SWT.NONE);
 		noErrorCheckGroup.setText("No Error Check for these Files");
 		layout = new FormLayout();
@@ -531,6 +540,7 @@ public class OptionsShell {
 			hostInTitle.setSelection(true);
 			viewLineNumbers.setSelection(true);
 			enableFolding.setSelection(true);
+			splitOrientation.select(0);
 			RepDevMain.saveSettings();
 		}
 		FormData data = new FormData();
@@ -672,6 +682,18 @@ public class OptionsShell {
 		data.top = new FormAttachment(viewLineNumbers);
 		data.right = new FormAttachment(100);
 		enableFolding.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(0);
+		data.top = new FormAttachment(enableFolding);
+		data.width = 163;
+		splitOrientationLabel.setLayoutData(data);
+
+		data = new FormData();
+		data.left = new FormAttachment(splitOrientationLabel);
+		data.top = new FormAttachment(enableFolding);
+		data.right = new FormAttachment(100);
+		splitOrientation.setLayoutData(data);
 
 		data = new FormData();
 		data.left = new FormAttachment(0);

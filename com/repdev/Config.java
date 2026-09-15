@@ -58,7 +58,7 @@ public class Config implements Serializable {
 	 * different, then a popup will notify the user and will launch the OptionsShell so that
 	 * the users can config the new options.
 	 */
-	public final static int REVISION = 6; // Modify this everytime we add new options to prompt the user.
+	public final static int REVISION = 7; // Modify this everytime we add new options to prompt the user.
 	private int revision=-1;
 	private boolean windowMaximized;
 	private Point windowSize;
@@ -67,6 +67,8 @@ public class Config implements Serializable {
 	private int terminateHour;
 	private int terminateMinute;
 	private int sashHSize, sashVSize;
+	private int splitOrientation = 0;
+	private int splitWeight = 0;
 	private boolean backupProjectFiles = false;
 	private String noErrorCheckSuffix = ".PRO,.SET,.DEF,.INC";
 	private String noErrorCheckPrefix = "INC.";
@@ -409,6 +411,25 @@ public class Config implements Serializable {
 	 */
 	public static void setSashVSize(int size){
 		me.sashVSize = size;
+	}
+
+	/** @return SWT.HORIZONTAL or SWT.VERTICAL; defaults to HORIZONTAL when unset. */
+	public static int getSplitOrientation() {
+		return me.splitOrientation == 0 ? org.eclipse.swt.SWT.HORIZONTAL : me.splitOrientation;
+	}
+
+	public static void setSplitOrientation(int orientation) {
+		me.splitOrientation = orientation;
+	}
+
+	/** @return the primary pane's share out of 1000; defaults to an even split when unset. */
+	public static int getSplitWeight() {
+		int weight = me.splitWeight == 0 ? 500 : me.splitWeight;
+		return Math.max(50, Math.min(950, weight));
+	}
+
+	public static void setSplitWeight(int weight) {
+		me.splitWeight = weight;
 	}
 	
 	/**
