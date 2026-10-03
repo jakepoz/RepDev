@@ -26,6 +26,7 @@ ARRAY|Instructs the repGen to create an array of type and size indicated|BEARSKI
 ASCII|Used with DATAFILE keyword to instruct data type for output of data|DATAFILE ASCII
 ATMDIALOG|Defines ATM Diaolog the target file|TARGET=ATMDIALOG
 AUDIO|Indicates that the repGen can be run by the Audio Response System|AUDIO
+BANKRUPTCY|Loan Bankruptcy records are child records that can be added to a Loan record with a Loan Code field value of (0) Closed End or (1) Open End.|
 BEFOREFIRST|Locator Keyword|LOC BEFOREFIRST
 BELL|Print control statement that makes the CRT beep once|PRINT "There's a BEAR!" BELL
 BILL|Designates an EFT Bill Payment Record as the target|TARGET=BILL
@@ -124,6 +125,7 @@ PLEDGE|PLEDGE in conjunction with a LOAN record type designates the Loan Pledge 
 PORTFOLIO|PORTFOLIO designates the Portfolio record in the Account file|TARGET=PORTFOLIO
 PORTRAIT|PORTRAIT is one of the available printer orientation options when using the HPSETUP HP Laser Control command|PORTRAIT
 PREFERENCE|PREFERENCE designates the Preference record in the Account file|PREFERENCE:LANGUAGE=1
+PREPETITIONBAL|This record type designates the fields in a Loan Bankruptcy Pre-Petition Bal record.|
 PREFIX|PREFIX is a special keyword you can use in batch specfile file maintenance when you are using the CREATE command to create a new Account record|ACCOUNT NEXTACCOUNT PREFIX 31
 PREVSYSTEMDATE|PREVSYSTEMDATE is a special date literal that evaluates to the previous system date, which is the last system date before the current system posting date|YESTERDAY=PREVSYSTEMDATE
 PRINT|A print statement controls the horizontal placement of data in a report|PRINT "CODE MONKEY"
