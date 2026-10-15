@@ -42,10 +42,12 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -81,6 +83,61 @@ public class SuggestShell {
 	private Token current;
 	private EditorComposite editor;
 	
+	/** Gap between the caret and the popup's top left corner. */
+	private static final int CARET_OFFSET_X = 5, CARET_OFFSET_Y = 20;
+
+	/**
+	 * Where the popup goes for a caret at <code>caret</code>, kept inside
+	 * <code>monitor</code>.
+	 *
+	 * <p>Monitor bounds are virtual-desktop coordinates, so a monitor's width
+	 * does not tell you where its right edge is: the second monitor in a
+	 * side-by-side pair starts at x=1920 and ends at 3840, and one placed to
+	 * the left of the primary starts at a negative x. Both edges have to come
+	 * from the bounds rectangle. Measuring against the bare width instead
+	 * treated every monitor as if it began at the origin, which slid the
+	 * popup onto the primary display whenever RepDev was running anywhere
+	 * else.
+	 */
+	static Point popupLocation(Point caret, Point size, Rectangle monitor) {
+		int x = caret.x + CARET_OFFSET_X;
+
+		if (x + size.x > monitor.x + monitor.width)
+			x = monitor.x + monitor.width - size.x;
+
+		if (x < monitor.x)
+			x = monitor.x;
+
+		return new Point(x, caret.y + CARET_OFFSET_Y);
+	}
+
+	/**
+	 * Where the tooltip goes: to the right of the popup, or flipped to its
+	 * left when the right side has no room, and never past the left edge of
+	 * the monitor the popup is on.
+	 */
+	static Point tooltipLocation(Rectangle popup, Point size, Rectangle monitor) {
+		int x = popup.x + popup.width;
+
+		if (x + size.x > monitor.x + monitor.width)
+			x = Math.max(monitor.x, popup.x - size.x);
+
+		return new Point(x, popup.y);
+	}
+
+	/**
+	 * Bounds of the monitor the caret is on. Asking the popup shell for its
+	 * own monitor is no good: it reports wherever it was last placed, which
+	 * once it has been clamped onto the primary display keeps it there.
+	 */
+	private static Rectangle monitorContaining(StyledText editor, Point point) {
+		for (Monitor monitor : editor.getDisplay().getMonitors())
+			if (monitor.getBounds().contains(point))
+				return monitor.getBounds();
+
+		return editor.getMonitor().getBounds();
+	}
+
 	public void open(){
 		open(false);
 	}
@@ -103,21 +160,11 @@ public class SuggestShell {
 		Token before = null;
 		long timer = System.currentTimeMillis();
 	
-		Point loc = shell.getDisplay().map(txt, null, txt.getLocationAtOffset(txt.getCaretOffset()));
-		loc.x += 5;
-		loc.y += 20;
-		
-		if( loc.x + shell.getBounds().width > shell.getMonitor().getBounds().width )
-			loc.x = shell.getMonitor().getBounds().width - shell.getBounds().width;
-		
-		shell.setLocation(loc);
-		
-		loc = new Point(shell.getBounds().x+shell.getBounds().width,shell.getBounds().y);
-		
-		if( loc.x + tooltip.getBounds().width > shell.getMonitor().getBounds().width )
-			loc.x = Math.max(0, shell.getBounds().x - tooltip.getBounds().width);
-		
-		tooltip.setLocation(loc);
+		Point caret = shell.getDisplay().map(txt, null, txt.getLocationAtOffset(txt.getCaretOffset()));
+		Rectangle monitor = monitorContaining(txt, caret);
+
+		shell.setLocation(popupLocation(caret, shell.getSize(), monitor));
+		tooltip.setLocation(tooltipLocation(shell.getBounds(), tooltip.getSize(), monitor));
 
 		if (parser == null || parser.getLtokens() == null)
 			return false;
